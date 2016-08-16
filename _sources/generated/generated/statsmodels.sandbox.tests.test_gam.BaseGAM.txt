@@ -1,0 +1,25 @@
+statsmodels.sandbox.tests.test_gam.BaseGAM
+==========================================
+
+.. currentmodule:: statsmodels.sandbox.tests.test_gam
+.. autoclass:: BaseGAM
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~BaseGAM.__init__
+   ~BaseGAM.init
+   ~BaseGAM.test_mu
+   ~BaseGAM.test_params
+   ~BaseGAM.test_predict
+
+
+
+
+

@@ -1,0 +1,45 @@
+statsmodels.miscmodels.count.PoissonOffsetGMLE
+==============================================
+
+.. currentmodule:: statsmodels.miscmodels.count
+.. autoclass:: PoissonOffsetGMLE
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PoissonOffsetGMLE.__init__
+   ~PoissonOffsetGMLE.expandparams
+   ~PoissonOffsetGMLE.fit
+   ~PoissonOffsetGMLE.from_formula
+   ~PoissonOffsetGMLE.hessian
+   ~PoissonOffsetGMLE.information
+   ~PoissonOffsetGMLE.initialize
+   ~PoissonOffsetGMLE.jac
+   ~PoissonOffsetGMLE.loglike
+   ~PoissonOffsetGMLE.loglikeobs
+   ~PoissonOffsetGMLE.nloglike
+   ~PoissonOffsetGMLE.nloglikeobs
+   ~PoissonOffsetGMLE.predict
+   ~PoissonOffsetGMLE.reduceparams
+   ~PoissonOffsetGMLE.score
+   ~PoissonOffsetGMLE.score_obs
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~PoissonOffsetGMLE.endog_names
+   ~PoissonOffsetGMLE.exog_names
+

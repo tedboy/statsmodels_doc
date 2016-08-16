@@ -1,0 +1,34 @@
+statsmodels.tools.sm_exceptions
+===============================
+
+.. automodule:: statsmodels.tools.sm_exceptions
+
+   
+   
+   
+
+   
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      CacheWriteWarning
+      ConvergenceWarning
+      IOWarning
+      InvalidTestWarning
+      IterationLimitWarning
+      MissingDataError
+      ModuleUnavailableWarning
+      PerfectSeparationError
+      X13Error
+      X13NotFoundError
+      X13Warning
+   
+   

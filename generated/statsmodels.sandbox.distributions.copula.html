@@ -1,0 +1,361 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.3.2. statsmodels.sandbox.distributions.copula &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.3.2.2.1. statsmodels.sandbox.distributions.copula.copula_bv_archimedean" href="statsmodels.sandbox.distributions.copula.copula_bv_archimedean.html"/>
+        <link rel="prev" title="6.3.1. statsmodels.sandbox.distributions" href="statsmodels.sandbox.distributions.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.html">6.3.1. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.3.2. statsmodels.sandbox.distributions.copula</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#references">6.3.2.1. References</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">6.3.2.2. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">6.3.2.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.html">6.3.3. statsmodels.sandbox.distributions.estimators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.extras.html">6.3.4. statsmodels.sandbox.distributions.extras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.genpareto.html">6.3.5. statsmodels.sandbox.distributions.genpareto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.gof_new.html">6.3.6. statsmodels.sandbox.distributions.gof_new</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.multivariate.html">6.3.7. statsmodels.sandbox.distributions.multivariate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.mv_measures.html">6.3.8. statsmodels.sandbox.distributions.mv_measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.html">6.3.9. statsmodels.sandbox.distributions.mv_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.otherdist.html">6.3.10. statsmodels.sandbox.distributions.otherdist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.quantize.html">6.3.11. statsmodels.sandbox.distributions.quantize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.sppatch.html">6.3.12. statsmodels.sandbox.distributions.sppatch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.transform_functions.html">6.3.13. statsmodels.sandbox.distributions.transform_functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.transformed.html">6.3.14. statsmodels.sandbox.distributions.transformed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.try_max.html">6.3.15. statsmodels.sandbox.distributions.try_max</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.try_pot.html">6.3.16. statsmodels.sandbox.distributions.try_pot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.3.2. statsmodels.sandbox.distributions.copula</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.distributions.copula.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.distributions.copula">
+<span id="statsmodels-sandbox-distributions-copula"></span><h1>6.3.2. statsmodels.sandbox.distributions.copula<a class="headerlink" href="#module-statsmodels.sandbox.distributions.copula" title="Permalink to this headline">¶</a></h1>
+<p>Which Archimedean is Best?
+Extreme Value copulas formulas are based on Genest 2009</p>
+<div class="section" id="references">
+<h2>6.3.2.1. References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>Genest, C., 2009. Rank-based inference for bivariate extreme-value
+copulas. The Annals of Statistics, 37(5), pp.2990-3022.</p>
+</div>
+<div class="section" id="functions">
+<h2>6.3.2.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.copula_bv_archimedean.html#statsmodels.sandbox.distributions.copula.copula_bv_archimedean" title="statsmodels.sandbox.distributions.copula.copula_bv_archimedean"><code class="xref py py-obj docutils literal"><span class="pre">copula_bv_archimedean</span></code></a>(u,&nbsp;v,&nbsp;transform[,&nbsp;args])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.copula_bv_clayton.html#statsmodels.sandbox.distributions.copula.copula_bv_clayton" title="statsmodels.sandbox.distributions.copula.copula_bv_clayton"><code class="xref py py-obj docutils literal"><span class="pre">copula_bv_clayton</span></code></a>(u,&nbsp;v,&nbsp;theta)</td>
+<td>Clayton or Cook, Johnson bivariate copula</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.copula_bv_ev.html#statsmodels.sandbox.distributions.copula.copula_bv_ev" title="statsmodels.sandbox.distributions.copula.copula_bv_ev"><code class="xref py py-obj docutils literal"><span class="pre">copula_bv_ev</span></code></a>(u,&nbsp;v,&nbsp;transform[,&nbsp;args])</td>
+<td>generic bivariate extreme value copula</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.copula_bv_frank.html#statsmodels.sandbox.distributions.copula.copula_bv_frank" title="statsmodels.sandbox.distributions.copula.copula_bv_frank"><code class="xref py py-obj docutils literal"><span class="pre">copula_bv_frank</span></code></a>(u,&nbsp;v,&nbsp;theta)</td>
+<td>Cook, Johnson bivariate copula</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.copula_bv_gauss.html#statsmodels.sandbox.distributions.copula.copula_bv_gauss" title="statsmodels.sandbox.distributions.copula.copula_bv_gauss"><code class="xref py py-obj docutils literal"><span class="pre">copula_bv_gauss</span></code></a>(u,&nbsp;v,&nbsp;rho)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.copula_bv_indep.html#statsmodels.sandbox.distributions.copula.copula_bv_indep" title="statsmodels.sandbox.distributions.copula.copula_bv_indep"><code class="xref py py-obj docutils literal"><span class="pre">copula_bv_indep</span></code></a>(u,&nbsp;v)</td>
+<td>independent bivariate copula</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.copula_bv_max.html#statsmodels.sandbox.distributions.copula.copula_bv_max" title="statsmodels.sandbox.distributions.copula.copula_bv_max"><code class="xref py py-obj docutils literal"><span class="pre">copula_bv_max</span></code></a>(u,&nbsp;v)</td>
+<td>countermonotonic bivariate copula</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.copula_bv_min.html#statsmodels.sandbox.distributions.copula.copula_bv_min" title="statsmodels.sandbox.distributions.copula.copula_bv_min"><code class="xref py py-obj docutils literal"><span class="pre">copula_bv_min</span></code></a>(u,&nbsp;v)</td>
+<td>comonotonic bivariate copula</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.copula_bv_t.html#statsmodels.sandbox.distributions.copula.copula_bv_t" title="statsmodels.sandbox.distributions.copula.copula_bv_t"><code class="xref py py-obj docutils literal"><span class="pre">copula_bv_t</span></code></a>(u,&nbsp;v,&nbsp;rho,&nbsp;df)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.copula_mv_archimedean.html#statsmodels.sandbox.distributions.copula.copula_mv_archimedean" title="statsmodels.sandbox.distributions.copula.copula_mv_archimedean"><code class="xref py py-obj docutils literal"><span class="pre">copula_mv_archimedean</span></code></a>(u,&nbsp;transform[,&nbsp;args,&nbsp;axis])</td>
+<td>generic multivariate Archimedean copula</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.transform_bilogistic.html#statsmodels.sandbox.distributions.copula.transform_bilogistic" title="statsmodels.sandbox.distributions.copula.transform_bilogistic"><code class="xref py py-obj docutils literal"><span class="pre">transform_bilogistic</span></code></a>(t,&nbsp;beta,&nbsp;delta)</td>
+<td>bilogistic model of Coles and Tawn 1994, Joe, Smith and Weissman 1992</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.transform_hr.html#statsmodels.sandbox.distributions.copula.transform_hr" title="statsmodels.sandbox.distributions.copula.transform_hr"><code class="xref py py-obj docutils literal"><span class="pre">transform_hr</span></code></a>(t,&nbsp;lamda)</td>
+<td>model of Huesler Reiss 1989</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.transform_joe.html#statsmodels.sandbox.distributions.copula.transform_joe" title="statsmodels.sandbox.distributions.copula.transform_joe"><code class="xref py py-obj docutils literal"><span class="pre">transform_joe</span></code></a>(t,&nbsp;a1,&nbsp;a2,&nbsp;theta)</td>
+<td>asymmetric negative logistic model of Joe 1990</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.transform_tawn.html#statsmodels.sandbox.distributions.copula.transform_tawn" title="statsmodels.sandbox.distributions.copula.transform_tawn"><code class="xref py py-obj docutils literal"><span class="pre">transform_tawn</span></code></a>(t,&nbsp;a1,&nbsp;a2,&nbsp;theta)</td>
+<td>asymmetric logistic model of Tawn 1988</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.transform_tawn2.html#statsmodels.sandbox.distributions.copula.transform_tawn2" title="statsmodels.sandbox.distributions.copula.transform_tawn2"><code class="xref py py-obj docutils literal"><span class="pre">transform_tawn2</span></code></a>(t,&nbsp;theta,&nbsp;k)</td>
+<td>asymmetric mixed model of Tawn 1988</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.copula.transform_tev.html#statsmodels.sandbox.distributions.copula.transform_tev" title="statsmodels.sandbox.distributions.copula.transform_tev"><code class="xref py py-obj docutils literal"><span class="pre">transform_tev</span></code></a>(t,&nbsp;rho,&nbsp;x)</td>
+<td>t-EV model of Demarta and McNeil 2005</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>6.3.2.3. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.copula.CopulaBivariate.html#statsmodels.sandbox.distributions.copula.CopulaBivariate" title="statsmodels.sandbox.distributions.copula.CopulaBivariate"><code class="xref py py-obj docutils literal"><span class="pre">CopulaBivariate</span></code></a>(marginalcdfs,&nbsp;copula[,&nbsp;copargs])</td>
+<td>bivariate copula class</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.copula.TransfClayton.html#statsmodels.sandbox.distributions.copula.TransfClayton" title="statsmodels.sandbox.distributions.copula.TransfClayton"><code class="xref py py-obj docutils literal"><span class="pre">TransfClayton</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.copula.TransfFrank.html#statsmodels.sandbox.distributions.copula.TransfFrank" title="statsmodels.sandbox.distributions.copula.TransfFrank"><code class="xref py py-obj docutils literal"><span class="pre">TransfFrank</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.copula.TransfGumbel.html#statsmodels.sandbox.distributions.copula.TransfGumbel" title="statsmodels.sandbox.distributions.copula.TransfGumbel"><code class="xref py py-obj docutils literal"><span class="pre">TransfGumbel</span></code></a></td>
+<td>requires theta &gt;=1</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.copula.TransfIndep.html#statsmodels.sandbox.distributions.copula.TransfIndep" title="statsmodels.sandbox.distributions.copula.TransfIndep"><code class="xref py py-obj docutils literal"><span class="pre">TransfIndep</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.copula.Transforms.html#statsmodels.sandbox.distributions.copula.Transforms" title="statsmodels.sandbox.distributions.copula.Transforms"><code class="xref py py-obj docutils literal"><span class="pre">Transforms</span></code></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.distributions.copula.copula_bv_archimedean.html" class="btn btn-neutral float-right" title="6.3.2.2.1. statsmodels.sandbox.distributions.copula.copula_bv_archimedean" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.distributions.html" class="btn btn-neutral" title="6.3.1. statsmodels.sandbox.distributions" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

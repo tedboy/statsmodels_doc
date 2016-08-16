@@ -1,0 +1,47 @@
+statsmodels.genmod.generalized_linear_model
+===========================================
+
+.. automodule:: statsmodels.genmod.generalized_linear_model
+
+   
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      GLM
+      GLMResults
+      GLMResultsWrapper
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.genmod.generalized_linear_model.GLM
+       generated/statsmodels.genmod.generalized_linear_model.GLMResults
+       generated/statsmodels.genmod.generalized_linear_model.GLMResultsWrapper
+       generated/statsmodels.genmod.generalized_linear_model.resettable_cache
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      PerfectSeparationError
+   
+   

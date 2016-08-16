@@ -1,0 +1,357 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7.16.7.1. statsmodels.graphics.factorplots.interaction_plot &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="7.16. Graphics" href="../graphics.html"/>
+        <link rel="next" title="7.16.7.2. statsmodels.graphics.mosaicplot.mosaic" href="statsmodels.graphics.mosaicplot.mosaic.html"/>
+        <link rel="prev" title="7.16.6.4. statsmodels.graphics.tsaplots.quarter_plot" href="statsmodels.graphics.tsaplots.quarter_plot.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">7. From official doc</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../regression.html">7.1. Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../glm.html">7.2. Generalized Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gee.html">7.3. Generalized Estimating Equations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rlm.html">7.4. Robust Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mixed_linear.html">7.5. Linear Mixed Effects Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../discretemod.html">7.6. Regression with Discrete Dependent Variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anova.html">7.7. ANOVA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tsa.html">7.8. Time Series analysis <code class="docutils literal"><span class="pre">tsa</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../duration.html">7.9. Models for Survival and Duration Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stats.html">7.10. Statistics <code class="docutils literal"><span class="pre">stats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nonparametric.html">7.11. Nonparametric Methods <code class="docutils literal"><span class="pre">nonparametric</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gmm.html">7.12. Generalized Method of Moments <code class="docutils literal"><span class="pre">gmm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../emplike.html">7.13. Empirical Likelihood <code class="docutils literal"><span class="pre">emplike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../miscmodels.html">7.14. Other Models <code class="docutils literal"><span class="pre">miscmodels</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../distributions.html">7.15. Distributions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../graphics.html">7.16. Graphics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../graphics.html#goodness-of-fit-plots">7.16.1. Goodness of Fit Plots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graphics.html#boxplots">7.16.2. Boxplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graphics.html#correlation-plots">7.16.3. Correlation Plots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graphics.html#functional-plots">7.16.4. Functional Plots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graphics.html#regression-plots">7.16.5. Regression Plots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../graphics.html#time-series-plots">7.16.6. Time Series Plots</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../graphics.html#other-plots">7.16.7. Other Plots</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">7.16.7.1. statsmodels.graphics.factorplots.interaction_plot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.graphics.mosaicplot.mosaic.html">7.16.7.2. statsmodels.graphics.mosaicplot.mosaic</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../iolib.html">7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tools.html">7.18. Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html">7.19. The Datasets Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox.html">7.20. Sandbox</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">7. From official doc</a> &raquo;</li>
+        
+          <li><a href="../graphics.html">7.16. Graphics</a> &raquo;</li>
+        
+      <li>7.16.7.1. statsmodels.graphics.factorplots.interaction_plot</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/doc/generated/statsmodels.graphics.factorplots.interaction_plot.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-graphics-factorplots-interaction-plot">
+<h1>7.16.7.1. statsmodels.graphics.factorplots.interaction_plot<a class="headerlink" href="#statsmodels-graphics-factorplots-interaction-plot" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.graphics.factorplots.interaction_plot">
+<code class="descclassname">statsmodels.graphics.factorplots.</code><code class="descname">interaction_plot</code><span class="sig-paren">(</span><em>x</em>, <em>trace</em>, <em>response</em>, <em>func=&lt;function mean&gt;</em>, <em>ax=None</em>, <em>plottype='b'</em>, <em>xlabel=None</em>, <em>ylabel=None</em>, <em>colors=[]</em>, <em>markers=[]</em>, <em>linestyles=[]</em>, <em>legendloc='best'</em>, <em>legendtitle=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/graphics/factorplots.html#interaction_plot"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.graphics.factorplots.interaction_plot" title="Permalink to this definition">¶</a></dt>
+<dd><p>Interaction plot for factor level statistics.</p>
+<p>Note. If categorial factors are supplied levels will be internally
+recoded to integers. This ensures matplotlib compatiblity.</p>
+<p>uses pandas.DataFrame to calculate an <cite>aggregate</cite> statistic for each
+level of the factor or group given by <cite>trace</cite>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array-like</p>
+<blockquote>
+<div><p>The <cite>x</cite> factor levels constitute the x-axis. If a <cite>pandas.Series</cite> is
+given its name will be used in <cite>xlabel</cite> if <cite>xlabel</cite> is None.</p>
+</div></blockquote>
+<p><strong>trace</strong> : array-like</p>
+<blockquote>
+<div><p>The <cite>trace</cite> factor levels will be drawn as lines in the plot.
+If <cite>trace</cite> is a <cite>pandas.Series</cite> its name will be used as the
+<cite>legendtitle</cite> if <cite>legendtitle</cite> is None.</p>
+</div></blockquote>
+<p><strong>response</strong> : array-like</p>
+<blockquote>
+<div><p>The reponse or dependent variable. If a <cite>pandas.Series</cite> is given
+its name will be used in <cite>ylabel</cite> if <cite>ylabel</cite> is None.</p>
+</div></blockquote>
+<p><strong>func</strong> : function</p>
+<blockquote>
+<div><p>Anything accepted by <cite>pandas.DataFrame.aggregate</cite>. This is applied to
+the response variable grouped by the trace levels.</p>
+</div></blockquote>
+<p><strong>plottype</strong> : str {&#8216;line&#8217;, &#8216;scatter&#8217;, &#8216;both&#8217;}, optional</p>
+<blockquote>
+<div><p>The type of plot to return. Can be &#8216;l&#8217;, &#8216;s&#8217;, or &#8216;b&#8217;</p>
+</div></blockquote>
+<p><strong>ax</strong> : axes, optional</p>
+<blockquote>
+<div><p>Matplotlib axes instance</p>
+</div></blockquote>
+<p><strong>xlabel</strong> : str, optional</p>
+<blockquote>
+<div><p>Label to use for <cite>x</cite>. Default is &#8216;X&#8217;. If <cite>x</cite> is a <cite>pandas.Series</cite> it
+will use the series names.</p>
+</div></blockquote>
+<p><strong>ylabel</strong> : str, optional</p>
+<blockquote>
+<div><p>Label to use for <cite>response</cite>. Default is &#8216;func of response&#8217;. If
+<cite>response</cite> is a <cite>pandas.Series</cite> it will use the series names.</p>
+</div></blockquote>
+<p><strong>colors</strong> : list, optional</p>
+<blockquote>
+<div><p>If given, must have length == number of levels in trace.</p>
+</div></blockquote>
+<p><strong>linestyles</strong> : list, optional</p>
+<blockquote>
+<div><p>If given, must have length == number of levels in trace.</p>
+</div></blockquote>
+<p><strong>markers</strong> : list, optional</p>
+<blockquote>
+<div><p>If given, must have length == number of lovels in trace</p>
+</div></blockquote>
+<p><strong>kwargs</strong></p>
+<blockquote>
+<div><p>These will be passed to the plot command used either plot or scatter.
+If you want to control the overall plotting options, use kwargs.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>fig</strong> : Figure</p>
+<blockquote class="last">
+<div><p>The figure given by <cite>ax.figure</cite> or a new instance.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">weight</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">duration</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">size</span><span class="o">=</span><span class="mi">60</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">days</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">30</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">60</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">fig</span> <span class="o">=</span> <span class="n">interaction_plot</span><span class="p">(</span><span class="n">weight</span><span class="p">,</span> <span class="n">duration</span><span class="p">,</span> <span class="n">days</span><span class="p">,</span>
+<span class="gp">... </span>            <span class="n">colors</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;red&#39;</span><span class="p">,</span><span class="s1">&#39;blue&#39;</span><span class="p">],</span> <span class="n">markers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">,</span><span class="s1">&#39;^&#39;</span><span class="p">],</span> <span class="n">ms</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.graphics.mosaicplot.mosaic.html" class="btn btn-neutral float-right" title="7.16.7.2. statsmodels.graphics.mosaicplot.mosaic" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.graphics.tsaplots.quarter_plot.html" class="btn btn-neutral" title="7.16.6.4. statsmodels.graphics.tsaplots.quarter_plot" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

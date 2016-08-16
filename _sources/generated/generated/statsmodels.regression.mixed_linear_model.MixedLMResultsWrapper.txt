@@ -1,0 +1,25 @@
+statsmodels.regression.mixed_linear_model.MixedLMResultsWrapper
+===============================================================
+
+.. currentmodule:: statsmodels.regression.mixed_linear_model
+.. autoclass:: MixedLMResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MixedLMResultsWrapper.__init__
+   ~MixedLMResultsWrapper.conf_int
+   ~MixedLMResultsWrapper.cov_params
+   ~MixedLMResultsWrapper.load
+   ~MixedLMResultsWrapper.save
+
+
+
+
+

@@ -1,0 +1,39 @@
+statsmodels.sandbox.cox.CoxPH
+=============================
+
+.. currentmodule:: statsmodels.sandbox.cox
+.. autoclass:: CoxPH
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CoxPH.__init__
+   ~CoxPH.cache
+   ~CoxPH.fit
+   ~CoxPH.from_formula
+   ~CoxPH.hessian
+   ~CoxPH.information
+   ~CoxPH.initialize
+   ~CoxPH.loglike
+   ~CoxPH.predict
+   ~CoxPH.score
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~CoxPH.endog_names
+   ~CoxPH.exog_names
+

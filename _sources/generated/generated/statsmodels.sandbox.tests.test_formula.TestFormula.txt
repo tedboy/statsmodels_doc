@@ -1,0 +1,110 @@
+statsmodels.sandbox.tests.test_formula.TestFormula
+==================================================
+
+.. currentmodule:: statsmodels.sandbox.tests.test_formula
+.. autoclass:: TestFormula
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestFormula.__init__
+   ~TestFormula.addCleanup
+   ~TestFormula.addTypeEqualityFunc
+   ~TestFormula.assertAlmostEqual
+   ~TestFormula.assertAlmostEquals
+   ~TestFormula.assertDictContainsSubset
+   ~TestFormula.assertDictEqual
+   ~TestFormula.assertEqual
+   ~TestFormula.assertEquals
+   ~TestFormula.assertFalse
+   ~TestFormula.assertGreater
+   ~TestFormula.assertGreaterEqual
+   ~TestFormula.assertIn
+   ~TestFormula.assertIs
+   ~TestFormula.assertIsInstance
+   ~TestFormula.assertIsNone
+   ~TestFormula.assertIsNot
+   ~TestFormula.assertIsNotNone
+   ~TestFormula.assertItemsEqual
+   ~TestFormula.assertLess
+   ~TestFormula.assertLessEqual
+   ~TestFormula.assertListEqual
+   ~TestFormula.assertMultiLineEqual
+   ~TestFormula.assertNotAlmostEqual
+   ~TestFormula.assertNotAlmostEquals
+   ~TestFormula.assertNotEqual
+   ~TestFormula.assertNotEquals
+   ~TestFormula.assertNotIn
+   ~TestFormula.assertNotIsInstance
+   ~TestFormula.assertNotRegexpMatches
+   ~TestFormula.assertRaises
+   ~TestFormula.assertRaisesRegexp
+   ~TestFormula.assertRegexpMatches
+   ~TestFormula.assertSequenceEqual
+   ~TestFormula.assertSetEqual
+   ~TestFormula.assertTrue
+   ~TestFormula.assertTupleEqual
+   ~TestFormula.assert_
+   ~TestFormula.countTestCases
+   ~TestFormula.debug
+   ~TestFormula.defaultTestResult
+   ~TestFormula.doCleanups
+   ~TestFormula.fail
+   ~TestFormula.failIf
+   ~TestFormula.failIfAlmostEqual
+   ~TestFormula.failIfEqual
+   ~TestFormula.failUnless
+   ~TestFormula.failUnlessAlmostEqual
+   ~TestFormula.failUnlessEqual
+   ~TestFormula.failUnlessRaises
+   ~TestFormula.id
+   ~TestFormula.run
+   ~TestFormula.setUp
+   ~TestFormula.setUpClass
+   ~TestFormula.shortDescription
+   ~TestFormula.skipTest
+   ~TestFormula.tearDown
+   ~TestFormula.tearDownClass
+   ~TestFormula.test_call
+   ~TestFormula.test_contrast1
+   ~TestFormula.test_contrast2
+   ~TestFormula.test_contrast3
+   ~TestFormula.test_contrast4
+   ~TestFormula.test_design
+   ~TestFormula.test_factor1
+   ~TestFormula.test_factor2
+   ~TestFormula.test_factor3
+   ~TestFormula.test_factor4
+   ~TestFormula.test_factor5
+   ~TestFormula.test_interactions
+   ~TestFormula.test_intercept1
+   ~TestFormula.test_intercept3
+   ~TestFormula.test_namespace
+   ~TestFormula.test_ordinal_factor
+   ~TestFormula.test_ordinal_factor2
+   ~TestFormula.test_power
+   ~TestFormula.test_product
+   ~TestFormula.test_quantitative
+   ~TestFormula.test_str
+   ~TestFormula.test_subtract
+   ~TestFormula.test_termcolumns
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TestFormula.longMessage
+   ~TestFormula.maxDiff
+

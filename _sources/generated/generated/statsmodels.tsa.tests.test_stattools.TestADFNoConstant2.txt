@@ -1,0 +1,35 @@
+statsmodels.tsa.tests.test_stattools.TestADFNoConstant2
+=======================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_stattools
+.. autoclass:: TestADFNoConstant2
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestADFNoConstant2.__init__
+   ~TestADFNoConstant2.test_critvalues
+   ~TestADFNoConstant2.test_pvalue
+   ~TestADFNoConstant2.test_teststat
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TestADFNoConstant2.data
+   ~TestADFNoConstant2.levels
+   ~TestADFNoConstant2.x
+   ~TestADFNoConstant2.y
+

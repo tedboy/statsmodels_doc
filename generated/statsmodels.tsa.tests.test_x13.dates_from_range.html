@@ -1,0 +1,251 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tsa.tests.test_x13.dates_from_range &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>statsmodels.tsa.tests.test_x13.dates_from_range</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.tsa.tests.test_x13.dates_from_range.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-tsa-tests-test-x13-dates-from-range">
+<h1>statsmodels.tsa.tests.test_x13.dates_from_range<a class="headerlink" href="#statsmodels-tsa-tests-test-x13-dates-from-range" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.tsa.tests.test_x13.dates_from_range">
+<code class="descclassname">statsmodels.tsa.tests.test_x13.</code><code class="descname">dates_from_range</code><span class="sig-paren">(</span><em>start</em>, <em>end=None</em>, <em>length=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/statsmodels/tsa/base/datetools.html#dates_from_range"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.tsa.tests.test_x13.dates_from_range" title="Permalink to this definition">¶</a></dt>
+<dd><p>Turns a sequence of date strings and returns a list of datetime.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>start</strong> : str</p>
+<blockquote>
+<div><p>The first abbreviated date, for instance, &#8216;1965q1&#8217; or &#8216;1965m1&#8217;</p>
+</div></blockquote>
+<p><strong>end</strong> : str, optional</p>
+<blockquote>
+<div><p>The last abbreviated date if length is None.</p>
+</div></blockquote>
+<p><strong>length</strong> : int, optional</p>
+<blockquote>
+<div><p>The length of the returned array of end is None.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>date_list</strong> : array</p>
+<blockquote class="last">
+<div><p>A list of datetime types.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dates</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">datetools</span><span class="o">.</span><span class="n">date_range</span><span class="p">(</span><span class="s1">&#39;1960m1&#39;</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

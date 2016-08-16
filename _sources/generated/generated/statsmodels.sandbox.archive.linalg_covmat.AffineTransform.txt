@@ -1,0 +1,26 @@
+statsmodels.sandbox.archive.linalg_covmat.AffineTransform
+=========================================================
+
+.. currentmodule:: statsmodels.sandbox.archive.linalg_covmat
+.. autoclass:: AffineTransform
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~AffineTransform.__init__
+   ~AffineTransform.invtransform
+   ~AffineTransform.logpdf
+   ~AffineTransform.pdf
+   ~AffineTransform.rvs
+   ~AffineTransform.transform
+
+
+
+
+

@@ -1,0 +1,50 @@
+statsmodels.sandbox.formula
+===========================
+
+.. automodule:: statsmodels.sandbox.formula
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      interactions
+      isnested
+      iterkeys
+      itervalues
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Factor
+      Formula
+      Quantitative
+      Term
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.formula.Factor
+       generated/statsmodels.sandbox.formula.Formula
+       generated/statsmodels.sandbox.formula.Quantitative
+       generated/statsmodels.sandbox.formula.Term
+
+   
+   
+
+   
+   
+   

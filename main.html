@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3. Main modules of interest &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="index.html"/>
+        <link rel="next" title="3.1.1. statsmodels" href="generated/statsmodels.html"/>
+        <link rel="prev" title="2.7.1.1.8. statsmodels.stats.contrast.ContrastResults" href="doc_basic/generated/statsmodels.stats.contrast.ContrastResults.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">3. Main modules of interest</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodel">3.1. statsmodel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.html">3.1.1. statsmodels</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodel-discrete">3.2. statsmodel.discrete</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.discrete.discrete_margins.html">3.2.1. statsmodels.discrete.discrete_margins</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.html">3.2.2. statsmodels.discrete.discrete_model</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodel-distributions">3.3. statsmodel.distributions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.distributions.html">3.3.1. statsmodels.distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.distributions.edgeworth.html">3.3.2. statsmodels.distributions.edgeworth</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.distributions.empirical_distribution.html">3.3.3. statsmodels.distributions.empirical_distribution</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.distributions.mixture_rvs.html">3.3.4. statsmodels.distributions.mixture_rvs</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodel-emplike">3.4. statsmodel.emplike</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.emplike.api.html">3.4.1. statsmodels.emplike.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.emplike.aft_el.html">3.4.2. statsmodels.emplike.aft_el</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.emplike.descriptive.html">3.4.3. statsmodels.emplike.descriptive</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.emplike.elanova.html">3.4.4. statsmodels.emplike.elanova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.emplike.elregress.html">3.4.5. statsmodels.emplike.elregress</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.emplike.originregress.html">3.4.6. statsmodels.emplike.originregress</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodel-genmod">3.5. statsmodel.genmod</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.genmod.api.html">3.5.1. statsmodels.genmod.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.genmod.cov_struct.html">3.5.2. statsmodels.genmod.cov_struct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.genmod.generalized_estimating_equations.html">3.5.3. statsmodels.genmod.generalized_estimating_equations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.genmod.generalized_linear_model.html">3.5.4. statsmodels.genmod.generalized_linear_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#statsmodel-genmod-families">3.5.5. statsmodel.genmod.families</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.genmod.families.html">3.5.5.1. statsmodels.genmod.families</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.genmod.families.family.html">3.5.5.2. statsmodels.genmod.families.family</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.genmod.families.links.html">3.5.5.3. statsmodels.genmod.families.links</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.genmod.families.varfuncs.html">3.5.5.4. statsmodels.genmod.families.varfuncs</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodel-graphics">3.6. statsmodel.graphics</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.api.html">3.6.1. statsmodels.graphics.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.api.html">3.6.1. statsmodels.graphics.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.boxplots.html">3.6.2. statsmodels.graphics.boxplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.correlation.html">3.6.3. statsmodels.graphics.correlation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.dotplots.html">3.6.4. statsmodels.graphics.dotplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.factorplots.html">3.6.5. statsmodels.graphics.factorplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.functional.html">3.6.6. statsmodels.graphics.functional</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.gofplots.html">3.6.7. statsmodels.graphics.gofplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.mosaicplot.html">3.6.8. statsmodels.graphics.mosaicplot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.plot_grids.html">3.6.9. statsmodels.graphics.plot_grids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.plottools.html">3.6.10. statsmodels.graphics.plottools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.regressionplots.html">3.6.11. statsmodels.graphics.regressionplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.tsaplots.html">3.6.12. statsmodels.graphics.tsaplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.tukeyplot.html">3.6.13. statsmodels.graphics.tukeyplot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.graphics.utils.html">3.6.14. statsmodels.graphics.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.miscmodels.api.html">3.7.1. statsmodels.miscmodels.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.miscmodels.count.html">3.7.2. statsmodels.miscmodels.count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.miscmodels.nonlinls.html">3.7.3. statsmodels.miscmodels.nonlinls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.miscmodels.tmodel.html">3.7.4. statsmodels.miscmodels.tmodel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.miscmodels.try_mlecov.html">3.7.5. statsmodels.miscmodels.try_mlecov</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.nonparametric.api.html">3.8.1. statsmodels.nonparametric.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.nonparametric.bandwidths.html">3.8.2. statsmodels.nonparametric.bandwidths</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.nonparametric.kde.html">3.8.3. statsmodels.nonparametric.kde</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.nonparametric.kdetools.html">3.8.4. statsmodels.nonparametric.kdetools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_density.html">3.8.5. statsmodels.nonparametric.kernel_density</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_regression.html">3.8.6. statsmodels.nonparametric.kernel_regression</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.nonparametric.kernels.html">3.8.7. statsmodels.nonparametric.kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.nonparametric.smoothers_lowess_old.html">3.8.8. statsmodels.nonparametric.smoothers_lowess_old</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.nonparametric.smoothers_lowess.html">3.8.9. statsmodels.nonparametric.smoothers_lowess</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-regression">3.9. statsmodels.regression</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.regression.feasible_gls.html">3.9.1. statsmodels.regression.feasible_gls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.regression.linear_model.html">3.9.2. statsmodels.regression.linear_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.regression.mixed_linear_model.html">3.9.3. statsmodels.regression.mixed_linear_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.regression.quantile_regression.html">3.9.4. statsmodels.regression.quantile_regression</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodel-robust">3.10. statsmodel.robust</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.robust.norms.html">3.10.1. statsmodels.robust.norms</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.robust.robust_linear_model.html">3.10.2. statsmodels.robust.robust_linear_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.robust.scale.html">3.10.3. statsmodels.robust.scale</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodel-stats">3.11. statsmodel.stats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.api.html">3.11.1. statsmodels.stats.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.adnorm.html">3.11.2. statsmodels.stats.adnorm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.anova.html">3.11.3. statsmodels.stats.anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.base.html">3.11.4. statsmodels.stats.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.contrast.html">3.11.5. statsmodels.stats.contrast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.correlation_tools.html">3.11.6. statsmodels.stats.correlation_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.descriptivestats.html">3.11.7. statsmodels.stats.descriptivestats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.diagnostic.html">3.11.8. statsmodels.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.gof.html">3.11.9. statsmodels.stats.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.inter_rater.html">3.11.10. statsmodels.stats.inter_rater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.lilliefors.html">3.11.11. statsmodels.stats.lilliefors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.moment_helpers.html">3.11.12. statsmodels.stats.moment_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.multicomp.html">3.11.13. statsmodels.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.multitest.html">3.11.14. statsmodels.stats.multitest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.multivariate_tools.html">3.11.15. statsmodels.stats.multivariate_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.outliers_influence.html">3.11.16. statsmodels.stats.outliers_influence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.power.html">3.11.17. statsmodels.stats.power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.proportion.html">3.11.18. statsmodels.stats.proportion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.sandwich_covariance.html">3.11.19. statsmodels.stats.sandwich_covariance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.stattools.html">3.11.20. statsmodels.stats.stattools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.tabledist.html">3.11.21. statsmodels.stats.tabledist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.stats.weightstats.html">3.11.22. statsmodels.stats.weightstats</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>3. Main modules of interest</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/main.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="main-modules-of-interest">
+<h1>3. Main modules of interest<a class="headerlink" href="#main-modules-of-interest" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="statsmodel">
+<h2>3.1. statsmodel<a class="headerlink" href="#statsmodel" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.html">3.1.1. statsmodels</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.html#module-statsmodels" title="statsmodels"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodel-discrete">
+<h2>3.2. statsmodel.discrete<a class="headerlink" href="#statsmodel-discrete" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.discrete.discrete_margins.html">3.2.1. statsmodels.discrete.discrete_margins</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.html">3.2.2. statsmodels.discrete.discrete_model</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.discrete.discrete_margins.html#module-statsmodels.discrete.discrete_margins" title="statsmodels.discrete.discrete_margins"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.discrete.discrete_margins</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.html#module-statsmodels.discrete.discrete_model" title="statsmodels.discrete.discrete_model"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.discrete.discrete_model</span></code></a></td>
+<td>Limited dependent variable and qualitative variables.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodel-distributions">
+<h2>3.3. statsmodel.distributions<a class="headerlink" href="#statsmodel-distributions" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.distributions.html">3.3.1. statsmodels.distributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.distributions.edgeworth.html">3.3.2. statsmodels.distributions.edgeworth</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.distributions.empirical_distribution.html">3.3.3. statsmodels.distributions.empirical_distribution</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.distributions.mixture_rvs.html">3.3.4. statsmodels.distributions.mixture_rvs</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.distributions.html#module-statsmodels.distributions" title="statsmodels.distributions"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.distributions</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.distributions.edgeworth.html#module-statsmodels.distributions.edgeworth" title="statsmodels.distributions.edgeworth"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.distributions.edgeworth</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.distributions.empirical_distribution.html#module-statsmodels.distributions.empirical_distribution" title="statsmodels.distributions.empirical_distribution"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.distributions.empirical_distribution</span></code></a></td>
+<td>Empirical CDF Functions</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.distributions.mixture_rvs.html#module-statsmodels.distributions.mixture_rvs" title="statsmodels.distributions.mixture_rvs"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.distributions.mixture_rvs</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodel-emplike">
+<h2>3.4. statsmodel.emplike<a class="headerlink" href="#statsmodel-emplike" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.emplike.api.html">3.4.1. statsmodels.emplike.api</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.emplike.aft_el.html">3.4.2. statsmodels.emplike.aft_el</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.emplike.descriptive.html">3.4.3. statsmodels.emplike.descriptive</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.emplike.elanova.html">3.4.4. statsmodels.emplike.elanova</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.emplike.elregress.html">3.4.5. statsmodels.emplike.elregress</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.emplike.originregress.html">3.4.6. statsmodels.emplike.originregress</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.emplike.api.html#module-statsmodels.emplike.api" title="statsmodels.emplike.api"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.emplike.api</span></code></a></td>
+<td>api for empirical likelihood</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.emplike.aft_el.html#module-statsmodels.emplike.aft_el" title="statsmodels.emplike.aft_el"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.emplike.aft_el</span></code></a></td>
+<td>Accelerated Failure Time (AFT) Model with empirical likelihood inference.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.emplike.descriptive.html#module-statsmodels.emplike.descriptive" title="statsmodels.emplike.descriptive"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.emplike.descriptive</span></code></a></td>
+<td>Empirical likelihood inference on descriptive statistics</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.emplike.elanova.html#module-statsmodels.emplike.elanova" title="statsmodels.emplike.elanova"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.emplike.elanova</span></code></a></td>
+<td>This script contains empirical likelihood ANOVA.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.emplike.elregress.html#module-statsmodels.emplike.elregress" title="statsmodels.emplike.elregress"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.emplike.elregress</span></code></a></td>
+<td>Empirical Likelihood Linear Regression Inference</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.emplike.originregress.html#module-statsmodels.emplike.originregress" title="statsmodels.emplike.originregress"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.emplike.originregress</span></code></a></td>
+<td>This module implements empirical likelihood regression that is forced through the origin.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodel-genmod">
+<h2>3.5. statsmodel.genmod<a class="headerlink" href="#statsmodel-genmod" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.genmod.api.html">3.5.1. statsmodels.genmod.api</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.genmod.cov_struct.html">3.5.2. statsmodels.genmod.cov_struct</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.genmod.generalized_estimating_equations.html">3.5.3. statsmodels.genmod.generalized_estimating_equations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.genmod.generalized_linear_model.html">3.5.4. statsmodels.genmod.generalized_linear_model</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.genmod.api.html#module-statsmodels.genmod.api" title="statsmodels.genmod.api"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.genmod.api</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.genmod.cov_struct.html#module-statsmodels.genmod.cov_struct" title="statsmodels.genmod.cov_struct"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.genmod.cov_struct</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.genmod.generalized_estimating_equations.html#module-statsmodels.genmod.generalized_estimating_equations" title="statsmodels.genmod.generalized_estimating_equations"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.genmod.generalized_estimating_equations</span></code></a></td>
+<td>Procedures for fitting marginal regression models to dependent data using Generalized Estimating Equations.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.genmod.generalized_linear_model.html#module-statsmodels.genmod.generalized_linear_model" title="statsmodels.genmod.generalized_linear_model"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.genmod.generalized_linear_model</span></code></a></td>
+<td>Generalized linear models currently supports estimation using the one-parameter</td>
+</tr>
+</tbody>
+</table>
+<div class="section" id="statsmodel-genmod-families">
+<h3>3.5.5. statsmodel.genmod.families<a class="headerlink" href="#statsmodel-genmod-families" title="Permalink to this headline">¶</a></h3>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.genmod.families.html">3.5.5.1. statsmodels.genmod.families</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.genmod.families.family.html">3.5.5.2. statsmodels.genmod.families.family</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.genmod.families.links.html">3.5.5.3. statsmodels.genmod.families.links</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.genmod.families.varfuncs.html">3.5.5.4. statsmodels.genmod.families.varfuncs</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.genmod.families.html#module-statsmodels.genmod.families" title="statsmodels.genmod.families"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.genmod.families</span></code></a></td>
+<td>This module contains the one-parameter exponential families used for fitting GLMs and GAMs.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.genmod.families.family.html#module-statsmodels.genmod.families.family" title="statsmodels.genmod.families.family"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.genmod.families.family</span></code></a></td>
+<td>The one parameter exponential family distributions used by GLM.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.genmod.families.links.html#module-statsmodels.genmod.families.links" title="statsmodels.genmod.families.links"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.genmod.families.links</span></code></a></td>
+<td>Defines the link functions to be used with GLM and GEE families.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.genmod.families.varfuncs.html#module-statsmodels.genmod.families.varfuncs" title="statsmodels.genmod.families.varfuncs"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.genmod.families.varfuncs</span></code></a></td>
+<td>Variance functions for use with the link functions in statsmodels.family.links</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="statsmodel-graphics">
+<h2>3.6. statsmodel.graphics<a class="headerlink" href="#statsmodel-graphics" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.api.html">3.6.1. statsmodels.graphics.api</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.api.html">3.6.1. statsmodels.graphics.api</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.boxplots.html">3.6.2. statsmodels.graphics.boxplots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.correlation.html">3.6.3. statsmodels.graphics.correlation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.dotplots.html">3.6.4. statsmodels.graphics.dotplots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.factorplots.html">3.6.5. statsmodels.graphics.factorplots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.functional.html">3.6.6. statsmodels.graphics.functional</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.gofplots.html">3.6.7. statsmodels.graphics.gofplots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.mosaicplot.html">3.6.8. statsmodels.graphics.mosaicplot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.plot_grids.html">3.6.9. statsmodels.graphics.plot_grids</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.plottools.html">3.6.10. statsmodels.graphics.plottools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.regressionplots.html">3.6.11. statsmodels.graphics.regressionplots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.tsaplots.html">3.6.12. statsmodels.graphics.tsaplots</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.tukeyplot.html">3.6.13. statsmodels.graphics.tukeyplot</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.graphics.utils.html">3.6.14. statsmodels.graphics.utils</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.graphics.api.html#module-statsmodels.graphics.api" title="statsmodels.graphics.api"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.api</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.graphics.boxplots.html#module-statsmodels.graphics.boxplots" title="statsmodels.graphics.boxplots"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.boxplots</span></code></a></td>
+<td>Variations on boxplots.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.graphics.correlation.html#module-statsmodels.graphics.correlation" title="statsmodels.graphics.correlation"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.correlation</span></code></a></td>
+<td>correlation plots</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.graphics.dotplots.html#module-statsmodels.graphics.dotplots" title="statsmodels.graphics.dotplots"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.dotplots</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.graphics.factorplots.html#module-statsmodels.graphics.factorplots" title="statsmodels.graphics.factorplots"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.factorplots</span></code></a></td>
+<td>Authors:    Josef Perktold, Skipper Seabold, Denis A.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.graphics.functional.html#module-statsmodels.graphics.functional" title="statsmodels.graphics.functional"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.functional</span></code></a></td>
+<td>Module for functional boxplots.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.graphics.gofplots.html#module-statsmodels.graphics.gofplots" title="statsmodels.graphics.gofplots"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.gofplots</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.graphics.mosaicplot.html#module-statsmodels.graphics.mosaicplot" title="statsmodels.graphics.mosaicplot"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.mosaicplot</span></code></a></td>
+<td>Create a mosaic plot from a contingency table.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.graphics.plot_grids.html#module-statsmodels.graphics.plot_grids" title="statsmodels.graphics.plot_grids"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.plot_grids</span></code></a></td>
+<td>create scatterplot with confidence ellipsis</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.graphics.plottools.html#module-statsmodels.graphics.plottools" title="statsmodels.graphics.plottools"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.plottools</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.graphics.regressionplots.html#module-statsmodels.graphics.regressionplots" title="statsmodels.graphics.regressionplots"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.regressionplots</span></code></a></td>
+<td>Partial Regression plot and residual plots to find misspecification</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.graphics.tsaplots.html#module-statsmodels.graphics.tsaplots" title="statsmodels.graphics.tsaplots"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.tsaplots</span></code></a></td>
+<td>Correlation plot functions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.graphics.tukeyplot.html#module-statsmodels.graphics.tukeyplot" title="statsmodels.graphics.tukeyplot"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.tukeyplot</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.graphics.utils.html#module-statsmodels.graphics.utils" title="statsmodels.graphics.utils"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.graphics.utils</span></code></a></td>
+<td>Helper functions for graphics with Matplotlib.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodel-miscmodels">
+<h2>3.7. statsmodel.miscmodels<a class="headerlink" href="#statsmodel-miscmodels" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.miscmodels.api.html">3.7.1. statsmodels.miscmodels.api</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.miscmodels.count.html">3.7.2. statsmodels.miscmodels.count</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.miscmodels.nonlinls.html">3.7.3. statsmodels.miscmodels.nonlinls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.miscmodels.tmodel.html">3.7.4. statsmodels.miscmodels.tmodel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.miscmodels.try_mlecov.html">3.7.5. statsmodels.miscmodels.try_mlecov</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.miscmodels.api.html#module-statsmodels.miscmodels.api" title="statsmodels.miscmodels.api"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.miscmodels.api</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.miscmodels.count.html#module-statsmodels.miscmodels.count" title="statsmodels.miscmodels.count"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.miscmodels.count</span></code></a></td>
+<td>Created on Mon Jul 26 08:34:59 2010</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.miscmodels.nonlinls.html#module-statsmodels.miscmodels.nonlinls" title="statsmodels.miscmodels.nonlinls"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.miscmodels.nonlinls</span></code></a></td>
+<td>Non-linear least squares</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.miscmodels.tmodel.html#module-statsmodels.miscmodels.tmodel" title="statsmodels.miscmodels.tmodel"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.miscmodels.tmodel</span></code></a></td>
+<td>Linear Model with Student-t distributed errors</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.miscmodels.try_mlecov.html#module-statsmodels.miscmodels.try_mlecov" title="statsmodels.miscmodels.try_mlecov"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.miscmodels.try_mlecov</span></code></a></td>
+<td>Multivariate Normal Model with full covariance matrix</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-nonparametric">
+<h2>3.8. statsmodels.nonparametric<a class="headerlink" href="#statsmodels-nonparametric" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.nonparametric.api.html">3.8.1. statsmodels.nonparametric.api</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.nonparametric.bandwidths.html">3.8.2. statsmodels.nonparametric.bandwidths</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.nonparametric.kde.html">3.8.3. statsmodels.nonparametric.kde</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.nonparametric.kdetools.html">3.8.4. statsmodels.nonparametric.kdetools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_density.html">3.8.5. statsmodels.nonparametric.kernel_density</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_regression.html">3.8.6. statsmodels.nonparametric.kernel_regression</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.nonparametric.kernels.html">3.8.7. statsmodels.nonparametric.kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.nonparametric.smoothers_lowess_old.html">3.8.8. statsmodels.nonparametric.smoothers_lowess_old</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.nonparametric.smoothers_lowess.html">3.8.9. statsmodels.nonparametric.smoothers_lowess</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.nonparametric.api.html#module-statsmodels.nonparametric.api" title="statsmodels.nonparametric.api"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.nonparametric.api</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.nonparametric.bandwidths.html#module-statsmodels.nonparametric.bandwidths" title="statsmodels.nonparametric.bandwidths"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.nonparametric.bandwidths</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kde.html#module-statsmodels.nonparametric.kde" title="statsmodels.nonparametric.kde"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.nonparametric.kde</span></code></a></td>
+<td>Univariate Kernel Density Estimators</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kdetools.html#module-statsmodels.nonparametric.kdetools" title="statsmodels.nonparametric.kdetools"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.nonparametric.kdetools</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_density.html#module-statsmodels.nonparametric.kernel_density" title="statsmodels.nonparametric.kernel_density"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.nonparametric.kernel_density</span></code></a></td>
+<td>Multivariate Conditional and Unconditional Kernel Density Estimation with Mixed Data Types.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_regression.html#module-statsmodels.nonparametric.kernel_regression" title="statsmodels.nonparametric.kernel_regression"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.nonparametric.kernel_regression</span></code></a></td>
+<td>Multivariate Conditional and Unconditional Kernel Density Estimation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kernels.html#module-statsmodels.nonparametric.kernels" title="statsmodels.nonparametric.kernels"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.nonparametric.kernels</span></code></a></td>
+<td>Module of kernels that are able to handle continuous as well as categorical variables (both ordered and unordered).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.nonparametric.smoothers_lowess_old.html#module-statsmodels.nonparametric.smoothers_lowess_old" title="statsmodels.nonparametric.smoothers_lowess_old"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.nonparametric.smoothers_lowess_old</span></code></a></td>
+<td>Univariate lowess function, like in R.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.nonparametric.smoothers_lowess.html#module-statsmodels.nonparametric.smoothers_lowess" title="statsmodels.nonparametric.smoothers_lowess"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.nonparametric.smoothers_lowess</span></code></a></td>
+<td>Lowess - wrapper for cythonized extension</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-regression">
+<h2>3.9. statsmodels.regression<a class="headerlink" href="#statsmodels-regression" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.regression.feasible_gls.html">3.9.1. statsmodels.regression.feasible_gls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.regression.linear_model.html">3.9.2. statsmodels.regression.linear_model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.regression.mixed_linear_model.html">3.9.3. statsmodels.regression.mixed_linear_model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.regression.quantile_regression.html">3.9.4. statsmodels.regression.quantile_regression</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.regression.feasible_gls.html#module-statsmodels.regression.feasible_gls" title="statsmodels.regression.feasible_gls"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.regression.feasible_gls</span></code></a></td>
+<td>Created on Tue Dec 20 20:24:20 2011</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.regression.linear_model.html#module-statsmodels.regression.linear_model" title="statsmodels.regression.linear_model"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.regression.linear_model</span></code></a></td>
+<td>This module implements standard regression models:</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.regression.mixed_linear_model.html#module-statsmodels.regression.mixed_linear_model" title="statsmodels.regression.mixed_linear_model"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.regression.mixed_linear_model</span></code></a></td>
+<td>Linear mixed effects models for Statsmodels</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.regression.quantile_regression.html#module-statsmodels.regression.quantile_regression" title="statsmodels.regression.quantile_regression"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.regression.quantile_regression</span></code></a></td>
+<td>Quantile regression model</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodel-robust">
+<h2>3.10. statsmodel.robust<a class="headerlink" href="#statsmodel-robust" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.robust.norms.html">3.10.1. statsmodels.robust.norms</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.robust.robust_linear_model.html">3.10.2. statsmodels.robust.robust_linear_model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.robust.scale.html">3.10.3. statsmodels.robust.scale</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.robust.norms.html#module-statsmodels.robust.norms" title="statsmodels.robust.norms"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.robust.norms</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.robust.robust_linear_model.html#module-statsmodels.robust.robust_linear_model" title="statsmodels.robust.robust_linear_model"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.robust.robust_linear_model</span></code></a></td>
+<td>Robust linear models with support for the M-estimators  listed under <a class="reference internal" href="doc/rlm.html#norms"><span class="std std-ref">norms</span></a>.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.robust.scale.html#module-statsmodels.robust.scale" title="statsmodels.robust.scale"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.robust.scale</span></code></a></td>
+<td>Support and standalone functions for Robust Linear Models</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodel-stats">
+<h2>3.11. statsmodel.stats<a class="headerlink" href="#statsmodel-stats" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.api.html">3.11.1. statsmodels.stats.api</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.adnorm.html">3.11.2. statsmodels.stats.adnorm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.anova.html">3.11.3. statsmodels.stats.anova</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.base.html">3.11.4. statsmodels.stats.base</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.contrast.html">3.11.5. statsmodels.stats.contrast</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.correlation_tools.html">3.11.6. statsmodels.stats.correlation_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.descriptivestats.html">3.11.7. statsmodels.stats.descriptivestats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.diagnostic.html">3.11.8. statsmodels.stats.diagnostic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.gof.html">3.11.9. statsmodels.stats.gof</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.inter_rater.html">3.11.10. statsmodels.stats.inter_rater</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.lilliefors.html">3.11.11. statsmodels.stats.lilliefors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.moment_helpers.html">3.11.12. statsmodels.stats.moment_helpers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.multicomp.html">3.11.13. statsmodels.stats.multicomp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.multitest.html">3.11.14. statsmodels.stats.multitest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.multivariate_tools.html">3.11.15. statsmodels.stats.multivariate_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.outliers_influence.html">3.11.16. statsmodels.stats.outliers_influence</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.power.html">3.11.17. statsmodels.stats.power</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.proportion.html">3.11.18. statsmodels.stats.proportion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.sandwich_covariance.html">3.11.19. statsmodels.stats.sandwich_covariance</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.stattools.html">3.11.20. statsmodels.stats.stattools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.tabledist.html">3.11.21. statsmodels.stats.tabledist</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.stats.weightstats.html">3.11.22. statsmodels.stats.weightstats</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.api.html#module-statsmodels.stats.api" title="statsmodels.stats.api"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.api</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.adnorm.html#module-statsmodels.stats.adnorm" title="statsmodels.stats.adnorm"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.adnorm</span></code></a></td>
+<td>Created on Sun Sep 25 21:23:38 2011</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.anova.html#module-statsmodels.stats.anova" title="statsmodels.stats.anova"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.anova</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.base.html#module-statsmodels.stats.base" title="statsmodels.stats.base"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.base</span></code></a></td>
+<td>Base classes for statistical test results</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.contrast.html#module-statsmodels.stats.contrast" title="statsmodels.stats.contrast"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.contrast</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.correlation_tools.html#module-statsmodels.stats.correlation_tools" title="statsmodels.stats.correlation_tools"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.correlation_tools</span></code></a></td>
+<td>Created on Fri Aug 17 13:10:52 2012</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.descriptivestats.html#module-statsmodels.stats.descriptivestats" title="statsmodels.stats.descriptivestats"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.descriptivestats</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.diagnostic.html#module-statsmodels.stats.diagnostic" title="statsmodels.stats.diagnostic"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.diagnostic</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.gof.html#module-statsmodels.stats.gof" title="statsmodels.stats.gof"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.gof</span></code></a></td>
+<td>extra statistical function and helper functions</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.inter_rater.html#module-statsmodels.stats.inter_rater" title="statsmodels.stats.inter_rater"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.inter_rater</span></code></a></td>
+<td>Inter Rater Agreement</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.lilliefors.html#module-statsmodels.stats.lilliefors" title="statsmodels.stats.lilliefors"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.lilliefors</span></code></a></td>
+<td>Created on Sat Oct 01 13:16:49 2011</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.moment_helpers.html#module-statsmodels.stats.moment_helpers" title="statsmodels.stats.moment_helpers"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.moment_helpers</span></code></a></td>
+<td>helper functions conversion between moments</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.multicomp.html#module-statsmodels.stats.multicomp" title="statsmodels.stats.multicomp"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.multicomp</span></code></a></td>
+<td>Created on Fri Mar 30 18:27:25 2012</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.multitest.html#module-statsmodels.stats.multitest" title="statsmodels.stats.multitest"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.multitest</span></code></a></td>
+<td>Multiple Testing and P-Value Correction</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.multivariate_tools.html#module-statsmodels.stats.multivariate_tools" title="statsmodels.stats.multivariate_tools"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.multivariate_tools</span></code></a></td>
+<td>Tools for multivariate analysis</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.outliers_influence.html#module-statsmodels.stats.outliers_influence" title="statsmodels.stats.outliers_influence"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.outliers_influence</span></code></a></td>
+<td>Influence and Outlier Measures</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.power.html#module-statsmodels.stats.power" title="statsmodels.stats.power"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.power</span></code></a></td>
+<td>Statistical power, solving for nobs, ...</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.proportion.html#module-statsmodels.stats.proportion" title="statsmodels.stats.proportion"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.proportion</span></code></a></td>
+<td>Tests and Confidence Intervals for Binomial Proportions</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.sandwich_covariance.html#module-statsmodels.stats.sandwich_covariance" title="statsmodels.stats.sandwich_covariance"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.sandwich_covariance</span></code></a></td>
+<td>Sandwich covariance estimators</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.stattools.html#module-statsmodels.stats.stattools" title="statsmodels.stats.stattools"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.stattools</span></code></a></td>
+<td>Statistical tests to be used in conjunction with the models</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.tabledist.html#module-statsmodels.stats.tabledist" title="statsmodels.stats.tabledist"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.tabledist</span></code></a></td>
+<td>Created on Sat Oct 01 20:20:16 2011</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.weightstats.html#module-statsmodels.stats.weightstats" title="statsmodels.stats.weightstats"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.stats.weightstats</span></code></a></td>
+<td>Ttests and descriptive statistics with weights</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/statsmodels.html" class="btn btn-neutral float-right" title="3.1.1. statsmodels" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="doc_basic/generated/statsmodels.stats.contrast.ContrastResults.html" class="btn btn-neutral" title="2.7.1.1.8. statsmodels.stats.contrast.ContrastResults" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

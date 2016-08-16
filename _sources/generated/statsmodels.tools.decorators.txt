@@ -1,0 +1,59 @@
+statsmodels.tools.decorators
+============================
+
+.. automodule:: statsmodels.tools.decorators
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      get_function_name
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CachedAttribute
+      CachedWritableAttribute
+      OneTimeProperty
+      ResettableCache
+      cache_writable
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tools.decorators.CachedAttribute
+       generated/statsmodels.tools.decorators.CachedWritableAttribute
+       generated/statsmodels.tools.decorators.OneTimeProperty
+       generated/statsmodels.tools.decorators.ResettableCache
+       generated/statsmodels.tools.decorators.cache_writable
+       generated/statsmodels.tools.decorators.resettable_cache
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      CacheWriteWarning
+   
+   

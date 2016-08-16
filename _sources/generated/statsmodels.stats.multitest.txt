@@ -1,0 +1,43 @@
+statsmodels.stats.multitest
+===========================
+
+.. automodule:: statsmodels.stats.multitest
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      fdrcorrection
+      fdrcorrection_twostage
+      multipletests
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      OrderedDict
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.multitest.OrderedDict
+
+   
+   
+
+   
+   
+   

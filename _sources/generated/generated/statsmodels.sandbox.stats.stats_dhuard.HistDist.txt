@@ -1,0 +1,25 @@
+statsmodels.sandbox.stats.stats_dhuard.HistDist
+===============================================
+
+.. currentmodule:: statsmodels.sandbox.stats.stats_dhuard
+.. autoclass:: HistDist
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~HistDist.__init__
+   ~HistDist.cdf_emp
+   ~HistDist.empiricalcdf
+   ~HistDist.optimize_binning
+   ~HistDist.ppf_emp
+
+
+
+
+

@@ -1,0 +1,54 @@
+statsmodels.discrete.discrete_model.L1CountResults
+==================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: L1CountResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~L1CountResults.__init__
+   ~L1CountResults.aic
+   ~L1CountResults.bic
+   ~L1CountResults.bse
+   ~L1CountResults.conf_int
+   ~L1CountResults.cov_params
+   ~L1CountResults.f_test
+   ~L1CountResults.fittedvalues
+   ~L1CountResults.get_margeff
+   ~L1CountResults.initialize
+   ~L1CountResults.llf
+   ~L1CountResults.llnull
+   ~L1CountResults.llr
+   ~L1CountResults.llr_pvalue
+   ~L1CountResults.load
+   ~L1CountResults.normalized_cov_params
+   ~L1CountResults.predict
+   ~L1CountResults.prsquared
+   ~L1CountResults.pvalues
+   ~L1CountResults.remove_data
+   ~L1CountResults.save
+   ~L1CountResults.summary
+   ~L1CountResults.summary2
+   ~L1CountResults.t_test
+   ~L1CountResults.tvalues
+   ~L1CountResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~L1CountResults.use_t
+

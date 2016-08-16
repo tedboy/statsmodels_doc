@@ -1,0 +1,51 @@
+statsmodels.nonparametric.api
+=============================
+
+.. automodule:: statsmodels.nonparametric.api
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      lowess
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      EstimatorSettings
+      KDEMultivariate
+      KDEMultivariateConditional
+      KDEUnivariate
+      KernelCensoredReg
+      KernelReg
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.nonparametric.api.EstimatorSettings
+       generated/statsmodels.nonparametric.api.KDEMultivariate
+       generated/statsmodels.nonparametric.api.KDEMultivariateConditional
+       generated/statsmodels.nonparametric.api.KDEUnivariate
+       generated/statsmodels.nonparametric.api.KernelCensoredReg
+       generated/statsmodels.nonparametric.api.KernelReg
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,41 @@
+statsmodels.regression.linear_model.WLS
+=======================================
+
+.. currentmodule:: statsmodels.regression.linear_model
+
+.. autoclass:: WLS
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~WLS.__init__
+      ~WLS.fit
+      ~WLS.fit_regularized
+      ~WLS.from_formula
+      ~WLS.hessian
+      ~WLS.information
+      ~WLS.initialize
+      ~WLS.loglike
+      ~WLS.predict
+      ~WLS.score
+      ~WLS.whiten
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~WLS.df_model
+      ~WLS.df_resid
+      ~WLS.endog_names
+      ~WLS.exog_names
+   
+   

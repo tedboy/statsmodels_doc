@@ -1,0 +1,650 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.9.4.2.4. statsmodels.regression.quantile_regression.RegressionResults &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="3.9.4. statsmodels.regression.quantile_regression" href="../statsmodels.regression.quantile_regression.html"/>
+        <link rel="next" title="3.9.4.2.4.1.1. statsmodels.regression.quantile_regression.RegressionResults.HC0_se" href="statsmodels.regression.quantile_regression.RegressionResults.HC0_se.html"/>
+        <link rel="prev" title="3.9.4.2.3.2.4. statsmodels.regression.quantile_regression.RegressionModel.exog_names" href="statsmodels.regression.quantile_regression.RegressionModel.exog_names.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../main.html#statsmodels-regression">3.9. statsmodels.regression</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.regression.feasible_gls.html">3.9.1. statsmodels.regression.feasible_gls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.regression.linear_model.html">3.9.2. statsmodels.regression.linear_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.regression.mixed_linear_model.html">3.9.3. statsmodels.regression.mixed_linear_model</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.regression.quantile_regression.html">3.9.4. statsmodels.regression.quantile_regression</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.regression.quantile_regression.html#functions">3.9.4.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.regression.quantile_regression.html#classes">3.9.4.2. Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.regression.quantile_regression.html#exceptions">3.9.4.3. Exceptions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-stats">3.11. statsmodel.stats</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.regression.quantile_regression.html">3.9.4. statsmodels.regression.quantile_regression</a> &raquo;</li>
+        
+      <li>3.9.4.2.4. statsmodels.regression.quantile_regression.RegressionResults</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.regression.quantile_regression.RegressionResults.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-regression-quantile-regression-regressionresults">
+<h1>3.9.4.2.4. statsmodels.regression.quantile_regression.RegressionResults<a class="headerlink" href="#statsmodels-regression-quantile-regression-regressionresults" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.regression.quantile_regression.RegressionResults">
+<em class="property">class </em><code class="descclassname">statsmodels.regression.quantile_regression.</code><code class="descname">RegressionResults</code><span class="sig-paren">(</span><em>model</em>, <em>params</em>, <em>normalized_cov_params=None</em>, <em>scale=1.0</em>, <em>cov_type='nonrobust'</em>, <em>cov_kwds=None</em>, <em>use_t=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/regression/linear_model.html#RegressionResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.regression.quantile_regression.RegressionResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class summarizes the fit of a linear regression model.</p>
+<p>It handles the output of contrasts, estimates of covariance, etc.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Attributes</strong></p>
+<p>aic</p>
+<blockquote>
+<div><p>Aikake&#8217;s information criteria. For a model with a constant
+<span class="math">\(-2llf + 2(df_model + 1)\)</span>. For a model without a constant
+<span class="math">\(-2llf + 2(df_model)\)</span>.</p>
+</div></blockquote>
+<p>bic</p>
+<blockquote>
+<div><p>Bayes&#8217; information criteria For a model with a constant
+<span class="math">\(-2llf + \log(n)(df_model+1)\)</span>. For a model without a constant
+<span class="math">\(-2llf + \log(n)(df_model)\)</span></p>
+</div></blockquote>
+<p>bse</p>
+<blockquote>
+<div><p>The standard errors of the parameter estimates.</p>
+</div></blockquote>
+<p>pinv_wexog</p>
+<blockquote>
+<div><p>See specific model class docstring</p>
+</div></blockquote>
+<p>centered_tss</p>
+<blockquote>
+<div><p>The total (weighted) sum of squares centered about the mean.</p>
+</div></blockquote>
+<p>cov_HC0</p>
+<blockquote>
+<div><p>Heteroscedasticity robust covariance matrix. See HC0_se below.</p>
+</div></blockquote>
+<p>cov_HC1</p>
+<blockquote>
+<div><p>Heteroscedasticity robust covariance matrix. See HC1_se below.</p>
+</div></blockquote>
+<p>cov_HC2</p>
+<blockquote>
+<div><p>Heteroscedasticity robust covariance matrix. See HC2_se below.</p>
+</div></blockquote>
+<p>cov_HC3</p>
+<blockquote>
+<div><p>Heteroscedasticity robust covariance matrix. See HC3_se below.</p>
+</div></blockquote>
+<p>cov_type</p>
+<blockquote>
+<div><p>Parameter covariance estimator used for standard errors and t-stats</p>
+</div></blockquote>
+<p>df_model</p>
+<blockquote>
+<div><p>Model degress of freedom. The number of regressors <cite>p</cite>. Does not
+include the constant if one is present</p>
+</div></blockquote>
+<p>df_resid</p>
+<blockquote>
+<div><p>Residual degrees of freedom. <cite>n - p - 1</cite>, if a constant is present.
+<cite>n - p</cite> if a constant is not included.</p>
+</div></blockquote>
+<p>ess</p>
+<blockquote>
+<div><p>Explained sum of squares.  If a constant is present, the centered
+total sum of squares minus the sum of squared residuals. If there is
+no constant, the uncentered total sum of squares is used.</p>
+</div></blockquote>
+<p>fvalue</p>
+<blockquote>
+<div><p>F-statistic of the fully specified model.  Calculated as the mean
+squared error of the model divided by the mean squared error of the
+residuals.</p>
+</div></blockquote>
+<p>f_pvalue</p>
+<blockquote>
+<div><p>p-value of the F-statistic</p>
+</div></blockquote>
+<p>fittedvalues</p>
+<blockquote>
+<div><p>The predicted the values for the original (unwhitened) design.</p>
+</div></blockquote>
+<p>het_scale</p>
+<blockquote>
+<div><p>adjusted squared residuals for heteroscedasticity robust standard
+errors. Is only available after <cite>HC#_se</cite> or <cite>cov_HC#</cite> is called.
+See HC#_se for more information.</p>
+</div></blockquote>
+<p>HC0_se</p>
+<blockquote>
+<div><p>White&#8217;s (1980) heteroskedasticity robust standard errors.
+Defined as sqrt(diag(X.T X)^(-1)X.T diag(e_i^(2)) X(X.T X)^(-1)
+where e_i = resid[i]
+HC0_se is a cached property.
+When HC0_se or cov_HC0 is called the RegressionResults instance will
+then have another attribute <cite>het_scale</cite>, which is in this case is just
+resid**2.</p>
+</div></blockquote>
+<p>HC1_se</p>
+<blockquote>
+<div><p>MacKinnon and White&#8217;s (1985) alternative heteroskedasticity robust
+standard errors.
+Defined as sqrt(diag(n/(n-p)*HC_0)
+HC1_see is a cached property.
+When HC1_se or cov_HC1 is called the RegressionResults instance will
+then have another attribute <cite>het_scale</cite>, which is in this case is
+n/(n-p)*resid**2.</p>
+</div></blockquote>
+<p>HC2_se</p>
+<blockquote>
+<div><p>MacKinnon and White&#8217;s (1985) alternative heteroskedasticity robust
+standard errors.
+Defined as (X.T X)^(-1)X.T diag(e_i^(2)/(1-h_ii)) X(X.T X)^(-1)
+where h_ii = x_i(X.T X)^(-1)x_i.T
+HC2_see is a cached property.
+When HC2_se or cov_HC2 is called the RegressionResults instance will
+then have another attribute <cite>het_scale</cite>, which is in this case is
+resid^(2)/(1-h_ii).</p>
+</div></blockquote>
+<p>HC3_se</p>
+<blockquote>
+<div><p>MacKinnon and White&#8217;s (1985) alternative heteroskedasticity robust
+standard errors.
+Defined as (X.T X)^(-1)X.T diag(e_i^(2)/(1-h_ii)^(2)) X(X.T X)^(-1)
+where h_ii = x_i(X.T X)^(-1)x_i.T
+HC3_see is a cached property.
+When HC3_se or cov_HC3 is called the RegressionResults instance will
+then have another attribute <cite>het_scale</cite>, which is in this case is
+resid^(2)/(1-h_ii)^(2).</p>
+</div></blockquote>
+<p>model</p>
+<blockquote>
+<div><p>A pointer to the model instance that called fit() or results.</p>
+</div></blockquote>
+<p>mse_model</p>
+<blockquote>
+<div><p>Mean squared error the model. This is the explained sum of squares
+divided by the model degrees of freedom.</p>
+</div></blockquote>
+<p>mse_resid</p>
+<blockquote>
+<div><p>Mean squared error of the residuals.  The sum of squared residuals
+divided by the residual degrees of freedom.</p>
+</div></blockquote>
+<p>mse_total</p>
+<blockquote>
+<div><p>Total mean squared error.  Defined as the uncentered total sum of
+squares divided by n the number of observations.</p>
+</div></blockquote>
+<p>nobs</p>
+<blockquote>
+<div><p>Number of observations n.</p>
+</div></blockquote>
+<p>normalized_cov_params</p>
+<blockquote>
+<div><p>See specific model class docstring</p>
+</div></blockquote>
+<p>params</p>
+<blockquote>
+<div><p>The linear coefficients that minimize the least squares criterion.  This
+is usually called Beta for the classical linear model.</p>
+</div></blockquote>
+<p>pvalues</p>
+<blockquote>
+<div><p>The two-tailed p values for the t-stats of the params.</p>
+</div></blockquote>
+<p>resid</p>
+<blockquote>
+<div><p>The residuals of the model.</p>
+</div></blockquote>
+<p>resid_pearson</p>
+<blockquote>
+<div><p><cite>wresid</cite> normalized to have unit variance.</p>
+</div></blockquote>
+<p>rsquared</p>
+<blockquote>
+<div><p>R-squared of a model with an intercept.  This is defined here as
+1 - <cite>ssr</cite>/<cite>centered_tss</cite> if the constant is included in the model and
+1 - <cite>ssr</cite>/<cite>uncentered_tss</cite> if the constant is omitted.</p>
+</div></blockquote>
+<p>rsquared_adj</p>
+<blockquote>
+<div><p>Adjusted R-squared.  This is defined here as
+1 - (<cite>nobs</cite>-1)/<cite>df_resid</cite> * (1-<cite>rsquared</cite>) if a constant is included
+and 1 - <cite>nobs</cite>/<cite>df_resid</cite> * (1-<cite>rsquared</cite>) if no constant is included.</p>
+</div></blockquote>
+<p>scale</p>
+<blockquote>
+<div><p>A scale factor for the covariance matrix.
+Default value is ssr/(n-p).  Note that the square root of <cite>scale</cite> is
+often called the standard error of the regression.</p>
+</div></blockquote>
+<p>ssr</p>
+<blockquote>
+<div><p>Sum of squared (whitened) residuals.</p>
+</div></blockquote>
+<p>uncentered_tss</p>
+<blockquote>
+<div><p>Uncentered sum of squares.  Sum of the squared values of the
+(whitened) endogenous response variable.</p>
+</div></blockquote>
+<p>wresid</p>
+<blockquote class="last">
+<div><p>The residuals of the transformed/whitened regressand and regressor(s)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="statsmodels.regression.quantile_regression.RegressionResults.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>model</em>, <em>params</em>, <em>normalized_cov_params=None</em>, <em>scale=1.0</em>, <em>cov_type='nonrobust'</em>, <em>cov_kwds=None</em>, <em>use_t=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/regression/linear_model.html#RegressionResults.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.regression.quantile_regression.RegressionResults.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>3.9.4.2.4.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.HC0_se.html#statsmodels.regression.quantile_regression.RegressionResults.HC0_se" title="statsmodels.regression.quantile_regression.RegressionResults.HC0_se"><code class="xref py py-obj docutils literal"><span class="pre">HC0_se</span></code></a>()</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.HC1_se.html#statsmodels.regression.quantile_regression.RegressionResults.HC1_se" title="statsmodels.regression.quantile_regression.RegressionResults.HC1_se"><code class="xref py py-obj docutils literal"><span class="pre">HC1_se</span></code></a>()</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.HC2_se.html#statsmodels.regression.quantile_regression.RegressionResults.HC2_se" title="statsmodels.regression.quantile_regression.RegressionResults.HC2_se"><code class="xref py py-obj docutils literal"><span class="pre">HC2_se</span></code></a>()</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.HC3_se.html#statsmodels.regression.quantile_regression.RegressionResults.HC3_se" title="statsmodels.regression.quantile_regression.RegressionResults.HC3_se"><code class="xref py py-obj docutils literal"><span class="pre">HC3_se</span></code></a>()</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.__init__.html#statsmodels.regression.quantile_regression.RegressionResults.__init__" title="statsmodels.regression.quantile_regression.RegressionResults.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(model,&nbsp;params[,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.aic.html#statsmodels.regression.quantile_regression.RegressionResults.aic" title="statsmodels.regression.quantile_regression.RegressionResults.aic"><code class="xref py py-obj docutils literal"><span class="pre">aic</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.bic.html#statsmodels.regression.quantile_regression.RegressionResults.bic" title="statsmodels.regression.quantile_regression.RegressionResults.bic"><code class="xref py py-obj docutils literal"><span class="pre">bic</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.bse.html#statsmodels.regression.quantile_regression.RegressionResults.bse" title="statsmodels.regression.quantile_regression.RegressionResults.bse"><code class="xref py py-obj docutils literal"><span class="pre">bse</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.centered_tss.html#statsmodels.regression.quantile_regression.RegressionResults.centered_tss" title="statsmodels.regression.quantile_regression.RegressionResults.centered_tss"><code class="xref py py-obj docutils literal"><span class="pre">centered_tss</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.compare_f_test.html#statsmodels.regression.quantile_regression.RegressionResults.compare_f_test" title="statsmodels.regression.quantile_regression.RegressionResults.compare_f_test"><code class="xref py py-obj docutils literal"><span class="pre">compare_f_test</span></code></a>(restricted)</td>
+<td>use F test to test whether restricted model is correct</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.compare_lm_test.html#statsmodels.regression.quantile_regression.RegressionResults.compare_lm_test" title="statsmodels.regression.quantile_regression.RegressionResults.compare_lm_test"><code class="xref py py-obj docutils literal"><span class="pre">compare_lm_test</span></code></a>(restricted[,&nbsp;demean,&nbsp;use_lr])</td>
+<td>Use Lagrange Multiplier test to test whether restricted model is correct</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.compare_lr_test.html#statsmodels.regression.quantile_regression.RegressionResults.compare_lr_test" title="statsmodels.regression.quantile_regression.RegressionResults.compare_lr_test"><code class="xref py py-obj docutils literal"><span class="pre">compare_lr_test</span></code></a>(restricted[,&nbsp;large_sample])</td>
+<td>Likelihood ratio test to test whether restricted model is correct</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.condition_number.html#statsmodels.regression.quantile_regression.RegressionResults.condition_number" title="statsmodels.regression.quantile_regression.RegressionResults.condition_number"><code class="xref py py-obj docutils literal"><span class="pre">condition_number</span></code></a>()</td>
+<td>Return condition number of exogenous matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.conf_int.html#statsmodels.regression.quantile_regression.RegressionResults.conf_int" title="statsmodels.regression.quantile_regression.RegressionResults.conf_int"><code class="xref py py-obj docutils literal"><span class="pre">conf_int</span></code></a>([alpha,&nbsp;cols])</td>
+<td>Returns the confidence interval of the fitted parameters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.cov_HC0.html#statsmodels.regression.quantile_regression.RegressionResults.cov_HC0" title="statsmodels.regression.quantile_regression.RegressionResults.cov_HC0"><code class="xref py py-obj docutils literal"><span class="pre">cov_HC0</span></code></a>()</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.cov_HC1.html#statsmodels.regression.quantile_regression.RegressionResults.cov_HC1" title="statsmodels.regression.quantile_regression.RegressionResults.cov_HC1"><code class="xref py py-obj docutils literal"><span class="pre">cov_HC1</span></code></a>()</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.cov_HC2.html#statsmodels.regression.quantile_regression.RegressionResults.cov_HC2" title="statsmodels.regression.quantile_regression.RegressionResults.cov_HC2"><code class="xref py py-obj docutils literal"><span class="pre">cov_HC2</span></code></a>()</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.cov_HC3.html#statsmodels.regression.quantile_regression.RegressionResults.cov_HC3" title="statsmodels.regression.quantile_regression.RegressionResults.cov_HC3"><code class="xref py py-obj docutils literal"><span class="pre">cov_HC3</span></code></a>()</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.cov_params.html#statsmodels.regression.quantile_regression.RegressionResults.cov_params" title="statsmodels.regression.quantile_regression.RegressionResults.cov_params"><code class="xref py py-obj docutils literal"><span class="pre">cov_params</span></code></a>([r_matrix,&nbsp;column,&nbsp;scale,&nbsp;cov_p,&nbsp;...])</td>
+<td>Returns the variance/covariance matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.eigenvals.html#statsmodels.regression.quantile_regression.RegressionResults.eigenvals" title="statsmodels.regression.quantile_regression.RegressionResults.eigenvals"><code class="xref py py-obj docutils literal"><span class="pre">eigenvals</span></code></a>()</td>
+<td>Return eigenvalues sorted in decreasing order.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.ess.html#statsmodels.regression.quantile_regression.RegressionResults.ess" title="statsmodels.regression.quantile_regression.RegressionResults.ess"><code class="xref py py-obj docutils literal"><span class="pre">ess</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.f_pvalue.html#statsmodels.regression.quantile_regression.RegressionResults.f_pvalue" title="statsmodels.regression.quantile_regression.RegressionResults.f_pvalue"><code class="xref py py-obj docutils literal"><span class="pre">f_pvalue</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.f_test.html#statsmodels.regression.quantile_regression.RegressionResults.f_test" title="statsmodels.regression.quantile_regression.RegressionResults.f_test"><code class="xref py py-obj docutils literal"><span class="pre">f_test</span></code></a>(r_matrix[,&nbsp;cov_p,&nbsp;scale,&nbsp;invcov])</td>
+<td>Compute the F-test for a joint linear hypothesis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.fittedvalues.html#statsmodels.regression.quantile_regression.RegressionResults.fittedvalues" title="statsmodels.regression.quantile_regression.RegressionResults.fittedvalues"><code class="xref py py-obj docutils literal"><span class="pre">fittedvalues</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.fvalue.html#statsmodels.regression.quantile_regression.RegressionResults.fvalue" title="statsmodels.regression.quantile_regression.RegressionResults.fvalue"><code class="xref py py-obj docutils literal"><span class="pre">fvalue</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.get_robustcov_results.html#statsmodels.regression.quantile_regression.RegressionResults.get_robustcov_results" title="statsmodels.regression.quantile_regression.RegressionResults.get_robustcov_results"><code class="xref py py-obj docutils literal"><span class="pre">get_robustcov_results</span></code></a>([cov_type,&nbsp;use_t])</td>
+<td>create new results instance with robust covariance as default</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.initialize.html#statsmodels.regression.quantile_regression.RegressionResults.initialize" title="statsmodels.regression.quantile_regression.RegressionResults.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>(model,&nbsp;params,&nbsp;**kwd)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.llf.html#statsmodels.regression.quantile_regression.RegressionResults.llf" title="statsmodels.regression.quantile_regression.RegressionResults.llf"><code class="xref py py-obj docutils literal"><span class="pre">llf</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.load.html#statsmodels.regression.quantile_regression.RegressionResults.load" title="statsmodels.regression.quantile_regression.RegressionResults.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a>(fname)</td>
+<td>load a pickle, (class method)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.mse_model.html#statsmodels.regression.quantile_regression.RegressionResults.mse_model" title="statsmodels.regression.quantile_regression.RegressionResults.mse_model"><code class="xref py py-obj docutils literal"><span class="pre">mse_model</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.mse_resid.html#statsmodels.regression.quantile_regression.RegressionResults.mse_resid" title="statsmodels.regression.quantile_regression.RegressionResults.mse_resid"><code class="xref py py-obj docutils literal"><span class="pre">mse_resid</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.mse_total.html#statsmodels.regression.quantile_regression.RegressionResults.mse_total" title="statsmodels.regression.quantile_regression.RegressionResults.mse_total"><code class="xref py py-obj docutils literal"><span class="pre">mse_total</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.nobs.html#statsmodels.regression.quantile_regression.RegressionResults.nobs" title="statsmodels.regression.quantile_regression.RegressionResults.nobs"><code class="xref py py-obj docutils literal"><span class="pre">nobs</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.normalized_cov_params.html#statsmodels.regression.quantile_regression.RegressionResults.normalized_cov_params" title="statsmodels.regression.quantile_regression.RegressionResults.normalized_cov_params"><code class="xref py py-obj docutils literal"><span class="pre">normalized_cov_params</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.predict.html#statsmodels.regression.quantile_regression.RegressionResults.predict" title="statsmodels.regression.quantile_regression.RegressionResults.predict"><code class="xref py py-obj docutils literal"><span class="pre">predict</span></code></a>([exog,&nbsp;transform])</td>
+<td>Call self.model.predict with self.params as the first argument.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.pvalues.html#statsmodels.regression.quantile_regression.RegressionResults.pvalues" title="statsmodels.regression.quantile_regression.RegressionResults.pvalues"><code class="xref py py-obj docutils literal"><span class="pre">pvalues</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.remove_data.html#statsmodels.regression.quantile_regression.RegressionResults.remove_data" title="statsmodels.regression.quantile_regression.RegressionResults.remove_data"><code class="xref py py-obj docutils literal"><span class="pre">remove_data</span></code></a>()</td>
+<td>remove data arrays, all nobs arrays from result and model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.resid.html#statsmodels.regression.quantile_regression.RegressionResults.resid" title="statsmodels.regression.quantile_regression.RegressionResults.resid"><code class="xref py py-obj docutils literal"><span class="pre">resid</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.resid_pearson.html#statsmodels.regression.quantile_regression.RegressionResults.resid_pearson" title="statsmodels.regression.quantile_regression.RegressionResults.resid_pearson"><code class="xref py py-obj docutils literal"><span class="pre">resid_pearson</span></code></a>()</td>
+<td>Residuals, normalized to have unit variance.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.rsquared.html#statsmodels.regression.quantile_regression.RegressionResults.rsquared" title="statsmodels.regression.quantile_regression.RegressionResults.rsquared"><code class="xref py py-obj docutils literal"><span class="pre">rsquared</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.rsquared_adj.html#statsmodels.regression.quantile_regression.RegressionResults.rsquared_adj" title="statsmodels.regression.quantile_regression.RegressionResults.rsquared_adj"><code class="xref py py-obj docutils literal"><span class="pre">rsquared_adj</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.save.html#statsmodels.regression.quantile_regression.RegressionResults.save" title="statsmodels.regression.quantile_regression.RegressionResults.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>(fname[,&nbsp;remove_data])</td>
+<td>save a pickle of this instance</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.scale.html#statsmodels.regression.quantile_regression.RegressionResults.scale" title="statsmodels.regression.quantile_regression.RegressionResults.scale"><code class="xref py py-obj docutils literal"><span class="pre">scale</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.ssr.html#statsmodels.regression.quantile_regression.RegressionResults.ssr" title="statsmodels.regression.quantile_regression.RegressionResults.ssr"><code class="xref py py-obj docutils literal"><span class="pre">ssr</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.summary.html#statsmodels.regression.quantile_regression.RegressionResults.summary" title="statsmodels.regression.quantile_regression.RegressionResults.summary"><code class="xref py py-obj docutils literal"><span class="pre">summary</span></code></a>([yname,&nbsp;xname,&nbsp;title,&nbsp;alpha])</td>
+<td>Summarize the Regression Results</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.summary2.html#statsmodels.regression.quantile_regression.RegressionResults.summary2" title="statsmodels.regression.quantile_regression.RegressionResults.summary2"><code class="xref py py-obj docutils literal"><span class="pre">summary2</span></code></a>([yname,&nbsp;xname,&nbsp;title,&nbsp;alpha,&nbsp;...])</td>
+<td>Experimental summary function to summarize the regression results</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.t_test.html#statsmodels.regression.quantile_regression.RegressionResults.t_test" title="statsmodels.regression.quantile_regression.RegressionResults.t_test"><code class="xref py py-obj docutils literal"><span class="pre">t_test</span></code></a>(r_matrix[,&nbsp;cov_p,&nbsp;scale,&nbsp;use_t])</td>
+<td>Compute a t-test for a each linear hypothesis of the form Rb = q</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.tvalues.html#statsmodels.regression.quantile_regression.RegressionResults.tvalues" title="statsmodels.regression.quantile_regression.RegressionResults.tvalues"><code class="xref py py-obj docutils literal"><span class="pre">tvalues</span></code></a>()</td>
+<td>Return the t-statistic for a given parameter estimate.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.uncentered_tss.html#statsmodels.regression.quantile_regression.RegressionResults.uncentered_tss" title="statsmodels.regression.quantile_regression.RegressionResults.uncentered_tss"><code class="xref py py-obj docutils literal"><span class="pre">uncentered_tss</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.wald_test.html#statsmodels.regression.quantile_regression.RegressionResults.wald_test" title="statsmodels.regression.quantile_regression.RegressionResults.wald_test"><code class="xref py py-obj docutils literal"><span class="pre">wald_test</span></code></a>(r_matrix[,&nbsp;cov_p,&nbsp;scale,&nbsp;invcov,&nbsp;...])</td>
+<td>Compute a Wald-test for a joint linear hypothesis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.wresid.html#statsmodels.regression.quantile_regression.RegressionResults.wresid" title="statsmodels.regression.quantile_regression.RegressionResults.wresid"><code class="xref py py-obj docutils literal"><span class="pre">wresid</span></code></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>3.9.4.2.4.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.quantile_regression.RegressionResults.use_t.html#statsmodels.regression.quantile_regression.RegressionResults.use_t" title="statsmodels.regression.quantile_regression.RegressionResults.use_t"><code class="xref py py-obj docutils literal"><span class="pre">use_t</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.regression.quantile_regression.RegressionResults.HC0_se.html" class="btn btn-neutral float-right" title="3.9.4.2.4.1.1. statsmodels.regression.quantile_regression.RegressionResults.HC0_se" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.regression.quantile_regression.RegressionModel.exog_names.html" class="btn btn-neutral" title="3.9.4.2.3.2.4. statsmodels.regression.quantile_regression.RegressionModel.exog_names" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

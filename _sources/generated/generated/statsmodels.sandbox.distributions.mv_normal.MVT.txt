@@ -1,0 +1,45 @@
+statsmodels.sandbox.distributions.mv_normal.MVT
+===============================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.mv_normal
+.. autoclass:: MVT
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MVT.__init__
+   ~MVT.affine_transformed
+   ~MVT.cdf
+   ~MVT.expect_mc
+   ~MVT.logpdf
+   ~MVT.marginal
+   ~MVT.normalize
+   ~MVT.normalized
+   ~MVT.normalized2
+   ~MVT.pdf
+   ~MVT.rvs
+   ~MVT.standardize
+   ~MVT.standardized
+   ~MVT.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~MVT.corr
+   ~MVT.cov
+   ~MVT.std
+   ~MVT.std_sigma
+

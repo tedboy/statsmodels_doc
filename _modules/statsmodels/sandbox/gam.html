@@ -1,0 +1,649 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.gam &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.gam</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.gam</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Generalized additive models</span>
+
+
+
+<span class="sd">Requirements for smoothers</span>
+<span class="sd">--------------------------</span>
+
+<span class="sd">smooth(y, weights=xxx) : ? no return ? alias for fit</span>
+<span class="sd">predict(x=None) : smoothed values, fittedvalues or for new exog</span>
+<span class="sd">df_fit() : degress of freedom of fit ?</span>
+
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+<span class="sd">- using PolySmoother works for AdditiveModel, and GAM with Poisson and Binomial</span>
+<span class="sd">- testfailure with Gamma, no other families tested</span>
+<span class="sd">- there is still an indeterminacy in the split up of the constant across</span>
+<span class="sd">  components (smoothers) and alpha, sum, i.e. constant, looks good.</span>
+<span class="sd">  - role of offset, that I haven&#39;t tried to figure out yet</span>
+
+<span class="sd">Refactoring</span>
+<span class="sd">-----------</span>
+<span class="sd">currently result is attached to model instead of other way around</span>
+<span class="sd">split up Result in class for AdditiveModel and for GAM,</span>
+<span class="sd">subclass GLMResults, needs verification that result statistics are appropriate</span>
+<span class="sd">how much inheritance, double inheritance?</span>
+<span class="sd">renamings and cleanup</span>
+<span class="sd">interface to other smoothers, scipy splines</span>
+
+<span class="sd">basic unittests as support for refactoring exist, but we should have a test</span>
+<span class="sd">case for gamma and the others. Advantage of PolySmoother is that we can</span>
+<span class="sd">benchmark against the parametric GLM results.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># JP:</span>
+<span class="c1"># changes: use PolySmoother instead of crashing bspline</span>
+<span class="c1"># TODO: check/catalogue required interface of a smoother</span>
+<span class="c1"># TODO: replace default smoother by corresponding function to initialize</span>
+<span class="c1">#       other smoothers</span>
+<span class="c1"># TODO: fix iteration, don&#39;t define class with iterator methods, use looping;</span>
+<span class="c1">#       add maximum iteration and other optional stop criteria</span>
+<span class="c1"># fixed some of the dimension problems in PolySmoother,</span>
+<span class="c1">#       now graph for example looks good</span>
+<span class="c1"># NOTE: example script is now in examples folder</span>
+<span class="c1">#update: I did some of the above, see module docstring</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">next</span><span class="p">,</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.genmod</span> <span class="k">import</span> <span class="n">families</span>
+<span class="kn">from</span> <span class="nn">statsmodels.sandbox.nonparametric.smoothers</span> <span class="k">import</span> <span class="n">PolySmoother</span>
+<span class="kn">from</span> <span class="nn">statsmodels.genmod.generalized_linear_model</span> <span class="k">import</span> <span class="n">GLM</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tools.sm_exceptions</span> <span class="k">import</span> <span class="n">IterationLimitWarning</span><span class="p">,</span> <span class="n">iteration_limit_doc</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">DEBUG</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="default_smoother"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.gam.default_smoother.html#statsmodels.sandbox.gam.default_smoother">[docs]</a><span class="k">def</span> <span class="nf">default_smoother</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">s_arg</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+<span class="c1">#    _x = x.copy()</span>
+<span class="c1">#    _x.sort()</span>
+    <span class="n">_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># taken form smooth.spline in R</span>
+
+    <span class="c1">#if n &lt; 50:</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">500</span><span class="p">:</span>
+        <span class="n">nknots</span> <span class="o">=</span> <span class="n">n</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">a1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">50</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">a2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">a3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">140</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">a4</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">200</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">200</span><span class="p">:</span>
+            <span class="n">nknots</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">a1</span> <span class="o">+</span> <span class="p">(</span><span class="n">a2</span> <span class="o">-</span> <span class="n">a1</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">50</span><span class="p">)</span><span class="o">/</span><span class="mf">150.</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">800</span><span class="p">:</span>
+            <span class="n">nknots</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">a2</span> <span class="o">+</span> <span class="p">(</span><span class="n">a3</span> <span class="o">-</span> <span class="n">a2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">200</span><span class="p">)</span><span class="o">/</span><span class="mf">600.</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">3200</span><span class="p">:</span>
+            <span class="n">nknots</span> <span class="o">=</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">a3</span> <span class="o">+</span> <span class="p">(</span><span class="n">a4</span> <span class="o">-</span> <span class="n">a3</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mi">800</span><span class="p">)</span><span class="o">/</span><span class="mf">2400.</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nknots</span> <span class="o">=</span> <span class="mi">200</span> <span class="o">+</span> <span class="p">(</span><span class="n">n</span> <span class="o">-</span> <span class="mf">3200.</span><span class="p">)</span><span class="o">**</span><span class="mf">0.2</span>
+    <span class="n">knots</span> <span class="o">=</span> <span class="n">_x</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nknots</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">int32</span><span class="p">)]</span>
+
+    <span class="c1">#s = SmoothingSpline(knots, x=x.copy())</span>
+    <span class="c1">#when I set order=2, I get nans in the GAM prediction</span>
+    <span class="k">if</span> <span class="n">s_arg</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="mi">3</span> <span class="c1">#what about knots? need smoother *args or **kwds</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="n">s_arg</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">PolySmoother</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>  <span class="c1">#TODO: change order, why copy?</span>
+<span class="c1">#    s.gram(d=2)</span>
+<span class="c1">#    s.target_df = 5</span>
+    <span class="k">return</span> <span class="n">s</span></div>
+
+<div class="viewcode-block" id="Offset"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Offset.html#statsmodels.sandbox.gam.Offset">[docs]</a><span class="k">class</span> <span class="nc">Offset</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Offset.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Offset.__init__.html#statsmodels.sandbox.gam.Offset.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fn</span> <span class="o">=</span> <span class="n">fn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span></div>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fn</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span></div>
+
+<div class="viewcode-block" id="Results"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Results.html#statsmodels.sandbox.gam.Results">[docs]</a><span class="k">class</span> <span class="nc">Results</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Results.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Results.__init__.html#statsmodels.sandbox.gam.Results.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">smoothers</span><span class="p">,</span> <span class="n">family</span><span class="p">,</span> <span class="n">offset</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_vars</span> <span class="o">=</span> <span class="n">exog</span><span class="o">.</span><span class="n">shape</span>  <span class="c1">#assumes exog is 2d</span>
+        <span class="c1">#weird: If I put the previous line after the definition of self.mu,</span>
+        <span class="c1">#    then the attributed don&#39;t get added</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span> <span class="o">=</span> <span class="n">smoothers</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span> <span class="n">family</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="n">exog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">linkinversepredict</span><span class="p">(</span><span class="n">exog</span><span class="p">)</span>  <span class="c1">#TODO: remove __call__</span></div>
+
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exog</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;expected value ? check new GLM, same as mu for given exog</span>
+<span class="sd">        maybe remove this</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">linkinversepredict</span><span class="p">(</span><span class="n">exog</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Results.linkinversepredict"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Results.linkinversepredict.html#statsmodels.sandbox.gam.Results.linkinversepredict">[docs]</a>    <span class="k">def</span> <span class="nf">linkinversepredict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exog</span><span class="p">):</span>  <span class="c1">#TODO what&#39;s the name in GLM</span>
+        <span class="sd">&#39;&#39;&#39;expected value ? check new GLM, same as mu for given exog</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">exog</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Results.predict"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Results.predict.html#statsmodels.sandbox.gam.Results.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exog</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;predict response, sum of smoothed components</span>
+<span class="sd">        TODO: What&#39;s this in the case of GLM, corresponds to X*beta ?</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#note: sum is here over axis=0,</span>
+        <span class="c1">#TODO: transpose in smoothed and sum over axis=1</span>
+
+        <span class="c1">#BUG: there is some inconsistent orientation somewhere</span>
+        <span class="c1">#temporary hack, won&#39;t work for 1d</span>
+        <span class="c1">#print dir(self)</span>
+        <span class="c1">#print &#39;self.nobs, self.k_vars&#39;, self.nobs, self.k_vars</span>
+        <span class="n">exog_smoothed</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothed</span><span class="p">(</span><span class="n">exog</span><span class="p">)</span>
+        <span class="c1">#print &#39;exog_smoothed.shape&#39;, exog_smoothed.shape</span>
+        <span class="k">if</span> <span class="n">exog_smoothed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_vars</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">warnings</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;old orientation, colvars, will go away&quot;</span><span class="p">,</span>
+                          <span class="ne">FutureWarning</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smoothed</span><span class="p">(</span><span class="n">exog</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+        <span class="k">if</span> <span class="n">exog_smoothed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">k_vars</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">exog_smoothed</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;shape mismatch in predict&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Results.smoothed"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Results.smoothed.html#statsmodels.sandbox.gam.Results.smoothed">[docs]</a>    <span class="k">def</span> <span class="nf">smoothed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exog</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get smoothed prediction for each component</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#bug: with exog in predict I get a shape error</span>
+        <span class="c1">#print &#39;smoothed&#39;, exog.shape, self.smoothers[0].predict(exog).shape</span>
+        <span class="c1">#there was a mistake exog didn&#39;t have column index i</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">exog</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">offset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="c1">#shouldn&#39;t be a mistake because exog[:,i] is attached to smoother, but</span>
+        <span class="c1">#it is for different exog</span>
+        <span class="c1">#return np.array([self.smoothers[i].predict() + self.offset[i]</span>
+                         <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span><span class="o">.</span><span class="n">T</span></div>
+
+<div class="viewcode-block" id="Results.smoothed_demeaned"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Results.smoothed_demeaned.html#statsmodels.sandbox.gam.Results.smoothed_demeaned">[docs]</a>    <span class="k">def</span> <span class="nf">smoothed_demeaned</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exog</span><span class="p">):</span>
+        <span class="n">components</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothed</span><span class="p">(</span><span class="n">exog</span><span class="p">)</span>
+        <span class="n">means</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">constant</span> <span class="o">=</span> <span class="n">means</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+        <span class="n">components_demeaned</span> <span class="o">=</span> <span class="n">components</span> <span class="o">-</span> <span class="n">means</span>
+        <span class="k">return</span> <span class="n">components_demeaned</span><span class="p">,</span> <span class="n">constant</span></div></div>
+
+<div class="viewcode-block" id="AdditiveModel"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.tests.test_gam.AdditiveModel.html#statsmodels.sandbox.gam.AdditiveModel">[docs]</a><span class="k">class</span> <span class="nc">AdditiveModel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;additive model with non-parametric, smoothed components</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    exog : ndarray</span>
+<span class="sd">    smoothers : None or list of smoother instances</span>
+<span class="sd">        smoother instances not yet checked</span>
+<span class="sd">    weights : None or ndarray</span>
+<span class="sd">    family : None or family instance</span>
+<span class="sd">        I think only used because of shared results with GAM and subclassing.</span>
+<span class="sd">        If None, then Gaussian is used.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="AdditiveModel.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.tests.test_gam.AdditiveModel.__init__.html#statsmodels.sandbox.gam.AdditiveModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">smoothers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="n">exog</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span> <span class="o">=</span> <span class="n">smoothers</span> <span class="ow">or</span> <span class="p">[</span><span class="n">default_smoother</span><span class="p">(</span><span class="n">exog</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])]</span>
+
+        <span class="c1">#TODO: why do we set here df, refactoring temporary?</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="mi">10</span>
+
+        <span class="k">if</span> <span class="n">family</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span> <span class="n">families</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span> <span class="n">family</span></div>
+        <span class="c1">#self.family = families.Gaussian()</span>
+
+    <span class="k">def</span> <span class="nf">_iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;initialize iteration ?, should be removed</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+<div class="viewcode-block" id="AdditiveModel.next"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.tests.test_gam.AdditiveModel.next.html#statsmodels.sandbox.gam.AdditiveModel.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;internal calculation for one fit iteration</span>
+
+<span class="sd">        BUG: I think this does not improve, what is supposed to improve</span>
+<span class="sd">            offset doesn&#39;t seem to be used, neither an old alpha</span>
+<span class="sd">            The smoothers keep coef/params from previous iteration</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Y</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">_results</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span>
+        <span class="c1">#TODO offset is never used ?</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+            <span class="c1">#TODO: check what smooth needs to do</span>
+            <span class="c1">#smooth (alias for fit, fit given x to new y and attach</span>
+            <span class="c1">#print &#39;next shape&#39;, (Y - alpha - mu + tmp).shape</span>
+            <span class="n">bad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">tmp</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+            <span class="k">if</span> <span class="n">bad</span><span class="p">:</span> <span class="c1">#temporary assert while debugging</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">tmp</span><span class="p">)</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;nan encountered&quot;</span><span class="p">)</span>
+            <span class="c1">#self.smoothers[i].smooth(Y - alpha - mu + tmp,</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">mu</span> <span class="o">+</span> <span class="n">tmp</span><span class="p">,</span>
+                                     <span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">tmp2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span> <span class="c1">#fittedvalues of previous smooth/fit</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">offset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="n">tmp2</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="c1">#self.offset used in smoothed</span>
+            <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+            <span class="n">mu</span> <span class="o">+=</span> <span class="n">tmp2</span> <span class="o">-</span> <span class="n">tmp</span>
+        <span class="c1">#change setting offset here: tests still pass, offset equal to constant</span>
+        <span class="c1">#in component ??? what&#39;s the effect of offset</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">offset</span>
+        <span class="c1">#print self.iter</span>
+        <span class="c1">#self.iter += 1 #missing incrementing of iter counter NOT</span>
+        <span class="k">return</span> <span class="n">Results</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AdditiveModel.cont"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.tests.test_gam.AdditiveModel.cont.html#statsmodels.sandbox.gam.AdditiveModel.cont">[docs]</a>    <span class="k">def</span> <span class="nf">cont</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;condition to continue iteration loop</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        tol</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cont : bool</span>
+<span class="sd">            If true, then iteration should be continued.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">+=</span> <span class="mi">1</span> <span class="c1">#moved here to always count, not necessary</span>
+        <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">iter</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">curdev</span> <span class="o">=</span> <span class="p">(((</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span><span class="p">:</span> <span class="c1">#kill it, no max iterationoption</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="o">-</span> <span class="n">curdev</span><span class="p">)</span> <span class="o">/</span> <span class="n">curdev</span><span class="p">)</span> <span class="o">&lt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">rtol</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="o">=</span> <span class="n">curdev</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1">#self.iter += 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="o">=</span> <span class="n">curdev</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="AdditiveModel.df_resid"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.tests.test_gam.AdditiveModel.df_resid.html#statsmodels.sandbox.gam.AdditiveModel.df_resid">[docs]</a>    <span class="k">def</span> <span class="nf">df_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;degrees of freedom of residuals, ddof is sum of all smoothers df</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">df_fit</span><span class="p">()</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AdditiveModel.estimate_scale"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.tests.test_gam.AdditiveModel.estimate_scale.html#statsmodels.sandbox.gam.AdditiveModel.estimate_scale">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;estimate standard deviation of residuals</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#TODO: remove use of self.results.__call__</span>
+        <span class="k">return</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_resid</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="AdditiveModel.fit"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.tests.test_gam.AdditiveModel.fit.html#statsmodels.sandbox.gam.AdditiveModel.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-06</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;fit the model to a given endogenous variable Y</span>
+
+<span class="sd">        This needs to change for consistency with statsmodels</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span> <span class="o">=</span> <span class="n">maxiter</span>
+        <span class="c1">#iter(self)  # what does this do? anything?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iter__</span><span class="p">()</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="p">(</span><span class="n">Y</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">alpha</span> <span class="o">-</span> <span class="n">mu</span><span class="p">,</span>
+                                     <span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">predict</span><span class="p">()</span>
+            <span class="n">offset</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">tmp</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">-=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">mu</span> <span class="o">+=</span> <span class="n">tmp</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">Results</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="p">,</span> <span class="n">offset</span><span class="p">)</span>
+
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">cont</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span><span class="p">:</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">iteration_limit_doc</span><span class="p">,</span> <span class="n">IterationLimitWarning</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span></div></div>
+
+<div class="viewcode-block" id="Model"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Model.html#statsmodels.sandbox.gam.Model">[docs]</a><span class="k">class</span> <span class="nc">Model</span><span class="p">(</span><span class="n">GLM</span><span class="p">,</span> <span class="n">AdditiveModel</span><span class="p">):</span>
+<span class="c1">#class Model(AdditiveModel):</span>
+    <span class="c1">#TODO: what does GLM do? Is it actually used ?</span>
+    <span class="c1">#only used in __init__, dropping it doesn&#39;t change results</span>
+    <span class="c1">#but where gets family attached now? - weird, it&#39;s Gaussian in this case now</span>
+    <span class="c1">#also where is the link defined?</span>
+    <span class="c1">#AdditiveModel overwrites family and sets it to Gaussian - corrected</span>
+
+    <span class="c1">#I think both GLM and AdditiveModel subclassing is only used in __init__</span>
+
+    <span class="c1">#niter = 2</span>
+
+<span class="c1">#    def __init__(self, exog, smoothers=None, family=family.Gaussian()):</span>
+<span class="c1">#        GLM.__init__(self, exog, family=family)</span>
+<span class="c1">#        AdditiveModel.__init__(self, exog, smoothers=smoothers)</span>
+<span class="c1">#        self.family = family</span>
+<div class="viewcode-block" id="Model.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Model.__init__.html#statsmodels.sandbox.gam.Model.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">smoothers</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">families</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">()):</span>
+        <span class="c1">#self.family = family</span>
+        <span class="c1">#TODO: inconsistent super __init__</span>
+        <span class="n">AdditiveModel</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">smoothers</span><span class="o">=</span><span class="n">smoothers</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">)</span>
+        <span class="n">GLM</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">family</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="ow">is</span> <span class="n">family</span>  <span class="c1">#make sure we got the right family</span></div>
+
+<div class="viewcode-block" id="Model.next"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Model.next.html#statsmodels.sandbox.gam.Model.next">[docs]</a>    <span class="k">def</span> <span class="nf">next</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">_results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="n">_results</span><span class="o">.</span><span class="n">Y</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nanweights1&quot;</span><span class="p">)</span>
+
+        <span class="n">_results</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">_results</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">))</span>
+        <span class="c1">#eta = _results.predict(self.exog)</span>
+        <span class="c1">#_results.mu = self.family.fitted(eta)</span>
+        <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">weights</span><span class="p">(</span><span class="n">_results</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nanweights2&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">weights</span>
+        <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;deriv isnan&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">deriv</span><span class="p">(</span><span class="n">_results</span><span class="o">.</span><span class="n">mu</span><span class="p">))</span><span class="o">.</span><span class="n">any</span><span class="p">())</span>
+
+        <span class="c1">#Z = _results.predict(self.exog) + \</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="n">_results</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span> <span class="o">+</span> \
+               <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">deriv</span><span class="p">(</span><span class="n">_results</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">_results</span><span class="o">.</span><span class="n">mu</span><span class="p">)</span> <span class="c1">#- _results.alpha #?added alpha</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">AdditiveModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">,</span> <span class="n">smoothers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">,</span>
+                          <span class="n">weights</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="p">)</span>
+
+        <span class="c1">#TODO: I don&#39;t know what the next two lines do, Z, Y ? which is endog?</span>
+        <span class="c1">#Y is original endog, Z is endog for the next step in the iterative solver</span>
+
+        <span class="n">_results</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">Z</span><span class="p">,</span> <span class="n">_results</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">)])</span>
+        <span class="n">_results</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span>
+        <span class="n">_results</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">_results</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">_results</span>
+
+        <span class="k">return</span> <span class="n">_results</span></div>
+
+<div class="viewcode-block" id="Model.estimate_scale"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Model.estimate_scale.html#statsmodels.sandbox.gam.Model.estimate_scale">[docs]</a>    <span class="k">def</span> <span class="nf">estimate_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Y</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return Pearson\&#39;s X^2 estimate of scale.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">Y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span>
+        <span class="n">resid</span> <span class="o">=</span> <span class="n">Y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mu</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">variance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mu</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> \
+                    <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_resid</span>   <span class="c1">#TODO check this</span></div>
+                   <span class="c1">#/ AdditiveModel.df_resid(self)  #what is the class doing here?</span>
+
+
+<div class="viewcode-block" id="Model.fit"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.gam.Model.fit.html#statsmodels.sandbox.gam.Model.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-06</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">30</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rtol</span> <span class="o">=</span> <span class="n">rtol</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span> <span class="o">=</span> <span class="n">maxiter</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1">#iter(self)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_iter__</span><span class="p">()</span>
+
+        <span class="c1">#TODO code duplication with next?</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+        <span class="n">mu0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">starting_mu</span><span class="p">(</span><span class="n">Y</span><span class="p">)</span>
+        <span class="c1">#Z = self.family.link(alpha) + self.family.link.deriv(alpha) * (Y - alpha)</span>
+        <span class="n">Z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">link</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">deriv</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">Y</span> <span class="o">-</span> <span class="n">mu0</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">AdditiveModel</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">,</span> <span class="n">smoothers</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">smoothers</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">Z</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">Y</span>
+
+        <span class="k">while</span> <span class="bp">self</span><span class="o">.</span><span class="n">cont</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">next</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">estimate_scale</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">iter</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">maxiter</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">warnings</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">iteration_limit_doc</span><span class="p">,</span> <span class="n">IterationLimitWarning</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

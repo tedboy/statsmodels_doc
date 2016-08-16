@@ -1,0 +1,28 @@
+statsmodels.nonparametric.api.KDEUnivariate
+===========================================
+
+.. currentmodule:: statsmodels.nonparametric.api
+.. autoclass:: KDEUnivariate
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KDEUnivariate.__init__
+   ~KDEUnivariate.cdf
+   ~KDEUnivariate.cumhazard
+   ~KDEUnivariate.entropy
+   ~KDEUnivariate.evaluate
+   ~KDEUnivariate.fit
+   ~KDEUnivariate.icdf
+   ~KDEUnivariate.sf
+
+
+
+
+

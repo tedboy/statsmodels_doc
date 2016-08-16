@@ -1,0 +1,1493 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.distributions.mv_normal &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.distributions.mv_normal</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.distributions.mv_normal</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Multivariate Normal and t distributions</span>
+
+
+
+<span class="sd">Created on Sat May 28 15:38:23 2011</span>
+
+<span class="sd">@author: Josef Perktold</span>
+
+<span class="sd">TODO:</span>
+<span class="sd">* renaming,</span>
+<span class="sd">    - after adding t distribution, cov doesn&#39;t make sense for Sigma    DONE</span>
+<span class="sd">    - should mean also be renamed to mu, if there will be distributions</span>
+<span class="sd">      with mean != mu</span>
+<span class="sd">* not sure about corner cases</span>
+<span class="sd">    - behavior with (almost) singular sigma or transforms</span>
+<span class="sd">    - df &lt;= 2, is everything correct if variance is not finite or defined ?</span>
+<span class="sd">* check to return possibly univariate distribution for marginals or conditional</span>
+<span class="sd">    distributions, does univariate special case work? seems ok for conditional</span>
+<span class="sd">* are all the extra transformation methods useful outside of testing ?</span>
+<span class="sd">  - looks like I have some mixup in definitions of standardize, normalize</span>
+<span class="sd">* new methods marginal, conditional, ... just added, typos ?</span>
+<span class="sd">  - largely tested for MVNormal, not yet for MVT   DONE</span>
+<span class="sd">* conditional: reusing, vectorizing, should we reuse a projection matrix or</span>
+<span class="sd">  allow for a vectorized, conditional_mean similar to OLS.predict</span>
+<span class="sd">* add additional things similar to LikelihoodModelResults? quadratic forms,</span>
+<span class="sd">  F distribution, and others ???</span>
+<span class="sd">* add Delta method for nonlinear functions here, current function is hidden</span>
+<span class="sd">  somewhere in miscmodels</span>
+<span class="sd">* raise ValueErrors for wrong input shapes, currently only partially checked</span>
+
+<span class="sd">* quantile method (ppf for equal bounds for multiple testing) is missing</span>
+<span class="sd">  http://svitsrv25.epfl.ch/R-doc/library/mvtnorm/html/qmvt.html seems to use</span>
+<span class="sd">  just a root finder for inversion of cdf</span>
+
+<span class="sd">* normalize has ambiguous definition, and mixing it up in different versions</span>
+<span class="sd">  std from sigma or std from cov ?</span>
+<span class="sd">  I would like to get what I need for mvt-cdf, or not</span>
+<span class="sd">  univariate standard t distribution has scale=1 but std&gt;1</span>
+<span class="sd">  FIXED: add std_sigma, and normalize uses std_sigma</span>
+
+<span class="sd">* more work: bivariate distributions,</span>
+<span class="sd">  inherit from multivariate but overwrite some methods for better efficiency,</span>
+<span class="sd">  e.g. cdf and expect</span>
+
+<span class="sd">I kept the original MVNormal0 class as reference, can be deleted</span>
+
+
+<span class="sd">See Also</span>
+<span class="sd">--------</span>
+<span class="sd">sandbox/examples/ex_mvelliptical.py</span>
+
+<span class="sd">Examples</span>
+<span class="sd">--------</span>
+
+<span class="sd">Note, several parts of these examples are random and the numbers will not be</span>
+<span class="sd">(exactly) the same.</span>
+
+<span class="sd">&gt;&gt;&gt; import numpy as np</span>
+<span class="sd">&gt;&gt;&gt; import statsmodels.sandbox.distributions.mv_normal as mvd</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; from numpy.testing import assert_array_almost_equal</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&gt;&gt;&gt; cov3 = np.array([[ 1.  ,  0.5 ,  0.75],</span>
+<span class="sd">...                    [ 0.5 ,  1.5 ,  0.6 ],</span>
+<span class="sd">...                    [ 0.75,  0.6 ,  2.  ]])</span>
+
+<span class="sd">&gt;&gt;&gt; mu = np.array([-1, 0.0, 2.0])</span>
+
+<span class="sd">multivariate normal distribution</span>
+<span class="sd">--------------------------------</span>
+
+<span class="sd">&gt;&gt;&gt; mvn3 = mvd.MVNormal(mu, cov3)</span>
+<span class="sd">&gt;&gt;&gt; mvn3.rvs(size=3)</span>
+<span class="sd">array([[-0.08559948, -1.0319881 ,  1.76073533],</span>
+<span class="sd">       [ 0.30079522,  0.55859618,  4.16538667],</span>
+<span class="sd">       [-1.36540091, -1.50152847,  3.87571161]])</span>
+
+<span class="sd">&gt;&gt;&gt; mvn3.std</span>
+<span class="sd">array([ 1.        ,  1.22474487,  1.41421356])</span>
+<span class="sd">&gt;&gt;&gt; a = [0.0, 1.0, 1.5]</span>
+<span class="sd">&gt;&gt;&gt; mvn3.pdf(a)</span>
+<span class="sd">0.013867410439318712</span>
+<span class="sd">&gt;&gt;&gt; mvn3.cdf(a)</span>
+<span class="sd">0.31163181123730122</span>
+
+<span class="sd">Monte Carlo integration</span>
+
+<span class="sd">&gt;&gt;&gt; mvn3.expect_mc(lambda x: (x&lt;a).all(-1), size=100000)</span>
+<span class="sd">0.30958999999999998</span>
+<span class="sd">&gt;&gt;&gt; mvn3.expect_mc(lambda x: (x&lt;a).all(-1), size=1000000)</span>
+<span class="sd">0.31197399999999997</span>
+
+<span class="sd">multivariate t distribution</span>
+<span class="sd">---------------------------</span>
+
+<span class="sd">&gt;&gt;&gt; mvt3 = mvd.MVT(mu, cov3, 4)</span>
+<span class="sd">&gt;&gt;&gt; mvt3.rvs(size=4)</span>
+<span class="sd">array([[-0.94185437,  0.3933273 ,  2.40005487],</span>
+<span class="sd">       [ 0.07563648,  0.06655433,  7.90752238],</span>
+<span class="sd">       [ 1.06596474,  0.32701158,  2.03482886],</span>
+<span class="sd">       [ 3.80529746,  7.0192967 ,  8.41899229]])</span>
+
+<span class="sd">&gt;&gt;&gt; mvt3.pdf(a)</span>
+<span class="sd">0.010402959362646937</span>
+<span class="sd">&gt;&gt;&gt; mvt3.cdf(a)</span>
+<span class="sd">0.30269483623249821</span>
+<span class="sd">&gt;&gt;&gt; mvt3.expect_mc(lambda x: (x&lt;a).all(-1), size=1000000)</span>
+<span class="sd">0.30271199999999998</span>
+
+<span class="sd">&gt;&gt;&gt; mvt3.cov</span>
+<span class="sd">array([[ 2. ,  1. ,  1.5],</span>
+<span class="sd">       [ 1. ,  3. ,  1.2],</span>
+<span class="sd">       [ 1.5,  1.2,  4. ]])</span>
+<span class="sd">&gt;&gt;&gt; mvt3.corr</span>
+<span class="sd">array([[ 1.        ,  0.40824829,  0.53033009],</span>
+<span class="sd">       [ 0.40824829,  1.        ,  0.34641016],</span>
+<span class="sd">       [ 0.53033009,  0.34641016,  1.        ]])</span>
+
+<span class="sd">get normalized distribution</span>
+
+<span class="sd">&gt;&gt;&gt; mvt3n = mvt3.normalized()</span>
+<span class="sd">&gt;&gt;&gt; mvt3n.sigma</span>
+<span class="sd">array([[ 1.        ,  0.40824829,  0.53033009],</span>
+<span class="sd">       [ 0.40824829,  1.        ,  0.34641016],</span>
+<span class="sd">       [ 0.53033009,  0.34641016,  1.        ]])</span>
+<span class="sd">&gt;&gt;&gt; mvt3n.cov</span>
+<span class="sd">array([[ 2.        ,  0.81649658,  1.06066017],</span>
+<span class="sd">       [ 0.81649658,  2.        ,  0.69282032],</span>
+<span class="sd">       [ 1.06066017,  0.69282032,  2.        ]])</span>
+
+<span class="sd">What&#39;s currently there?</span>
+
+<span class="sd">&gt;&gt;&gt; [i for i in dir(mvn3) if not i[0]==&#39;_&#39;]</span>
+<span class="sd">[&#39;affine_transformed&#39;, &#39;cdf&#39;, &#39;cholsigmainv&#39;, &#39;conditional&#39;, &#39;corr&#39;, &#39;cov&#39;,</span>
+<span class="sd">&#39;expect_mc&#39;, &#39;extra_args&#39;, &#39;logdetsigma&#39;, &#39;logpdf&#39;, &#39;marginal&#39;, &#39;mean&#39;,</span>
+<span class="sd">&#39;normalize&#39;, &#39;normalized&#39;, &#39;normalized2&#39;, &#39;nvars&#39;, &#39;pdf&#39;, &#39;rvs&#39;, &#39;sigma&#39;,</span>
+<span class="sd">&#39;sigmainv&#39;, &#39;standardize&#39;, &#39;standardized&#39;, &#39;std&#39;, &#39;std_sigma&#39;, &#39;whiten&#39;]</span>
+
+<span class="sd">&gt;&gt;&gt; [i for i in dir(mvt3) if not i[0]==&#39;_&#39;]</span>
+<span class="sd">[&#39;affine_transformed&#39;, &#39;cdf&#39;, &#39;cholsigmainv&#39;, &#39;corr&#39;, &#39;cov&#39;, &#39;df&#39;, &#39;expect_mc&#39;,</span>
+<span class="sd">&#39;extra_args&#39;, &#39;logdetsigma&#39;, &#39;logpdf&#39;, &#39;marginal&#39;, &#39;mean&#39;, &#39;normalize&#39;,</span>
+<span class="sd">&#39;normalized&#39;, &#39;normalized2&#39;, &#39;nvars&#39;, &#39;pdf&#39;, &#39;rvs&#39;, &#39;sigma&#39;, &#39;sigmainv&#39;,</span>
+<span class="sd">&#39;standardize&#39;, &#39;standardized&#39;, &#39;std&#39;, &#39;std_sigma&#39;, &#39;whiten&#39;]</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.sandbox.distributions.multivariate</span> <span class="k">import</span> <span class="p">(</span>
+                <span class="n">mvstdtprob</span><span class="p">,</span> <span class="n">mvstdnormcdf</span><span class="p">,</span> <span class="n">mvnormcdf</span><span class="p">)</span>
+
+<div class="viewcode-block" id="expect_mc"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.mv_normal.expect_mc.html#statsmodels.sandbox.distributions.mv_normal.expect_mc">[docs]</a><span class="k">def</span> <span class="nf">expect_mc</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50000</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;calculate expected value of function by Monte Carlo integration</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dist : distribution instance</span>
+<span class="sd">        needs to have rvs defined as a method for drawing random numbers</span>
+<span class="sd">    func : callable</span>
+<span class="sd">        function for which expectation is calculated, this function needs to</span>
+<span class="sd">        be vectorized, integration is over axis=0</span>
+<span class="sd">    size : int</span>
+<span class="sd">        number of random samples to use in the Monte Carlo integration,</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    this doesn&#39;t batch</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    expected value : ndarray</span>
+<span class="sd">        return of function func integrated over axis=0 by MonteCarlo, this will</span>
+<span class="sd">        have the same shape as the return of func without axis=0</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    integrate probability that both observations are negative</span>
+
+<span class="sd">    &gt;&gt;&gt; mvn = mve.MVNormal([0,0],2.)</span>
+<span class="sd">    &gt;&gt;&gt; mve.expect_mc(mvn, lambda x: (x&lt;np.array([0,0])).all(-1), size=100000)</span>
+<span class="sd">    0.25306000000000001</span>
+
+<span class="sd">    get tail probabilities of marginal distribution (should be 0.1)</span>
+
+<span class="sd">    &gt;&gt;&gt; c = stats.norm.isf(0.05, scale=np.sqrt(2.))</span>
+<span class="sd">    &gt;&gt;&gt; expect_mc(mvn, lambda x: (np.abs(x)&gt;np.array([c, c])), size=100000)</span>
+<span class="sd">    array([ 0.09969,  0.0986 ])</span>
+
+<span class="sd">    or calling the method</span>
+
+<span class="sd">    &gt;&gt;&gt; mvn.expect_mc(lambda x: (np.abs(x)&gt;np.array([c, c])), size=100000)</span>
+<span class="sd">    array([ 0.09937,  0.10075])</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># * dist.pdf(x)</span>
+    <span class="n">rvs</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="n">rvs</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="expect_mc_bounds"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.mv_normal.expect_mc_bounds.html#statsmodels.sandbox.distributions.mv_normal.expect_mc_bounds">[docs]</a><span class="k">def</span> <span class="nf">expect_mc_bounds</span><span class="p">(</span><span class="n">dist</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">50000</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">upper</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">conditional</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">overfact</span><span class="o">=</span><span class="mf">1.2</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;calculate expected value of function by Monte Carlo integration</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dist : distribution instance</span>
+<span class="sd">        needs to have rvs defined as a method for drawing random numbers</span>
+<span class="sd">    func : callable</span>
+<span class="sd">        function for which expectation is calculated, this function needs to</span>
+<span class="sd">        be vectorized, integration is over axis=0</span>
+<span class="sd">    size : int</span>
+<span class="sd">        minimum number of random samples to use in the Monte Carlo integration,</span>
+<span class="sd">        the actual number used can be larger because of oversampling.</span>
+<span class="sd">    lower : None or array_like</span>
+<span class="sd">        lower integration bounds, if None, then it is set to -inf</span>
+<span class="sd">    upper : None or array_like</span>
+<span class="sd">        upper integration bounds, if None, then it is set to +inf</span>
+<span class="sd">    conditional : bool</span>
+<span class="sd">        If true, then the expectation is conditional on being in within</span>
+<span class="sd">        [lower, upper] bounds, otherwise it is unconditional</span>
+<span class="sd">    overfact : float</span>
+<span class="sd">        oversampling factor, the actual number of random variables drawn in</span>
+<span class="sd">        each attempt are overfact * remaining draws. Extra draws are also</span>
+<span class="sd">        used in the integration.</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    this doesn&#39;t batch</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    expected value : ndarray</span>
+<span class="sd">        return of function func integrated over axis=0 by MonteCarlo, this will</span>
+<span class="sd">        have the same shape as the return of func without axis=0</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; mvn = mve.MVNormal([0,0],2.)</span>
+<span class="sd">    &gt;&gt;&gt; mve.expect_mc_bounds(mvn, lambda x: np.ones(x.shape[0]),</span>
+<span class="sd">                                lower=[-10,-10],upper=[0,0])</span>
+<span class="sd">    0.24990416666666668</span>
+
+<span class="sd">    get 3 marginal moments with one integration</span>
+
+<span class="sd">    &gt;&gt;&gt; mvn = mve.MVNormal([0,0],1.)</span>
+<span class="sd">    &gt;&gt;&gt; mve.expect_mc_bounds(mvn, lambda x: np.dstack([x, x**2, x**3, x**4]),</span>
+<span class="sd">        lower=[-np.inf,-np.inf], upper=[np.inf,np.inf])</span>
+<span class="sd">    array([[  2.88629497e-03,   9.96706297e-01,  -2.51005344e-03,</span>
+<span class="sd">              2.95240921e+00],</span>
+<span class="sd">           [ -5.48020088e-03,   9.96004409e-01,  -2.23803072e-02,</span>
+<span class="sd">              2.96289203e+00]])</span>
+<span class="sd">    &gt;&gt;&gt; from scipy import stats</span>
+<span class="sd">    &gt;&gt;&gt; [stats.norm.moment(i) for i in [1,2,3,4]]</span>
+<span class="sd">    [0.0, 1.0, 0.0, 3.0]</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#call rvs once to find length of random vector</span>
+    <span class="n">rvsdim</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">lower</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">rvsdim</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">lower</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">upper</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">rvsdim</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">upper</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="c1"># * dist.pdf(x)</span>
+
+    <span class="n">rvsli</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="n">used</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#remain = size  #inplace changes size</span>
+    <span class="n">total</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="n">remain</span> <span class="o">=</span> <span class="n">size</span> <span class="o">-</span> <span class="n">used</span>  <span class="c1">#just a temp variable</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="n">dist</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">int</span><span class="p">(</span><span class="n">remain</span> <span class="o">*</span> <span class="n">overfact</span><span class="p">))</span>
+        <span class="n">total</span> <span class="o">+=</span> <span class="nb">int</span><span class="p">(</span><span class="n">size</span> <span class="o">*</span> <span class="n">overfact</span><span class="p">)</span>
+
+        <span class="n">rvsok</span> <span class="o">=</span> <span class="n">rvs</span><span class="p">[((</span><span class="n">rvs</span> <span class="o">&gt;=</span> <span class="n">lower</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">rvs</span> <span class="o">&lt;=</span> <span class="n">upper</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="c1">#if rvsok.ndim == 1: #possible shape problems if only 1 random vector</span>
+        <span class="n">rvsok</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">rvsok</span><span class="p">)</span>
+        <span class="n">used</span> <span class="o">+=</span> <span class="n">rvsok</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">rvsli</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">rvsok</span><span class="p">)</span>   <span class="c1">#[:remain]) use extras instead</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">used</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">used</span> <span class="o">&gt;=</span> <span class="n">size</span><span class="p">:</span> <span class="k">break</span>
+    <span class="n">rvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">(</span><span class="n">rvsli</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">rvs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">used</span> <span class="o">==</span> <span class="n">rvs</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#saftey check</span>
+    <span class="n">mean_conditional</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="n">rvs</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">conditional</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mean_conditional</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mean_conditional</span> <span class="o">*</span> <span class="p">(</span><span class="n">used</span> <span class="o">*</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">total</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="bivariate_normal"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.mv_normal.bivariate_normal.html#statsmodels.sandbox.distributions.mv_normal.bivariate_normal">[docs]</a><span class="k">def</span> <span class="nf">bivariate_normal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">cov</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Bivariate Gaussian distribution for equal shape *X*, *Y*.</span>
+
+<span class="sd">    See `bivariate normal</span>
+<span class="sd">    &lt;http://mathworld.wolfram.com/BivariateNormalDistribution.html&gt;`_</span>
+<span class="sd">    at mathworld.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span><span class="p">,</span> <span class="n">Y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">mux</span><span class="p">,</span> <span class="n">muy</span> <span class="o">=</span> <span class="n">mu</span>
+    <span class="n">sigmax</span><span class="p">,</span> <span class="n">sigmaxy</span><span class="p">,</span> <span class="n">tmp</span><span class="p">,</span> <span class="n">sigmay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+    <span class="n">sigmax</span><span class="p">,</span> <span class="n">sigmay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigmax</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigmay</span><span class="p">)</span>
+    <span class="n">Xmu</span> <span class="o">=</span> <span class="n">X</span><span class="o">-</span><span class="n">mux</span>
+    <span class="n">Ymu</span> <span class="o">=</span> <span class="n">Y</span><span class="o">-</span><span class="n">muy</span>
+
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">sigmaxy</span><span class="o">/</span><span class="p">(</span><span class="n">sigmax</span><span class="o">*</span><span class="n">sigmay</span><span class="p">)</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">Xmu</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">sigmax</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">Ymu</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">sigmay</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="mi">2</span><span class="o">*</span><span class="n">rho</span><span class="o">*</span><span class="n">Xmu</span><span class="o">*</span><span class="n">Ymu</span><span class="o">/</span><span class="p">(</span><span class="n">sigmax</span><span class="o">*</span><span class="n">sigmay</span><span class="p">)</span>
+    <span class="n">denom</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">*</span><span class="n">sigmax</span><span class="o">*</span><span class="n">sigmay</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span> <span class="o">-</span><span class="n">z</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span><span class="p">)))</span> <span class="o">/</span> <span class="n">denom</span></div>
+
+
+
+<div class="viewcode-block" id="BivariateNormal"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal.html#statsmodels.sandbox.distributions.mv_normal.BivariateNormal">[docs]</a><span class="k">class</span> <span class="nc">BivariateNormal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+
+    <span class="c1">#TODO: make integration limits more flexible</span>
+    <span class="c1">#      or normalize before integration</span>
+
+<div class="viewcode-block" id="BivariateNormal.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal.__init__.html#statsmodels.sandbox.distributions.mv_normal.BivariateNormal.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cov</span> <span class="o">=</span> <span class="n">cov</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigmax</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigmaxy</span><span class="p">,</span> <span class="n">tmp</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigmay</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+<div class="viewcode-block" id="BivariateNormal.rvs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal.rvs.html#statsmodels.sandbox.distributions.mv_normal.BivariateNormal.rvs">[docs]</a>    <span class="k">def</span> <span class="nf">rvs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BivariateNormal.pdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal.pdf.html#statsmodels.sandbox.distributions.mv_normal.BivariateNormal.pdf">[docs]</a>    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">bivariate_normal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BivariateNormal.logpdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal.logpdf.html#statsmodels.sandbox.distributions.mv_normal.BivariateNormal.logpdf">[docs]</a>    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1">#TODO: replace this</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="BivariateNormal.cdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal.cdf.html#statsmodels.sandbox.distributions.mv_normal.BivariateNormal.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">upper</span><span class="o">=</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BivariateNormal.expect"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal.expect.html#statsmodels.sandbox.distributions.mv_normal.BivariateNormal.expect">[docs]</a>    <span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="n">upper</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)):</span>
+        <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+            <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">dblquad</span>
+        <span class="k">return</span> <span class="n">dblquad</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">lower</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">lower</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                       <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">upper</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="BivariateNormal.kl"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal.kl.html#statsmodels.sandbox.distributions.mv_normal.BivariateNormal.kl">[docs]</a>    <span class="k">def</span> <span class="nf">kl</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Kullback-Leibler divergence between this and another distribution</span>
+
+<span class="sd">        int f(x) (log f(x) - log g(x)) dx</span>
+
+<span class="sd">        where f is the pdf of self, and g is the pdf of other</span>
+
+<span class="sd">        uses double integration with scipy.integrate.dblquad</span>
+
+<span class="sd">        limits currently hardcoded</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">fun</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="BivariateNormal.kl_mc"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal.kl_mc.html#statsmodels.sandbox.distributions.mv_normal.BivariateNormal.kl_mc">[docs]</a>    <span class="k">def</span> <span class="nf">kl_mc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">500000</span><span class="p">):</span>
+        <span class="n">fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">-</span> <span class="n">other</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">fun</span><span class="p">(</span><span class="n">rvs</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="MVElliptical"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical">[docs]</a><span class="k">class</span> <span class="nc">MVElliptical</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Base Class for multivariate elliptical distributions, normal and t</span>
+
+<span class="sd">    contains common initialization, and some common methods</span>
+<span class="sd">    subclass needs to implement at least rvs and logpdf methods</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#getting common things between normal and t distribution</span>
+
+
+<div class="viewcode-block" id="MVElliptical.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.__init__.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;initialize instance</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mean : array_like</span>
+<span class="sd">            parameter mu (might be renamed), for symmetric distributions this</span>
+<span class="sd">            is the mean</span>
+<span class="sd">        sigma : array_like, 2d</span>
+<span class="sd">            dispersion matrix, covariance matrix in normal distribution, but</span>
+<span class="sd">            only proportional to covariance matrix in t distribution</span>
+<span class="sd">        args : list</span>
+<span class="sd">            distribution specific arguments, e.g. df for t distribution</span>
+<span class="sd">        kwds : dict</span>
+<span class="sd">            currently not used</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_args</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span> <span class="o">=</span> <span class="n">nvars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+        <span class="c1">#self.covchol = np.linalg.cholesky(sigma)</span>
+
+
+        <span class="c1">#in the following sigma is original, self.sigma is full matrix</span>
+        <span class="k">if</span> <span class="n">sigma</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="c1">#iid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigmainv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">sigma</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span> <span class="o">==</span> <span class="n">nvars</span><span class="p">):</span>
+            <span class="c1">#independent heteroscedastic</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigmainv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">sigma</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">sigma</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">nvars</span><span class="p">,</span> <span class="n">nvars</span><span class="p">):</span> <span class="c1">#python tuple comparison</span>
+            <span class="c1">#general</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">sigmainv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigmainv</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;sigma has invalid shape&#39;</span><span class="p">)</span>
+
+        <span class="c1">#store logdetsigma for logpdf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logdetsigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="MVElliptical.rvs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.rvs.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.rvs">[docs]</a>    <span class="k">def</span> <span class="nf">rvs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;random variable</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : int or tuple</span>
+<span class="sd">            the number and shape of random variables to draw.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rvs : ndarray</span>
+<span class="sd">            the returned random variables with shape given by size and the</span>
+<span class="sd">            dimension of the multivariate random vector as additional last</span>
+<span class="sd">            dimension</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="MVElliptical.logpdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.logpdf.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.logpdf">[docs]</a>    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;logarithm of probability density function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            can be 1d or 2d, if 2d, then each row is taken as independent</span>
+<span class="sd">            multivariate random vector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        logpdf : float or array</span>
+<span class="sd">            probability density value of each random vector</span>
+
+
+<span class="sd">        this should be made to work with 2d x,</span>
+<span class="sd">        with multivariate normal vector in each row and iid across rows</span>
+<span class="sd">        doesn&#39;t work now because of dot in whiten</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="MVElliptical.cdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.cdf.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;cumulative distribution function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            can be 1d or 2d, if 2d, then each row is taken as independent</span>
+<span class="sd">            multivariate random vector</span>
+<span class="sd">        kwds : dict</span>
+<span class="sd">            contains options for the numerical calculation of the cdf</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cdf : float or array</span>
+<span class="sd">            probability density value of each random vector</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+
+<div class="viewcode-block" id="MVElliptical.affine_transformed"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.affine_transformed.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.affine_transformed">[docs]</a>    <span class="k">def</span> <span class="nf">affine_transformed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">scale_matrix</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;affine transformation define in subclass because of distribution</span>
+<span class="sd">        specific restrictions&#39;&#39;&#39;</span>
+        <span class="c1">#implemented in subclass at least for now</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="MVElliptical.whiten"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.whiten.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.whiten">[docs]</a>    <span class="k">def</span> <span class="nf">whiten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        whiten the data by linear transformation</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        x : array-like, 1d or 2d</span>
+<span class="sd">            Data to be whitened, if 2d then each row contains an independent</span>
+<span class="sd">            sample of the multivariate random vector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.dot(x, self.cholsigmainv.T)</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This only does rescaling, it doesn&#39;t subtract the mean, use standardize</span>
+<span class="sd">        for this instead</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        standardize : subtract mean and rescale to standardized random variable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MVElliptical.pdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.pdf.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.pdf">[docs]</a>    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;probability density function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            can be 1d or 2d, if 2d, then each row is taken as independent</span>
+<span class="sd">            multivariate random vector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pdf : float or array</span>
+<span class="sd">            probability density value of each random vector</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="MVElliptical.standardize"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.standardize.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.standardize">[docs]</a>    <span class="k">def</span> <span class="nf">standardize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;standardize the random variable, i.e. subtract mean and whiten</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        x : array-like, 1d or 2d</span>
+<span class="sd">            Data to be whitened, if 2d then each row contains an independent</span>
+<span class="sd">            sample of the multivariate random vector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.dot(x - self.mean, self.cholsigmainv.T)</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        whiten : rescale random variable, standardize without subtracting mean.</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">whiten</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MVElliptical.standardized"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.standardized.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.standardized">[docs]</a>    <span class="k">def</span> <span class="nf">standardized</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return new standardized MVNormal instance</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">affine_transformed</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MVElliptical.normalize"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.normalize.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.normalize">[docs]</a>    <span class="k">def</span> <span class="nf">normalize</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;normalize the random variable, i.e. subtract mean and rescale</span>
+
+<span class="sd">        The distribution will have zero mean and sigma equal to correlation</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        x : array-like, 1d or 2d</span>
+<span class="sd">            Data to be whitened, if 2d then each row contains an independent</span>
+<span class="sd">            sample of the multivariate random vector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        (x - self.mean)/std_sigma</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        whiten : rescale random variable, standardize without subtracting mean.</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">std_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">std_sigma</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span><span class="o">/</span><span class="n">std_</span> <span class="c1">#/std_.T</span></div>
+
+<div class="viewcode-block" id="MVElliptical.normalized"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.normalized.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.normalized">[docs]</a>    <span class="k">def</span> <span class="nf">normalized</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">demeaned</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return a normalized distribution where sigma=corr</span>
+
+<span class="sd">        if demeaned is True, then mean will be set to zero</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">demeaned</span><span class="p">:</span>
+            <span class="n">mean_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mean_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_sigma</span>
+        <span class="n">sigma_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">corr</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ea</span><span class="p">)</span> <span class="k">for</span> <span class="n">ea</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_args</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">mean_new</span><span class="p">,</span> <span class="n">sigma_new</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MVElliptical.normalized2"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.normalized2.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.normalized2">[docs]</a>    <span class="k">def</span> <span class="nf">normalized2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">demeaned</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return a normalized distribution where sigma=corr</span>
+
+
+
+<span class="sd">        second implementation for testing affine transformation</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">demeaned</span><span class="p">:</span>
+            <span class="n">shift</span> <span class="o">=</span> <span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">shift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_sigma</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">affine_transformed</span><span class="p">(</span><span class="n">shift</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_sigma</span><span class="p">))</span></div>
+        <span class="c1">#the following &quot;standardizes&quot; cov instead</span>
+        <span class="c1">#return self.affine_transformed(shift, self.cholsigmainv)</span>
+
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;standard deviation, square root of diagonal elements of cov</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">))</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">std_sigma</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;standard deviation, square root of diagonal elements of sigma</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">))</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">corr</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;correlation matrix&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">std</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">std</span><span class="p">)</span>
+
+    <span class="n">expect_mc</span> <span class="o">=</span> <span class="n">expect_mc</span>
+
+<div class="viewcode-block" id="MVElliptical.marginal"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.marginal.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical.marginal">[docs]</a>    <span class="k">def</span> <span class="nf">marginal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return marginal distribution for variables given by indices</span>
+
+<span class="sd">        this should be correct for normal and t distribution</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices : array_like, int</span>
+<span class="sd">            list of indices of variables in the marginal distribution</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mvdist : instance</span>
+<span class="sd">            new instance of the same multivariate distribution class that</span>
+<span class="sd">            contains the marginal distribution of the variables given in</span>
+<span class="sd">            indices</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">indices</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="n">mean_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">[</span><span class="n">indices</span><span class="p">]</span>
+        <span class="n">sigma_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">[</span><span class="n">indices</span><span class="p">[:,</span><span class="kc">None</span><span class="p">],</span> <span class="n">indices</span><span class="p">]</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="p">[</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ea</span><span class="p">)</span> <span class="k">for</span> <span class="n">ea</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">extra_args</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="n">mean_new</span><span class="p">,</span> <span class="n">sigma_new</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span></div></div>
+
+
+<span class="c1">#parts taken from linear_model, but heavy adjustments</span>
+<div class="viewcode-block" id="MVNormal0"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal0.html#statsmodels.sandbox.distributions.mv_normal.MVNormal0">[docs]</a><span class="k">class</span> <span class="nc">MVNormal0</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Class for Multivariate Normal Distribution</span>
+
+<span class="sd">    original full version, kept for testing, new version inherits from</span>
+<span class="sd">    MVElliptical</span>
+
+<span class="sd">    uses Cholesky decomposition of covariance matrix for the transformation</span>
+<span class="sd">    of the data</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="MVNormal0.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal0.__init__.html#statsmodels.sandbox.distributions.mv_normal.MVNormal0.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">cov</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cov</span> <span class="o">=</span> <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+        <span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span> <span class="o">=</span> <span class="n">nvars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">mean</span><span class="p">)</span>
+
+
+        <span class="c1">#in the following cov is original, self.cov is full matrix</span>
+        <span class="k">if</span> <span class="n">cov</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">():</span>
+            <span class="c1">#iid</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span> <span class="o">*</span> <span class="n">cov</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">covinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span> <span class="o">/</span> <span class="n">cov</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cholcovinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="p">(</span><span class="n">cov</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span> <span class="o">==</span> <span class="n">nvars</span><span class="p">):</span>
+            <span class="c1">#independent heteroscedastic</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">covinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">cov</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cholcovinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cov</span><span class="p">))</span>
+        <span class="k">elif</span> <span class="n">cov</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="n">nvars</span><span class="p">,</span> <span class="n">nvars</span><span class="p">):</span> <span class="c1">#python tuple comparison</span>
+            <span class="c1">#general</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">covinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">cov</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cholcovinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">covinv</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cov has invalid shape&#39;</span><span class="p">)</span>
+
+        <span class="c1">#store logdetcov for logpdf</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logdetcov</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="MVNormal0.whiten"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal0.whiten.html#statsmodels.sandbox.distributions.mv_normal.MVNormal0.whiten">[docs]</a>    <span class="k">def</span> <span class="nf">whiten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        whiten the data by linear transformation</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        X : array-like, 1d or 2d</span>
+<span class="sd">            Data to be whitened, if 2d then each row contains an independent</span>
+<span class="sd">            sample of the multivariate random vector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        np.dot(x, self.cholcovinv.T)</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This only does rescaling, it doesn&#39;t subtract the mean, use standardize</span>
+<span class="sd">        for this instead</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        standardize : subtract mean and rescale to standardized random variable.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">):</span>
+            <span class="c1">#return np.dot(self.cholcovinv, x)</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cholcovinv</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="MVNormal0.rvs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal0.rvs.html#statsmodels.sandbox.distributions.mv_normal.MVNormal0.rvs">[docs]</a>    <span class="k">def</span> <span class="nf">rvs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;random variable</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : int or tuple</span>
+<span class="sd">            the number and shape of random variables to draw.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rvs : ndarray</span>
+<span class="sd">            the returned random variables with shape given by size and the</span>
+<span class="sd">            dimension of the multivariate random vector as additional last</span>
+<span class="sd">            dimension</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        uses numpy.random.multivariate_normal directly</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MVNormal0.pdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal0.pdf.html#statsmodels.sandbox.distributions.mv_normal.MVNormal0.pdf">[docs]</a>    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;probability density function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            can be 1d or 2d, if 2d, then each row is taken as independent</span>
+<span class="sd">            multivariate random vector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        pdf : float or array</span>
+<span class="sd">            probability density value of each random vector</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="MVNormal0.logpdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal0.logpdf.html#statsmodels.sandbox.distributions.mv_normal.MVNormal0.logpdf">[docs]</a>    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;logarithm of probability density function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            can be 1d or 2d, if 2d, then each row is taken as independent</span>
+<span class="sd">            multivariate random vector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        logpdf : float or array</span>
+<span class="sd">            probability density value of each random vector</span>
+
+
+<span class="sd">        this should be made to work with 2d x,</span>
+<span class="sd">        with multivariate normal vector in each row and iid across rows</span>
+<span class="sd">        doesn&#39;t work now because of dot in whiten</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x_whitened</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">whiten</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
+        <span class="n">SSR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_whitened</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">llf</span> <span class="o">=</span> <span class="o">-</span><span class="n">SSR</span>
+        <span class="n">llf</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="n">llf</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logdetcov</span>
+        <span class="n">llf</span> <span class="o">*=</span> <span class="mf">0.5</span>
+        <span class="k">return</span> <span class="n">llf</span></div>
+
+    <span class="n">expect_mc</span> <span class="o">=</span> <span class="n">expect_mc</span></div>
+
+
+<div class="viewcode-block" id="MVNormal"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal.html#statsmodels.sandbox.distributions.mv_normal.MVNormal">[docs]</a><span class="k">class</span> <span class="nc">MVNormal</span><span class="p">(</span><span class="n">MVElliptical</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Class for Multivariate Normal Distribution</span>
+
+<span class="sd">    uses Cholesky decomposition of covariance matrix for the transformation</span>
+<span class="sd">    of the data</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;Multivariate Normal Distribution&#39;</span>
+
+
+<div class="viewcode-block" id="MVNormal.rvs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal.rvs.html#statsmodels.sandbox.distributions.mv_normal.MVNormal.rvs">[docs]</a>    <span class="k">def</span> <span class="nf">rvs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;random variable</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : int or tuple</span>
+<span class="sd">            the number and shape of random variables to draw.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rvs : ndarray</span>
+<span class="sd">            the returned random variables with shape given by size and the</span>
+<span class="sd">            dimension of the multivariate random vector as additional last</span>
+<span class="sd">            dimension</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        uses numpy.random.multivariate_normal directly</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MVNormal.logpdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal.logpdf.html#statsmodels.sandbox.distributions.mv_normal.MVNormal.logpdf">[docs]</a>    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;logarithm of probability density function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            can be 1d or 2d, if 2d, then each row is taken as independent</span>
+<span class="sd">            multivariate random vector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        logpdf : float or array</span>
+<span class="sd">            probability density value of each random vector</span>
+
+
+<span class="sd">        this should be made to work with 2d x,</span>
+<span class="sd">        with multivariate normal vector in each row and iid across rows</span>
+<span class="sd">        doesn&#39;t work now because of dot in whiten</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">x_whitened</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">whiten</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span>
+        <span class="n">SSR</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_whitened</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">llf</span> <span class="o">=</span> <span class="o">-</span><span class="n">SSR</span>
+        <span class="n">llf</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="n">llf</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logdetsigma</span>
+        <span class="n">llf</span> <span class="o">*=</span> <span class="mf">0.5</span>
+        <span class="k">return</span> <span class="n">llf</span></div>
+
+<div class="viewcode-block" id="MVNormal.cdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal.cdf.html#statsmodels.sandbox.distributions.mv_normal.MVNormal.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;cumulative distribution function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            can be 1d or 2d, if 2d, then each row is taken as independent</span>
+<span class="sd">            multivariate random vector</span>
+<span class="sd">        kwds : dict</span>
+<span class="sd">            contains options for the numerical calculation of the cdf</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cdf : float or array</span>
+<span class="sd">            probability density value of each random vector</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#lower = -np.inf * np.ones_like(x)</span>
+        <span class="c1">#return mvstdnormcdf(lower, self.standardize(x), self.corr, **kwds)</span>
+        <span class="k">return</span> <span class="n">mvnormcdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;covariance matrix&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+
+<div class="viewcode-block" id="MVNormal.affine_transformed"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal.affine_transformed.html#statsmodels.sandbox.distributions.mv_normal.MVNormal.affine_transformed">[docs]</a>    <span class="k">def</span> <span class="nf">affine_transformed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">scale_matrix</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return distribution of an affine transform</span>
+
+<span class="sd">        for full rank scale_matrix only</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shift : array_like</span>
+<span class="sd">            shift of mean</span>
+<span class="sd">        scale_matrix : array_like</span>
+<span class="sd">            linear transformation matrix</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mvt : instance of MVT</span>
+<span class="sd">            instance of multivariate t distribution given by affine</span>
+<span class="sd">            transformation</span>
+
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        the affine transformation is defined by</span>
+<span class="sd">        y = a + B x</span>
+
+<span class="sd">        where a is shift,</span>
+<span class="sd">        B is a scale matrix for the linear transformation</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This should also work to select marginal distributions, but not</span>
+<span class="sd">        tested for this case yet.</span>
+
+<span class="sd">        currently only tested because it&#39;s called by standardized</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">scale_matrix</span>  <span class="c1">#tmp variable</span>
+        <span class="n">mean_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">+</span> <span class="n">shift</span>
+        <span class="n">sigma_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">),</span> <span class="n">B</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MVNormal</span><span class="p">(</span><span class="n">mean_new</span><span class="p">,</span> <span class="n">sigma_new</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MVNormal.conditional"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVNormal.conditional.html#statsmodels.sandbox.distributions.mv_normal.MVNormal.conditional">[docs]</a>    <span class="k">def</span> <span class="nf">conditional</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">indices</span><span class="p">,</span> <span class="n">values</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return conditional distribution</span>
+
+<span class="sd">        indices are the variables to keep, the complement is the conditioning</span>
+<span class="sd">        set</span>
+<span class="sd">        values are the values of the conditioning variables</span>
+
+<span class="sd">        \bar{\mu} = \mu_1 + \Sigma_{12} \Sigma_{22}^{-1} \left( a - \mu_2 \right)</span>
+
+<span class="sd">        and covariance matrix</span>
+
+<span class="sd">        \overline{\Sigma} = \Sigma_{11} - \Sigma_{12} \Sigma_{22}^{-1} \Sigma_{21}.T</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        indices : array_like, int</span>
+<span class="sd">            list of indices of variables in the marginal distribution</span>
+<span class="sd">        given : array_like</span>
+<span class="sd">            values of the conditioning variables</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mvn : instance of MVNormal</span>
+<span class="sd">            new instance of the MVNormal class that contains the conditional</span>
+<span class="sd">            distribution of the variables given in indices for given</span>
+<span class="sd">             values of the excluded variables.</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#indices need to be nd arrays for broadcasting</span>
+        <span class="n">keep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">indices</span><span class="p">)</span>
+        <span class="n">given</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvars</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">keep</span><span class="p">])</span>
+        <span class="n">sigmakk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">[</span><span class="n">keep</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">keep</span><span class="p">]</span>
+        <span class="n">sigmagg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">[</span><span class="n">given</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">given</span><span class="p">]</span>
+        <span class="n">sigmakg</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">[</span><span class="n">keep</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">given</span><span class="p">]</span>
+        <span class="n">sigmagk</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">[</span><span class="n">given</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">],</span> <span class="n">keep</span><span class="p">]</span>
+
+
+        <span class="n">sigma_new</span> <span class="o">=</span> <span class="n">sigmakk</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sigmakg</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">sigmagg</span><span class="p">,</span> <span class="n">sigmagk</span><span class="p">))</span>
+        <span class="n">mean_new</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">[</span><span class="n">keep</span><span class="p">]</span> <span class="o">+</span>  \
+            <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sigmakg</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">sigmagg</span><span class="p">,</span> <span class="n">values</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">[</span><span class="n">given</span><span class="p">]))</span>
+
+<span class="c1">#        #or</span>
+<span class="c1">#        sig = np.linalg.solve(sigmagg, sigmagk).T</span>
+<span class="c1">#        mean_new = self.mean[keep] + np.dot(sigmakg, values-self.mean[given])</span>
+<span class="c1">#        sigma_new = sigmakk - np.dot(sigmakg, sig)</span>
+        <span class="k">return</span> <span class="n">MVNormal</span><span class="p">(</span><span class="n">mean_new</span><span class="p">,</span> <span class="n">sigma_new</span><span class="p">)</span></div></div>
+
+
+
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">special</span>
+<span class="c1">#redefine some shortcuts</span>
+<span class="n">np_log</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span>
+<span class="n">np_pi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+<span class="n">sps_gamln</span> <span class="o">=</span> <span class="n">special</span><span class="o">.</span><span class="n">gammaln</span>
+
+<div class="viewcode-block" id="MVT"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVT.html#statsmodels.sandbox.distributions.mv_normal.MVT">[docs]</a><span class="k">class</span> <span class="nc">MVT</span><span class="p">(</span><span class="n">MVElliptical</span><span class="p">):</span>
+
+    <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;Multivariate Student T Distribution&#39;</span>
+
+<div class="viewcode-block" id="MVT.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVT.__init__.html#statsmodels.sandbox.distributions.mv_normal.MVT.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;initialize instance</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mean : array_like</span>
+<span class="sd">            parameter mu (might be renamed), for symmetric distributions this</span>
+<span class="sd">            is the mean</span>
+<span class="sd">        sigma : array_like, 2d</span>
+<span class="sd">            dispersion matrix, covariance matrix in normal distribution, but</span>
+<span class="sd">            only proportional to covariance matrix in t distribution</span>
+<span class="sd">        args : list</span>
+<span class="sd">            distribution specific arguments, e.g. df for t distribution</span>
+<span class="sd">        kwds : dict</span>
+<span class="sd">            currently not used</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">MVT</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">extra_args</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;df&#39;</span><span class="p">]</span>  <span class="c1">#overwrites extra_args of super</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span></div>
+
+<div class="viewcode-block" id="MVT.rvs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVT.rvs.html#statsmodels.sandbox.distributions.mv_normal.MVT.rvs">[docs]</a>    <span class="k">def</span> <span class="nf">rvs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;random variables with Student T distribution</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        size : int or tuple</span>
+<span class="sd">            the number and shape of random variables to draw.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        rvs : ndarray</span>
+<span class="sd">            the returned random variables with shape given by size and the</span>
+<span class="sd">            dimension of the multivariate random vector as additional last</span>
+<span class="sd">            dimension</span>
+<span class="sd">            - TODO: Not sure if this works for size tuples with len&gt;1.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        generated as a chi-square mixture of multivariate normal random</span>
+<span class="sd">        variables.</span>
+<span class="sd">        does this require df&gt;2 ?</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">.multivariate</span> <span class="k">import</span> <span class="n">multivariate_t_rvs</span>
+        <span class="k">return</span> <span class="n">multivariate_t_rvs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="MVT.logpdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVT.logpdf.html#statsmodels.sandbox.distributions.mv_normal.MVT.logpdf">[docs]</a>    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;logarithm of probability density function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            can be 1d or 2d, if 2d, then each row is taken as independent</span>
+<span class="sd">            multivariate random vector</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        logpdf : float or array</span>
+<span class="sd">            probability density value of each random vector</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">df</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span>
+        <span class="n">nvars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span>
+
+        <span class="n">x_whitened</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">whiten</span><span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="c1">#should be float</span>
+
+        <span class="n">llf</span> <span class="o">=</span> <span class="o">-</span> <span class="n">nvars</span> <span class="o">*</span> <span class="n">np_log</span><span class="p">(</span><span class="n">df</span> <span class="o">*</span> <span class="n">np_pi</span><span class="p">)</span>
+        <span class="n">llf</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">logdetsigma</span>
+        <span class="n">llf</span> <span class="o">-=</span> <span class="p">(</span><span class="n">df</span> <span class="o">+</span> <span class="n">nvars</span><span class="p">)</span> <span class="o">*</span> <span class="n">np_log</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">x_whitened</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="n">df</span><span class="p">)</span>
+        <span class="n">llf</span> <span class="o">*=</span> <span class="mf">0.5</span>
+        <span class="n">llf</span> <span class="o">+=</span> <span class="n">sps_gamln</span><span class="p">((</span><span class="n">df</span> <span class="o">+</span> <span class="n">nvars</span><span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">-</span> <span class="n">sps_gamln</span><span class="p">(</span><span class="n">df</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">llf</span></div>
+
+<div class="viewcode-block" id="MVT.cdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVT.cdf.html#statsmodels.sandbox.distributions.mv_normal.MVT.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;cumulative distribution function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            can be 1d or 2d, if 2d, then each row is taken as independent</span>
+<span class="sd">            multivariate random vector</span>
+<span class="sd">        kwds : dict</span>
+<span class="sd">            contains options for the numerical calculation of the cdf</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        cdf : float or array</span>
+<span class="sd">            probability density value of each random vector</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">lower</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1">#std_sigma = np.sqrt(np.diag(self.sigma))</span>
+        <span class="n">upper</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">std_sigma</span>
+        <span class="k">return</span> <span class="n">mvstdtprob</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">corr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
+        <span class="c1">#mvstdtcdf doesn&#39;t exist yet</span>
+        <span class="c1">#return mvstdtcdf(lower, x, self.corr, df, **kwds)</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;covariance matrix</span>
+
+<span class="sd">        The covariance matrix for the t distribution does not exist for df&lt;=2,</span>
+<span class="sd">        and is equal to sigma * df/(df-2) for df&gt;2</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">&lt;=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">df</span> <span class="o">-</span> <span class="mf">2.</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+
+<div class="viewcode-block" id="MVT.affine_transformed"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.mv_normal.MVT.affine_transformed.html#statsmodels.sandbox.distributions.mv_normal.MVT.affine_transformed">[docs]</a>    <span class="k">def</span> <span class="nf">affine_transformed</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shift</span><span class="p">,</span> <span class="n">scale_matrix</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return distribution of a full rank affine transform</span>
+
+<span class="sd">        for full rank scale_matrix only</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        shift : array_like</span>
+<span class="sd">            shift of mean</span>
+<span class="sd">        scale_matrix : array_like</span>
+<span class="sd">            linear transformation matrix</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mvt : instance of MVT</span>
+<span class="sd">            instance of multivariate t distribution given by affine</span>
+<span class="sd">            transformation</span>
+
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+
+<span class="sd">        This checks for eigvals&lt;=0, so there are possible problems for cases</span>
+<span class="sd">        with positive eigenvalues close to zero.</span>
+
+<span class="sd">        see: http://www.statlect.com/mcdstu1.htm</span>
+
+<span class="sd">        I&#39;m not sure about general case, non-full rank transformation are not</span>
+<span class="sd">        multivariate t distributed.</span>
+
+<span class="sd">        y = a + B x</span>
+
+<span class="sd">        where a is shift,</span>
+<span class="sd">        B is full rank scale matrix with same dimension as sigma</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#full rank method could also be in elliptical and called with super</span>
+        <span class="c1">#after the rank check</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">scale_matrix</span>  <span class="c1">#tmp variable as shorthand</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">B</span><span class="o">.</span><span class="n">shape</span> <span class="o">==</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nvars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span><span class="p">):</span>
+            <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">B</span><span class="p">)</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;affine transform has to be full rank&#39;</span><span class="p">)</span>
+
+        <span class="n">mean_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span><span class="p">)</span> <span class="o">+</span> <span class="n">shift</span>
+        <span class="n">sigma_new</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">B</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">),</span> <span class="n">B</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">MVT</span><span class="p">(</span><span class="n">mean_new</span><span class="p">,</span> <span class="n">sigma_new</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">df</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="quad2d"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.mv_normal.quad2d.html#statsmodels.sandbox.distributions.mv_normal.quad2d">[docs]</a><span class="k">def</span> <span class="nf">quad2d</span><span class="p">(</span><span class="n">func</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span><span class="o">-</span><span class="mi">10</span><span class="p">),</span> <span class="n">upper</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="p">)):</span>
+    <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">scipy.integrate</span> <span class="k">import</span> <span class="n">dblquad</span>
+    <span class="k">return</span> <span class="n">dblquad</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">lower</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">lower</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                   <span class="k">lambda</span> <span class="n">y</span><span class="p">:</span> <span class="n">upper</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_almost_equal</span><span class="p">,</span> <span class="n">assert_array_almost_equal</span>
+
+    <span class="n">examples</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;mvn&#39;</span><span class="p">]</span>
+
+    <span class="n">mu</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">covx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]])</span>
+    <span class="n">mu3</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]</span>
+    <span class="n">cov3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">1.</span>  <span class="p">,</span>  <span class="mf">0.5</span> <span class="p">,</span>  <span class="mf">0.75</span><span class="p">],</span>
+                     <span class="p">[</span> <span class="mf">0.5</span> <span class="p">,</span>  <span class="mf">1.5</span> <span class="p">,</span>  <span class="mf">0.6</span> <span class="p">],</span>
+                     <span class="p">[</span> <span class="mf">0.75</span><span class="p">,</span>  <span class="mf">0.6</span> <span class="p">,</span>  <span class="mf">2.</span>  <span class="p">]])</span>
+
+
+    <span class="k">if</span> <span class="s1">&#39;mvn&#39;</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+        <span class="n">bvn</span> <span class="o">=</span> <span class="n">BivariateNormal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">covx</span><span class="p">)</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="n">bvn</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">rvs</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">bvn</span><span class="o">.</span><span class="n">expect</span><span class="p">())</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">bvn</span><span class="o">.</span><span class="n">cdf</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">bvn1</span> <span class="o">=</span> <span class="n">BivariateNormal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">bvn2</span> <span class="o">=</span> <span class="n">BivariateNormal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="mi">4</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">bvn1</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">bvn</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">bvn1</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">fun</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">bvn1</span><span class="o">.</span><span class="n">kl</span><span class="p">(</span><span class="n">bvn2</span><span class="p">),</span> <span class="n">bvn1</span><span class="o">.</span><span class="n">kl_mc</span><span class="p">(</span><span class="n">bvn2</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">bvn2</span><span class="o">.</span><span class="n">kl</span><span class="p">(</span><span class="n">bvn1</span><span class="p">),</span> <span class="n">bvn2</span><span class="o">.</span><span class="n">kl_mc</span><span class="p">(</span><span class="n">bvn1</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">bvn1</span><span class="o">.</span><span class="n">kl</span><span class="p">(</span><span class="n">bvn</span><span class="p">),</span> <span class="n">bvn1</span><span class="o">.</span><span class="n">kl_mc</span><span class="p">(</span><span class="n">bvn</span><span class="p">))</span>
+        <span class="n">mvn</span> <span class="o">=</span> <span class="n">MVNormal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">covx</span><span class="p">)</span>
+        <span class="n">mvn</span><span class="o">.</span><span class="n">pdf</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">mvn</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)))</span>
+        <span class="c1">#np.dot(mvn.cholcovinv.T, mvn.cholcovinv) - mvn.covinv</span>
+
+        <span class="n">cov3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">1.</span>  <span class="p">,</span>  <span class="mf">0.5</span> <span class="p">,</span>  <span class="mf">0.75</span><span class="p">],</span>
+                         <span class="p">[</span> <span class="mf">0.5</span> <span class="p">,</span>  <span class="mf">1.5</span> <span class="p">,</span>  <span class="mf">0.6</span> <span class="p">],</span>
+                         <span class="p">[</span> <span class="mf">0.75</span><span class="p">,</span>  <span class="mf">0.6</span> <span class="p">,</span>  <span class="mf">2.</span>  <span class="p">]])</span>
+        <span class="n">mu3</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">]</span>
+        <span class="n">mvn3</span> <span class="o">=</span> <span class="n">MVNormal</span><span class="p">(</span><span class="n">mu3</span><span class="p">,</span> <span class="n">cov3</span><span class="p">)</span>
+        <span class="n">mvn3</span><span class="o">.</span><span class="n">pdf</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">))</span>
+        <span class="n">mvn3</span><span class="o">.</span><span class="n">logpdf</span><span class="p">((</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">,</span> <span class="mf">3.</span><span class="p">))</span>
+        <span class="c1">#comparisons with R mvtnorm::dmvnorm</span>
+        <span class="c1">#decimal=14</span>
+<span class="c1">#        mvn3.logpdf(cov3) - [-7.667977543898155, -6.917977543898155, -5.167977543898155]</span>
+<span class="c1">#        #decimal 18</span>
+<span class="c1">#        mvn3.pdf(cov3) - [0.000467562492721686, 0.000989829804859273, 0.005696077243833402]</span>
+<span class="c1">#        #cheating new mean, same cov</span>
+<span class="c1">#        mvn3.mean = np.array([0,0,0])</span>
+<span class="c1">#        #decimal= 16</span>
+<span class="c1">#        mvn3.pdf(cov3) - [0.02914269740502042, 0.02269635555984291, 0.01767593948287269]</span>
+
+        <span class="c1">#as asserts</span>
+        <span class="n">r_val</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">7.667977543898155</span><span class="p">,</span> <span class="o">-</span><span class="mf">6.917977543898155</span><span class="p">,</span> <span class="o">-</span><span class="mf">5.167977543898155</span><span class="p">]</span>
+        <span class="n">assert_array_almost_equal</span><span class="p">(</span> <span class="n">mvn3</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">cov3</span><span class="p">),</span> <span class="n">r_val</span><span class="p">,</span> <span class="n">decimal</span> <span class="o">=</span> <span class="mi">14</span><span class="p">)</span>
+        <span class="c1">#decimal 18</span>
+        <span class="n">r_val</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.000467562492721686</span><span class="p">,</span> <span class="mf">0.000989829804859273</span><span class="p">,</span> <span class="mf">0.005696077243833402</span><span class="p">]</span>
+        <span class="n">assert_array_almost_equal</span><span class="p">(</span> <span class="n">mvn3</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">cov3</span><span class="p">),</span> <span class="n">r_val</span><span class="p">,</span> <span class="n">decimal</span> <span class="o">=</span> <span class="mi">17</span><span class="p">)</span>
+        <span class="c1">#cheating new mean, same cov, too dangerous, got wrong instance in tests</span>
+        <span class="c1">#mvn3.mean = np.array([0,0,0])</span>
+        <span class="n">mvn3c</span> <span class="o">=</span> <span class="n">MVNormal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]),</span> <span class="n">cov3</span><span class="p">)</span>
+        <span class="n">r_val</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.02914269740502042</span><span class="p">,</span> <span class="mf">0.02269635555984291</span><span class="p">,</span> <span class="mf">0.01767593948287269</span><span class="p">]</span>
+        <span class="n">assert_array_almost_equal</span><span class="p">(</span> <span class="n">mvn3c</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">cov3</span><span class="p">),</span> <span class="n">r_val</span><span class="p">,</span> <span class="n">decimal</span> <span class="o">=</span> <span class="mi">16</span><span class="p">)</span>
+
+        <span class="n">mvn3b</span> <span class="o">=</span> <span class="n">MVNormal</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">fun</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mvn3</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">mvn3b</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">mvn3</span><span class="o">.</span><span class="n">expect_mc</span><span class="p">(</span><span class="n">fun</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">mvn3</span><span class="o">.</span><span class="n">expect_mc</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">200000</span><span class="p">))</span>
+
+
+    <span class="n">mvt</span> <span class="o">=</span> <span class="n">MVT</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">mvt</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">])),</span> <span class="o">-</span><span class="mf">1.837877066409345</span><span class="p">,</span>
+                        <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">mvt</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">])),</span> <span class="mf">0.1591549430918953</span><span class="p">,</span>
+                        <span class="n">decimal</span><span class="o">=</span><span class="mi">15</span><span class="p">)</span>
+
+    <span class="n">mvt</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span><span class="mf">1.</span><span class="p">]))</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mf">3.01552989458359</span><span class="p">)</span>
+
+    <span class="n">mvt1</span> <span class="o">=</span> <span class="n">MVT</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">mvt1</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="p">,</span><span class="mf">1.</span><span class="p">]))</span><span class="o">-</span><span class="p">(</span><span class="o">-</span><span class="mf">3.48579549941151</span><span class="p">)</span> <span class="c1">#decimal=16</span>
+
+    <span class="n">rvs</span> <span class="o">=</span> <span class="n">mvt</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">100000</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">rowvar</span><span class="o">=</span><span class="mi">0</span><span class="p">),</span> <span class="n">mvt</span><span class="o">.</span><span class="n">cov</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">mvt31</span> <span class="o">=</span> <span class="n">MVT</span><span class="p">(</span><span class="n">mu3</span><span class="p">,</span> <span class="n">cov3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">mvt31</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">cov3</span><span class="p">),</span>
+        <span class="p">[</span><span class="mf">0.0007276818698165781</span><span class="p">,</span> <span class="mf">0.0009980625182293658</span><span class="p">,</span> <span class="mf">0.0027661422056214652</span><span class="p">],</span>
+        <span class="n">decimal</span><span class="o">=</span><span class="mi">18</span><span class="p">)</span>
+
+    <span class="n">mvt</span> <span class="o">=</span> <span class="n">MVT</span><span class="p">(</span><span class="n">mu3</span><span class="p">,</span> <span class="n">cov3</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">mvt</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">cov3</span><span class="p">),</span>
+        <span class="p">[</span><span class="mf">0.000863777424247410</span><span class="p">,</span> <span class="mf">0.001277510788307594</span><span class="p">,</span> <span class="mf">0.004156314279452241</span><span class="p">],</span>
+        <span class="n">decimal</span><span class="o">=</span><span class="mi">17</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

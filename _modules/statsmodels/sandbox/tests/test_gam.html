@@ -1,0 +1,526 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.tests.test_gam &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.tests.test_gam</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.tests.test_gam</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Tests for gam.AdditiveModel and GAM with Polynomials compared to OLS and GLM</span>
+
+
+<span class="sd">Created on Sat Nov 05 14:16:07 2011</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License: BSD</span>
+
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+
+<span class="sd">TODO: TestGAMGamma: has test failure (GLM looks good),</span>
+<span class="sd">        adding log-link didn&#39;t help</span>
+<span class="sd">        resolved: gamma doesn&#39;t fail anymore after tightening the</span>
+<span class="sd">                  convergence criterium (rtol=1e-6)</span>
+<span class="sd">TODO: TestGAMNegativeBinomial: rvs generation doesn&#39;t work,</span>
+<span class="sd">        nbinom needs 2 parameters</span>
+<span class="sd">TODO: TestGAMGaussianLogLink: test failure,</span>
+<span class="sd">        but maybe precision issue, not completely off</span>
+
+<span class="sd">        but something is wrong, either the testcase or with the link</span>
+<span class="sd">        &gt;&gt;&gt; tt3.__class__</span>
+<span class="sd">        &lt;class &#39;__main__.TestGAMGaussianLogLink&#39;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; tt3.res2.mu_pred.mean()</span>
+<span class="sd">        3.5616368292650766</span>
+<span class="sd">        &gt;&gt;&gt; tt3.res1.mu_pred.mean()</span>
+<span class="sd">        3.6144278964707679</span>
+<span class="sd">        &gt;&gt;&gt; tt3.mu_true.mean()</span>
+<span class="sd">        34.821904835958122</span>
+<span class="sd">        &gt;&gt;&gt;</span>
+<span class="sd">        &gt;&gt;&gt; tt3.y_true.mean()</span>
+<span class="sd">        2.685225067611543</span>
+<span class="sd">        &gt;&gt;&gt; tt3.res1.y_pred.mean()</span>
+<span class="sd">        0.52991541684645616</span>
+<span class="sd">        &gt;&gt;&gt; tt3.res2.y_pred.mean()</span>
+<span class="sd">        0.44626406889363229</span>
+
+
+
+<span class="sd">one possible change</span>
+<span class="sd">~~~~~~~~~~~~~~~~~~~</span>
+<span class="sd">add average, integral based tests, instead of or additional to sup</span>
+<span class="sd">    * for example mean squared error for mu and eta (predict, fittedvalues)</span>
+<span class="sd">      or mean absolute error, what&#39;s the scale for this? required precision?</span>
+<span class="sd">    * this will also work for real non-parametric tests</span>
+
+<span class="sd">example: Gamma looks good in average bias and average RMSE (RMISE)</span>
+
+<span class="sd">&gt;&gt;&gt; tt3 = _estGAMGamma()</span>
+<span class="sd">&gt;&gt;&gt; np.mean((tt3.res2.mu_pred - tt3.mu_true))/tt3.mu_true.mean()</span>
+<span class="sd">-0.0051829977497423706</span>
+<span class="sd">&gt;&gt;&gt; np.mean((tt3.res2.y_pred - tt3.y_true))/tt3.y_true.mean()</span>
+<span class="sd">0.00015255264651864049</span>
+<span class="sd">&gt;&gt;&gt; np.mean((tt3.res1.y_pred - tt3.y_true))/tt3.y_true.mean()</span>
+<span class="sd">0.00015255538823786711</span>
+<span class="sd">&gt;&gt;&gt; np.mean((tt3.res1.mu_pred - tt3.mu_true))/tt3.mu_true.mean()</span>
+<span class="sd">-0.0051937668989744494</span>
+<span class="sd">&gt;&gt;&gt; np.sqrt(np.mean((tt3.res1.mu_pred - tt3.mu_true)**2))/tt3.mu_true.mean()</span>
+<span class="sd">0.022946118520401692</span>
+<span class="sd">&gt;&gt;&gt; np.sqrt(np.mean((tt3.res2.mu_pred - tt3.mu_true)**2))/tt3.mu_true.mean()</span>
+<span class="sd">0.022953913332599746</span>
+<span class="sd">&gt;&gt;&gt; maxabs = lambda x: np.max(np.abs(x))</span>
+<span class="sd">&gt;&gt;&gt; maxabs((tt3.res1.mu_pred - tt3.mu_true))/tt3.mu_true.mean()</span>
+<span class="sd">0.079540546242707733</span>
+<span class="sd">&gt;&gt;&gt; maxabs((tt3.res2.mu_pred - tt3.mu_true))/tt3.mu_true.mean()</span>
+<span class="sd">0.079578857986784574</span>
+<span class="sd">&gt;&gt;&gt; maxabs((tt3.res2.y_pred - tt3.y_true))/tt3.y_true.mean()</span>
+<span class="sd">0.016282852522951426</span>
+<span class="sd">&gt;&gt;&gt; maxabs((tt3.res1.y_pred - tt3.y_true))/tt3.y_true.mean()</span>
+<span class="sd">0.016288391235613865</span>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">get_class</span><span class="p">,</span> <span class="n">lrange</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_almost_equal</span><span class="p">,</span> <span class="n">assert_equal</span>
+
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.sandbox.gam</span> <span class="k">import</span> <span class="n">AdditiveModel</span>
+<span class="kn">from</span> <span class="nn">statsmodels.sandbox.gam</span> <span class="k">import</span> <span class="n">Model</span> <span class="k">as</span> <span class="n">GAM</span> <span class="c1">#?</span>
+<span class="kn">from</span> <span class="nn">statsmodels.genmod.families</span> <span class="k">import</span> <span class="n">family</span><span class="p">,</span> <span class="n">links</span>
+<span class="kn">from</span> <span class="nn">statsmodels.genmod.generalized_linear_model</span> <span class="k">import</span> <span class="n">GLM</span>
+<span class="kn">from</span> <span class="nn">statsmodels.regression.linear_model</span> <span class="k">import</span> <span class="n">OLS</span>
+
+
+<div class="viewcode-block" id="Dummy"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.Dummy.html#statsmodels.sandbox.tests.test_gam.Dummy">[docs]</a><span class="k">class</span> <span class="nc">Dummy</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="CheckAM"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.CheckAM.html#statsmodels.sandbox.tests.test_gam.CheckAM">[docs]</a><span class="k">class</span> <span class="nc">CheckAM</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CheckAM.test_predict"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.CheckAM.test_predict.html#statsmodels.sandbox.tests.test_gam.CheckAM.test_predict">[docs]</a>    <span class="k">def</span> <span class="nf">test_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="o">.</span><span class="n">y_pred</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">res2</span><span class="o">.</span><span class="n">y_pred</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="o">.</span><span class="n">y_predshort</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">res2</span><span class="o">.</span><span class="n">y_pred</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_est_fitted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#check definition of fitted in GLM: eta or mu</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="o">.</span><span class="n">y_pred</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">res2</span><span class="o">.</span><span class="n">fittedvalues</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="o">.</span><span class="n">y_predshort</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">res2</span><span class="o">.</span><span class="n">fittedvalues</span><span class="p">[:</span><span class="mi">10</span><span class="p">],</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CheckAM.test_params"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.CheckAM.test_params.html#statsmodels.sandbox.tests.test_gam.CheckAM.test_params">[docs]</a>    <span class="k">def</span> <span class="nf">test_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#note: only testing slope coefficients</span>
+        <span class="c1">#constant is far off in example 4 versus 2</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">res2</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+        <span class="c1">#constant</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">res2</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_est_df</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#not used yet, copied from PolySmoother tests</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res_ps</span><span class="o">.</span><span class="n">df_model</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">res2</span><span class="o">.</span><span class="n">df_model</span><span class="p">)</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res_ps</span><span class="o">.</span><span class="n">df_fit</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">res2</span><span class="o">.</span><span class="n">df_model</span><span class="p">)</span> <span class="c1">#alias</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res_ps</span><span class="o">.</span><span class="n">df_resid</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">res2</span><span class="o">.</span><span class="n">df_resid</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CheckGAM"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.CheckGAM.html#statsmodels.sandbox.tests.test_gam.CheckGAM">[docs]</a><span class="k">class</span> <span class="nc">CheckGAM</span><span class="p">(</span><span class="n">CheckAM</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CheckGAM.test_mu"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.CheckGAM.test_mu.html#statsmodels.sandbox.tests.test_gam.CheckGAM.test_mu">[docs]</a>    <span class="k">def</span> <span class="nf">test_mu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#problem with scale for precision</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="o">.</span><span class="n">mu_pred</span><span class="p">,</span>
+                            <span class="bp">self</span><span class="o">.</span><span class="n">res2</span><span class="o">.</span><span class="n">mu_pred</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div></div>
+<span class="c1">#        assert_almost_equal(self.res1.y_predshort,</span>
+<span class="c1">#                            self.res2.y_pred[:10], decimal=2)</span>
+
+
+<div class="viewcode-block" id="BaseAM"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.BaseAM.html#statsmodels.sandbox.tests.test_gam.BaseAM">[docs]</a><span class="k">class</span> <span class="nc">BaseAM</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseAM.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.BaseAM.__init__.html#statsmodels.sandbox.tests.test_gam.BaseAM.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+
+        <span class="c1">#DGP: simple polynomial</span>
+        <span class="n">order</span> <span class="o">=</span> <span class="mi">3</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="mi">200</span>
+        <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span> <span class="o">=</span> <span class="o">-</span><span class="mf">3.5</span><span class="p">,</span> <span class="mi">3</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">x1</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x1</span><span class="o">/</span><span class="n">x1</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">*</span><span class="mi">1</span><span class="p">,</span> <span class="mf">1.</span><span class="o">*</span><span class="n">x2</span><span class="p">))</span>
+        <span class="n">exog</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="p">[:,:,</span><span class="kc">None</span><span class="p">]</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">order</span><span class="o">+</span><span class="mi">1</span><span class="p">)[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">nobs</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">lrange</span><span class="p">((</span><span class="n">order</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">del</span> <span class="n">idx</span><span class="p">[</span><span class="n">order</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">exog_reduced</span> <span class="o">=</span> <span class="n">exog</span><span class="p">[:,</span><span class="n">idx</span><span class="p">]</span>  <span class="c1">#remove duplicate constant</span>
+        <span class="n">y_true</span> <span class="o">=</span> <span class="n">exog</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="c1">#/ 4.</span>
+        <span class="c1">#z = y_true #alias check</span>
+        <span class="c1">#d = x</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">=</span> <span class="n">nobs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_true</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="n">y_true</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">exog_reduced</span></div></div>
+
+
+
+<div class="viewcode-block" id="TestAdditiveModel"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.TestAdditiveModel.html#statsmodels.sandbox.tests.test_gam.TestAdditiveModel">[docs]</a><span class="k">class</span> <span class="nc">TestAdditiveModel</span><span class="p">(</span><span class="n">BaseAM</span><span class="p">,</span> <span class="n">CheckAM</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestAdditiveModel.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.TestAdditiveModel.__init__.html#statsmodels.sandbox.tests.test_gam.TestAdditiveModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span> <span class="c1">#initialize DGP</span>
+
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span>
+        <span class="n">y_true</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">exog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_true</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span>
+
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">8765993</span><span class="p">)</span>
+        <span class="n">sigma_noise</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">y_true</span> <span class="o">+</span> <span class="n">sigma_noise</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+
+        <span class="n">m</span> <span class="o">=</span> <span class="n">AdditiveModel</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">res_gam</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">results</span> <span class="c1">#TODO: currently attached to class</span>
+
+        <span class="n">res_ols</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+        <span class="c1">#Note: there still are some naming inconsistencies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">res1</span> <span class="o">=</span> <span class="n">Dummy</span><span class="p">()</span> <span class="c1">#for gam model</span>
+        <span class="c1">#res2 = Dummy() #for benchmark</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res2</span> <span class="o">=</span> <span class="n">res2</span> <span class="o">=</span> <span class="n">res_ols</span>  <span class="c1">#reuse existing ols results, will add additional</span>
+
+        <span class="n">res1</span><span class="o">.</span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">res_gam</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">res2</span><span class="o">.</span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">res_ols</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">res_ols</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span>
+        <span class="n">res1</span><span class="o">.</span><span class="n">y_predshort</span> <span class="o">=</span> <span class="n">res_gam</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span>
+
+        <span class="n">slopes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">smoothers</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ss</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+
+        <span class="n">const</span> <span class="o">=</span> <span class="n">res_gam</span><span class="o">.</span><span class="n">alpha</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">([</span><span class="n">ss</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">smoothers</span><span class="p">])</span>
+        <span class="c1">#print const, slopes</span>
+        <span class="n">res1</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">const</span><span class="p">]</span> <span class="o">+</span> <span class="n">slopes</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="BaseGAM"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.BaseGAM.html#statsmodels.sandbox.tests.test_gam.BaseGAM">[docs]</a><span class="k">class</span> <span class="nc">BaseGAM</span><span class="p">(</span><span class="n">BaseAM</span><span class="p">,</span> <span class="n">CheckGAM</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BaseGAM.init"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.BaseGAM.init.html#statsmodels.sandbox.tests.test_gam.BaseGAM.init">[docs]</a>    <span class="k">def</span> <span class="nf">init</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span>
+        <span class="n">y_true</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">exog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">y_true</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">):</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">scale</span>
+
+        <span class="n">f</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">family</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu_true</span> <span class="o">=</span> <span class="n">mu_true</span> <span class="o">=</span> <span class="n">f</span><span class="o">.</span><span class="n">link</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">y_true</span><span class="p">)</span>
+
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">8765993</span><span class="p">)</span>
+        <span class="c1">#y_obs = np.asarray([stats.poisson.rvs(p) for p in mu], float)</span>
+        <span class="k">if</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">get_class</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rvs</span><span class="p">),</span> <span class="n">stats</span><span class="o">.</span><span class="n">rv_discrete</span><span class="p">):</span>
+            <span class="c1"># Discrete distributions don&#39;t take `scale`.</span>
+            <span class="n">y_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">mu_true</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">y_obs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">mu_true</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">GAM</span><span class="p">(</span><span class="n">y_obs</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">f</span><span class="p">)</span>  <span class="c1">#TODO: y_obs is twice __init__ and fit</span>
+        <span class="n">m</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">y_obs</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="n">res_gam</span> <span class="o">=</span> <span class="n">m</span><span class="o">.</span><span class="n">results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res_gam</span> <span class="o">=</span> <span class="n">res_gam</span>   <span class="c1">#attached for debugging</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mod_gam</span> <span class="o">=</span> <span class="n">m</span>   <span class="c1">#attached for debugging</span>
+
+        <span class="n">res_glm</span> <span class="o">=</span> <span class="n">GLM</span><span class="p">(</span><span class="n">y_obs</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">f</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+        <span class="c1">#Note: there still are some naming inconsistencies</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">res1</span> <span class="o">=</span> <span class="n">Dummy</span><span class="p">()</span> <span class="c1">#for gam model</span>
+        <span class="c1">#res2 = Dummy() #for benchmark</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res2</span> <span class="o">=</span> <span class="n">res2</span> <span class="o">=</span> <span class="n">res_glm</span>  <span class="c1">#reuse existing glm results, will add additional</span>
+
+        <span class="c1">#eta in GLM terminology</span>
+        <span class="n">res2</span><span class="o">.</span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">res_glm</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">res_glm</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="n">res1</span><span class="o">.</span><span class="n">y_pred</span> <span class="o">=</span> <span class="n">res_gam</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">res1</span><span class="o">.</span><span class="n">y_predshort</span> <span class="o">=</span> <span class="n">res_gam</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="mi">10</span><span class="p">])</span> <span class="c1">#, linear=True)</span>
+
+        <span class="c1">#mu</span>
+        <span class="n">res2</span><span class="o">.</span><span class="n">mu_pred</span> <span class="o">=</span> <span class="n">res_glm</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">res_glm</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">linear</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">res1</span><span class="o">.</span><span class="n">mu_pred</span> <span class="o">=</span> <span class="n">res_gam</span><span class="o">.</span><span class="n">mu</span>
+
+        <span class="c1">#parameters</span>
+        <span class="n">slopes</span> <span class="o">=</span> <span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">smoothers</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">ss</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">:]]</span>
+        <span class="n">const</span> <span class="o">=</span> <span class="n">res_gam</span><span class="o">.</span><span class="n">alpha</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">([</span><span class="n">ss</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="n">m</span><span class="o">.</span><span class="n">smoothers</span><span class="p">])</span>
+        <span class="n">res1</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">const</span><span class="p">]</span> <span class="o">+</span> <span class="n">slopes</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TestGAMPoisson"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.TestGAMPoisson.html#statsmodels.sandbox.tests.test_gam.TestGAMPoisson">[docs]</a><span class="k">class</span> <span class="nc">TestGAMPoisson</span><span class="p">(</span><span class="n">BaseGAM</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestGAMPoisson.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.TestGAMPoisson.__init__.html#statsmodels.sandbox.tests.test_gam.TestGAMPoisson.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span> <span class="c1">#initialize DGP</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span>  <span class="n">family</span><span class="o">.</span><span class="n">Poisson</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rvs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">poisson</span><span class="o">.</span><span class="n">rvs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">()</span></div></div>
+
+<div class="viewcode-block" id="TestGAMBinomial"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.TestGAMBinomial.html#statsmodels.sandbox.tests.test_gam.TestGAMBinomial">[docs]</a><span class="k">class</span> <span class="nc">TestGAMBinomial</span><span class="p">(</span><span class="n">BaseGAM</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestGAMBinomial.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.TestGAMBinomial.__init__.html#statsmodels.sandbox.tests.test_gam.TestGAMBinomial.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span> <span class="c1">#initialize DGP</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span>  <span class="n">family</span><span class="o">.</span><span class="n">Binomial</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rvs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">bernoulli</span><span class="o">.</span><span class="n">rvs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">()</span></div></div>
+
+<span class="k">class</span> <span class="nc">_estGAMGaussianLogLink</span><span class="p">(</span><span class="n">BaseGAM</span><span class="p">):</span>
+    <span class="c1">#test failure, but maybe precision issue, not far off</span>
+    <span class="c1">#&gt;&gt;&gt; np.mean(np.abs(tt.res2.mu_pred - tt.mu_true))</span>
+    <span class="c1">#0.80409736263199649</span>
+    <span class="c1">#&gt;&gt;&gt; np.mean(np.abs(tt.res2.mu_pred - tt.mu_true))/tt.mu_true.mean()</span>
+    <span class="c1">#0.023258245077813208</span>
+    <span class="c1">#&gt;&gt;&gt; np.mean((tt.res2.mu_pred - tt.mu_true)**2)/tt.mu_true.mean()</span>
+    <span class="c1">#0.022989403735692578</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span> <span class="c1">#initialize DGP</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span>  <span class="n">family</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">(</span><span class="n">links</span><span class="o">.</span><span class="n">log</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rvs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="mi">5</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="TestGAMGamma"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.TestGAMGamma.html#statsmodels.sandbox.tests.test_gam.TestGAMGamma">[docs]</a><span class="k">class</span> <span class="nc">TestGAMGamma</span><span class="p">(</span><span class="n">BaseGAM</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestGAMGamma.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tests.test_gam.TestGAMGamma.__init__.html#statsmodels.sandbox.tests.test_gam.TestGAMGamma.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span> <span class="c1">#initialize DGP</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span>  <span class="n">family</span><span class="o">.</span><span class="n">Gamma</span><span class="p">(</span><span class="n">links</span><span class="o">.</span><span class="n">log</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rvs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gamma</span><span class="o">.</span><span class="n">rvs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">()</span></div></div>
+
+<span class="k">class</span> <span class="nc">_estGAMNegativeBinomial</span><span class="p">(</span><span class="n">BaseGAM</span><span class="p">):</span>
+    <span class="c1">#rvs generation doesn&#39;t work, nbinom needs 2 parameters</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">()</span> <span class="c1">#initialize DGP</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">family</span> <span class="o">=</span>  <span class="n">family</span><span class="o">.</span><span class="n">NegativeBinomial</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rvs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">nbinom</span><span class="o">.</span><span class="n">rvs</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">init</span><span class="p">()</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">TestAdditiveModel</span><span class="p">()</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">test_predict</span><span class="p">()</span>
+    <span class="n">t1</span><span class="o">.</span><span class="n">test_params</span><span class="p">()</span>
+
+    <span class="k">for</span> <span class="n">tt</span> <span class="ow">in</span> <span class="p">[</span><span class="n">TestGAMPoisson</span><span class="p">,</span> <span class="n">TestGAMBinomial</span><span class="p">,</span> <span class="n">TestGAMGamma</span><span class="p">,</span>
+               <span class="n">_estGAMGaussianLogLink</span><span class="p">]:</span> <span class="c1">#, TestGAMNegativeBinomial]:</span>
+        <span class="n">tt</span> <span class="o">=</span> <span class="n">tt</span><span class="p">()</span>
+        <span class="n">tt</span><span class="o">.</span><span class="n">test_predict</span><span class="p">()</span>
+        <span class="n">tt</span><span class="o">.</span><span class="n">test_params</span><span class="p">()</span>
+        <span class="n">tt</span><span class="o">.</span><span class="n">test_mu</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

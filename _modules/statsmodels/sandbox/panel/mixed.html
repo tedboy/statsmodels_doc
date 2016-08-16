@@ -1,0 +1,888 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.panel.mixed &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.panel.mixed</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.panel.mixed</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Mixed effects models</span>
+
+<span class="sd">Author: Jonathan Taylor</span>
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License: BSD-3</span>
+
+
+<span class="sd">Notes</span>
+<span class="sd">------</span>
+
+<span class="sd">It&#39;s pretty slow if the model is misspecified, in my first example convergence</span>
+<span class="sd">in loglike is not reached within 2000 iterations. Added stop criteria based</span>
+<span class="sd">on convergence of parameters instead.</span>
+
+<span class="sd">With correctly specified model, convergence is fast, in 6 iterations in</span>
+<span class="sd">example.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">numpy.linalg</span> <span class="k">as</span> <span class="nn">L</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.base.model</span> <span class="k">import</span> <span class="n">LikelihoodModelResults</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tools.decorators</span> <span class="k">import</span> <span class="n">cache_readonly</span>
+
+<div class="viewcode-block" id="Unit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.Unit.html#statsmodels.sandbox.panel.mixed.Unit">[docs]</a><span class="k">class</span> <span class="nc">Unit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Individual experimental unit for</span>
+<span class="sd">    EM implementation of (repeated measures)</span>
+<span class="sd">    mixed effects model.</span>
+
+<span class="sd">    \&#39;Maximum Likelihood Computations with Repeated Measures:</span>
+<span class="sd">    Application of the EM Algorithm\&#39;</span>
+
+<span class="sd">    Nan Laird; Nicholas Lange; Daniel Stram</span>
+
+<span class="sd">    Journal of the American Statistical Association,</span>
+<span class="sd">    Vol. 82, No. 397. (Mar., 1987), pp. 97-105.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    endog : ndarray, (nobs,)</span>
+<span class="sd">        response, endogenous variable</span>
+<span class="sd">    exog_fe : ndarray, (nobs, k_vars_fe)</span>
+<span class="sd">        explanatory variables as regressors or fixed effects,</span>
+<span class="sd">        should include exog_re to correct mean of random</span>
+<span class="sd">        coefficients, see Notes</span>
+<span class="sd">    exog_re : ndarray, (nobs, k_vars_re)</span>
+<span class="sd">        explanatory variables or random effects or coefficients</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    If the exog_re variables are not included in exog_fe, then the</span>
+<span class="sd">    mean of the random constants or coefficients are not centered.</span>
+<span class="sd">    The covariance matrix of the random parameter estimates are not</span>
+<span class="sd">    centered in this case. (That&#39;s how it looks to me. JP)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="Unit.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.Unit.__init__.html#statsmodels.sandbox.panel.mixed.Unit.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog_fe</span><span class="p">,</span> <span class="n">exog_re</span><span class="p">):</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">=</span> <span class="n">endog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">exog_fe</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Z</span> <span class="o">=</span> <span class="n">exog_re</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">endog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">_compute_S</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;covariance of observations (nobs_i, nobs_i)  (JP check)</span>
+<span class="sd">        Display (3.3) from Laird, Lange, Stram (see help(Unit))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">S</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="o">.</span><span class="n">T</span><span class="p">)))</span>
+
+    <span class="k">def</span> <span class="nf">_compute_W</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;inverse covariance of observations (nobs_i, nobs_i)  (JP check)</span>
+<span class="sd">        Display (3.2) from Laird, Lange, Stram (see help(Unit))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">S</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Unit.compute_P"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.Unit.compute_P.html#statsmodels.sandbox.panel.mixed.Unit.compute_P">[docs]</a>    <span class="k">def</span> <span class="nf">compute_P</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">Sinv</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;projection matrix (nobs_i, nobs_i) (M in regression ?)  (JP check, guessing)</span>
+<span class="sd">        Display (3.10) from Laird, Lange, Stram (see help(Unit))</span>
+
+<span class="sd">        W - W X Sinv X&#39; W&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">P</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">Sinv</span><span class="p">),</span> <span class="n">t</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_compute_r</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;residual after removing fixed effects</span>
+
+<span class="sd">        Display (3.5) from Laird, Lange, Stram (see help(Unit))</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_compute_b</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">D</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;coefficients for random effects/coefficients</span>
+<span class="sd">        Display (3.4) from Laird, Lange, Stram (see help(Unit))</span>
+
+<span class="sd">        D Z&#39; W r</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">))</span>
+
+<div class="viewcode-block" id="Unit.fit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.Unit.fit.html#statsmodels.sandbox.panel.mixed.Unit.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Compute unit specific parameters in</span>
+<span class="sd">        Laird, Lange, Stram (see help(Unit)).</span>
+
+<span class="sd">        Displays (3.2)-(3.5).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_S</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>    <span class="c1">#random effect plus error covariance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_W</span><span class="p">()</span>            <span class="c1">#inv(S)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_r</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>           <span class="c1">#residual after removing fixed effects/exogs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_compute_b</span><span class="p">(</span><span class="n">D</span><span class="p">)</span>           <span class="c1">#?  coefficients on random exog, Z ?</span></div>
+
+<div class="viewcode-block" id="Unit.compute_xtwy"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.Unit.compute_xtwy.html#statsmodels.sandbox.panel.mixed.Unit.compute_xtwy">[docs]</a>    <span class="k">def</span> <span class="nf">compute_xtwy</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Utility function to compute X^tWY (transposed ?) for Unit instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span> <span class="c1">#is this transposed ?</span></div>
+
+<div class="viewcode-block" id="Unit.compute_xtwx"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.Unit.compute_xtwx.html#statsmodels.sandbox.panel.mixed.Unit.compute_xtwx">[docs]</a>    <span class="k">def</span> <span class="nf">compute_xtwx</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Utility function to compute X^tWX for Unit instance.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Unit.cov_random"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.Unit.cov_random.html#statsmodels.sandbox.panel.mixed.Unit.cov_random">[docs]</a>    <span class="k">def</span> <span class="nf">cov_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">D</span><span class="p">,</span> <span class="n">Sinv</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Approximate covariance of estimates of random effects. Just after</span>
+<span class="sd">        Display (3.10) in Laird, Lange, Stram (see help(Unit)).</span>
+
+<span class="sd">        D - D&#39; Z&#39; P Z D</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        In example where the mean of the random coefficient is not zero, this</span>
+<span class="sd">        is not a covariance but a non-centered moment. (proof by example)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">Sinv</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">compute_P</span><span class="p">(</span><span class="n">Sinv</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">D</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">D</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">P</span><span class="p">),</span> <span class="n">t</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Unit.logL"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.Unit.logL.html#statsmodels.sandbox.panel.mixed.Unit.logL">[docs]</a>    <span class="k">def</span> <span class="nf">logL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">ML</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Individual contributions to the log-likelihood, tries to return REML</span>
+<span class="sd">        contribution by default though this requires estimated</span>
+<span class="sd">        fixed effect a to be passed as an argument.</span>
+
+<span class="sd">        no constant with pi included</span>
+
+<span class="sd">        a is not used if ML=true  (should be a=None in signature)</span>
+<span class="sd">        If ML is false, then the residuals are calculated for the given fixed</span>
+<span class="sd">        effects parameters a.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">ML</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">r</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">a</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;need fixed effect a for REML contribution to log-likelihood&#39;</span><span class="p">)</span>
+            <span class="n">r</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">))</span> <span class="o">-</span> <span class="p">(</span><span class="n">r</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">W</span><span class="p">,</span> <span class="n">r</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span> <span class="o">/</span> <span class="mf">2.</span></div>
+
+<div class="viewcode-block" id="Unit.deviance"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.Unit.deviance.html#statsmodels.sandbox.panel.mixed.Unit.deviance">[docs]</a>    <span class="k">def</span> <span class="nf">deviance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ML</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;deviance defined as 2 times the negative loglikelihood</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">logL</span><span class="p">(</span><span class="n">ML</span><span class="o">=</span><span class="n">ML</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="OneWayMixed"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.html#statsmodels.sandbox.panel.mixed.OneWayMixed">[docs]</a><span class="k">class</span> <span class="nc">OneWayMixed</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Model for</span>
+<span class="sd">    EM implementation of (repeated measures)</span>
+<span class="sd">    mixed effects model.</span>
+
+<span class="sd">    \&#39;Maximum Likelihood Computations with Repeated Measures:</span>
+<span class="sd">    Application of the EM Algorithm\&#39;</span>
+
+<span class="sd">    Nan Laird; Nicholas Lange; Daniel Stram</span>
+
+<span class="sd">    Journal of the American Statistical Association,</span>
+<span class="sd">    Vol. 82, No. 397. (Mar., 1987), pp. 97-105.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    units : list of units</span>
+<span class="sd">       the data for the individual units should be attached to the units</span>
+<span class="sd">    response, fixed and random : formula expression, called as argument to Formula</span>
+
+
+<span class="sd">    *available results and alias*</span>
+
+<span class="sd">    (subject to renaming, and coversion to cached attributes)</span>
+
+<span class="sd">    params() -&gt; self.a : coefficient for fixed effects or exog</span>
+<span class="sd">    cov_params() -&gt; self.Sinv : covariance estimate of fixed effects/exog</span>
+<span class="sd">    bse() : standard deviation of params</span>
+
+<span class="sd">    cov_random -&gt; self.D : estimate of random effects covariance</span>
+<span class="sd">    params_random_units -&gt; [self.units[...].b] : random coefficient for each unit</span>
+
+
+<span class="sd">    *attributes*</span>
+
+<span class="sd">    (others)</span>
+
+<span class="sd">    self.m : number of units</span>
+<span class="sd">    self.p : k_vars_fixed</span>
+<span class="sd">    self.q : k_vars_random</span>
+<span class="sd">    self.N : nobs (total)</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Fit returns a result instance, but not all results that use the inherited</span>
+<span class="sd">    methods have been checked.</span>
+
+<span class="sd">    Parameters need to change: drop formula and we require a naming convention for</span>
+<span class="sd">    the units (currently Y,X,Z). - endog, exog_fe, endog_re ?</span>
+
+<span class="sd">    logL does not include constant, e.g. sqrt(pi)</span>
+<span class="sd">    llf is for MLE not for REML</span>
+
+
+<span class="sd">    convergence criteria for iteration</span>
+<span class="sd">    Currently convergence in the iterative solver is reached if either the loglikelihood</span>
+<span class="sd">    *or* the fixed effects parameter don&#39;t change above tolerance.</span>
+
+<span class="sd">    In some examples, the fixed effects parameters converged to 1e-5 within 150 iterations</span>
+<span class="sd">    while the log likelihood did not converge within 2000 iterations. This might be</span>
+<span class="sd">    the case if the fixed effects parameters are well estimated, but there are still</span>
+<span class="sd">    changes in the random effects. If params_rtol and params_atol are set at a higher</span>
+<span class="sd">    level, then the random effects might not be estimated to a very high precision.</span>
+
+<span class="sd">    The above was with a misspecified model, without a constant. With a</span>
+<span class="sd">    correctly specified model convergence is fast, within a few iterations</span>
+<span class="sd">    (6 in example).</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="OneWayMixed.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.__init__.html#statsmodels.sandbox.panel.mixed.OneWayMixed.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">units</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">units</span> <span class="o">=</span> <span class="n">units</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_units</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span>     <span class="c1">#alias for now</span>
+
+        <span class="c1"># Determine size of fixed effects</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">X</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># d.shape = p</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_exog_fe</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>   <span class="c1">#alias for now</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+        <span class="c1"># Determine size of D, and sensible initial estimates</span>
+        <span class="c1"># of sigma and D</span>
+        <span class="n">d</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">Z</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>  <span class="c1"># Z.shape = q</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k_exog_re</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span>   <span class="c1">#alias for now</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">q</span><span class="p">,)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="mf">1.</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>   <span class="c1">#initialize for iterations, move it?</span></div>
+
+    <span class="k">def</span> <span class="nf">_compute_a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;fixed effects parameters</span>
+
+<span class="sd">        Display (3.1) of</span>
+<span class="sd">        Laird, Lange, Stram (see help(Mixed)).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
+            <span class="n">unit</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span>
+
+        <span class="n">S</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">unit</span><span class="o">.</span><span class="n">compute_xtwx</span><span class="p">()</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">])</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">unit</span><span class="o">.</span><span class="n">compute_xtwy</span><span class="p">()</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">Sinv</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">S</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Sinv</span><span class="p">,</span> <span class="n">Y</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_compute_sigma</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ML</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate sigma. If ML is True, return the ML estimate of sigma,</span>
+<span class="sd">        else return the REML estimate.</span>
+
+<span class="sd">        If ML, this is (3.6) in Laird, Lange, Stram (see help(Mixed)),</span>
+<span class="sd">        otherwise it corresponds to (3.8).</span>
+
+<span class="sd">        sigma is the standard deviation of the noise (residual)</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">sigmasq</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ML</span><span class="p">:</span>
+                <span class="n">W</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">W</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">unit</span><span class="o">.</span><span class="n">compute_P</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Sinv</span><span class="p">)</span>
+                <span class="n">W</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">P</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">r</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">sigmasq</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+            <span class="n">sigmasq</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">n</span><span class="p">)</span> <span class="o">-</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="n">W</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigmasq</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_compute_D</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ML</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate random effects covariance D.</span>
+<span class="sd">        If ML is True, return the ML estimate of sigma,</span>
+<span class="sd">        else return the REML estimate.</span>
+
+<span class="sd">        If ML, this is (3.7) in Laird, Lange, Stram (see help(Mixed)),</span>
+<span class="sd">        otherwise it corresponds to (3.9).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="mf">0.</span>
+        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">ML</span><span class="p">:</span>
+                <span class="n">W</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">W</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">unit</span><span class="o">.</span><span class="n">compute_P</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Sinv</span><span class="p">)</span>
+                <span class="n">W</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">P</span>
+            <span class="n">D</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="p">)</span>
+            <span class="n">D</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">W</span><span class="p">),</span> <span class="n">t</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="n">D</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span>
+
+<div class="viewcode-block" id="OneWayMixed.cov_fixed"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.cov_fixed.html#statsmodels.sandbox.panel.mixed.OneWayMixed.cov_fixed">[docs]</a>    <span class="k">def</span> <span class="nf">cov_fixed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Approximate covariance of estimates of fixed effects.</span>
+
+<span class="sd">        Just after Display (3.10) in Laird, Lange, Stram (see help(Mixed)).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Sinv</span></div>
+
+    <span class="c1">#----------- alias (JP)   move to results class ?</span>
+
+<div class="viewcode-block" id="OneWayMixed.cov_random"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.cov_random.html#statsmodels.sandbox.panel.mixed.OneWayMixed.cov_random">[docs]</a>    <span class="k">def</span> <span class="nf">cov_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Estimate random effects covariance D.</span>
+
+<span class="sd">        If ML is True, return the ML estimate of sigma, else return the REML estimate.</span>
+
+<span class="sd">        see _compute_D, alias for self.D</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">D</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        estimated coefficients for exogeneous variables or fixed effects</span>
+
+<span class="sd">        see _compute_a, alias for self.a</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">params_random_units</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;random coefficients for each unit</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">unit</span><span class="o">.</span><span class="n">b</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">])</span>
+
+<div class="viewcode-block" id="OneWayMixed.cov_params"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.cov_params.html#statsmodels.sandbox.panel.mixed.OneWayMixed.cov_params">[docs]</a>    <span class="k">def</span> <span class="nf">cov_params</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        estimated covariance for coefficients for exogeneous variables or fixed effects</span>
+
+<span class="sd">        see cov_fixed, and Sinv in _compute_a</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov_fixed</span><span class="p">()</span></div>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">bse</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        standard errors of estimated coefficients for exogeneous variables (fixed)</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov_params</span><span class="p">()))</span>
+
+    <span class="c1">#----------- end alias</span>
+
+<div class="viewcode-block" id="OneWayMixed.deviance"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.deviance.html#statsmodels.sandbox.panel.mixed.OneWayMixed.deviance">[docs]</a>    <span class="k">def</span> <span class="nf">deviance</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ML</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;deviance defined as 2 times the negative loglikelihood</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">logL</span><span class="p">(</span><span class="n">ML</span><span class="o">=</span><span class="n">ML</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OneWayMixed.logL"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.logL.html#statsmodels.sandbox.panel.mixed.OneWayMixed.logL">[docs]</a>    <span class="k">def</span> <span class="nf">logL</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ML</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return log-likelihood, REML by default.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#I don&#39;t know what the difference between REML and ML is here.</span>
+        <span class="n">logL</span> <span class="o">=</span> <span class="mf">0.</span>
+
+        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
+            <span class="n">logL</span> <span class="o">+=</span> <span class="n">unit</span><span class="o">.</span><span class="n">logL</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="n">ML</span><span class="o">=</span><span class="n">ML</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">ML</span><span class="p">:</span>
+            <span class="n">logL</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">L</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Sinv</span><span class="p">))</span> <span class="o">/</span> <span class="mi">2</span>
+        <span class="k">return</span> <span class="n">logL</span></div>
+
+<div class="viewcode-block" id="OneWayMixed.initialize"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.initialize.html#statsmodels.sandbox.panel.mixed.OneWayMixed.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">X</span><span class="p">)</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">])</span>
+        <span class="n">Y</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Y</span><span class="p">)</span> <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">S</span><span class="p">,</span> <span class="n">Y</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">D</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">sigmasq</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">unit</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">units</span><span class="p">:</span>
+            <span class="n">unit</span><span class="o">.</span><span class="n">r</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">Y</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">unit</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">Z</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">Z</span> <span class="o">=</span> <span class="n">unit</span><span class="o">.</span><span class="n">Z</span><span class="o">.</span><span class="n">reshape</span><span class="p">((</span><span class="n">unit</span><span class="o">.</span><span class="n">Z</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">))</span>
+                <span class="n">unit</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">L</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">Z</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">r</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+            <span class="n">sigmasq</span> <span class="o">+=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">Y</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span>
+                        <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Y</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span>
+                        <span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">Z</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">r</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+            <span class="n">D</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">multiply</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">t</span> <span class="o">+=</span> <span class="n">L</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">unit</span><span class="o">.</span><span class="n">Z</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">unit</span><span class="o">.</span><span class="n">Z</span><span class="p">))</span>
+
+        <span class="c1">#TODO: JP added df_resid check</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_resid</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
+        <span class="n">sigmasq</span> <span class="o">/=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">-</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">q</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigmasq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">D</span> <span class="o">=</span> <span class="p">(</span><span class="n">D</span> <span class="o">-</span> <span class="n">sigmasq</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">m</span></div>
+
+<div class="viewcode-block" id="OneWayMixed.cont"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.cont.html#statsmodels.sandbox.panel.mixed.OneWayMixed.cont">[docs]</a>    <span class="k">def</span> <span class="nf">cont</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ML</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-05</span><span class="p">,</span> <span class="n">params_rtol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">params_atol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">4</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;convergence check for iterative estimation</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="p">,</span> <span class="n">old</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">deviance</span><span class="p">(</span><span class="n">ML</span><span class="o">=</span><span class="n">ML</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span>
+
+        <span class="c1">#self.history.append(np.hstack((self.dev, self.a)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;llf&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;params&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;D&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">D</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span>
+
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">dev</span> <span class="o">-</span> <span class="n">old</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">dev</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">rtol</span><span class="p">:</span>   <span class="c1">#why is there times `*`?</span>
+            <span class="c1">#print np.fabs((self.dev - old)), self.dev, old</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">termination</span> <span class="o">=</span> <span class="s1">&#39;llf&#39;</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="c1">#break if parameters converged</span>
+        <span class="c1">#TODO: check termination conditions, OR or AND</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_a_old</span><span class="p">)</span> <span class="o">&lt;</span> <span class="p">(</span><span class="n">params_rtol</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">+</span> <span class="n">params_atol</span><span class="p">)):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">termination</span> <span class="o">=</span> <span class="s1">&#39;params&#39;</span>
+            <span class="k">return</span> <span class="kc">False</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_a_old</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="k">return</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="OneWayMixed.fit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.fit.html#statsmodels.sandbox.panel.mixed.OneWayMixed.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">ML</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mf">1.0e-05</span><span class="p">,</span> <span class="n">params_rtol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="n">params_atol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">):</span>
+
+        <span class="c1">#initialize for convergence criteria</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_a_old</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;llf&#39;</span><span class="p">:[],</span> <span class="s1">&#39;params&#39;</span><span class="p">:[],</span> <span class="s1">&#39;D&#39;</span><span class="p">:[]}</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxiter</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compute_a</span><span class="p">()</span>              <span class="c1">#a, Sinv :  params, cov_params of fixed exog</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compute_sigma</span><span class="p">(</span><span class="n">ML</span><span class="o">=</span><span class="n">ML</span><span class="p">)</span>     <span class="c1">#sigma   MLE or REML of sigma ?</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_compute_D</span><span class="p">(</span><span class="n">ML</span><span class="o">=</span><span class="n">ML</span><span class="p">)</span>         <span class="c1">#D :  covariance of random effects, MLE or REML</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">cont</span><span class="p">(</span><span class="n">ML</span><span class="o">=</span><span class="n">ML</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">params_rtol</span><span class="o">=</span><span class="n">params_rtol</span><span class="p">,</span>
+                                             <span class="n">params_atol</span><span class="o">=</span><span class="n">params_atol</span><span class="p">):</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1">#if end of loop is reached without break</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">termination</span> <span class="o">=</span> <span class="s1">&#39;maxiter&#39;</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: maximum number of iterations reached&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">iterations</span> <span class="o">=</span> <span class="n">i</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="n">OneWayMixedResults</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="c1">#compatibility functions for fixed effects/exog</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">results</span><span class="o">.</span><span class="n">normalized_cov_params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cov_params</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">results</span></div></div>
+
+
+<div class="viewcode-block" id="OneWayMixedResults"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixedResults.html#statsmodels.sandbox.panel.mixed.OneWayMixedResults">[docs]</a><span class="k">class</span> <span class="nc">OneWayMixedResults</span><span class="p">(</span><span class="n">LikelihoodModelResults</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Results class for OneWayMixed models</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="OneWayMixedResults.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixedResults.__init__.html#statsmodels.sandbox.panel.mixed.OneWayMixedResults.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1">#TODO: check, change initialization to more standard pattern</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">model</span> <span class="o">=</span> <span class="n">model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">params</span></div>
+
+
+    <span class="c1">#need to overwrite this because we don&#39;t have a standard</span>
+    <span class="c1">#model.loglike yet</span>
+    <span class="c1">#TODO: what todo about REML loglike, logL is not normalized</span>
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="OneWayMixedResults.llf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixedResults.llf.html#statsmodels.sandbox.panel.mixed.OneWayMixedResults.llf">[docs]</a>    <span class="k">def</span> <span class="nf">llf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">logL</span><span class="p">(</span><span class="n">ML</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">params_random_units</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">params_random_units</span>
+
+<div class="viewcode-block" id="OneWayMixedResults.cov_random"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixedResults.cov_random.html#statsmodels.sandbox.panel.mixed.OneWayMixedResults.cov_random">[docs]</a>    <span class="k">def</span> <span class="nf">cov_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">cov_random</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="OneWayMixedResults.mean_random"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixedResults.mean_random.html#statsmodels.sandbox.panel.mixed.OneWayMixedResults.mean_random">[docs]</a>    <span class="k">def</span> <span class="nf">mean_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="s1">&#39;lastexog&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">idx</span> <span class="o">==</span> <span class="s1">&#39;lastexog&#39;</span><span class="p">:</span>
+            <span class="n">meanr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">k_exog_re</span><span class="p">:]</span>
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">k_exog_re</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;length of idx different from k_exog_re&#39;</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">meanr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">meanr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">k_exog_re</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">meanr</span></div>
+
+<div class="viewcode-block" id="OneWayMixedResults.std_random"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixedResults.std_random.html#statsmodels.sandbox.panel.mixed.OneWayMixedResults.std_random">[docs]</a>    <span class="k">def</span> <span class="nf">std_random</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cov_random</span><span class="p">()))</span></div>
+
+<div class="viewcode-block" id="OneWayMixedResults.plot_random_univariate"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixedResults.plot_random_univariate.html#statsmodels.sandbox.panel.mixed.OneWayMixedResults.plot_random_univariate">[docs]</a>    <span class="k">def</span> <span class="nf">plot_random_univariate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">use_loc</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;create plot of marginal distribution of random effects</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        bins : int or bin edges</span>
+<span class="sd">            option for bins in matplotlibs hist method. Current default is not</span>
+<span class="sd">            very sophisticated. All distributions use the same setting for</span>
+<span class="sd">            bins.</span>
+<span class="sd">        use_loc : bool</span>
+<span class="sd">            If True, then the distribution with mean given by the fixed</span>
+<span class="sd">            effect is used.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fig : matplotlib figure instance</span>
+<span class="sd">            figure with subplots</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        What can make this fancier?</span>
+
+<span class="sd">        Bin edges will not make sense if loc or scale differ across random</span>
+<span class="sd">        effect distributions.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#outsource this</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">norm</span> <span class="k">as</span> <span class="n">normal</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">k_exog_re</span>
+        <span class="k">if</span> <span class="n">k</span> <span class="o">&gt;</span> <span class="mi">3</span><span class="p">:</span>
+            <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)),</span> <span class="mi">2</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rows</span><span class="p">,</span> <span class="n">cols</span> <span class="o">=</span> <span class="n">k</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">bins</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1">#bins = self.model.n_units // 20    #TODO: just roughly, check</span>
+           <span class="c1"># bins = np.sqrt(self.model.n_units)</span>
+            <span class="n">bins</span> <span class="o">=</span> <span class="mi">5</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">n_units</span><span class="o">**</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mf">3.</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">use_loc</span><span class="p">:</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean_random</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="n">k</span>
+
+        <span class="n">scale</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">std_random</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="n">rows</span><span class="p">,</span> <span class="n">cols</span><span class="p">,</span> <span class="n">ii</span><span class="p">)</span>
+
+            <span class="n">freq</span><span class="p">,</span> <span class="n">bins_</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">ax</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">loc</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_random_units</span><span class="p">[:,</span><span class="n">ii</span><span class="p">],</span>
+                                    <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">points</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">bins_</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">bins_</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">200</span><span class="p">)</span>
+
+            <span class="c1">#ax.plot(points, normal.pdf(points, loc=loc, scale=scale))</span>
+            <span class="c1">#loc of sample is approx. zero, with Z appended to X</span>
+            <span class="c1">#alternative, add fixed  to mean</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="s1">&#39;Random Effect </span><span class="si">%d</span><span class="s1"> Marginal Distribution&#39;</span> <span class="o">%</span> <span class="n">ii</span><span class="p">)</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">points</span><span class="p">,</span>
+                    <span class="n">normal</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">points</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">[</span><span class="n">ii</span><span class="p">]),</span>
+                    <span class="s1">&#39;r&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">fig</span></div>
+
+<div class="viewcode-block" id="OneWayMixedResults.plot_scatter_pairs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixedResults.plot_scatter_pairs.html#statsmodels.sandbox.panel.mixed.OneWayMixedResults.plot_scatter_pairs">[docs]</a>    <span class="k">def</span> <span class="nf">plot_scatter_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx1</span><span class="p">,</span> <span class="n">idx2</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;create scatter plot of two random effects</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        idx1, idx2 : int</span>
+<span class="sd">            indices of the two random effects to display, corresponding to</span>
+<span class="sd">            columns of exog_re</span>
+<span class="sd">        title : None or string</span>
+<span class="sd">            If None, then a default title is added</span>
+<span class="sd">        ax : None or matplotlib axis instance</span>
+<span class="sd">            If None, then a figure with one axis is created and returned.</span>
+<span class="sd">            If ax is not None, then the scatter plot is created on it, and</span>
+<span class="sd">            this axis instance is returned.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ax_or_fig : axis or figure instance</span>
+<span class="sd">            see ax parameter</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        Still needs ellipse from estimated parameters</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">ax_or_fig</span> <span class="o">=</span> <span class="n">fig</span>
+
+        <span class="n">re1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_random_units</span><span class="p">[:,</span><span class="n">idx1</span><span class="p">]</span>
+        <span class="n">re2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params_random_units</span><span class="p">[:,</span><span class="n">idx2</span><span class="p">]</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">re1</span><span class="p">,</span> <span class="n">re2</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.75</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">title</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Random Effects </span><span class="si">%d</span><span class="s1"> and </span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">idx1</span><span class="p">,</span> <span class="n">idx2</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">set_title</span><span class="p">(</span><span class="n">title</span><span class="p">)</span>
+        <span class="n">ax_or_fig</span> <span class="o">=</span> <span class="n">ax</span>
+
+        <span class="k">return</span> <span class="n">ax_or_fig</span></div>
+
+<div class="viewcode-block" id="OneWayMixedResults.plot_scatter_all_pairs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixedResults.plot_scatter_all_pairs.html#statsmodels.sandbox.panel.mixed.OneWayMixedResults.plot_scatter_all_pairs">[docs]</a>    <span class="k">def</span> <span class="nf">plot_scatter_all_pairs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">statsmodels.graphics.plot_grids</span> <span class="k">import</span> <span class="n">scatter_ellipse</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">k_exog_re</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;less than two variables available&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">scatter_ellipse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params_random_units</span><span class="p">,</span>
+                               <span class="n">ell_kwds</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;color&#39;</span><span class="p">:</span><span class="s1">&#39;r&#39;</span><span class="p">})</span></div></div>
+                               <span class="c1">#ell_kwds not implemented yet</span>
+
+<span class="c1">#        #note I have written this already as helper function, get it</span>
+<span class="c1">#        import matplotlib.pyplot as plt</span>
+<span class="c1">#        #from scipy.stats import norm as normal</span>
+<span class="c1">#        fig = plt.figure()</span>
+<span class="c1">#        k = self.model.k_exog_re</span>
+<span class="c1">#        n_plots = k * (k - 1) // 2</span>
+<span class="c1">#        if n_plots &gt; 3:</span>
+<span class="c1">#            rows, cols = int(np.ceil(n_plots * 0.5)), 2</span>
+<span class="c1">#        else:</span>
+<span class="c1">#            rows, cols = n_plots, 1</span>
+<span class="c1">#</span>
+<span class="c1">#        count = 1</span>
+<span class="c1">#        for ii in range(k):</span>
+<span class="c1">#            for jj in range(ii):</span>
+<span class="c1">#                ax = fig.add_subplot(rows, cols, count)</span>
+<span class="c1">#                self.plot_scatter_pairs(ii, jj, title=None, ax=ax)</span>
+<span class="c1">#                count += 1</span>
+<span class="c1">#</span>
+<span class="c1">#        return fig</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1">#see examples/ex_mixed_lls_1.py</span>
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

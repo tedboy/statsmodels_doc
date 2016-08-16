@@ -1,0 +1,484 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tools.print_version &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tools.print_version</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tools.print_version</h1><div class="highlight"><pre>
+<span></span><span class="ch">#!/usr/bin/env python</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">reduce</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">dirname</span>
+
+<span class="k">def</span> <span class="nf">safe_version</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="n">attr</span><span class="o">=</span><span class="s1">&#39;__version__&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">attr</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+        <span class="n">attr</span> <span class="o">=</span> <span class="p">[</span><span class="n">attr</span><span class="p">]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="nb">getattr</span><span class="p">,</span> <span class="p">[</span><span class="n">module</span><span class="p">]</span> <span class="o">+</span> <span class="n">attr</span><span class="p">)</span>
+    <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s2">&quot;Cannot detect version&quot;</span>
+
+
+<span class="k">def</span> <span class="nf">_show_versions_only</span><span class="p">():</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">INSTALLED VERSIONS&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------------------&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Python: </span><span class="si">%d</span><span class="s2">.</span><span class="si">%d</span><span class="s2">.</span><span class="si">%d</span><span class="s2">.</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="p">(</span><span class="n">sysname</span><span class="p">,</span> <span class="n">nodename</span><span class="p">,</span> <span class="n">release</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">machine</span><span class="p">)</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">uname</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OS: </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sysname</span><span class="p">,</span> <span class="n">release</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span><span class="n">machine</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;byteorder: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">byteorder</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LC_ALL: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LC_ALL&#39;</span><span class="p">,</span><span class="s2">&quot;None&quot;</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LANG: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LANG&#39;</span><span class="p">,</span><span class="s2">&quot;None&quot;</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">statsmodels</span>
+        <span class="kn">from</span> <span class="nn">statsmodels</span> <span class="k">import</span> <span class="n">version</span>
+        <span class="n">has_sm</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">has_sm</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Statsmodels</span><span class="se">\n</span><span class="s1">===========</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">has_sm</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Installed: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="s1">&#39;full_version&#39;</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not installed&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Required Dependencies</span><span class="se">\n</span><span class="s2">=====================</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">Cython</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cython: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">Cython</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cython: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">numpy</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numpy: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">numpy</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">]))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numpy: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">scipy</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;scipy: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">scipy</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">]))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;scipy: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pandas</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pandas: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">pandas</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">]))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pandas: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">dateutil</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    dateutil: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">dateutil</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    dateutil: not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">patsy</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;patsy: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">patsy</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;patsy: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Optional Dependencies</span><span class="se">\n</span><span class="s2">=====================</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;matplotlib: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">mpl</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;matplotlib: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">cvxopt</span> <span class="k">import</span> <span class="n">info</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cvxopt: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cvxopt: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Developer Tools</span><span class="se">\n</span><span class="s2">================</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">IPython</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;IPython: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">IPython</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;IPython: Not installed&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">jinja2</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    jinja2: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">jinja2</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    jinja2: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">sphinx</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sphinx: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">sphinx</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sphinx: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pygments</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    pygments: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">pygments</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    pygments: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">nose</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nose: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">nose</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nose: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">virtualenv</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;virtualenv: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">safe_version</span><span class="p">(</span><span class="n">virtualenv</span><span class="p">))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;virtualenv: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="show_versions"><a class="viewcode-back" href="../../../generated/statsmodels.api.show_versions.html#statsmodels.api.show_versions">[docs]</a><span class="k">def</span> <span class="nf">show_versions</span><span class="p">(</span><span class="n">show_dirs</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">show_dirs</span><span class="p">:</span>
+        <span class="n">_show_versions_only</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">INSTALLED VERSIONS&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;------------------&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Python: </span><span class="si">%d</span><span class="s2">.</span><span class="si">%d</span><span class="s2">.</span><span class="si">%d</span><span class="s2">.</span><span class="si">%s</span><span class="s2">.</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">version_info</span><span class="p">[:])</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">os</span>
+        <span class="p">(</span><span class="n">sysname</span><span class="p">,</span> <span class="n">nodename</span><span class="p">,</span> <span class="n">release</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span> <span class="n">machine</span><span class="p">)</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">uname</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;OS: </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2"> </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">sysname</span><span class="p">,</span> <span class="n">release</span><span class="p">,</span> <span class="n">version</span><span class="p">,</span><span class="n">machine</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;byteorder: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">sys</span><span class="o">.</span><span class="n">byteorder</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LC_ALL: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LC_ALL&#39;</span><span class="p">,</span><span class="s2">&quot;None&quot;</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;LANG: </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">os</span><span class="o">.</span><span class="n">environ</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;LANG&#39;</span><span class="p">,</span><span class="s2">&quot;None&quot;</span><span class="p">))</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">statsmodels</span>
+        <span class="kn">from</span> <span class="nn">statsmodels</span> <span class="k">import</span> <span class="n">version</span>
+        <span class="n">has_sm</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="n">has_sm</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Statsmodels</span><span class="se">\n</span><span class="s1">===========</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">has_sm</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Installed: </span><span class="si">%s</span><span class="s1"> (</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">version</span><span class="p">,</span> <span class="s1">&#39;full_version&#39;</span><span class="p">),</span>
+                                      <span class="n">dirname</span><span class="p">(</span><span class="n">statsmodels</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Not installed&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Required Dependencies</span><span class="se">\n</span><span class="s2">=====================</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">Cython</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cython: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">Cython</span><span class="p">),</span>
+                                   <span class="n">dirname</span><span class="p">(</span><span class="n">Cython</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cython: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">numpy</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numpy: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">numpy</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">]),</span>
+                                  <span class="n">dirname</span><span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;numpy: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">scipy</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;scipy: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">scipy</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">]),</span>
+                                  <span class="n">dirname</span><span class="p">(</span><span class="n">scipy</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;scipy: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pandas</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pandas: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">pandas</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;version&#39;</span><span class="p">,</span>
+                                                         <span class="s1">&#39;version&#39;</span><span class="p">]),</span>
+                                   <span class="n">dirname</span><span class="p">(</span><span class="n">pandas</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;pandas: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">dateutil</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    dateutil: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">dateutil</span><span class="p">),</span>
+                                     <span class="n">dirname</span><span class="p">(</span><span class="n">dateutil</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    dateutil: not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">patsy</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;patsy: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">patsy</span><span class="p">),</span>
+                                  <span class="n">dirname</span><span class="p">(</span><span class="n">patsy</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;patsy: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Optional Dependencies</span><span class="se">\n</span><span class="s2">=====================</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">matplotlib</span> <span class="k">as</span> <span class="nn">mpl</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;matplotlib: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">mpl</span><span class="p">),</span>
+                                       <span class="n">dirname</span><span class="p">(</span><span class="n">mpl</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;matplotlib: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">cvxopt</span> <span class="k">import</span> <span class="n">info</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cvxopt: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">info</span><span class="p">,</span> <span class="s1">&#39;version&#39;</span><span class="p">),</span>
+                                   <span class="n">dirname</span><span class="p">(</span><span class="n">info</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cvxopt: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">Developer Tools</span><span class="se">\n</span><span class="s2">================</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">IPython</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;IPython: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">IPython</span><span class="p">),</span>
+                                    <span class="n">dirname</span><span class="p">(</span><span class="n">IPython</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;IPython: Not installed&quot;</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">jinja2</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    jinja2: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">jinja2</span><span class="p">),</span>
+                                       <span class="n">dirname</span><span class="p">(</span><span class="n">jinja2</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    jinja2: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">sphinx</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sphinx: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">sphinx</span><span class="p">),</span>
+                                   <span class="n">dirname</span><span class="p">(</span><span class="n">sphinx</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;sphinx: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">pygments</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    pygments: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">pygments</span><span class="p">),</span>
+                                         <span class="n">dirname</span><span class="p">(</span><span class="n">pygments</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;    pygments: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">nose</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nose: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">nose</span><span class="p">),</span> <span class="n">dirname</span><span class="p">(</span><span class="n">nose</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;nose: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">virtualenv</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;virtualenv: </span><span class="si">%s</span><span class="s2"> (</span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">safe_version</span><span class="p">(</span><span class="n">virtualenv</span><span class="p">),</span>
+                                       <span class="n">dirname</span><span class="p">(</span><span class="n">virtualenv</span><span class="o">.</span><span class="n">__file__</span><span class="p">)))</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;virtualenv: Not installed&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">show_versions</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

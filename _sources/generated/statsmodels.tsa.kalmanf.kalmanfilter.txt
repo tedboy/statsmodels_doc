@@ -1,0 +1,46 @@
+statsmodels.tsa.kalmanf.kalmanfilter
+====================================
+
+.. automodule:: statsmodels.tsa.kalmanf.kalmanfilter
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      chain_dot
+      kalmanfilter
+      kalmansmooth
+      updatematrices
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      KalmanFilter
+      StateSpaceModel
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tsa.kalmanf.kalmanfilter.KalmanFilter
+       generated/statsmodels.tsa.kalmanf.kalmanfilter.StateSpaceModel
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,39 @@
+statsmodels.base.model.resettable_cache
+=======================================
+
+.. currentmodule:: statsmodels.base.model
+.. autoclass:: resettable_cache
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~resettable_cache.__init__
+   ~resettable_cache.clear
+   ~resettable_cache.copy
+   ~resettable_cache.fromkeys
+   ~resettable_cache.get
+   ~resettable_cache.has_key
+   ~resettable_cache.items
+   ~resettable_cache.iteritems
+   ~resettable_cache.iterkeys
+   ~resettable_cache.itervalues
+   ~resettable_cache.keys
+   ~resettable_cache.pop
+   ~resettable_cache.popitem
+   ~resettable_cache.setdefault
+   ~resettable_cache.update
+   ~resettable_cache.values
+   ~resettable_cache.viewitems
+   ~resettable_cache.viewkeys
+   ~resettable_cache.viewvalues
+
+
+
+
+

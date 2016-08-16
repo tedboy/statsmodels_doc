@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.11.1.1.42. statsmodels.stats.api.powerdiscrepancy &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="3.11.1. statsmodels.stats.api" href="statsmodels.stats.api.html"/>
+        <link rel="next" title="3.11.1.1.43. statsmodels.stats.api.proportion_confint" href="statsmodels.stats.api.proportion_confint.html"/>
+        <link rel="prev" title="3.11.1.1.41. statsmodels.stats.api.power_ztost_prop" href="statsmodels.stats.api.power_ztost_prop.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main.html#statsmodel-stats">3.11. statsmodel.stats</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="statsmodels.stats.api.html">3.11.1. statsmodels.stats.api</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="statsmodels.stats.api.html#functions">3.11.1.1. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.stats.api.html#classes">3.11.1.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.adnorm.html">3.11.2. statsmodels.stats.adnorm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.anova.html">3.11.3. statsmodels.stats.anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.base.html">3.11.4. statsmodels.stats.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.contrast.html">3.11.5. statsmodels.stats.contrast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.correlation_tools.html">3.11.6. statsmodels.stats.correlation_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.descriptivestats.html">3.11.7. statsmodels.stats.descriptivestats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.diagnostic.html">3.11.8. statsmodels.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.gof.html">3.11.9. statsmodels.stats.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.inter_rater.html">3.11.10. statsmodels.stats.inter_rater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.lilliefors.html">3.11.11. statsmodels.stats.lilliefors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.moment_helpers.html">3.11.12. statsmodels.stats.moment_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multicomp.html">3.11.13. statsmodels.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multitest.html">3.11.14. statsmodels.stats.multitest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multivariate_tools.html">3.11.15. statsmodels.stats.multivariate_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.outliers_influence.html">3.11.16. statsmodels.stats.outliers_influence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.power.html">3.11.17. statsmodels.stats.power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.proportion.html">3.11.18. statsmodels.stats.proportion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.sandwich_covariance.html">3.11.19. statsmodels.stats.sandwich_covariance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.stattools.html">3.11.20. statsmodels.stats.stattools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.tabledist.html">3.11.21. statsmodels.stats.tabledist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.weightstats.html">3.11.22. statsmodels.stats.weightstats</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+          <li><a href="statsmodels.stats.api.html">3.11.1. statsmodels.stats.api</a> &raquo;</li>
+        
+      <li>3.11.1.1.42. statsmodels.stats.api.powerdiscrepancy</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.stats.api.powerdiscrepancy.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-stats-api-powerdiscrepancy">
+<h1>3.11.1.1.42. statsmodels.stats.api.powerdiscrepancy<a class="headerlink" href="#statsmodels-stats-api-powerdiscrepancy" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.stats.api.powerdiscrepancy">
+<code class="descclassname">statsmodels.stats.api.</code><code class="descname">powerdiscrepancy</code><span class="sig-paren">(</span><em>observed</em>, <em>expected</em>, <em>lambd=0.0</em>, <em>axis=0</em>, <em>ddof=0</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/statsmodels/stats/gof.html#powerdiscrepancy"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.stats.api.powerdiscrepancy" title="Permalink to this definition">¶</a></dt>
+<dd><p>Calculates power discrepancy, a class of goodness-of-fit tests
+as a measure of discrepancy between observed and expected data.</p>
+<p>This contains several goodness-of-fit tests as special cases, see the
+describtion of lambd, the exponent of the power discrepancy. The pvalue
+is based on the asymptotic chi-square distribution of the test statistic.</p>
+<p>freeman_tukey:
+D(x|        heta) = sum_j (sqrt{x_j} - sqrt{e_j})^2</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>o</strong> : Iterable</p>
+<blockquote>
+<div><p>Observed values</p>
+</div></blockquote>
+<p><strong>e</strong> : Iterable</p>
+<blockquote>
+<div><p>Expected values</p>
+</div></blockquote>
+<p><strong>lambd</strong> : float or string</p>
+<blockquote>
+<div><ul class="simple">
+<li>float : exponent <cite>a</cite> for power discrepancy</li>
+<li>&#8216;loglikeratio&#8217;: a = 0</li>
+<li>&#8216;freeman_tukey&#8217;: a = -0.5</li>
+<li>&#8216;pearson&#8217;: a = 1   (standard chisquare test statistic)</li>
+<li>&#8216;modified_loglikeratio&#8217;: a = -1</li>
+<li>&#8216;cressie_read&#8217;: a = 2/3</li>
+<li>&#8216;neyman&#8217; : a = -2 (Neyman-modified chisquare, reference from a book?)</li>
+</ul>
+</div></blockquote>
+<p><strong>axis</strong> : int</p>
+<blockquote>
+<div><p>axis for observations of one series</p>
+</div></blockquote>
+<p><strong>ddof</strong> : int</p>
+<blockquote>
+<div><p>degrees of freedom correction,</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>D_obs</strong> : Discrepancy of observed values</p>
+<p class="last"><strong>pvalue</strong> : pvalue</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<dl class="docutils">
+<dt>Cressie, Noel  and Timothy R. C. Read, Multinomial Goodness-of-Fit Tests,</dt>
+<dd>Journal of the Royal Statistical Society. Series B (Methodological),
+Vol. 46, No. 3 (1984), pp. 440-464</dd>
+<dt>Campbell B. Read: Freeman-Tukey chi-squared goodness-of-fit statistics,</dt>
+<dd>Statistics &amp; Probability Letters 18 (1993) 271-278</dd>
+<dt>Nobuhiro Taneichi, Yuri Sekiya, Akio Suzukawa, Asymptotic Approximations</dt>
+<dd>for the Distributions of the Multinomial Goodness-of-Fit Statistics
+under Local Alternatives, Journal of Multivariate Analysis 81, 335?359 (2002)</dd>
+<dt>Steele, M. 1,2, C. Hurst 3 and J. Chaseling, Simulated Power of Discrete</dt>
+<dd>Goodness-of-Fit Tests for Likert Type Data</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">observed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">2.</span><span class="p">,</span>  <span class="mf">4.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>for checking correct dimension with multiple series</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="n">observed</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="n">expected</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="s1">&#39;freeman_tukey&#39;</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">(array([[ 2.745166,  2.745166]]), array([[ 0.6013346,  0.6013346]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="n">observed</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="n">expected</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">(array([[ 2.77258872,  2.77258872]]), array([[ 0.59657359,  0.59657359]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="n">observed</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="n">expected</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">(array([[ 2.77258872,  2.77258872]]), array([[ 0.59657359,  0.59657359]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="n">observed</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="n">expected</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">(array([[ 3.,  3.]]), array([[ 0.5578254,  0.5578254]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="n">observed</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="mi">10</span><span class="o">*</span><span class="n">expected</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">(array([[ 2.89714546,  2.89714546]]), array([[ 0.57518277,  0.57518277]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="n">observed</span><span class="p">))</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">expected</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="go">(array([[ 2.89714546,  2.89714546]]), array([[ 0.57518277,  0.57518277]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="n">observed</span><span class="p">)),</span> <span class="n">expected</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">(array([[ 2.89714546,  2.89714546]]), array([[ 0.57518277,  0.57518277]]))</span>
+</pre></div>
+</div>
+<p>each random variable can have different total count/sum</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">observed</span><span class="p">)),</span> <span class="n">expected</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">(array([[ 2.89714546,  5.79429093]]), array([[ 0.57518277,  0.21504648]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">observed</span><span class="p">)),</span> <span class="n">expected</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">(array([[ 2.89714546,  5.79429093]]), array([[ 0.57518277,  0.21504648]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">observed</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">observed</span><span class="p">)),</span> <span class="n">expected</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">(array([[ 5.79429093,  5.79429093]]), array([[ 0.21504648,  0.21504648]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="mi">2</span><span class="o">*</span><span class="n">observed</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">observed</span><span class="p">)),</span> <span class="mi">20</span><span class="o">*</span><span class="n">expected</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">(array([[ 5.79429093,  5.79429093]]), array([[ 0.21504648,  0.21504648]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">observed</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="mi">10</span><span class="o">*</span><span class="n">expected</span><span class="p">,</span><span class="mi">20</span><span class="o">*</span><span class="n">expected</span><span class="p">)),</span> <span class="n">lambd</span><span class="o">=</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.0</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">(array([[ 2.89714546,  5.79429093]]), array([[ 0.57518277,  0.21504648]]))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">powerdiscrepancy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">observed</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">observed</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="mi">10</span><span class="o">*</span><span class="n">expected</span><span class="p">,</span><span class="mi">20</span><span class="o">*</span><span class="n">expected</span><span class="p">)),</span> <span class="n">lambd</span><span class="o">=-</span><span class="mi">1</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+<span class="go">(array([[ 2.77258872,  5.54517744]]), array([[ 0.59657359,  0.2357868 ]]))</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.stats.api.proportion_confint.html" class="btn btn-neutral float-right" title="3.11.1.1.43. statsmodels.stats.api.proportion_confint" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.stats.api.power_ztost_prop.html" class="btn btn-neutral" title="3.11.1.1.41. statsmodels.stats.api.power_ztost_prop" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

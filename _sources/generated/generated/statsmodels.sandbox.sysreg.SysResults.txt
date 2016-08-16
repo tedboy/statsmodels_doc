@@ -1,0 +1,44 @@
+statsmodels.sandbox.sysreg.SysResults
+=====================================
+
+.. currentmodule:: statsmodels.sandbox.sysreg
+.. autoclass:: SysResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~SysResults.__init__
+   ~SysResults.bse
+   ~SysResults.conf_int
+   ~SysResults.cov_params
+   ~SysResults.f_test
+   ~SysResults.initialize
+   ~SysResults.llf
+   ~SysResults.load
+   ~SysResults.normalized_cov_params
+   ~SysResults.predict
+   ~SysResults.pvalues
+   ~SysResults.remove_data
+   ~SysResults.save
+   ~SysResults.t_test
+   ~SysResults.tvalues
+   ~SysResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~SysResults.use_t
+

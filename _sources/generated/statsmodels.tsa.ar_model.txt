@@ -1,0 +1,57 @@
+statsmodels.tsa.ar_model
+========================
+
+.. automodule:: statsmodels.tsa.ar_model
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      add_trend
+      approx_fprime
+      approx_hess
+      iteritems
+      lagmat
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      AR
+      ARResults
+      ARResultsWrapper
+      KalmanFilter
+      OLS
+      cache_writable
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tsa.ar_model.AR
+       generated/statsmodels.tsa.ar_model.ARResults
+       generated/statsmodels.tsa.ar_model.ARResultsWrapper
+       generated/statsmodels.tsa.ar_model.KalmanFilter
+       generated/statsmodels.tsa.ar_model.OLS
+       generated/statsmodels.tsa.ar_model.cache_writable
+       generated/statsmodels.tsa.ar_model.resettable_cache
+
+   
+   
+
+   
+   
+   

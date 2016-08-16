@@ -1,0 +1,39 @@
+statsmodels.tools.decorators.ResettableCache
+============================================
+
+.. currentmodule:: statsmodels.tools.decorators
+.. autoclass:: ResettableCache
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ResettableCache.__init__
+   ~ResettableCache.clear
+   ~ResettableCache.copy
+   ~ResettableCache.fromkeys
+   ~ResettableCache.get
+   ~ResettableCache.has_key
+   ~ResettableCache.items
+   ~ResettableCache.iteritems
+   ~ResettableCache.iterkeys
+   ~ResettableCache.itervalues
+   ~ResettableCache.keys
+   ~ResettableCache.pop
+   ~ResettableCache.popitem
+   ~ResettableCache.setdefault
+   ~ResettableCache.update
+   ~ResettableCache.values
+   ~ResettableCache.viewitems
+   ~ResettableCache.viewkeys
+   ~ResettableCache.viewvalues
+
+
+
+
+

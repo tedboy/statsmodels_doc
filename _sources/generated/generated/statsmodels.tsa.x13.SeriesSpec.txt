@@ -1,0 +1,31 @@
+statsmodels.tsa.x13.SeriesSpec
+==============================
+
+.. currentmodule:: statsmodels.tsa.x13
+.. autoclass:: SeriesSpec
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~SeriesSpec.__init__
+   ~SeriesSpec.create_spec
+   ~SeriesSpec.set_options
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~SeriesSpec.spec_name
+

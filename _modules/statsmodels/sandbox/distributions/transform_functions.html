@@ -1,0 +1,406 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.distributions.transform_functions &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.distributions.transform_functions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.distributions.transform_functions</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Nonlinear Transformation classes</span>
+
+
+<span class="sd">Created on Sat Apr 16 16:06:11 2011</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License : BSD</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="TransformFunction"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.TransformFunction.html#statsmodels.sandbox.distributions.transform_functions.TransformFunction">[docs]</a><span class="k">class</span> <span class="nc">TransformFunction</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+
+<span class="c1">## Hump and U-shaped functions</span>
+
+
+<div class="viewcode-block" id="SquareFunc"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.SquareFunc.html#statsmodels.sandbox.distributions.transform_functions.SquareFunc">[docs]</a><span class="k">class</span> <span class="nc">SquareFunc</span><span class="p">(</span><span class="n">TransformFunction</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;class to hold quadratic function with inverse function and derivative</span>
+
+<span class="sd">    using instance methods instead of class methods, if we want extension</span>
+<span class="sd">    to parameterized function</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="SquareFunc.func"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.SquareFunc.func.html#statsmodels.sandbox.distributions.transform_functions.SquareFunc.func">[docs]</a>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">2.</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SquareFunc.inverseplus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.SquareFunc.inverseplus.html#statsmodels.sandbox.distributions.transform_functions.SquareFunc.inverseplus">[docs]</a>    <span class="k">def</span> <span class="nf">inverseplus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SquareFunc.inverseminus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.SquareFunc.inverseminus.html#statsmodels.sandbox.distributions.transform_functions.SquareFunc.inverseminus">[docs]</a>    <span class="k">def</span> <span class="nf">inverseminus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SquareFunc.derivplus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.SquareFunc.derivplus.html#statsmodels.sandbox.distributions.transform_functions.SquareFunc.derivplus">[docs]</a>    <span class="k">def</span> <span class="nf">derivplus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.5</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SquareFunc.derivminus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.SquareFunc.derivminus.html#statsmodels.sandbox.distributions.transform_functions.SquareFunc.derivminus">[docs]</a>    <span class="k">def</span> <span class="nf">derivminus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.0</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
+
+
+
+
+<div class="viewcode-block" id="NegSquareFunc"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.html#statsmodels.sandbox.distributions.transform_functions.NegSquareFunc">[docs]</a><span class="k">class</span> <span class="nc">NegSquareFunc</span><span class="p">(</span><span class="n">TransformFunction</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;negative quadratic function</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="NegSquareFunc.func"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.func.html#statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.func">[docs]</a>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NegSquareFunc.inverseplus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.inverseplus.html#statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.inverseplus">[docs]</a>    <span class="k">def</span> <span class="nf">inverseplus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NegSquareFunc.inverseminus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.inverseminus.html#statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.inverseminus">[docs]</a>    <span class="k">def</span> <span class="nf">inverseminus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NegSquareFunc.derivplus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.derivplus.html#statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.derivplus">[docs]</a>    <span class="k">def</span> <span class="nf">derivplus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.0</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NegSquareFunc.derivminus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.derivminus.html#statsmodels.sandbox.distributions.transform_functions.NegSquareFunc.derivminus">[docs]</a>    <span class="k">def</span> <span class="nf">derivminus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.5</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="AbsFunc"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AbsFunc.html#statsmodels.sandbox.distributions.transform_functions.AbsFunc">[docs]</a><span class="k">class</span> <span class="nc">AbsFunc</span><span class="p">(</span><span class="n">TransformFunction</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;class for absolute value transformation</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="AbsFunc.func"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AbsFunc.func.html#statsmodels.sandbox.distributions.transform_functions.AbsFunc.func">[docs]</a>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AbsFunc.inverseplus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AbsFunc.inverseplus.html#statsmodels.sandbox.distributions.transform_functions.AbsFunc.inverseplus">[docs]</a>    <span class="k">def</span> <span class="nf">inverseplus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="AbsFunc.inverseminus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AbsFunc.inverseminus.html#statsmodels.sandbox.distributions.transform_functions.AbsFunc.inverseminus">[docs]</a>    <span class="k">def</span> <span class="nf">inverseminus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.0</span> <span class="o">-</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="AbsFunc.derivplus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AbsFunc.derivplus.html#statsmodels.sandbox.distributions.transform_functions.AbsFunc.derivplus">[docs]</a>    <span class="k">def</span> <span class="nf">derivplus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">1.0</span></div>
+
+<div class="viewcode-block" id="AbsFunc.derivminus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AbsFunc.derivminus.html#statsmodels.sandbox.distributions.transform_functions.AbsFunc.derivminus">[docs]</a>    <span class="k">def</span> <span class="nf">derivminus</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">0.0</span> <span class="o">-</span> <span class="mf">1.0</span></div></div>
+
+
+<span class="c1">## monotonic functions</span>
+<span class="c1"># more monotone functions in families.links, some for restricted domains</span>
+
+
+<div class="viewcode-block" id="LogFunc"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.LogFunc.html#statsmodels.sandbox.distributions.transform_functions.LogFunc">[docs]</a><span class="k">class</span> <span class="nc">LogFunc</span><span class="p">(</span><span class="n">TransformFunction</span><span class="p">):</span>
+
+<div class="viewcode-block" id="LogFunc.func"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.LogFunc.func.html#statsmodels.sandbox.distributions.transform_functions.LogFunc.func">[docs]</a>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LogFunc.inverse"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.LogFunc.inverse.html#statsmodels.sandbox.distributions.transform_functions.LogFunc.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="LogFunc.deriv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.LogFunc.deriv.html#statsmodels.sandbox.distributions.transform_functions.LogFunc.deriv">[docs]</a>    <span class="k">def</span> <span class="nf">deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">1.</span><span class="o">/</span><span class="n">x</span></div></div>
+
+<div class="viewcode-block" id="ExpFunc"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.ExpFunc.html#statsmodels.sandbox.distributions.transform_functions.ExpFunc">[docs]</a><span class="k">class</span> <span class="nc">ExpFunc</span><span class="p">(</span><span class="n">TransformFunction</span><span class="p">):</span>
+
+
+<div class="viewcode-block" id="ExpFunc.func"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.ExpFunc.func.html#statsmodels.sandbox.distributions.transform_functions.ExpFunc.func">[docs]</a>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExpFunc.inverse"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.ExpFunc.inverse.html#statsmodels.sandbox.distributions.transform_functions.ExpFunc.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExpFunc.deriv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.ExpFunc.deriv.html#statsmodels.sandbox.distributions.transform_functions.ExpFunc.deriv">[docs]</a>    <span class="k">def</span> <span class="nf">deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="BoxCoxNonzeroFunc"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc.html#statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc">[docs]</a><span class="k">class</span> <span class="nc">BoxCoxNonzeroFunc</span><span class="p">(</span><span class="n">TransformFunction</span><span class="p">):</span>
+
+<div class="viewcode-block" id="BoxCoxNonzeroFunc.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc.__init__.html#statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lamda</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lamda</span> <span class="o">=</span> <span class="n">lamda</span></div>
+
+<div class="viewcode-block" id="BoxCoxNonzeroFunc.func"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc.func.html#statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc.func">[docs]</a>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lamda</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">lamda</span></div>
+
+<div class="viewcode-block" id="BoxCoxNonzeroFunc.inverse"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc.inverse.html#statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lamda</span> <span class="o">*</span> <span class="n">y</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">lamda</span></div>
+
+<div class="viewcode-block" id="BoxCoxNonzeroFunc.deriv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc.deriv.html#statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc.deriv">[docs]</a>    <span class="k">def</span> <span class="nf">deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">lamda</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="AffineFunc"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AffineFunc.html#statsmodels.sandbox.distributions.transform_functions.AffineFunc">[docs]</a><span class="k">class</span> <span class="nc">AffineFunc</span><span class="p">(</span><span class="n">TransformFunction</span><span class="p">):</span>
+
+<div class="viewcode-block" id="AffineFunc.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AffineFunc.__init__.html#statsmodels.sandbox.distributions.transform_functions.AffineFunc.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">constant</span><span class="p">,</span> <span class="n">slope</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">constant</span> <span class="o">=</span> <span class="n">constant</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slope</span> <span class="o">=</span> <span class="n">slope</span></div>
+
+<div class="viewcode-block" id="AffineFunc.func"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AffineFunc.func.html#statsmodels.sandbox.distributions.transform_functions.AffineFunc.func">[docs]</a>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">slope</span> <span class="o">*</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="AffineFunc.inverse"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AffineFunc.inverse.html#statsmodels.sandbox.distributions.transform_functions.AffineFunc.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">constant</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">slope</span></div>
+
+<div class="viewcode-block" id="AffineFunc.deriv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.AffineFunc.deriv.html#statsmodels.sandbox.distributions.transform_functions.AffineFunc.deriv">[docs]</a>    <span class="k">def</span> <span class="nf">deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">slope</span></div></div>
+
+
+<div class="viewcode-block" id="ChainFunc"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.ChainFunc.html#statsmodels.sandbox.distributions.transform_functions.ChainFunc">[docs]</a><span class="k">class</span> <span class="nc">ChainFunc</span><span class="p">(</span><span class="n">TransformFunction</span><span class="p">):</span>
+
+<div class="viewcode-block" id="ChainFunc.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.ChainFunc.__init__.html#statsmodels.sandbox.distributions.transform_functions.ChainFunc.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">finn</span><span class="p">,</span> <span class="n">fout</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">finn</span> <span class="o">=</span> <span class="n">finn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fout</span> <span class="o">=</span> <span class="n">fout</span></div>
+
+<div class="viewcode-block" id="ChainFunc.func"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.ChainFunc.func.html#statsmodels.sandbox.distributions.transform_functions.ChainFunc.func">[docs]</a>    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fout</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">finn</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="ChainFunc.inverse"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.ChainFunc.inverse.html#statsmodels.sandbox.distributions.transform_functions.ChainFunc.inverse">[docs]</a>    <span class="k">def</span> <span class="nf">inverse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">f1</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">fout</span><span class="o">.</span><span class="n">inverse</span><span class="p">(</span><span class="n">y</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="ChainFunc.deriv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.transform_functions.ChainFunc.deriv.html#statsmodels.sandbox.distributions.transform_functions.ChainFunc.deriv">[docs]</a>    <span class="k">def</span> <span class="nf">deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">z</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">finn</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fout</span><span class="o">.</span><span class="n">deriv</span><span class="p">(</span><span class="n">z</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">finn</span><span class="o">.</span><span class="n">deriv</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div></div>
+
+
+<span class="c1">#def inverse(x):</span>
+<span class="c1">#    return np.divide(1.0,x)</span>
+<span class="c1">#</span>
+<span class="c1">#mux, stdx = 0.05, 0.1</span>
+<span class="c1">#mux, stdx = 9.0, 1.0</span>
+<span class="c1">#def inversew(x):</span>
+<span class="c1">#    return 1.0/(1+mux+x*stdx)</span>
+<span class="c1">#def inversew_inv(x):</span>
+<span class="c1">#    return (1.0/x - 1.0 - mux)/stdx #.np.divide(1.0,x)-10</span>
+<span class="c1">#</span>
+<span class="c1">#def identit(x):</span>
+<span class="c1">#    return x</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">absf</span> <span class="o">=</span> <span class="n">AbsFunc</span><span class="p">()</span>
+    <span class="n">absf</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+    <span class="n">absf</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="o">-</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+    <span class="n">absf</span><span class="o">.</span><span class="n">inverseplus</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="mi">5</span>
+    <span class="n">absf</span><span class="o">.</span><span class="n">inverseminus</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span> <span class="o">==</span> <span class="o">-</span><span class="mi">5</span>
+
+    <span class="n">chainf</span> <span class="o">=</span> <span class="n">ChainFunc</span><span class="p">(</span><span class="n">AffineFunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">BoxCoxNonzeroFunc</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chainf</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="mf">3.</span><span class="p">))</span>
+    <span class="n">chainf2</span> <span class="o">=</span> <span class="n">ChainFunc</span><span class="p">(</span><span class="n">BoxCoxNonzeroFunc</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">AffineFunc</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">chainf</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="mf">3.</span><span class="p">))</span>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

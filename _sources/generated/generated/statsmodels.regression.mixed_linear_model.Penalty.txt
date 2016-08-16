@@ -1,0 +1,23 @@
+statsmodels.regression.mixed_linear_model.Penalty
+=================================================
+
+.. currentmodule:: statsmodels.regression.mixed_linear_model
+.. autoclass:: Penalty
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Penalty.__init__
+   ~Penalty.func
+   ~Penalty.grad
+
+
+
+
+

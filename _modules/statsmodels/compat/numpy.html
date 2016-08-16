@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.compat.numpy &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.compat.numpy</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.compat.numpy</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Compatibility functions for numpy versions in lib</span>
+
+<span class="sd">np.unique</span>
+<span class="sd">---------</span>
+<span class="sd">Behavior changed in 1.6.2 and doesn&#39;t work for structured arrays if</span>
+<span class="sd">return_index=True.</span>
+<span class="sd">Only needed for this case, use np.unique otherwise</span>
+
+
+<span class="sd">License:</span>
+
+<span class="sd">np_unique below is copied form the numpy source before the change and is</span>
+<span class="sd">distributed under the BSD-3 license</span>
+
+<span class="sd">Copyright (c) 2005-2009, NumPy Developers.</span>
+<span class="sd">All rights reserved.</span>
+
+<span class="sd">Redistribution and use in source and binary forms, with or without</span>
+<span class="sd">modification, are permitted provided that the following conditions are</span>
+<span class="sd">met:</span>
+
+<span class="sd">    * Redistributions of source code must retain the above copyright</span>
+<span class="sd">       notice, this list of conditions and the following disclaimer.</span>
+
+<span class="sd">    * Redistributions in binary form must reproduce the above</span>
+<span class="sd">       copyright notice, this list of conditions and the following</span>
+<span class="sd">       disclaimer in the documentation and/or other materials provided</span>
+<span class="sd">       with the distribution.</span>
+
+<span class="sd">    * Neither the name of the NumPy Developers nor the names of any</span>
+<span class="sd">       contributors may be used to endorse or promote products derived</span>
+<span class="sd">       from this software without specific prior written permission.</span>
+
+<span class="sd">THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS</span>
+<span class="sd">&quot;AS IS&quot; AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT</span>
+<span class="sd">LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR</span>
+<span class="sd">A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT</span>
+<span class="sd">OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,</span>
+<span class="sd">SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT</span>
+<span class="sd">LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,</span>
+<span class="sd">DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY</span>
+<span class="sd">THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT</span>
+<span class="sd">(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE</span>
+<span class="sd">OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">absolute_import</span>
+<span class="kn">from</span> <span class="nn">.scipy</span> <span class="k">import</span> <span class="n">NumpyVersion</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="k">if</span> <span class="n">NumpyVersion</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&lt;</span> <span class="s1">&#39;1.6.2&#39;</span><span class="p">:</span>
+    <span class="n">npc_unique</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span>
+<span class="k">else</span><span class="p">:</span>
+
+<div class="viewcode-block" id="npc_unique"><a class="viewcode-back" href="../../../generated/statsmodels.tools.grouputils.npc_unique.html#statsmodels.tools.grouputils.npc_unique">[docs]</a>    <span class="k">def</span> <span class="nf">npc_unique</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Find the unique elements of an array.</span>
+
+<span class="sd">        Returns the sorted unique elements of an array. There are two optional</span>
+<span class="sd">        outputs in addition to the unique elements: the indices of the input array</span>
+<span class="sd">        that give the unique values, and the indices of the unique array that</span>
+<span class="sd">        reconstruct the input array.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        ar : array_like</span>
+<span class="sd">            Input array. This will be flattened if it is not already 1-D.</span>
+<span class="sd">        return_index : bool, optional</span>
+<span class="sd">            If True, also return the indices of `ar` that result in the unique</span>
+<span class="sd">            array.</span>
+<span class="sd">        return_inverse : bool, optional</span>
+<span class="sd">            If True, also return the indices of the unique array that can be used</span>
+<span class="sd">            to reconstruct `ar`.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        unique : ndarray</span>
+<span class="sd">            The sorted unique values.</span>
+<span class="sd">        unique_indices : ndarray, optional</span>
+<span class="sd">            The indices of the unique values in the (flattened) original array.</span>
+<span class="sd">            Only provided if `return_index` is True.</span>
+<span class="sd">        unique_inverse : ndarray, optional</span>
+<span class="sd">            The indices to reconstruct the (flattened) original array from the</span>
+<span class="sd">            unique array. Only provided if `return_inverse` is True.</span>
+
+<span class="sd">        See Also</span>
+<span class="sd">        --------</span>
+<span class="sd">        numpy.lib.arraysetops : Module with a number of other functions for</span>
+<span class="sd">                                performing set operations on arrays.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; np.unique([1, 1, 2, 2, 3, 3])</span>
+<span class="sd">        array([1, 2, 3])</span>
+<span class="sd">        &gt;&gt;&gt; a = np.array([[1, 1], [2, 3]])</span>
+<span class="sd">        &gt;&gt;&gt; np.unique(a)</span>
+<span class="sd">        array([1, 2, 3])</span>
+
+<span class="sd">        Return the indices of the original array that give the unique values:</span>
+
+<span class="sd">        &gt;&gt;&gt; a = np.array([&#39;a&#39;, &#39;b&#39;, &#39;b&#39;, &#39;c&#39;, &#39;a&#39;])</span>
+<span class="sd">        &gt;&gt;&gt; u, indices = np.unique(a, return_index=True)</span>
+<span class="sd">        &gt;&gt;&gt; u</span>
+<span class="sd">        array([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;],</span>
+<span class="sd">               dtype=&#39;|S1&#39;)</span>
+<span class="sd">        &gt;&gt;&gt; indices</span>
+<span class="sd">        array([0, 1, 3])</span>
+<span class="sd">        &gt;&gt;&gt; a[indices]</span>
+<span class="sd">        array([&#39;a&#39;, &#39;b&#39;, &#39;c&#39;],</span>
+<span class="sd">               dtype=&#39;|S1&#39;)</span>
+
+<span class="sd">        Reconstruct the input array from the unique values:</span>
+
+<span class="sd">        &gt;&gt;&gt; a = np.array([1, 2, 6, 4, 2, 3, 2])</span>
+<span class="sd">        &gt;&gt;&gt; u, indices = np.unique(a, return_inverse=True)</span>
+<span class="sd">        &gt;&gt;&gt; u</span>
+<span class="sd">        array([1, 2, 3, 4, 6])</span>
+<span class="sd">        &gt;&gt;&gt; indices</span>
+<span class="sd">        array([0, 1, 4, 3, 1, 2, 1])</span>
+<span class="sd">        &gt;&gt;&gt; u[indices]</span>
+<span class="sd">        array([1, 2, 6, 4, 2, 3, 2])</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ar</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+        <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">return_inverse</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">return_index</span><span class="p">:</span>
+                <span class="n">items</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">ar</span><span class="p">))</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">items</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">ar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span><span class="o">.</span><span class="n">flatten</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">ar</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">return_inverse</span> <span class="ow">and</span> <span class="n">return_index</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ar</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">return_inverse</span> <span class="ow">or</span> <span class="n">return_index</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ar</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">ar</span>
+
+        <span class="k">if</span> <span class="n">return_inverse</span> <span class="ow">or</span> <span class="n">return_index</span><span class="p">:</span>
+            <span class="n">perm</span> <span class="o">=</span> <span class="n">ar</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+            <span class="n">aux</span> <span class="o">=</span> <span class="n">ar</span><span class="p">[</span><span class="n">perm</span><span class="p">]</span>
+            <span class="n">flag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="kc">True</span><span class="p">],</span> <span class="n">aux</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">!=</span> <span class="n">aux</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">if</span> <span class="n">return_inverse</span><span class="p">:</span>
+                <span class="n">iflag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">flag</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+                <span class="n">iperm</span> <span class="o">=</span> <span class="n">perm</span><span class="o">.</span><span class="n">argsort</span><span class="p">()</span>
+                <span class="k">if</span> <span class="n">return_index</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">aux</span><span class="p">[</span><span class="n">flag</span><span class="p">],</span> <span class="n">perm</span><span class="p">[</span><span class="n">flag</span><span class="p">],</span> <span class="n">iflag</span><span class="p">[</span><span class="n">iperm</span><span class="p">]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">return</span> <span class="n">aux</span><span class="p">[</span><span class="n">flag</span><span class="p">],</span> <span class="n">iflag</span><span class="p">[</span><span class="n">iperm</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">aux</span><span class="p">[</span><span class="n">flag</span><span class="p">],</span> <span class="n">perm</span><span class="p">[</span><span class="n">flag</span><span class="p">]</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">ar</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="n">flag</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="kc">True</span><span class="p">],</span> <span class="n">ar</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">!=</span> <span class="n">ar</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="k">return</span> <span class="n">ar</span><span class="p">[</span><span class="n">flag</span><span class="p">]</span></div>
+
+<span class="k">if</span> <span class="n">NumpyVersion</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">__version__</span><span class="p">)</span> <span class="o">&gt;=</span> <span class="s1">&#39;1.7.1&#39;</span><span class="p">:</span>
+    <span class="n">np_matrix_rank</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">matrix_rank</span>
+<span class="k">else</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">np_matrix_rank</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Return matrix rank of array using SVD method</span>
+
+<span class="sd">        Rank of the array is the number of SVD singular values of the array that are</span>
+<span class="sd">        greater than `tol`.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        M : {(M,), (M, N)} array_like</span>
+<span class="sd">            array of &lt;=2 dimensions</span>
+<span class="sd">        tol : {None, float}, optional</span>
+<span class="sd">        threshold below which SVD values are considered zero. If `tol` is</span>
+<span class="sd">        None, and ``S`` is an array with singular values for `M`, and</span>
+<span class="sd">        ``eps`` is the epsilon value for datatype of ``S``, then `tol` is</span>
+<span class="sd">        set to ``S.max() * max(M.shape) * eps``.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The default threshold to detect rank deficiency is a test on the magnitude</span>
+<span class="sd">        of the singular values of `M`.  By default, we identify singular values less</span>
+<span class="sd">        than ``S.max() * max(M.shape) * eps`` as indicating rank deficiency (with</span>
+<span class="sd">        the symbols defined above). This is the algorithm MATLAB uses [1].  It also</span>
+<span class="sd">        appears in *Numerical recipes* in the discussion of SVD solutions for linear</span>
+<span class="sd">        least squares [2].</span>
+
+<span class="sd">        This default threshold is designed to detect rank deficiency accounting for</span>
+<span class="sd">        the numerical errors of the SVD computation.  Imagine that there is a column</span>
+<span class="sd">        in `M` that is an exact (in floating point) linear combination of other</span>
+<span class="sd">        columns in `M`. Computing the SVD on `M` will not produce a singular value</span>
+<span class="sd">        exactly equal to 0 in general: any difference of the smallest SVD value from</span>
+<span class="sd">        0 will be caused by numerical imprecision in the calculation of the SVD.</span>
+<span class="sd">        Our threshold for small SVD values takes this numerical imprecision into</span>
+<span class="sd">        account, and the default threshold will detect such numerical rank</span>
+<span class="sd">        deficiency.  The threshold may declare a matrix `M` rank deficient even if</span>
+<span class="sd">        the linear combination of some columns of `M` is not exactly equal to</span>
+<span class="sd">        another column of `M` but only numerically very close to another column of</span>
+<span class="sd">        `M`.</span>
+
+<span class="sd">        We chose our default threshold because it is in wide use.  Other thresholds</span>
+<span class="sd">        are possible.  For example, elsewhere in the 2007 edition of *Numerical</span>
+<span class="sd">        recipes* there is an alternative threshold of ``S.max() *</span>
+<span class="sd">        np.finfo(M.dtype).eps / 2. * np.sqrt(m + n + 1.)``. The authors describe</span>
+<span class="sd">        this threshold as being based on &quot;expected roundoff error&quot; (p 71).</span>
+
+<span class="sd">        The thresholds above deal with floating point roundoff error in the</span>
+<span class="sd">        calculation of the SVD.  However, you may have more information about the</span>
+<span class="sd">        sources of error in `M` that would make you consider other tolerance values</span>
+<span class="sd">        to detect *effective* rank deficiency.  The most useful measure of the</span>
+<span class="sd">        tolerance depends on the operations you intend to use on your matrix.  For</span>
+<span class="sd">        example, if your data come from uncertain measurements with uncertainties</span>
+<span class="sd">        greater than floating point epsilon, choosing a tolerance near that</span>
+<span class="sd">        uncertainty may be preferable.  The tolerance may be absolute if the</span>
+<span class="sd">        uncertainties are absolute rather than relative.</span>
+
+<span class="sd">        References</span>
+<span class="sd">        ----------</span>
+<span class="sd">        .. [1] MATLAB reference documention, &quot;Rank&quot;</span>
+<span class="sd">            http://www.mathworks.com/help/techdoc/ref/rank.html</span>
+<span class="sd">        .. [2] W. H. Press, S. A. Teukolsky, W. T. Vetterling and B. P. Flannery,</span>
+<span class="sd">            &quot;Numerical Recipes (3rd edition)&quot;, Cambridge University Press, 2007,</span>
+<span class="sd">            page 795.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from numpy.linalg import matrix_rank</span>
+<span class="sd">        &gt;&gt;&gt; matrix_rank(np.eye(4)) # Full rank matrix</span>
+<span class="sd">        4</span>
+<span class="sd">        &gt;&gt;&gt; I=np.eye(4); I[-1,-1] = 0. # rank deficient matrix</span>
+<span class="sd">        &gt;&gt;&gt; matrix_rank(I)</span>
+<span class="sd">        3</span>
+<span class="sd">        &gt;&gt;&gt; matrix_rank(np.ones((4,))) # 1 dimension - rank 1 unless all 0</span>
+<span class="sd">        1</span>
+<span class="sd">        &gt;&gt;&gt; matrix_rank(np.zeros((4,)))</span>
+<span class="sd">        0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">M</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">M</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">M</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s1">&#39;array should have 2 or fewer dimensions&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">M</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="ow">not</span> <span class="nb">all</span><span class="p">(</span><span class="n">M</span> <span class="o">==</span> <span class="mi">0</span><span class="p">))</span>
+        <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="n">M</span><span class="p">,</span> <span class="n">compute_uv</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">tol</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">tol</span> <span class="o">=</span> <span class="n">S</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">*</span> <span class="nb">max</span><span class="p">(</span><span class="n">M</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="n">S</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">S</span> <span class="o">&gt;</span> <span class="n">tol</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

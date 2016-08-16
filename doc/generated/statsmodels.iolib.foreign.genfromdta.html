@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7.17.2.3. statsmodels.iolib.foreign.genfromdta &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="7.17. Input-Output iolib" href="../iolib.html"/>
+        <link rel="next" title="7.17.2.4. statsmodels.iolib.foreign.savetxt" href="statsmodels.iolib.foreign.savetxt.html"/>
+        <link rel="prev" title="7.17.2.2. statsmodels.iolib.foreign.StataWriter" href="statsmodels.iolib.foreign.StataWriter.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../index.html">7. From official doc</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../regression.html">7.1. Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../glm.html">7.2. Generalized Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gee.html">7.3. Generalized Estimating Equations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../rlm.html">7.4. Robust Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../mixed_linear.html">7.5. Linear Mixed Effects Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../discretemod.html">7.6. Regression with Discrete Dependent Variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../anova.html">7.7. ANOVA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../tsa.html">7.8. Time Series analysis <code class="docutils literal"><span class="pre">tsa</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../duration.html">7.9. Models for Survival and Duration Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../stats.html">7.10. Statistics <code class="docutils literal"><span class="pre">stats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../nonparametric.html">7.11. Nonparametric Methods <code class="docutils literal"><span class="pre">nonparametric</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../gmm.html">7.12. Generalized Method of Moments <code class="docutils literal"><span class="pre">gmm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../emplike.html">7.13. Empirical Likelihood <code class="docutils literal"><span class="pre">emplike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../miscmodels.html">7.14. Other Models <code class="docutils literal"><span class="pre">miscmodels</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="../distributions.html">7.15. Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../graphics.html">7.16. Graphics</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../iolib.html">7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../iolib.html#examples">7.17.1. Examples</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../iolib.html#module-reference">7.17.2. Module Reference</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.iolib.foreign.StataReader.html">7.17.2.1. statsmodels.iolib.foreign.StataReader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.iolib.foreign.StataWriter.html">7.17.2.2. statsmodels.iolib.foreign.StataWriter</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">7.17.2.3. statsmodels.iolib.foreign.genfromdta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.iolib.foreign.savetxt.html">7.17.2.4. statsmodels.iolib.foreign.savetxt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.iolib.table.SimpleTable.html">7.17.2.5. statsmodels.iolib.table.SimpleTable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.iolib.table.csv2st.html">7.17.2.6. statsmodels.iolib.table.csv2st</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.iolib.smpickle.save_pickle.html">7.17.2.7. statsmodels.iolib.smpickle.save_pickle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.iolib.smpickle.load_pickle.html">7.17.2.8. statsmodels.iolib.smpickle.load_pickle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.iolib.summary.Summary.html">7.17.2.9. statsmodels.iolib.summary.Summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.iolib.summary2.Summary.html">7.17.2.10. statsmodels.iolib.summary2.Summary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../tools.html">7.18. Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../datasets.html">7.19. The Datasets Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox.html">7.20. Sandbox</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">7. From official doc</a> &raquo;</li>
+        
+          <li><a href="../iolib.html">7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></a> &raquo;</li>
+        
+      <li>7.17.2.3. statsmodels.iolib.foreign.genfromdta</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/doc/generated/statsmodels.iolib.foreign.genfromdta.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-iolib-foreign-genfromdta">
+<h1>7.17.2.3. statsmodels.iolib.foreign.genfromdta<a class="headerlink" href="#statsmodels-iolib-foreign-genfromdta" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.iolib.foreign.genfromdta">
+<code class="descclassname">statsmodels.iolib.foreign.</code><code class="descname">genfromdta</code><span class="sig-paren">(</span><em>fname</em>, <em>missing_flt=-999.0</em>, <em>encoding=None</em>, <em>pandas=False</em>, <em>convert_dates=True</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/iolib/foreign.html#genfromdta"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.iolib.foreign.genfromdta" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns an ndarray or DataFrame from a Stata .dta file.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>fname</strong> : str or filehandle</p>
+<blockquote>
+<div><p>Stata .dta file.</p>
+</div></blockquote>
+<p><strong>missing_flt</strong> : numeric</p>
+<blockquote>
+<div><p>The numeric value to replace missing values with. Will be used for
+any numeric value.</p>
+</div></blockquote>
+<p><strong>encoding</strong> : string, optional</p>
+<blockquote>
+<div><p>Used for Python 3 only. Encoding to use when reading the .dta file.
+Defaults to <cite>locale.getpreferredencoding</cite></p>
+</div></blockquote>
+<p><strong>pandas</strong> : bool</p>
+<blockquote>
+<div><p>Optionally return a DataFrame instead of an ndarray</p>
+</div></blockquote>
+<p><strong>convert_dates</strong> : bool</p>
+<blockquote class="last">
+<div><p>If convert_dates is True, then Stata formatted dates will be converted
+to datetime types according to the variable&#8217;s format.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.iolib.foreign.savetxt.html" class="btn btn-neutral float-right" title="7.17.2.4. statsmodels.iolib.foreign.savetxt" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.iolib.foreign.StataWriter.html" class="btn btn-neutral" title="7.17.2.2. statsmodels.iolib.foreign.StataWriter" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

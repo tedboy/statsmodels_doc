@@ -1,0 +1,26 @@
+statsmodels.genmod.generalized_estimating_equations.Independence
+================================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: Independence
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Independence.__init__
+   ~Independence.covariance_matrix
+   ~Independence.covariance_matrix_solve
+   ~Independence.initialize
+   ~Independence.summary
+   ~Independence.update
+
+
+
+
+

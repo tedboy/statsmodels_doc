@@ -1,0 +1,52 @@
+statsmodels.miscmodels.tmodel.Arma
+==================================
+
+.. currentmodule:: statsmodels.miscmodels.tmodel
+.. autoclass:: Arma
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Arma.__init__
+   ~Arma.expandparams
+   ~Arma.fit
+   ~Arma.fit_mle
+   ~Arma.forecast
+   ~Arma.forecast2
+   ~Arma.forecast3
+   ~Arma.from_formula
+   ~Arma.generate_sample
+   ~Arma.geterrors
+   ~Arma.hessian
+   ~Arma.information
+   ~Arma.initialize
+   ~Arma.jac
+   ~Arma.loglike
+   ~Arma.loglikeobs
+   ~Arma.nloglike
+   ~Arma.nloglikeobs
+   ~Arma.predict
+   ~Arma.predicted
+   ~Arma.reduceparams
+   ~Arma.score
+   ~Arma.score_obs
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Arma.endog_names
+   ~Arma.exog_names
+

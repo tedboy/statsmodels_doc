@@ -1,0 +1,48 @@
+statsmodels.iolib.summary2.SimpleTable
+======================================
+
+.. currentmodule:: statsmodels.iolib.summary2
+.. autoclass:: SimpleTable
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~SimpleTable.__init__
+   ~SimpleTable.append
+   ~SimpleTable.as_csv
+   ~SimpleTable.as_html
+   ~SimpleTable.as_latex_tabular
+   ~SimpleTable.as_text
+   ~SimpleTable.count
+   ~SimpleTable.extend
+   ~SimpleTable.extend_right
+   ~SimpleTable.get_colwidths
+   ~SimpleTable.index
+   ~SimpleTable.insert
+   ~SimpleTable.insert_header_row
+   ~SimpleTable.insert_stubs
+   ~SimpleTable.label_cells
+   ~SimpleTable.pad
+   ~SimpleTable.pop
+   ~SimpleTable.remove
+   ~SimpleTable.reverse
+   ~SimpleTable.sort
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~SimpleTable.data
+

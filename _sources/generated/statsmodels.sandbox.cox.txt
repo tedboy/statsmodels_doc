@@ -1,0 +1,45 @@
+statsmodels.sandbox.cox
+=======================
+
+.. automodule:: statsmodels.sandbox.cox
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      iterkeys
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CoxPH
+      Discrete
+      Observation
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.cox.CoxPH
+       generated/statsmodels.sandbox.cox.Discrete
+       generated/statsmodels.sandbox.cox.Observation
+
+   
+   
+
+   
+   
+   

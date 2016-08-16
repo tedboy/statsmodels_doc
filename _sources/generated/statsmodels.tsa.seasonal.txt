@@ -1,0 +1,45 @@
+statsmodels.tsa.seasonal
+========================
+
+.. automodule:: statsmodels.tsa.seasonal
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      convolution_filter
+      freq_to_period
+      iteritems
+      seasonal_decompose
+      seasonal_mean
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      DecomposeResult
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tsa.seasonal.DecomposeResult
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,27 @@
+statsmodels.sandbox.tsa.diffusion.ExactDiffusion
+================================================
+
+.. currentmodule:: statsmodels.sandbox.tsa.diffusion
+.. autoclass:: ExactDiffusion
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ExactDiffusion.__init__
+   ~ExactDiffusion.exactdist
+   ~ExactDiffusion.exactprocess
+   ~ExactDiffusion.expectedsim
+   ~ExactDiffusion.sim
+   ~ExactDiffusion.simEM
+   ~ExactDiffusion.simulateW
+
+
+
+
+

@@ -1,0 +1,73 @@
+statsmodels.tsa.api
+===================
+
+.. automodule:: statsmodels.tsa.api
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      acf
+      acovf
+      add_lag
+      add_trend
+      adfuller
+      arma_generate_sample
+      arma_order_select_ic
+      ccf
+      ccovf
+      coint
+      detrend
+      lagmat
+      lagmat2ds
+      pacf
+      pacf_ols
+      pacf_yw
+      periodogram
+      q_stat
+      seasonal_decompose
+      x13_arima_analysis
+      x13_arima_select_order
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      AR
+      ARIMA
+      ARMA
+      ArmaProcess
+      DynamicVAR
+      SVAR
+      VAR
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tsa.api.AR
+       generated/statsmodels.tsa.api.ARIMA
+       generated/statsmodels.tsa.api.ARMA
+       generated/statsmodels.tsa.api.ArmaProcess
+       generated/statsmodels.tsa.api.DynamicVAR
+       generated/statsmodels.tsa.api.SVAR
+       generated/statsmodels.tsa.api.VAR
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,28 @@
+statsmodels.sandbox.distributions.mv_normal.BivariateNormal
+===========================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.mv_normal
+.. autoclass:: BivariateNormal
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~BivariateNormal.__init__
+   ~BivariateNormal.cdf
+   ~BivariateNormal.expect
+   ~BivariateNormal.kl
+   ~BivariateNormal.kl_mc
+   ~BivariateNormal.logpdf
+   ~BivariateNormal.pdf
+   ~BivariateNormal.rvs
+
+
+
+
+

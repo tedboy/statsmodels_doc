@@ -1,0 +1,493 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.5.5.2.1. statsmodels.iolib.summary.SimpleTable &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="4.5.5. statsmodels.iolib.summary" href="../statsmodels.iolib.summary.html"/>
+        <link rel="next" title="4.5.5.2.1.1.1. statsmodels.iolib.summary.SimpleTable.__init__" href="statsmodels.iolib.summary.SimpleTable.__init__.html"/>
+        <link rel="prev" title="4.5.5.1.9. statsmodels.iolib.summary.table_extend" href="../statsmodels.iolib.summary.table_extend.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.api.html">4.5.1. statsmodels.iolib.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.foreign.html">4.5.2. statsmodels.iolib.foreign</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.smpickle.html">4.5.3. statsmodels.iolib.smpickle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.stata_summary_examples.html">4.5.4. statsmodels.iolib.stata_summary_examples</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.iolib.summary.html">4.5.5. statsmodels.iolib.summary</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.iolib.summary.html#functions">4.5.5.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.iolib.summary.html#classes">4.5.5.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.summary2.html">4.5.6. statsmodels.iolib.summary2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.table.html">4.5.7. statsmodels.iolib.table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.tableformatting.html">4.5.8. statsmodels.iolib.tableformatting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.iolib.summary.html">4.5.5. statsmodels.iolib.summary</a> &raquo;</li>
+        
+      <li>4.5.5.2.1. statsmodels.iolib.summary.SimpleTable</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.iolib.summary.SimpleTable.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-iolib-summary-simpletable">
+<h1>4.5.5.2.1. statsmodels.iolib.summary.SimpleTable<a class="headerlink" href="#statsmodels-iolib-summary-simpletable" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.iolib.summary.SimpleTable">
+<em class="property">class </em><code class="descclassname">statsmodels.iolib.summary.</code><code class="descname">SimpleTable</code><span class="sig-paren">(</span><em>data</em>, <em>headers=None</em>, <em>stubs=None</em>, <em>title=''</em>, <em>datatypes=None</em>, <em>csv_fmt=None</em>, <em>txt_fmt=None</em>, <em>ltx_fmt=None</em>, <em>html_fmt=None</em>, <em>celltype=None</em>, <em>rowtype=None</em>, <em>**fmt_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/iolib/table.html#SimpleTable"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.iolib.summary.SimpleTable" title="Permalink to this definition">¶</a></dt>
+<dd><p>Produce a simple ASCII, CSV, HTML, or LaTeX table from a
+<em>rectangular</em> (2d!) array of data, not necessarily numerical.
+Directly supports at most one header row,
+which should be the length of data[0].
+Directly supports at most one stubs column,
+which must be the length of data.
+(But see <cite>insert_stubs</cite> method.)
+See globals <cite>default_txt_fmt</cite>, <cite>default_csv_fmt</cite>, <cite>default_html_fmt</cite>,
+and <cite>default_latex_fmt</cite> for formatting options.</p>
+<p>Sample uses:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mydata</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">],[</span><span class="mi">21</span><span class="p">,</span><span class="mi">22</span><span class="p">]]</span>  <span class="c1"># data MUST be 2-dimensional</span>
+<span class="n">myheaders</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;Column 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Column 2&quot;</span> <span class="p">]</span>
+<span class="n">mystubs</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;Row 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Row 2&quot;</span> <span class="p">]</span>
+<span class="n">tbl</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">SimpleTable</span><span class="p">(</span><span class="n">mydata</span><span class="p">,</span> <span class="n">myheaders</span><span class="p">,</span> <span class="n">mystubs</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="n">tbl</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="n">tbl</span><span class="o">.</span><span class="n">as_html</span><span class="p">()</span> <span class="p">)</span>
+<span class="c1"># set column specific data formatting</span>
+<span class="n">tbl</span> <span class="o">=</span> <span class="n">text</span><span class="o">.</span><span class="n">SimpleTable</span><span class="p">(</span><span class="n">mydata</span><span class="p">,</span> <span class="n">myheaders</span><span class="p">,</span> <span class="n">mystubs</span><span class="p">,</span>
+    <span class="n">data_fmts</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%3.2f</span><span class="s2">&quot;</span><span class="p">,</span><span class="s2">&quot;</span><span class="si">%d</span><span class="s2">&quot;</span><span class="p">])</span>
+<span class="nb">print</span><span class="p">(</span> <span class="n">tbl</span><span class="o">.</span><span class="n">as_csv</span><span class="p">()</span> <span class="p">)</span>
+<span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="s1">&#39;c:/temp/temp.tex&#39;</span><span class="p">,</span><span class="s1">&#39;w&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">fh</span><span class="p">:</span>
+    <span class="n">fh</span><span class="o">.</span><span class="n">write</span><span class="p">(</span> <span class="n">tbl</span><span class="o">.</span><span class="n">as_latex_tabular</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : list of lists or 2d array (not matrix!)</p>
+<blockquote>
+<div><p>R rows by K columns of table elements</p>
+</div></blockquote>
+<p><strong>headers</strong> : list (or tuple) of str</p>
+<blockquote>
+<div><p>sequence of K strings, one per header</p>
+</div></blockquote>
+<p><strong>stubs</strong> : list (or tuple) of str</p>
+<blockquote>
+<div><p>sequence of R strings, one per stub</p>
+</div></blockquote>
+<p><strong>title</strong> : string</p>
+<blockquote>
+<div><p>title of the table</p>
+</div></blockquote>
+<p><strong>datatypes</strong> : list of int</p>
+<blockquote>
+<div><p>indexes to <cite>data_fmts</cite></p>
+</div></blockquote>
+<p><strong>txt_fmt</strong> : dict</p>
+<blockquote>
+<div><p>text formatting options</p>
+</div></blockquote>
+<p><strong>ltx_fmt</strong> : dict</p>
+<blockquote>
+<div><p>latex formatting options</p>
+</div></blockquote>
+<p><strong>csv_fmt</strong> : dict</p>
+<blockquote>
+<div><p>csv formatting options</p>
+</div></blockquote>
+<p><strong>hmtl_fmt</strong> : dict</p>
+<blockquote>
+<div><p>hmtl formatting options</p>
+</div></blockquote>
+<p><strong>celltype</strong> : class</p>
+<blockquote>
+<div><p>the cell class for the table (default: Cell)</p>
+</div></blockquote>
+<p><strong>rowtype</strong> : class</p>
+<blockquote>
+<div><p>the row class for the table (default: Row)</p>
+</div></blockquote>
+<p><strong>fmt_dict</strong> : dict</p>
+<blockquote class="last">
+<div><p>general formatting options</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="statsmodels.iolib.summary.SimpleTable.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>data</em>, <em>headers=None</em>, <em>stubs=None</em>, <em>title=''</em>, <em>datatypes=None</em>, <em>csv_fmt=None</em>, <em>txt_fmt=None</em>, <em>ltx_fmt=None</em>, <em>html_fmt=None</em>, <em>celltype=None</em>, <em>rowtype=None</em>, <em>**fmt_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/iolib/table.html#SimpleTable.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.iolib.summary.SimpleTable.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : list of lists or 2d array (not matrix!)</p>
+<blockquote>
+<div><p>R rows by K columns of table elements</p>
+</div></blockquote>
+<p><strong>headers</strong> : list (or tuple) of str</p>
+<blockquote>
+<div><p>sequence of K strings, one per header</p>
+</div></blockquote>
+<p><strong>stubs</strong> : list (or tuple) of str</p>
+<blockquote>
+<div><p>sequence of R strings, one per stub</p>
+</div></blockquote>
+<p><strong>title</strong> : string</p>
+<blockquote>
+<div><p>title of the table</p>
+</div></blockquote>
+<p><strong>datatypes</strong> : list of int</p>
+<blockquote>
+<div><p>indexes to <cite>data_fmts</cite></p>
+</div></blockquote>
+<p><strong>txt_fmt</strong> : dict</p>
+<blockquote>
+<div><p>text formatting options</p>
+</div></blockquote>
+<p><strong>ltx_fmt</strong> : dict</p>
+<blockquote>
+<div><p>latex formatting options</p>
+</div></blockquote>
+<p><strong>csv_fmt</strong> : dict</p>
+<blockquote>
+<div><p>csv formatting options</p>
+</div></blockquote>
+<p><strong>hmtl_fmt</strong> : dict</p>
+<blockquote>
+<div><p>hmtl formatting options</p>
+</div></blockquote>
+<p><strong>celltype</strong> : class</p>
+<blockquote>
+<div><p>the cell class for the table (default: Cell)</p>
+</div></blockquote>
+<p><strong>rowtype</strong> : class</p>
+<blockquote>
+<div><p>the row class for the table (default: Row)</p>
+</div></blockquote>
+<p><strong>fmt_dict</strong> : dict</p>
+<blockquote class="last">
+<div><p>general formatting options</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>4.5.5.2.1.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.__init__.html#statsmodels.iolib.summary.SimpleTable.__init__" title="statsmodels.iolib.summary.SimpleTable.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(data[,&nbsp;headers,&nbsp;stubs,&nbsp;title,&nbsp;...])</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.append.html#statsmodels.iolib.summary.SimpleTable.append" title="statsmodels.iolib.summary.SimpleTable.append"><code class="xref py py-obj docutils literal"><span class="pre">append</span></code></a></td>
+<td>L.append(object) &#8211; append object to end</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.as_csv.html#statsmodels.iolib.summary.SimpleTable.as_csv" title="statsmodels.iolib.summary.SimpleTable.as_csv"><code class="xref py py-obj docutils literal"><span class="pre">as_csv</span></code></a>(**fmt_dict)</td>
+<td>Return string, the table in CSV format.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.as_html.html#statsmodels.iolib.summary.SimpleTable.as_html" title="statsmodels.iolib.summary.SimpleTable.as_html"><code class="xref py py-obj docutils literal"><span class="pre">as_html</span></code></a>(**fmt_dict)</td>
+<td>Return string.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.as_latex_tabular.html#statsmodels.iolib.summary.SimpleTable.as_latex_tabular" title="statsmodels.iolib.summary.SimpleTable.as_latex_tabular"><code class="xref py py-obj docutils literal"><span class="pre">as_latex_tabular</span></code></a>([center])</td>
+<td>Return string, the table as a LaTeX tabular environment.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.as_text.html#statsmodels.iolib.summary.SimpleTable.as_text" title="statsmodels.iolib.summary.SimpleTable.as_text"><code class="xref py py-obj docutils literal"><span class="pre">as_text</span></code></a>(**fmt_dict)</td>
+<td>Return string, the table as text.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.count.html#statsmodels.iolib.summary.SimpleTable.count" title="statsmodels.iolib.summary.SimpleTable.count"><code class="xref py py-obj docutils literal"><span class="pre">count</span></code></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.extend.html#statsmodels.iolib.summary.SimpleTable.extend" title="statsmodels.iolib.summary.SimpleTable.extend"><code class="xref py py-obj docutils literal"><span class="pre">extend</span></code></a></td>
+<td>L.extend(iterable) &#8211; extend list by appending elements from the iterable</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.extend_right.html#statsmodels.iolib.summary.SimpleTable.extend_right" title="statsmodels.iolib.summary.SimpleTable.extend_right"><code class="xref py py-obj docutils literal"><span class="pre">extend_right</span></code></a>(table)</td>
+<td>Return None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.get_colwidths.html#statsmodels.iolib.summary.SimpleTable.get_colwidths" title="statsmodels.iolib.summary.SimpleTable.get_colwidths"><code class="xref py py-obj docutils literal"><span class="pre">get_colwidths</span></code></a>(output_format,&nbsp;**fmt_dict)</td>
+<td>Return list, the widths of each column.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.index.html#statsmodels.iolib.summary.SimpleTable.index" title="statsmodels.iolib.summary.SimpleTable.index"><code class="xref py py-obj docutils literal"><span class="pre">index</span></code></a>((value,&nbsp;[start,&nbsp;...)</td>
+<td>Raises ValueError if the value is not present.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.insert.html#statsmodels.iolib.summary.SimpleTable.insert" title="statsmodels.iolib.summary.SimpleTable.insert"><code class="xref py py-obj docutils literal"><span class="pre">insert</span></code></a>(idx,&nbsp;row[,&nbsp;datatype])</td>
+<td>Return None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.insert_header_row.html#statsmodels.iolib.summary.SimpleTable.insert_header_row" title="statsmodels.iolib.summary.SimpleTable.insert_header_row"><code class="xref py py-obj docutils literal"><span class="pre">insert_header_row</span></code></a>(rownum,&nbsp;headers[,&nbsp;dec_below])</td>
+<td>Return None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.insert_stubs.html#statsmodels.iolib.summary.SimpleTable.insert_stubs" title="statsmodels.iolib.summary.SimpleTable.insert_stubs"><code class="xref py py-obj docutils literal"><span class="pre">insert_stubs</span></code></a>(loc,&nbsp;stubs)</td>
+<td>Return None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.label_cells.html#statsmodels.iolib.summary.SimpleTable.label_cells" title="statsmodels.iolib.summary.SimpleTable.label_cells"><code class="xref py py-obj docutils literal"><span class="pre">label_cells</span></code></a>(func)</td>
+<td>Return None.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.pad.html#statsmodels.iolib.summary.SimpleTable.pad" title="statsmodels.iolib.summary.SimpleTable.pad"><code class="xref py py-obj docutils literal"><span class="pre">pad</span></code></a>(s,&nbsp;width,&nbsp;align)</td>
+<td>DEPRECATED: just use the pad function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.pop.html#statsmodels.iolib.summary.SimpleTable.pop" title="statsmodels.iolib.summary.SimpleTable.pop"><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code></a>(...)</td>
+<td>Raises IndexError if list is empty or index is out of range.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.remove.html#statsmodels.iolib.summary.SimpleTable.remove" title="statsmodels.iolib.summary.SimpleTable.remove"><code class="xref py py-obj docutils literal"><span class="pre">remove</span></code></a></td>
+<td>L.remove(value) &#8211; remove first occurrence of value.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.reverse.html#statsmodels.iolib.summary.SimpleTable.reverse" title="statsmodels.iolib.summary.SimpleTable.reverse"><code class="xref py py-obj docutils literal"><span class="pre">reverse</span></code></a></td>
+<td>L.reverse() &#8211; reverse <em>IN PLACE</em></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.sort.html#statsmodels.iolib.summary.SimpleTable.sort" title="statsmodels.iolib.summary.SimpleTable.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a></td>
+<td>L.sort(cmp=None, key=None, reverse=False) &#8211; stable sort <em>IN PLACE</em>;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>4.5.5.2.1.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.summary.SimpleTable.data.html#statsmodels.iolib.summary.SimpleTable.data" title="statsmodels.iolib.summary.SimpleTable.data"><code class="xref py py-obj docutils literal"><span class="pre">data</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.iolib.summary.SimpleTable.__init__.html" class="btn btn-neutral float-right" title="4.5.5.2.1.1.1. statsmodels.iolib.summary.SimpleTable.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../statsmodels.iolib.summary.table_extend.html" class="btn btn-neutral" title="4.5.5.1.9. statsmodels.iolib.summary.table_extend" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.3.3. statsmodels.sandbox.distributions.estimators &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.3.3.2.2.1. statsmodels.sandbox.distributions.estimators.fit_mps" href="statsmodels.sandbox.distributions.estimators.fit_mps.html"/>
+        <link rel="prev" title="6.3.2.3.6.1.1. statsmodels.sandbox.distributions.copula.Transforms.__init__" href="generated/statsmodels.sandbox.distributions.copula.Transforms.__init__.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.html">6.3.1. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.copula.html">6.3.2. statsmodels.sandbox.distributions.copula</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.3.3. statsmodels.sandbox.distributions.estimators</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#quantile-based-estimator">6.3.3.1. quantile based estimator</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#binned-estimator">6.3.3.2. binned estimator</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.extras.html">6.3.4. statsmodels.sandbox.distributions.extras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.genpareto.html">6.3.5. statsmodels.sandbox.distributions.genpareto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.gof_new.html">6.3.6. statsmodels.sandbox.distributions.gof_new</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.multivariate.html">6.3.7. statsmodels.sandbox.distributions.multivariate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.mv_measures.html">6.3.8. statsmodels.sandbox.distributions.mv_measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.html">6.3.9. statsmodels.sandbox.distributions.mv_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.otherdist.html">6.3.10. statsmodels.sandbox.distributions.otherdist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.quantize.html">6.3.11. statsmodels.sandbox.distributions.quantize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.sppatch.html">6.3.12. statsmodels.sandbox.distributions.sppatch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.transform_functions.html">6.3.13. statsmodels.sandbox.distributions.transform_functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.transformed.html">6.3.14. statsmodels.sandbox.distributions.transformed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.try_max.html">6.3.15. statsmodels.sandbox.distributions.try_max</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.try_pot.html">6.3.16. statsmodels.sandbox.distributions.try_pot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.3.3. statsmodels.sandbox.distributions.estimators</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.distributions.estimators.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.distributions.estimators">
+<span id="statsmodels-sandbox-distributions-estimators"></span><h1>6.3.3. statsmodels.sandbox.distributions.estimators<a class="headerlink" href="#module-statsmodels.sandbox.distributions.estimators" title="Permalink to this headline">¶</a></h1>
+<p>estimate distribution parameters by various methods
+method of moments or matching quantiles, and Maximum Likelihood estimation
+based on binned data and Maximum Product-of-Spacings</p>
+<dl class="docutils">
+<dt>Warning: I&#8217;m still finding cut-and-paste and refactoring errors, e.g.</dt>
+<dd>hardcoded variables from outer scope in functions
+some results don&#8217;t seem to make sense for Pareto case,
+looks better now after correcting some name errors</dd>
+<dt>initially loosely based on a paper and blog for quantile matching</dt>
+<dd>by John D. Cook
+formula for gamma quantile (ppf) matching by him (from paper)
+<a class="reference external" href="http://www.codeproject.com/KB/recipes/ParameterPercentile.aspx">http://www.codeproject.com/KB/recipes/ParameterPercentile.aspx</a>
+<a class="reference external" href="http://www.johndcook.com/blog/2010/01/31/parameters-from-percentiles/">http://www.johndcook.com/blog/2010/01/31/parameters-from-percentiles/</a>
+this is what I actually used (in parts):
+<a class="reference external" href="http://www.bepress.com/mdandersonbiostat/paper55/">http://www.bepress.com/mdandersonbiostat/paper55/</a></dd>
+</dl>
+<div class="section" id="quantile-based-estimator">
+<h2>6.3.3.1. quantile based estimator<a class="headerlink" href="#quantile-based-estimator" title="Permalink to this headline">¶</a></h2>
+<p>only special cases for number or parameters so far
+Is there a literature for GMM estimation of distribution parameters? check</p>
+<blockquote>
+<div>found one: Wu/Perloff 2007</div></blockquote>
+</div>
+<div class="section" id="binned-estimator">
+<h2>6.3.3.2. binned estimator<a class="headerlink" href="#binned-estimator" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>I added this also</li>
+<li>use it for chisquare tests with estimation distribution parameters</li>
+<li>move this to distribution_extras (next to gof tests powerdiscrepancy and
+continuous) or add to distribution_patch</li>
+</ul>
+<p>example: t-distribution
+* works with quantiles if they contain tail quantiles
+* results with momentcondquant don&#8217;t look as good as mle estimate</p>
+<p>TODOs
+* rearange and make sure I don&#8217;t use module globals (as I did initially) DONE</p>
+<blockquote>
+<div>make two version exactly identified method of moments with fsolve
+and GMM (?) version with fmin
+and maybe the special cases of JD Cook
+update: maybe exact (MM) version is not so interesting compared to GMM</div></blockquote>
+<ul class="simple">
+<li>add semifrozen version of moment and quantile based estimators,
+e.g. for beta (both loc and scale fixed), or gamma (loc fixed)</li>
+<li>add beta example to the semifrozen MLE, fitfr, code
+-&gt; added method of moment estimator to _fitstart for beta</li>
+<li>start a list of how well different estimators, especially current mle work
+for the different distributions</li>
+<li>need general GMM code (with optimal weights ?), looks like a good example
+for it</li>
+<li>get example for binned data estimation, mailing list a while ago</li>
+<li>any idea when these are better than mle ?</li>
+<li>check language: I use quantile to mean the value of the random variable, not
+quantile between 0 and 1.</li>
+<li>for GMM: move moment conditions to separate function, so that they can be
+used for further analysis, e.g. covariance matrix of parameter estimates</li>
+<li>question: Are GMM properties different for matching quantiles with cdf or
+ppf? Estimate should be the same, but derivatives of moment conditions
+differ.</li>
+<li>add maximum spacings estimator, Wikipedia, Per Brodtkorb -&gt; basic version Done</li>
+<li>add parameter estimation based on empirical characteristic function
+(Carrasco/Florens), especially for stable distribution</li>
+<li>provide a model class based on estimating all distributions, and collect
+all distribution specific information</li>
+</ul>
+<div class="section" id="references">
+<h3>6.3.3.2.1. References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<p>Ximing Wu, Jeffrey M. Perloff, GMM estimation of a maximum entropy
+distribution with interval data, Journal of Econometrics, Volume 138,
+Issue 2, &#8216;Information and Entropy Econometrics&#8217; - A Volume in Honor of
+Arnold Zellner, June 2007, Pages 532-546, ISSN 0304-4076,
+DOI: 10.1016/j.jeconom.2006.05.008.
+<a class="reference external" href="http://www.sciencedirect.com/science/article/B6VC0-4K606TK-4/2/78bc07c6245546374490f777a6bdbbcc">http://www.sciencedirect.com/science/article/B6VC0-4K606TK-4/2/78bc07c6245546374490f777a6bdbbcc</a>
+<a class="reference external" href="http://escholarship.org/uc/item/7jf5w1ht">http://escholarship.org/uc/item/7jf5w1ht</a>  (working paper)</p>
+<p>Johnson, Kotz, Balakrishnan: Volume 2</p>
+<p>Author : josef-pktd
+License : BSD
+created : 2010-04-20</p>
+<p>changes:
+added Maximum Product-of-Spacings 2010-05-12</p>
+</div>
+<div class="section" id="functions">
+<h3>6.3.3.2.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.fit_mps.html#statsmodels.sandbox.distributions.estimators.fit_mps" title="statsmodels.sandbox.distributions.estimators.fit_mps"><code class="xref py py-obj docutils literal"><span class="pre">fit_mps</span></code></a>(dist,&nbsp;data[,&nbsp;x0])</td>
+<td>Estimate distribution parameters with Maximum Product-of-Spacings</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.fitbinned.html#statsmodels.sandbox.distributions.estimators.fitbinned" title="statsmodels.sandbox.distributions.estimators.fitbinned"><code class="xref py py-obj docutils literal"><span class="pre">fitbinned</span></code></a>(distfn,&nbsp;freq,&nbsp;binedges,&nbsp;start[,&nbsp;fixed])</td>
+<td>estimate parameters of distribution function for binned data using MLE</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.fitbinnedgmm.html#statsmodels.sandbox.distributions.estimators.fitbinnedgmm" title="statsmodels.sandbox.distributions.estimators.fitbinnedgmm"><code class="xref py py-obj docutils literal"><span class="pre">fitbinnedgmm</span></code></a>(distfn,&nbsp;freq,&nbsp;binedges,&nbsp;start)</td>
+<td>estimate parameters of distribution function for binned data using GMM</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.fitquantilesgmm.html#statsmodels.sandbox.distributions.estimators.fitquantilesgmm" title="statsmodels.sandbox.distributions.estimators.fitquantilesgmm"><code class="xref py py-obj docutils literal"><span class="pre">fitquantilesgmm</span></code></a>(distfn,&nbsp;x[,&nbsp;start,&nbsp;pquant,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.gammamomentcond.html#statsmodels.sandbox.distributions.estimators.gammamomentcond" title="statsmodels.sandbox.distributions.estimators.gammamomentcond"><code class="xref py py-obj docutils literal"><span class="pre">gammamomentcond</span></code></a>(distfn,&nbsp;params,&nbsp;mom2[,&nbsp;quantile])</td>
+<td>estimate distribution parameters based method of moments (mean,</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.gammamomentcond2.html#statsmodels.sandbox.distributions.estimators.gammamomentcond2" title="statsmodels.sandbox.distributions.estimators.gammamomentcond2"><code class="xref py py-obj docutils literal"><span class="pre">gammamomentcond2</span></code></a>(distfn,&nbsp;params,&nbsp;mom2[,&nbsp;...])</td>
+<td>estimate distribution parameters based method of moments (mean,</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.getstartparams.html#statsmodels.sandbox.distributions.estimators.getstartparams" title="statsmodels.sandbox.distributions.estimators.getstartparams"><code class="xref py py-obj docutils literal"><span class="pre">getstartparams</span></code></a>(dist,&nbsp;data)</td>
+<td>get starting values for estimation of distribution parameters</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.hess_ndt.html#statsmodels.sandbox.distributions.estimators.hess_ndt" title="statsmodels.sandbox.distributions.estimators.hess_ndt"><code class="xref py py-obj docutils literal"><span class="pre">hess_ndt</span></code></a>(fun,&nbsp;pars,&nbsp;args,&nbsp;options)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.logmps.html#statsmodels.sandbox.distributions.estimators.logmps" title="statsmodels.sandbox.distributions.estimators.logmps"><code class="xref py py-obj docutils literal"><span class="pre">logmps</span></code></a>(params,&nbsp;xsorted,&nbsp;dist)</td>
+<td>calculate negative log of Product-of-Spacings</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.momentcondquant.html#statsmodels.sandbox.distributions.estimators.momentcondquant" title="statsmodels.sandbox.distributions.estimators.momentcondquant"><code class="xref py py-obj docutils literal"><span class="pre">momentcondquant</span></code></a>(distfn,&nbsp;params,&nbsp;mom2[,&nbsp;...])</td>
+<td>moment conditions for estimating distribution parameters by matching</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.momentcondunbound.html#statsmodels.sandbox.distributions.estimators.momentcondunbound" title="statsmodels.sandbox.distributions.estimators.momentcondunbound"><code class="xref py py-obj docutils literal"><span class="pre">momentcondunbound</span></code></a>(distfn,&nbsp;params,&nbsp;mom2[,&nbsp;...])</td>
+<td>moment conditions for estimating distribution parameters using method</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.momentcondunboundls.html#statsmodels.sandbox.distributions.estimators.momentcondunboundls" title="statsmodels.sandbox.distributions.estimators.momentcondunboundls"><code class="xref py py-obj docutils literal"><span class="pre">momentcondunboundls</span></code></a>(distfn,&nbsp;params,&nbsp;mom2[,&nbsp;...])</td>
+<td>moment conditions for estimating loc and scale of a distribution</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.distributions.estimators.fit_mps.html" class="btn btn-neutral float-right" title="6.3.3.2.2.1. statsmodels.sandbox.distributions.estimators.fit_mps" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.sandbox.distributions.copula.Transforms.__init__.html" class="btn btn-neutral" title="6.3.2.3.6.1.1. statsmodels.sandbox.distributions.copula.Transforms.__init__" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+statsmodels.regression.linear_model.RegressionModel
+===================================================
+
+.. currentmodule:: statsmodels.regression.linear_model
+.. autoclass:: RegressionModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~RegressionModel.__init__
+   ~RegressionModel.fit
+   ~RegressionModel.fit_regularized
+   ~RegressionModel.from_formula
+   ~RegressionModel.hessian
+   ~RegressionModel.information
+   ~RegressionModel.initialize
+   ~RegressionModel.loglike
+   ~RegressionModel.predict
+   ~RegressionModel.score
+   ~RegressionModel.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~RegressionModel.df_model
+   ~RegressionModel.df_resid
+   ~RegressionModel.endog_names
+   ~RegressionModel.exog_names
+

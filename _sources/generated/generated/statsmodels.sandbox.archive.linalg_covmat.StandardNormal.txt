@@ -1,0 +1,23 @@
+statsmodels.sandbox.archive.linalg_covmat.StandardNormal
+========================================================
+
+.. currentmodule:: statsmodels.sandbox.archive.linalg_covmat
+.. autoclass:: StandardNormal
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~StandardNormal.logpdf
+   ~StandardNormal.pdf
+   ~StandardNormal.rvs
+
+
+
+
+

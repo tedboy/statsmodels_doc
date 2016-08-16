@@ -1,0 +1,339 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.panel.sandwich_covariance_generic &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.panel.sandwich_covariance_generic</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.panel.sandwich_covariance_generic</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;covariance with (nobs,nobs) loop and general kernel</span>
+
+<span class="sd">This is a general implementation that is not efficient for any special cases.</span>
+<span class="sd">kernel is currently only for one continuous variable and any number of</span>
+<span class="sd">categorical groups.</span>
+
+<span class="sd">No spatial example, continuous is interpreted as time</span>
+
+<span class="sd">Created on Wed Nov 30 08:20:44 2011</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License: BSD-3</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="kernel"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.sandwich_covariance_generic.kernel.html#statsmodels.sandbox.panel.sandwich_covariance_generic.kernel">[docs]</a><span class="k">def</span> <span class="nf">kernel</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;general product kernel</span>
+
+<span class="sd">    hardcoded split for the example:</span>
+<span class="sd">        cat1 is continuous (time), other categories are discrete</span>
+
+<span class="sd">    weights is e.g. Bartlett for cat1</span>
+<span class="sd">    r is (0,1) indicator vector for boolean weights 1{d1_i == d2_i}</span>
+
+<span class="sd">    returns boolean if no continuous weights are used</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">d1</span> <span class="o">-</span> <span class="n">d2</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="c1">#time is irrelevant or treated as categorical</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">((</span><span class="n">r</span> <span class="o">*</span> <span class="n">diff</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>   <span class="c1">#return bool</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#time uses continuous kernel, all other categorical</span>
+        <span class="k">return</span> <span class="n">weights</span><span class="p">[</span><span class="n">diff</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">((</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">*</span> <span class="n">diff</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="aggregate_cov"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.sandwich_covariance_generic.aggregate_cov.html#statsmodels.sandbox.panel.sandwich_covariance_generic.aggregate_cov">[docs]</a><span class="k">def</span> <span class="nf">aggregate_cov</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;sum of outer procuct over groups and time selected by r</span>
+
+<span class="sd">    This is for a generic reference implementation, it uses a nobs-nobs double</span>
+<span class="sd">    loop.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : ndarray, (nobs,) or (nobs, k_vars)</span>
+<span class="sd">        data, for robust standard error calculation, this is array of x_i * u_i</span>
+<span class="sd">    d : ndarray, (nobs, n_groups)</span>
+<span class="sd">        integer group labels, each column contains group (or time) indices</span>
+<span class="sd">    r : ndarray, (n_groups,)</span>
+<span class="sd">        indicator for which groups to include. If r[i] is zero, then</span>
+<span class="sd">        this group is ignored. If r[i] is not zero, then the cluster robust</span>
+<span class="sd">        standard errors include this group.</span>
+<span class="sd">    weights : ndarray</span>
+<span class="sd">        weights if the first group dimension uses a HAC kernel</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    cov : ndarray (k_vars, k_vars) or scalar</span>
+<span class="sd">        covariance matrix aggregates over group kernels</span>
+<span class="sd">    count : int</span>
+<span class="sd">        number of terms added in sum, mainly returned for cross-checking</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This uses `kernel` to calculate the weighted distance between two</span>
+<span class="sd">    observations.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">nobs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>   <span class="c1">#either 1d or 2d with obs in rows</span>
+    <span class="c1">#next is not needed yet</span>
+<span class="c1">#    if x.ndim == 2:</span>
+<span class="c1">#        kvars = x.shape[1]</span>
+<span class="c1">#    else:</span>
+<span class="c1">#        kvars = 1</span>
+
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1">#count non-zero pairs for cross checking, not needed</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>  <span class="c1">#get output shape</span>
+
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nobs</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">jj</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nobs</span><span class="p">):</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">d</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">d</span><span class="p">[</span><span class="n">jj</span><span class="p">],</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">w</span><span class="p">:</span>  <span class="c1">#true or non-zero</span>
+                <span class="n">res</span> <span class="o">+=</span> <span class="n">w</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                <span class="n">count</span> <span class="o">*=</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">count</span></div>
+
+<div class="viewcode-block" id="weights_bartlett"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.sandwich_covariance_generic.weights_bartlett.html#statsmodels.sandbox.panel.sandwich_covariance_generic.weights_bartlett">[docs]</a><span class="k">def</span> <span class="nf">weights_bartlett</span><span class="p">(</span><span class="n">nlags</span><span class="p">):</span>
+    <span class="c1">#with lag zero, nlags is the highest lag included</span>
+    <span class="k">return</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nlags</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">nlags</span><span class="o">+</span><span class="mf">1.</span><span class="p">)</span></div>
+
+<span class="c1">#------- examples, cases: hardcoded for d is time and two categorical groups</span>
+<div class="viewcode-block" id="S_all_hac"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.sandwich_covariance_generic.S_all_hac.html#statsmodels.sandbox.panel.sandwich_covariance_generic.S_all_hac">[docs]</a><span class="k">def</span> <span class="nf">S_all_hac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;HAC independent of categorical group membership</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">weights_bartlett</span><span class="p">(</span><span class="n">nlags</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">aggregate_cov</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="S_within_hac"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.sandwich_covariance_generic.S_within_hac.html#statsmodels.sandbox.panel.sandwich_covariance_generic.S_within_hac">[docs]</a><span class="k">def</span> <span class="nf">S_within_hac</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">groupidx</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;HAC for observations within a categorical group</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">r</span><span class="p">[</span><span class="n">groupidx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">weights_bartlett</span><span class="p">(</span><span class="n">nlags</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">aggregate_cov</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="S_cluster"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.sandwich_covariance_generic.S_cluster.html#statsmodels.sandbox.panel.sandwich_covariance_generic.S_cluster">[docs]</a><span class="k">def</span> <span class="nf">S_cluster</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">groupidx</span><span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">]):</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">r</span><span class="p">[</span><span class="n">groupidx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">aggregate_cov</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="S_white"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.sandwich_covariance_generic.S_white.html#statsmodels.sandbox.panel.sandwich_covariance_generic.S_white">[docs]</a><span class="k">def</span> <span class="nf">S_white</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;simple white heteroscedasticity robust covariance</span>
+<span class="sd">    note: calculating this way is very inefficient, just for cross-checking</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>  <span class="c1">#only points on diagonal</span>
+    <span class="k">return</span> <span class="n">aggregate_cov</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">r</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

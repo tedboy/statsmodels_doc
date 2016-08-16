@@ -1,0 +1,465 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2.1. Getting started &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="2. Basic Documentation" href="index.html"/>
+        <link rel="next" title="2.2. Fitting models using R-style formulas" href="example_formulas.html"/>
+        <link rel="prev" title="2. Basic Documentation" href="index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Basic Documentation</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.1. Getting started</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#loading-modules-and-functions">2.1.1. Loading modules and functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#data">2.1.2. Data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#substantive-motivation-and-model">2.1.3. Substantive motivation and model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#design-matrices-endog-exog">2.1.4. Design matrices (<em>endog</em> &amp; <em>exog</em>)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#model-fit-and-summary">2.1.5. Model fit and summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#diagnostics-and-specification-tests">2.1.6. Diagnostics and specification tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#more">2.1.7. More</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="example_formulas.html">2.2. Fitting models using R-style formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="about.html">2.3. About Statsmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endog_exog.html">2.4. <code class="docutils literal"><span class="pre">endog</span></code>, <code class="docutils literal"><span class="pre">exog</span></code>, what&#8217;s that?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="importpaths.html">2.5. Import Paths and Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pitfalls.html">2.6. Pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internal.html">2.7. Internal Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">2. Basic Documentation</a> &raquo;</li>
+        
+      <li>2.1. Getting started</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/doc_basic/gettingstarted.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="getting-started">
+<h1>2.1. Getting started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
+<p>This very simple case-study is designed to get you up-and-running quickly with
+<code class="docutils literal"><span class="pre">statsmodels</span></code>. Starting from raw data, we will show the steps needed to
+estimate a statistical model and to draw a diagnostic plot. We will only use
+functions provided by <code class="docutils literal"><span class="pre">statsmodels</span></code> or its <code class="docutils literal"><span class="pre">pandas</span></code> and <code class="docutils literal"><span class="pre">patsy</span></code>
+dependencies.</p>
+<div class="section" id="loading-modules-and-functions">
+<h2>2.1.1. Loading modules and functions<a class="headerlink" href="#loading-modules-and-functions" title="Permalink to this headline">¶</a></h2>
+<p>After <a class="reference external" href="install.html">installing statsmodels and its dependencies</a>, we load a
+few modules and functions:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [1]: </span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
+
+<span class="gp">In [2]: </span><span class="kn">import</span> <span class="nn">pandas</span>
+
+<span class="gp">In [3]: </span><span class="kn">from</span> <span class="nn">patsy</span> <span class="kn">import</span> <span class="n">dmatrices</span>
+</pre></div>
+</div>
+<p><a class="reference external" href="http://pandas.pydata.org/">pandas</a> builds on <code class="docutils literal"><span class="pre">numpy</span></code> arrays to provide
+rich data structures and data analysis tools. The <code class="docutils literal"><span class="pre">pandas.DataFrame</span></code> function
+provides labelled arrays of (potentially heterogenous) data, similar to the
+<code class="docutils literal"><span class="pre">R</span></code> &#8220;data.frame&#8221;. The <code class="docutils literal"><span class="pre">pandas.read_csv</span></code> function can be used to convert a
+comma-separated values file to a <code class="docutils literal"><span class="pre">DataFrame</span></code> object.</p>
+<p><a class="reference external" href="https://github.com/pydata/patsy">patsy</a> is a Python library for describing
+statistical models and building <a class="reference external" href="http://en.wikipedia.org/wiki/Design_matrix">Design Matrices</a> using <code class="docutils literal"><span class="pre">R</span></code>-like formulas.</p>
+</div>
+<div class="section" id="data">
+<h2>2.1.2. Data<a class="headerlink" href="#data" title="Permalink to this headline">¶</a></h2>
+<p>We download the <a class="reference external" href="http://vincentarelbundock.github.com/Rdatasets/doc/HistData/Guerry.html">Guerry dataset</a>, a
+collection of historical data used in support of Andre-Michel Guerry&#8217;s 1833
+<em>Essay on the Moral Statistics of France</em>. The data set is hosted online in
+comma-separated values format (CSV) by the <a class="reference external" href="http://vincentarelbundock.github.com/Rdatasets/">Rdatasets</a> repository.
+We could download the file locally and then load it using <code class="docutils literal"><span class="pre">read_csv</span></code>, but
+<code class="docutils literal"><span class="pre">pandas</span></code> takes care of all of this automatically for us:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [4]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get_rdataset</span><span class="p">(</span><span class="s2">&quot;Guerry&quot;</span><span class="p">,</span> <span class="s2">&quot;HistData&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+</pre></div>
+</div>
+<p>The <a class="reference external" href="iolib.html">Input/Output doc page</a> shows how to import from various
+other formats.</p>
+<p>We select the variables of interest and look at the bottom 5 rows:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [5]: </span><span class="nb">vars</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;Department&#39;</span><span class="p">,</span> <span class="s1">&#39;Lottery&#39;</span><span class="p">,</span> <span class="s1">&#39;Literacy&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="s1">&#39;Region&#39;</span><span class="p">]</span>
+
+<span class="gp">In [6]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="p">[</span><span class="nb">vars</span><span class="p">]</span>
+
+<span class="gp">In [7]: </span><span class="n">df</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span>
+<span class="gh">Out[7]: </span><span class="go"></span>
+<span class="go">      Department  Lottery  Literacy  Wealth Region</span>
+<span class="go">81        Vienne       40        25      68      W</span>
+<span class="go">82  Haute-Vienne       55        13      67      C</span>
+<span class="go">83        Vosges       14        62      82      E</span>
+<span class="go">84         Yonne       51        47      30      C</span>
+<span class="go">85         Corse       83        49      37    NaN</span>
+</pre></div>
+</div>
+<p>Notice that there is one missing observation in the <em>Region</em> column. We
+eliminate it using a <code class="docutils literal"><span class="pre">DataFrame</span></code> method provided by <code class="docutils literal"><span class="pre">pandas</span></code>:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [8]: </span><span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+<span class="gp">In [9]: </span><span class="n">df</span><span class="p">[</span><span class="o">-</span><span class="mi">5</span><span class="p">:]</span>
+<span class="gh">Out[9]: </span><span class="go"></span>
+<span class="go">      Department  Lottery  Literacy  Wealth Region</span>
+<span class="go">80        Vendee       68        28      56      W</span>
+<span class="go">81        Vienne       40        25      68      W</span>
+<span class="go">82  Haute-Vienne       55        13      67      C</span>
+<span class="go">83        Vosges       14        62      82      E</span>
+<span class="go">84         Yonne       51        47      30      C</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="substantive-motivation-and-model">
+<h2>2.1.3. Substantive motivation and model<a class="headerlink" href="#substantive-motivation-and-model" title="Permalink to this headline">¶</a></h2>
+<p>We want to know whether literacy rates in the 86 French departments are
+associated with per capita wagers on the Royal Lottery in the 1820s. We need to
+control for the level of wealth in each department, and we also want to include
+a series of dummy variables on the right-hand side of our regression equation to
+control for unobserved heterogeneity due to regional effects. The model is
+estimated using ordinary least squares regression (OLS).</p>
+</div>
+<div class="section" id="design-matrices-endog-exog">
+<h2>2.1.4. Design matrices (<em>endog</em> &amp; <em>exog</em>)<a class="headerlink" href="#design-matrices-endog-exog" title="Permalink to this headline">¶</a></h2>
+<p>To fit most of the models covered by <code class="docutils literal"><span class="pre">statsmodels</span></code>, you will need to create
+two design matrices. The first is a matrix of endogenous variable(s) (i.e.
+dependent, response, regressand, etc.). The second is a matrix of exogenous
+variable(s) (i.e. independent, predictor, regressor, etc.). The OLS coefficient
+estimates are calculated as usual:</p>
+<div class="math">
+\[\hat{\beta} = (X'X)^{-1} X'y\]</div>
+<p>where <span class="math">\(y\)</span> is an <span class="math">\(N \times 1\)</span> column of data on lottery wagers per
+capita (<em>Lottery</em>). <span class="math">\(X\)</span> is <span class="math">\(N \times 7\)</span> with an intercept, the
+<em>Literacy</em> and <em>Wealth</em> variables, and 4 region binary variables.</p>
+<p>The <code class="docutils literal"><span class="pre">patsy</span></code> module provides a convenient function to prepare design matrices
+using <code class="docutils literal"><span class="pre">R</span></code>-like formulas. You can find more information here:
+<a class="reference external" href="http://patsy.readthedocs.org">http://patsy.readthedocs.org</a></p>
+<p>We use <code class="docutils literal"><span class="pre">patsy</span></code>&#8216;s <code class="docutils literal"><span class="pre">dmatrices</span></code> function to create design matrices:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [10]: </span><span class="n">y</span><span class="p">,</span> <span class="n">X</span> <span class="o">=</span> <span class="n">dmatrices</span><span class="p">(</span><span class="s1">&#39;Lottery ~ Literacy + Wealth + Region&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;dataframe&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>The resulting matrices/data frames look like this:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [11]: </span><span class="n">y</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<span class="gh">Out[11]: </span><span class="go"></span>
+<span class="go">   Lottery</span>
+<span class="go">0     41.0</span>
+<span class="go">1     38.0</span>
+<span class="go">2     66.0</span>
+
+<span class="gp">In [12]: </span><span class="n">X</span><span class="p">[:</span><span class="mi">3</span><span class="p">]</span>
+<span class="gh">Out[12]: </span><span class="go"></span>
+<span class="go">   Intercept  Region[T.E]  Region[T.N]  Region[T.S]  Region[T.W]  Literacy  \</span>
+<span class="go">0        1.0          1.0          0.0          0.0          0.0      37.0   </span>
+<span class="go">1        1.0          0.0          1.0          0.0          0.0      51.0   </span>
+<span class="go">2        1.0          0.0          0.0          0.0          0.0      13.0   </span>
+
+<span class="go">   Wealth  </span>
+<span class="go">0    73.0  </span>
+<span class="go">1    22.0  </span>
+<span class="go">2    61.0  </span>
+</pre></div>
+</div>
+<p>Notice that <code class="docutils literal"><span class="pre">dmatrices</span></code> has</p>
+<ul class="simple">
+<li>split the categorical <em>Region</em> variable into a set of indicator variables.</li>
+<li>added a constant to the exogenous regressors matrix.</li>
+<li>returned <code class="docutils literal"><span class="pre">pandas</span></code> DataFrames instead of simple numpy arrays. This is useful because DataFrames allow <code class="docutils literal"><span class="pre">statsmodels</span></code> to carry-over meta-data (e.g. variable names) when reporting results.</li>
+</ul>
+<p>The above behavior can of course be altered. See the <a class="reference external" href="http://patsy.readthedocs.org/">patsy doc pages</a>.</p>
+</div>
+<div class="section" id="model-fit-and-summary">
+<h2>2.1.5. Model fit and summary<a class="headerlink" href="#model-fit-and-summary" title="Permalink to this headline">¶</a></h2>
+<p>Fitting a model in <code class="docutils literal"><span class="pre">statsmodels</span></code> typically involves 3 easy steps:</p>
+<ol class="arabic simple">
+<li>Use the model class to describe the model</li>
+<li>Fit the model using a class method</li>
+<li>Inspect the results using a summary method</li>
+</ol>
+<p>For OLS, this is achieved by:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [13]: </span><span class="n">mod</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span>    <span class="c1"># Describe model</span>
+
+<span class="gp">In [14]: </span><span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>       <span class="c1"># Fit model</span>
+
+<span class="gp">In [15]: </span><span class="k">print</span> <span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>   <span class="c1"># Summarize model</span>
+<span class="go">                            OLS Regression Results                            </span>
+<span class="go">==============================================================================</span>
+<span class="go">Dep. Variable:                Lottery   R-squared:                       0.338</span>
+<span class="go">Model:                            OLS   Adj. R-squared:                  0.287</span>
+<span class="go">Method:                 Least Squares   F-statistic:                     6.636</span>
+<span class="go">Date:                Tue, 16 Aug 2016   Prob (F-statistic):           1.07e-05</span>
+<span class="go">Time:                        01:01:18   Log-Likelihood:                -375.30</span>
+<span class="go">No. Observations:                  85   AIC:                             764.6</span>
+<span class="go">Df Residuals:                      78   BIC:                             781.7</span>
+<span class="go">Df Model:                           6                                         </span>
+<span class="go">Covariance Type:            nonrobust                                         </span>
+<span class="go">===============================================================================</span>
+<span class="go">                  coef    std err          t      P&gt;|t|      [95.0% Conf. Int.]</span>
+<span class="gt">-------------------------------------------------------------------------------</span>
+<span class="n">Intercept</span>      <span class="mf">38.6517</span>      <span class="mf">9.456</span>      <span class="mf">4.087</span>      <span class="mf">0.000</span>        <span class="mf">19.826</span>    <span class="mf">57.478</span>
+<span class="n">Region</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">E</span><span class="p">]</span>   <span class="o">-</span><span class="mf">15.4278</span>      <span class="mf">9.727</span>     <span class="o">-</span><span class="mf">1.586</span>      <span class="mf">0.117</span>       <span class="o">-</span><span class="mf">34.793</span>     <span class="mf">3.938</span>
+<span class="n">Region</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">N</span><span class="p">]</span>   <span class="o">-</span><span class="mf">10.0170</span>      <span class="mf">9.260</span>     <span class="o">-</span><span class="mf">1.082</span>      <span class="mf">0.283</span>       <span class="o">-</span><span class="mf">28.453</span>     <span class="mf">8.419</span>
+<span class="n">Region</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">S</span><span class="p">]</span>    <span class="o">-</span><span class="mf">4.5483</span>      <span class="mf">7.279</span>     <span class="o">-</span><span class="mf">0.625</span>      <span class="mf">0.534</span>       <span class="o">-</span><span class="mf">19.039</span>     <span class="mf">9.943</span>
+<span class="n">Region</span><span class="p">[</span><span class="n">T</span><span class="o">.</span><span class="n">W</span><span class="p">]</span>   <span class="o">-</span><span class="mf">10.0913</span>      <span class="mf">7.196</span>     <span class="o">-</span><span class="mf">1.402</span>      <span class="mf">0.165</span>       <span class="o">-</span><span class="mf">24.418</span>     <span class="mf">4.235</span>
+<span class="n">Literacy</span>       <span class="o">-</span><span class="mf">0.1858</span>      <span class="mf">0.210</span>     <span class="o">-</span><span class="mf">0.886</span>      <span class="mf">0.378</span>        <span class="o">-</span><span class="mf">0.603</span>     <span class="mf">0.232</span>
+<span class="n">Wealth</span>          <span class="mf">0.4515</span>      <span class="mf">0.103</span>      <span class="mf">4.390</span>      <span class="mf">0.000</span>         <span class="mf">0.247</span>     <span class="mf">0.656</span>
+<span class="o">==============================================================================</span>
+<span class="ne">Omnibus</span>:                        3.049   Durbin-Watson:                   1.785
+<span class="n">Prob</span><span class="p">(</span><span class="n">Omnibus</span><span class="p">):</span>                  <span class="mf">0.218</span>   <span class="n">Jarque</span><span class="o">-</span><span class="n">Bera</span> <span class="p">(</span><span class="n">JB</span><span class="p">):</span>                <span class="mf">2.694</span>
+<span class="ne">Skew</span>:                          -0.340   Prob(JB):                        0.260
+<span class="ne">Kurtosis</span>:                       2.454   Cond. No.                         371.
+<span class="o">==============================================================================</span>
+
+<span class="ne">Warnings</span>:
+<span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="n">Standard</span> <span class="n">Errors</span> <span class="n">assume</span> <span class="n">that</span> <span class="n">the</span> <span class="n">covariance</span> <span class="n">matrix</span> <span class="n">of</span> <span class="n">the</span> <span class="n">errors</span> <span class="ow">is</span> <span class="n">correctly</span> <span class="n">specified</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>The <code class="docutils literal"><span class="pre">res</span></code> object has many useful attributes. For example, we can extract
+parameter estimates and r-squared by typing:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [16]: </span><span class="n">res</span><span class="o">.</span><span class="n">params</span>
+<span class="gh">Out[16]: </span><span class="go"></span>
+<span class="go">Intercept      38.651655</span>
+<span class="go">Region[T.E]   -15.427785</span>
+<span class="go">Region[T.N]   -10.016961</span>
+<span class="go">Region[T.S]    -4.548257</span>
+<span class="go">Region[T.W]   -10.091276</span>
+<span class="go">Literacy       -0.185819</span>
+<span class="go">Wealth          0.451475</span>
+<span class="go">dtype: float64</span>
+
+<span class="gp">In [17]: </span><span class="n">res</span><span class="o">.</span><span class="n">rsquared</span>
+<span class="gh">Out[17]: </span><span class="go">0.3379508691928822</span>
+</pre></div>
+</div>
+<p>Type <code class="docutils literal"><span class="pre">dir(res)</span></code> for a full list of attributes.</p>
+<p>For more information and examples, see the <a class="reference external" href="regression.html">Regression doc page</a></p>
+</div>
+<div class="section" id="diagnostics-and-specification-tests">
+<h2>2.1.6. Diagnostics and specification tests<a class="headerlink" href="#diagnostics-and-specification-tests" title="Permalink to this headline">¶</a></h2>
+<p><code class="docutils literal"><span class="pre">statsmodels</span></code> allows you to conduct a range of useful <a class="reference external" href="stats.html#residual-diagnostics-and-specification-tests">regression diagnostics
+and specification tests</a>.  For instance,
+apply the Rainbow test for linearity (the null hypothesis is that the
+relationship is properly modelled as linear):</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [18]: </span><span class="n">sm</span><span class="o">.</span><span class="n">stats</span><span class="o">.</span><span class="n">linear_rainbow</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+<span class="gh">Out[18]: </span><span class="go">(0.84723399761569096, 0.69979655436216437)</span>
+</pre></div>
+</div>
+<p>Admittedly, the output produced above is not very verbose, but we know from
+reading the <a class="reference external" href="generated/statsmodels.stats.diagnostic.linear_rainbow.html">docstring</a>
+(also, <code class="docutils literal"><span class="pre">print</span> <span class="pre">sm.stats.linear_rainbow.__doc__</span></code>) that the
+first number is an F-statistic and that the second is the p-value.</p>
+<p><code class="docutils literal"><span class="pre">statsmodels</span></code> also provides graphics functions. For example, we can draw a
+plot of partial regression for a set of regressors by:</p>
+<div class="highlight-ipython"><div class="highlight"><pre><span></span><span class="gp">In [19]: </span><span class="n">sm</span><span class="o">.</span><span class="n">graphics</span><span class="o">.</span><span class="n">plot_partregress</span><span class="p">(</span><span class="s1">&#39;Lottery&#39;</span><span class="p">,</span> <span class="s1">&#39;Wealth&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Region&#39;</span><span class="p">,</span> <span class="s1">&#39;Literacy&#39;</span><span class="p">],</span>
+<span class="gp">   ....: </span>                             <span class="n">data</span><span class="o">=</span><span class="n">df</span><span class="p">,</span> <span class="n">obs_labels</span><span class="o">=</span><span class="bp">False</span><span class="p">)</span>
+<span class="gp">   ....: </span>
+<span class="gh">Out[19]: </span><span class="go">&lt;matplotlib.figure.Figure at 0x2b5c9565a590&gt;</span>
+</pre></div>
+</div>
+<img alt="doc_basic/../../build/html/_static/gettingstarted_0.png" src="doc_basic/../../build/html/_static/gettingstarted_0.png" />
+</div>
+<div class="section" id="more">
+<h2>2.1.7. More<a class="headerlink" href="#more" title="Permalink to this headline">¶</a></h2>
+<p>Congratulations! You&#8217;re ready to move on to other topics in the
+<a class="reference external" href="index.html#table-of-contents">Table of Contents</a></p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="example_formulas.html" class="btn btn-neutral float-right" title="2.2. Fitting models using R-style formulas" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="index.html" class="btn btn-neutral" title="2. Basic Documentation" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

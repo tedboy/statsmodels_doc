@@ -1,0 +1,616 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.regression.tools &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.regression.tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.regression.tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;gradient/Jacobian of normal and t loglikelihood</span>
+
+<span class="sd">use chain rule</span>
+
+<span class="sd">normal derivative wrt mu, sigma and beta</span>
+
+<span class="sd">new version: loc-scale distributions, derivative wrt loc, scale</span>
+
+<span class="sd">also includes &quot;standardized&quot; t distribution (for use in GARCH)</span>
+
+<span class="sd">TODO:</span>
+<span class="sd">* use sympy for derivative of loglike wrt shape parameters</span>
+<span class="sd">  it works for df of t distribution dlog(gamma(a))da = polygamma(0,a) check</span>
+<span class="sd">  polygamma is available in scipy.special</span>
+<span class="sd">* get loc-scale example to work with mean = X*b</span>
+<span class="sd">* write some full unit test examples</span>
+
+<span class="sd">A: josef-pktd</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">special</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">gammaln</span>
+
+
+<div class="viewcode-block" id="norm_lls"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.norm_lls.html#statsmodels.sandbox.regression.tools.norm_lls">[docs]</a><span class="k">def</span> <span class="nf">norm_lls</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;normal loglikelihood given observations and mean mu and variance sigma2</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array, 1d</span>
+<span class="sd">        normally distributed random variable</span>
+<span class="sd">    params: array, (nobs, 2)</span>
+<span class="sd">        array of mean, variance (mu, sigma2) with observations in rows</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lls : array</span>
+<span class="sd">        contribution to loglikelihood for each observation</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">mu</span><span class="p">,</span> <span class="n">sigma2</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">lls</span> <span class="o">=</span> <span class="o">-</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">sigma2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lls</span></div>
+
+<div class="viewcode-block" id="norm_lls_grad"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.norm_lls_grad.html#statsmodels.sandbox.regression.tools.norm_lls_grad">[docs]</a><span class="k">def</span> <span class="nf">norm_lls_grad</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Jacobian of normal loglikelihood wrt mean mu and variance sigma2</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array, 1d</span>
+<span class="sd">        normally distributed random variable</span>
+<span class="sd">    params: array, (nobs, 2)</span>
+<span class="sd">        array of mean, variance (mu, sigma2) with observations in rows</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    grad : array (nobs, 2)</span>
+<span class="sd">        derivative of loglikelihood for each observation wrt mean in first</span>
+<span class="sd">        column, and wrt variance in second column</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    this is actually the derivative wrt sigma not sigma**2, but evaluated</span>
+<span class="sd">    with parameter sigma2 = sigma**2</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">mu</span><span class="p">,</span> <span class="n">sigma2</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">dllsdmu</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">/</span><span class="n">sigma2</span>
+    <span class="n">dllsdsigma2</span> <span class="o">=</span> <span class="p">((</span><span class="n">y</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="n">sigma2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">dllsdmu</span><span class="p">,</span> <span class="n">dllsdsigma2</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="mean_grad"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.mean_grad.html#statsmodels.sandbox.regression.tools.mean_grad">[docs]</a><span class="k">def</span> <span class="nf">mean_grad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">beta</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;gradient/Jacobian for d (x*beta)/ d beta</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="normgrad"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.normgrad.html#statsmodels.sandbox.regression.tools.normgrad">[docs]</a><span class="k">def</span> <span class="nf">normgrad</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Jacobian of normal loglikelihood wrt mean mu and variance sigma2</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array, 1d</span>
+<span class="sd">        normally distributed random variable with mean x*beta, and variance sigma2</span>
+<span class="sd">    x : array, 2d</span>
+<span class="sd">        explanatory variables, observation in rows, variables in columns</span>
+<span class="sd">    params: array_like, (nvars + 1)</span>
+<span class="sd">        array of coefficients and variance (beta, sigma2)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    grad : array (nobs, 2)</span>
+<span class="sd">        derivative of loglikelihood for each observation wrt mean in first</span>
+<span class="sd">        column, and wrt scale (sigma) in second column</span>
+<span class="sd">    assume params = (beta, sigma2)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    TODO: for heteroscedasticity need sigma to be a 1d array</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">sigma2</span> <span class="o">=</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">),</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">dmudbeta</span> <span class="o">=</span> <span class="n">mean_grad</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="c1">#print(beta, sigma2)</span>
+    <span class="n">params2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">mu</span><span class="p">,</span><span class="n">sigma2</span><span class="p">))</span>
+    <span class="n">dllsdms</span> <span class="o">=</span> <span class="n">norm_lls_grad</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">params2</span><span class="p">)</span>
+    <span class="n">grad</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">dllsdms</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">dmudbeta</span><span class="p">,</span> <span class="n">dllsdms</span><span class="p">[:,:</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">grad</span></div>
+
+
+
+<div class="viewcode-block" id="tstd_lls"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.tstd_lls.html#statsmodels.sandbox.regression.tools.tstd_lls">[docs]</a><span class="k">def</span> <span class="nf">tstd_lls</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;t loglikelihood given observations and mean mu and variance sigma2 = 1</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array, 1d</span>
+<span class="sd">        normally distributed random variable</span>
+<span class="sd">    params: array, (nobs, 2)</span>
+<span class="sd">        array of mean, variance (mu, sigma2) with observations in rows</span>
+<span class="sd">    df : integer</span>
+<span class="sd">        degrees of freedom of the t distribution</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lls : array</span>
+<span class="sd">        contribution to loglikelihood for each observation</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    parameterized for garch</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">mu</span><span class="p">,</span> <span class="n">sigma2</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">*</span><span class="mf">1.0</span>
+    <span class="c1">#lls = gammaln((df+1)/2.) - gammaln(df/2.) - 0.5*np.log((df-2)*np.pi)</span>
+    <span class="c1">#lls -= (df+1)/2. * np.log(1. + (y-mu)**2/(df-2.)/sigma2) + 0.5 * np.log(sigma2)</span>
+    <span class="n">lls</span> <span class="o">=</span> <span class="n">gammaln</span><span class="p">((</span><span class="n">df</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">-</span> <span class="n">gammaln</span><span class="p">(</span><span class="n">df</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="n">df</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">lls</span> <span class="o">-=</span> <span class="p">(</span><span class="n">df</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">df</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">lls</span></div>
+
+<div class="viewcode-block" id="norm_dlldy"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.norm_dlldy.html#statsmodels.sandbox.regression.tools.norm_dlldy">[docs]</a><span class="k">def</span> <span class="nf">norm_dlldy</span><span class="p">(</span><span class="n">y</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;derivative of log pdf of standard normal with respect to y</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="o">-</span><span class="n">y</span></div>
+
+<span class="k">def</span> <span class="nf">ts_dlldy</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;derivative of log pdf of standardized (?) t with respect to y</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    parameterized for garch, with mean 0 and variance 1</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#(df+1)/2. / (1 + y**2/(df-2.)) * 2.*y/(df-2.)</span>
+    <span class="c1">#return -(df+1)/(df-2.) / (1 + y**2/(df-2.)) * y</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">df</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">df</span><span class="p">))</span> <span class="o">*</span> <span class="n">y</span>
+
+<div class="viewcode-block" id="tstd_pdf"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.tstd_pdf.html#statsmodels.sandbox.regression.tools.tstd_pdf">[docs]</a><span class="k">def</span> <span class="nf">tstd_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;pdf for standardized (not standard) t distribution, variance is one</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">df</span><span class="o">*</span><span class="mf">1.0</span><span class="p">)</span>
+    <span class="n">Px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">special</span><span class="o">.</span><span class="n">gammaln</span><span class="p">((</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span><span class="o">-</span><span class="n">special</span><span class="o">.</span><span class="n">gammaln</span><span class="p">(</span><span class="n">r</span><span class="o">/</span><span class="mf">2.</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">r</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">Px</span> <span class="o">/=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">r</span><span class="o">-</span><span class="mi">2</span><span class="p">))</span><span class="o">**</span><span class="p">((</span><span class="n">r</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Px</span></div>
+
+<div class="viewcode-block" id="ts_lls"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.ts_lls.html#statsmodels.sandbox.regression.tools.ts_lls">[docs]</a><span class="k">def</span> <span class="nf">ts_lls</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;t loglikelihood given observations and mean mu and variance sigma2 = 1</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array, 1d</span>
+<span class="sd">        normally distributed random variable</span>
+<span class="sd">    params: array, (nobs, 2)</span>
+<span class="sd">        array of mean, variance (mu, sigma2) with observations in rows</span>
+<span class="sd">    df : integer</span>
+<span class="sd">        degrees of freedom of the t distribution</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    lls : array</span>
+<span class="sd">        contribution to loglikelihood for each observation</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    parameterized for garch</span>
+<span class="sd">    normalized/rescaled so that sigma2 is the variance</span>
+
+<span class="sd">    &gt;&gt;&gt; df = 10; sigma = 1.</span>
+<span class="sd">    &gt;&gt;&gt; stats.t.stats(df, loc=0., scale=sigma.*np.sqrt((df-2.)/df))</span>
+<span class="sd">    (array(0.0), array(1.0))</span>
+<span class="sd">    &gt;&gt;&gt; sigma = np.sqrt(2.)</span>
+<span class="sd">    &gt;&gt;&gt; stats.t.stats(df, loc=0., scale=sigma*np.sqrt((df-2.)/df))</span>
+<span class="sd">    (array(0.0), array(2.0))</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+    <span class="n">mu</span><span class="p">,</span> <span class="n">sigma2</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">*</span><span class="mf">1.0</span>
+    <span class="c1">#lls = gammaln((df+1)/2.) - gammaln(df/2.) - 0.5*np.log((df-2)*np.pi)</span>
+    <span class="c1">#lls -= (df+1)/2. * np.log(1. + (y-mu)**2/(df-2.)/sigma2) + 0.5 * np.log(sigma2)</span>
+    <span class="n">lls</span> <span class="o">=</span> <span class="n">gammaln</span><span class="p">((</span><span class="n">df</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">-</span> <span class="n">gammaln</span><span class="p">(</span><span class="n">df</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span> <span class="o">-</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="n">df</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">lls</span> <span class="o">-=</span> <span class="p">(</span><span class="n">df</span><span class="o">+</span><span class="mf">1.</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">mu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">/</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lls</span></div>
+
+
+<div class="viewcode-block" id="ts_dlldy"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.ts_dlldy.html#statsmodels.sandbox.regression.tools.ts_dlldy">[docs]</a><span class="k">def</span> <span class="nf">ts_dlldy</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;derivative of log pdf of standard t with respect to y</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array_like</span>
+<span class="sd">        data points of random variable at which loglike is evaluated</span>
+<span class="sd">    df : array_like</span>
+<span class="sd">        degrees of freedom,shape parameters of log-likelihood function</span>
+<span class="sd">        of t distribution</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dlldy : array</span>
+<span class="sd">        derivative of loglikelihood wrt random variable y evaluated at the</span>
+<span class="sd">        points given in y</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    with mean 0 and scale 1, but variance is df/(df-2)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="n">df</span><span class="o">*</span><span class="mf">1.</span>
+    <span class="c1">#(df+1)/2. / (1 + y**2/(df-2.)) * 2.*y/(df-2.)</span>
+    <span class="c1">#return -(df+1)/(df-2.) / (1 + y**2/(df-2.)) * y</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">df</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">df</span><span class="p">))</span> <span class="o">*</span> <span class="n">y</span></div>
+
+<div class="viewcode-block" id="tstd_dlldy"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.tstd_dlldy.html#statsmodels.sandbox.regression.tools.tstd_dlldy">[docs]</a><span class="k">def</span> <span class="nf">tstd_dlldy</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;derivative of log pdf of standardized t with respect to y</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array_like</span>
+<span class="sd">        data points of random variable at which loglike is evaluated</span>
+<span class="sd">    df : array_like</span>
+<span class="sd">        degrees of freedom,shape parameters of log-likelihood function</span>
+<span class="sd">        of t distribution</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dlldy : array</span>
+<span class="sd">        derivative of loglikelihood wrt random variable y evaluated at the</span>
+<span class="sd">        points given in y</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    parameterized for garch, standardized to variance=1</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#(df+1)/2. / (1 + y**2/(df-2.)) * 2.*y/(df-2.)</span>
+    <span class="k">return</span> <span class="o">-</span><span class="p">(</span><span class="n">df</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">df</span><span class="o">-</span><span class="mf">2.</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">y</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="p">(</span><span class="n">df</span><span class="o">-</span><span class="mf">2.</span><span class="p">))</span> <span class="o">*</span> <span class="n">y</span></div>
+    <span class="c1">#return (df+1)/(df) / (1 + y**2/(df)) * y</span>
+
+<div class="viewcode-block" id="locscale_grad"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.tools.locscale_grad.html#statsmodels.sandbox.regression.tools.locscale_grad">[docs]</a><span class="k">def</span> <span class="nf">locscale_grad</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">dlldy</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;derivative of log-likelihood with respect to location and scale</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    y : array_like</span>
+<span class="sd">        data points of random variable at which loglike is evaluated</span>
+<span class="sd">    loc : float</span>
+<span class="sd">        location parameter of distribution</span>
+<span class="sd">    scale : float</span>
+<span class="sd">        scale parameter of distribution</span>
+<span class="sd">    dlldy : function</span>
+<span class="sd">        derivative of loglikelihood fuction wrt. random variable x</span>
+<span class="sd">    args : array_like</span>
+<span class="sd">        shape parameters of log-likelihood function</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dlldloc : array</span>
+<span class="sd">        derivative of loglikelihood wrt location evaluated at the</span>
+<span class="sd">        points given in y</span>
+<span class="sd">    dlldscale : array</span>
+<span class="sd">        derivative of loglikelihood wrt scale evaluated at the</span>
+<span class="sd">        points given in y</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">yst</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">loc</span><span class="p">)</span><span class="o">/</span><span class="n">scale</span>    <span class="c1">#ystandardized</span>
+    <span class="n">dlldloc</span> <span class="o">=</span> <span class="o">-</span><span class="n">dlldy</span><span class="p">(</span><span class="n">yst</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span>
+    <span class="n">dlldscale</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.</span><span class="o">/</span><span class="n">scale</span> <span class="o">-</span> <span class="n">dlldy</span><span class="p">(</span><span class="n">yst</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">loc</span><span class="p">)</span><span class="o">/</span><span class="n">scale</span><span class="o">**</span><span class="mi">2</span>
+    <span class="k">return</span> <span class="n">dlldloc</span><span class="p">,</span> <span class="n">dlldscale</span></div>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">verbose</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="mf">0.1</span>
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">rvs</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:]</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="n">sig</span><span class="o">*</span><span class="n">rvs</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">params</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">normgrad</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+
+        <span class="n">dllfdbeta</span> <span class="o">=</span> <span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">beta</span><span class="p">))[:,</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">x</span>   <span class="c1">#for sigma = 1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">dllfdbeta</span><span class="p">)</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">locscale_grad</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">beta</span><span class="p">),</span> <span class="mi">1</span><span class="p">,</span> <span class="n">norm_dlldy</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">y</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">beta</span><span class="p">))</span>
+
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span><span class="p">,</span> <span class="n">misc</span>
+
+    <span class="k">def</span> <span class="nf">llt</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">scale</span><span class="p">,</span><span class="n">df</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">lltloc</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">scale</span><span class="p">,</span><span class="n">df</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">lltscale</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">df</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">llnorm</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">scale</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">llnormloc</span><span class="p">(</span><span class="n">loc</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">scale</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">llnormscale</span><span class="p">(</span><span class="n">scale</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">verbose</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">gradient of t&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llt</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;t &#39;</span><span class="p">,</span> <span class="n">locscale_grad</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">tstd_dlldy</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ts&#39;</span><span class="p">,</span> <span class="n">locscale_grad</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ts_dlldy</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llt</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">),)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ts&#39;</span><span class="p">,</span> <span class="n">locscale_grad</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">ts_dlldy</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llt</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">),)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ts&#39;</span><span class="p">,</span> <span class="n">locscale_grad</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ts_dlldy</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llt</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">),)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ts&#39;</span><span class="p">,</span> <span class="n">locscale_grad</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">ts_dlldy</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">lltloc</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">),)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">lltscale</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mf">1.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">scale</span><span class="p">,</span><span class="n">df</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">20</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ts&#39;</span><span class="p">,</span> <span class="n">locscale_grad</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">scale</span><span class="p">,</span> <span class="n">ts_dlldy</span><span class="p">,</span> <span class="mi">20</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">lltloc</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">scale</span><span class="p">,</span><span class="n">df</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">),)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">lltscale</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">df</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">gradient of norm&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llnorm</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">locscale_grad</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">norm_dlldy</span><span class="p">))</span>
+        <span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">scale</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ts&#39;</span><span class="p">,</span> <span class="n">locscale_grad</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">scale</span><span class="p">,</span> <span class="n">norm_dlldy</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llnormloc</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">scale</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">),)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llnormscale</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+        <span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">scale</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;ts&#39;</span><span class="p">,</span> <span class="n">locscale_grad</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">scale</span><span class="p">,</span> <span class="n">norm_dlldy</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llnormloc</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">scale</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">),)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llnormscale</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">loc</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+        <span class="c1">#print(&#39;still something wrong with handling of scale and variance&#39;</span>
+        <span class="c1">#looks ok now</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">loglike of t&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">tstd_lls</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">100</span><span class="p">),</span> <span class="n">llt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">),</span> <span class="s1">&#39;differently standardized&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">tstd_lls</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">10</span><span class="p">),</span> <span class="n">llt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span> <span class="s1">&#39;differently standardized&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ts_lls</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">10</span><span class="p">),</span> <span class="n">llt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">tstd_lls</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.</span><span class="o">*</span><span class="mf">10.</span><span class="o">/</span><span class="mf">8.</span><span class="p">]),</span> <span class="mi">10</span><span class="p">),</span> <span class="n">llt</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ts_lls</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">100</span><span class="p">),</span> <span class="n">llt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">100</span><span class="p">))</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="n">tstd_lls</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]),</span> <span class="mi">10</span><span class="p">),</span> <span class="n">llt</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">8</span><span class="o">/</span><span class="mf">10.</span><span class="p">),</span><span class="mi">10</span><span class="p">))</span>
+
+
+    <span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_almost_equal</span>
+    <span class="n">params</span> <span class="o">=</span><span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mf">1.</span><span class="p">,</span><span class="mf">1.</span><span class="p">),</span> <span class="p">(</span><span class="mf">0.</span><span class="p">,</span><span class="mf">2.</span><span class="p">),</span> <span class="p">(</span> <span class="mf">1.</span><span class="p">,</span> <span class="mf">2.</span><span class="p">)]</span>
+    <span class="n">yt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mf">2.</span><span class="p">,</span><span class="mf">2.</span><span class="p">,</span><span class="mi">11</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">loc</span><span class="p">,</span><span class="n">scale</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+        <span class="n">dlldlo</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llnormloc</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span><span class="n">scale</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">dlldsc</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">llnormscale</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span><span class="n">loc</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">gr</span> <span class="o">=</span> <span class="n">locscale_grad</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">norm_dlldy</span><span class="p">)</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">dlldlo</span><span class="p">,</span> <span class="n">gr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">5</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s1">&#39;deriv loc&#39;</span><span class="p">)</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">dlldsc</span><span class="p">,</span> <span class="n">gr</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">5</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s1">&#39;deriv scale&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">df</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="mi">100</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">loc</span><span class="p">,</span><span class="n">scale</span> <span class="ow">in</span> <span class="n">params</span><span class="p">:</span>
+            <span class="n">dlldlo</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">lltloc</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span><span class="n">scale</span><span class="p">,</span><span class="n">df</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">dlldsc</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">derivative</span><span class="p">(</span><span class="n">lltscale</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">dx</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">df</span><span class="p">),</span> <span class="n">order</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+            <span class="n">gr</span> <span class="o">=</span> <span class="n">locscale_grad</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">ts_dlldy</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+            <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">dlldlo</span><span class="p">,</span> <span class="n">gr</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">4</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s1">&#39;deriv loc&#39;</span><span class="p">)</span>
+            <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">dlldsc</span><span class="p">,</span> <span class="n">gr</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="mi">4</span><span class="p">,</span> <span class="n">err_msg</span><span class="o">=</span><span class="s1">&#39;deriv scale&#39;</span><span class="p">)</span>
+            <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">ts_lls</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">**</span><span class="mi">2</span><span class="p">]),</span> <span class="n">df</span><span class="p">),</span>
+                                <span class="n">llt</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">scale</span><span class="p">,</span><span class="n">df</span><span class="p">),</span> <span class="mi">5</span><span class="p">,</span>
+                                <span class="n">err_msg</span><span class="o">=</span><span class="s1">&#39;loglike&#39;</span><span class="p">)</span>
+            <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">tstd_lls</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">**</span><span class="mi">2</span><span class="p">]),</span> <span class="n">df</span><span class="p">),</span>
+                                <span class="n">llt</span><span class="p">(</span><span class="n">yt</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="n">scale</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="n">df</span><span class="o">-</span><span class="mf">2.</span><span class="p">)</span><span class="o">/</span><span class="n">df</span><span class="p">),</span><span class="n">df</span><span class="p">),</span> <span class="mi">5</span><span class="p">,</span>
+                                <span class="n">err_msg</span><span class="o">=</span><span class="s1">&#39;loglike&#39;</span><span class="p">)</span>
+
+
+
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

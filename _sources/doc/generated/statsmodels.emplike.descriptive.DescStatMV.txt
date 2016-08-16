@@ -1,0 +1,26 @@
+statsmodels.emplike.descriptive.DescStatMV
+==========================================
+
+.. currentmodule:: statsmodels.emplike.descriptive
+
+.. autoclass:: DescStatMV
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DescStatMV.__init__
+      ~DescStatMV.ci_corr
+      ~DescStatMV.mv_mean_contour
+      ~DescStatMV.mv_test_mean
+      ~DescStatMV.test_corr
+   
+   
+
+   
+   
+   

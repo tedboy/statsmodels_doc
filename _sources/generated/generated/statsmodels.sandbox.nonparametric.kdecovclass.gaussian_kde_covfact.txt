@@ -1,0 +1,34 @@
+statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_covfact
+==================================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kdecovclass
+.. autoclass:: gaussian_kde_covfact
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~gaussian_kde_covfact.__init__
+   ~gaussian_kde_covfact.covariance_factor
+   ~gaussian_kde_covfact.evaluate
+   ~gaussian_kde_covfact.integrate_box
+   ~gaussian_kde_covfact.integrate_box_1d
+   ~gaussian_kde_covfact.integrate_gaussian
+   ~gaussian_kde_covfact.integrate_kde
+   ~gaussian_kde_covfact.logpdf
+   ~gaussian_kde_covfact.pdf
+   ~gaussian_kde_covfact.resample
+   ~gaussian_kde_covfact.reset_covfact
+   ~gaussian_kde_covfact.scotts_factor
+   ~gaussian_kde_covfact.set_bandwidth
+   ~gaussian_kde_covfact.silverman_factor
+
+
+
+
+

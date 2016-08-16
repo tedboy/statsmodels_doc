@@ -1,0 +1,55 @@
+statsmodels.sandbox.distributions.mv_normal
+===========================================
+
+.. automodule:: statsmodels.sandbox.distributions.mv_normal
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      bivariate_normal
+      expect_mc
+      expect_mc_bounds
+      mvnormcdf
+      mvstdnormcdf
+      mvstdtprob
+      quad2d
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      BivariateNormal
+      MVElliptical
+      MVNormal
+      MVNormal0
+      MVT
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal
+       generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical
+       generated/statsmodels.sandbox.distributions.mv_normal.MVNormal
+       generated/statsmodels.sandbox.distributions.mv_normal.MVNormal0
+       generated/statsmodels.sandbox.distributions.mv_normal.MVT
+
+   
+   
+
+   
+   
+   

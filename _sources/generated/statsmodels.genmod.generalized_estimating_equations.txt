@@ -1,0 +1,82 @@
+statsmodels.genmod.generalized_estimating_equations
+===================================================
+
+.. automodule:: statsmodels.genmod.generalized_estimating_equations
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      block_diag
+      iterkeys
+      margeff_cov_with_se
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CovStruct
+      GEE
+      GEEMargins
+      GEEResults
+      GEEResultsWrapper
+      GlobalOddsRatio
+      Independence
+      Link
+      NominalGEE
+      NominalGEEResults
+      NominalGEEResultsWrapper
+      OrdinalGEE
+      OrdinalGEEResults
+      OrdinalGEEResultsWrapper
+      ParameterConstraint
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.genmod.generalized_estimating_equations.CovStruct
+       generated/statsmodels.genmod.generalized_estimating_equations.GEE
+       generated/statsmodels.genmod.generalized_estimating_equations.GEEMargins
+       generated/statsmodels.genmod.generalized_estimating_equations.GEEResults
+       generated/statsmodels.genmod.generalized_estimating_equations.GEEResultsWrapper
+       generated/statsmodels.genmod.generalized_estimating_equations.GlobalOddsRatio
+       generated/statsmodels.genmod.generalized_estimating_equations.Independence
+       generated/statsmodels.genmod.generalized_estimating_equations.Link
+       generated/statsmodels.genmod.generalized_estimating_equations.NominalGEE
+       generated/statsmodels.genmod.generalized_estimating_equations.NominalGEEResults
+       generated/statsmodels.genmod.generalized_estimating_equations.NominalGEEResultsWrapper
+       generated/statsmodels.genmod.generalized_estimating_equations.OrdinalGEE
+       generated/statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults
+       generated/statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResultsWrapper
+       generated/statsmodels.genmod.generalized_estimating_equations.ParameterConstraint
+       generated/statsmodels.genmod.generalized_estimating_equations.resettable_cache
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      ConvergenceWarning
+      IterationLimitWarning
+   
+   

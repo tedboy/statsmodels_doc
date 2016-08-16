@@ -1,0 +1,42 @@
+statsmodels.discrete.discrete_model.CountModel
+==============================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: CountModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CountModel.__init__
+   ~CountModel.cdf
+   ~CountModel.cov_params_func_l1
+   ~CountModel.fit
+   ~CountModel.fit_regularized
+   ~CountModel.from_formula
+   ~CountModel.hessian
+   ~CountModel.information
+   ~CountModel.initialize
+   ~CountModel.loglike
+   ~CountModel.pdf
+   ~CountModel.predict
+   ~CountModel.score
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~CountModel.endog_names
+   ~CountModel.exog_names
+

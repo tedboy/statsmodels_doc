@@ -1,0 +1,364 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.7.4.4.1.1.3. statsmodels.sandbox.regression.gmm.DistQuantilesGMM.fit &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.7.4.4.1. statsmodels.sandbox.regression.gmm.DistQuantilesGMM" href="statsmodels.sandbox.regression.gmm.DistQuantilesGMM.html"/>
+        <link rel="next" title="6.7.4.4.1.1.4. statsmodels.sandbox.regression.gmm.DistQuantilesGMM.fitgmm" href="statsmodels.sandbox.regression.gmm.DistQuantilesGMM.fitgmm.html"/>
+        <link rel="prev" title="6.7.4.4.1.1.2. statsmodels.sandbox.regression.gmm.DistQuantilesGMM.calc_weightmatrix" href="statsmodels.sandbox.regression.gmm.DistQuantilesGMM.calc_weightmatrix.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.anova_nistcertified.html">6.7.1. statsmodels.sandbox.regression.anova_nistcertified</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.ar_panel.html">6.7.2. statsmodels.sandbox.regression.ar_panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.example_kernridge.html">6.7.3. statsmodels.sandbox.regression.example_kernridge</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#issues">6.7.4.1. Issues</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#unclear">6.7.4.2. Unclear</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#functions">6.7.4.3. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#classes">6.7.4.4. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.kernridgeregress_class.html">6.7.5. statsmodels.sandbox.regression.kernridgeregress_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.onewaygls.html">6.7.6. statsmodels.sandbox.regression.onewaygls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.penalized.html">6.7.7. statsmodels.sandbox.regression.penalized</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.predstd.html">6.7.8. statsmodels.sandbox.regression.predstd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.sympy_diff.html">6.7.9. statsmodels.sandbox.regression.sympy_diff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.tools.html">6.7.10. statsmodels.sandbox.regression.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.treewalkerclass.html">6.7.11. statsmodels.sandbox.regression.treewalkerclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_catdata.html">6.7.12. statsmodels.sandbox.regression.try_catdata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_ols_anova.html">6.7.13. statsmodels.sandbox.regression.try_ols_anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_treewalker.html">6.7.14. statsmodels.sandbox.regression.try_treewalker</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a> &raquo;</li>
+        
+          <li><a href="statsmodels.sandbox.regression.gmm.DistQuantilesGMM.html">6.7.4.4.1. statsmodels.sandbox.regression.gmm.DistQuantilesGMM</a> &raquo;</li>
+        
+      <li>6.7.4.4.1.1.3. statsmodels.sandbox.regression.gmm.DistQuantilesGMM.fit</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.regression.gmm.DistQuantilesGMM.fit.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-regression-gmm-distquantilesgmm-fit">
+<h1>6.7.4.4.1.1.3. statsmodels.sandbox.regression.gmm.DistQuantilesGMM.fit<a class="headerlink" href="#statsmodels-sandbox-regression-gmm-distquantilesgmm-fit" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="statsmodels.sandbox.regression.gmm.DistQuantilesGMM.fit">
+<code class="descclassname">DistQuantilesGMM.</code><code class="descname">fit</code><span class="sig-paren">(</span><em>start_params=None</em>, <em>maxiter=10</em>, <em>inv_weights=None</em>, <em>weights_method='cov'</em>, <em>wargs=()</em>, <em>has_optimal_weights=True</em>, <em>optim_method='bfgs'</em>, <em>optim_args=None</em><span class="sig-paren">)</span><a class="headerlink" href="#statsmodels.sandbox.regression.gmm.DistQuantilesGMM.fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Estimate parameters using GMM and return GMMResults</p>
+<p>TODO: weight and covariance arguments still need to be made consistent
+with similar options in other models,
+see RegressionResult.get_robustcov_results</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>start_params</strong> : array (optional)</p>
+<blockquote>
+<div><p>starting value for parameters ub minimization. If None then
+fitstart method is called for the starting values.</p>
+</div></blockquote>
+<p><strong>maxiter</strong> : int or &#8216;cue&#8217;</p>
+<blockquote>
+<div><p>Number of iterations in iterated GMM. The onestep estimate can be
+obtained with maxiter=0 or 1. If maxiter is large, then the
+iteration will stop either at maxiter or on convergence of the
+parameters (TODO: no options for convergence criteria yet.)
+If <cite>maxiter == &#8216;cue&#8217;</cite>, the the continuously updated GMM is
+calculated which updates the weight matrix during the minimization
+of the GMM objective function. The CUE estimation uses the onestep
+parameters as starting values.</p>
+</div></blockquote>
+<p><strong>inv_weights</strong> : None or ndarray</p>
+<blockquote>
+<div><p>inverse of the starting weighting matrix. If inv_weights are not
+given then the method <cite>start_weights</cite> is used which depends on
+the subclass, for IV subclasses <cite>inv_weights = z&#8217;z</cite> where <cite>z</cite> are
+the instruments, otherwise an identity matrix is used.</p>
+</div></blockquote>
+<p><strong>weights_method</strong> : string, defines method for robust</p>
+<blockquote>
+<div><p>Options here are similar to <code class="xref py py-mod docutils literal"><span class="pre">statsmodels.stats.robust_covariance</span></code>
+default is heteroscedasticity consistent, HC0</p>
+<p>currently available methods are</p>
+<ul class="simple">
+<li><cite>cov</cite> : HC0, optionally with degrees of freedom correction</li>
+<li><cite>hac</cite> :</li>
+<li><cite>iid</cite> : untested, only for Z*u case, IV cases with u as error indep of Z</li>
+<li><cite>ac</cite> : not available yet</li>
+<li><cite>cluster</cite> : not connected yet</li>
+<li>others from robust_covariance</li>
+</ul>
+</div></blockquote>
+<p><strong>wargs`</strong> : tuple or dict,</p>
+<blockquote>
+<div><p>required and optional arguments for weights_method</p>
+<ul class="simple">
+<li><cite>centered</cite> : bool,
+indicates whether moments are centered for the calculation of the weights
+and covariance matrix, applies to all weight_methods</li>
+<li><cite>ddof</cite> : int
+degrees of freedom correction, applies currently only to <cite>cov</cite></li>
+<li><cite>maxlag</cite> : int
+number of lags to include in HAC calculation , applies only to <cite>hac</cite></li>
+<li>others not yet, e.g. groups for cluster robust</li>
+</ul>
+</div></blockquote>
+<p><strong>has_optimal_weights: If true, then the calculation of the covariance</strong></p>
+<blockquote>
+<div><p>matrix assumes that we have optimal GMM with <span class="math">\(W = S^{-1}\)</span>.
+Default is True.
+TODO: do we want to have a different default after <cite>onestep</cite>?</p>
+</div></blockquote>
+<p><strong>optim_method</strong> : string, default is &#8216;bfgs&#8217;</p>
+<blockquote>
+<div><p>numerical optimization method. Currently not all optimizers that
+are available in LikelihoodModels are connected.</p>
+</div></blockquote>
+<p><strong>optim_args</strong> : dict</p>
+<blockquote>
+<div><p>keyword arguments for the numerical optimizer.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>results</strong> : instance of GMMResults</p>
+<blockquote class="last">
+<div><p>this is also attached as attribute results</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Warning: One-step estimation, <cite>maxiter</cite> either 0 or 1, still has
+problems (at least compared to Stata&#8217;s gmm).
+By default it uses a heteroscedasticity robust covariance matrix, but
+uses the assumption that the weight matrix is optimal.
+See options for cov_params in the results instance.</p>
+<p>The same options as for weight matrix also apply to the calculation of
+the estimate of the covariance matrix of the parameter estimates.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.regression.gmm.DistQuantilesGMM.fitgmm.html" class="btn btn-neutral float-right" title="6.7.4.4.1.1.4. statsmodels.sandbox.regression.gmm.DistQuantilesGMM.fitgmm" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.regression.gmm.DistQuantilesGMM.calc_weightmatrix.html" class="btn btn-neutral" title="6.7.4.4.1.1.2. statsmodels.sandbox.regression.gmm.DistQuantilesGMM.calc_weightmatrix" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

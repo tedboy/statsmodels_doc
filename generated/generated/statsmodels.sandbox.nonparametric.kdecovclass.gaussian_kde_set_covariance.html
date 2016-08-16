@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.5.4.2.2. statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.5.4. statsmodels.sandbox.nonparametric.kdecovclass" href="../statsmodels.sandbox.nonparametric.kdecovclass.html"/>
+        <link rel="next" title="6.5.4.2.2.1.1. statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.__init__" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.__init__.html"/>
+        <link rel="prev" title="6.5.4.2.1.1.14. statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_covfact.silverman_factor" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_covfact.silverman_factor.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.densityorthopoly.html">6.5.1. statsmodels.sandbox.nonparametric.densityorthopoly</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.dgp_examples.html">6.5.2. statsmodels.sandbox.nonparametric.dgp_examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kde2.html">6.5.3. statsmodels.sandbox.nonparametric.kde2</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kdecovclass.html">6.5.4. statsmodels.sandbox.nonparametric.kdecovclass</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kdecovclass.html#functions">6.5.4.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kdecovclass.html#classes">6.5.4.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kernel_extras.html">6.5.5. statsmodels.sandbox.nonparametric.kernel_extras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kernels.html">6.5.6. statsmodels.sandbox.nonparametric.kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.smoothers.html">6.5.7. statsmodels.sandbox.nonparametric.smoothers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.testdata.html">6.5.8. statsmodels.sandbox.nonparametric.testdata</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.nonparametric.kdecovclass.html">6.5.4. statsmodels.sandbox.nonparametric.kdecovclass</a> &raquo;</li>
+        
+      <li>6.5.4.2.2. statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-nonparametric-kdecovclass-gaussian-kde-set-covariance">
+<h1>6.5.4.2.2. statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance<a class="headerlink" href="#statsmodels-sandbox-nonparametric-kdecovclass-gaussian-kde-set-covariance" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance">
+<em class="property">class </em><code class="descclassname">statsmodels.sandbox.nonparametric.kdecovclass.</code><code class="descname">gaussian_kde_set_covariance</code><span class="sig-paren">(</span><em>dataset</em>, <em>covariance</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/nonparametric/kdecovclass.html#gaussian_kde_set_covariance"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance" title="Permalink to this definition">¶</a></dt>
+<dd><p>from Anne Archibald in mailinglist:
+<a class="reference external" href="http://www.nabble.com/Width-of-the-gaussian-in-stats.kde.gaussian_kde---td19558924.html#a19558924">http://www.nabble.com/Width-of-the-gaussian-in-stats.kde.gaussian_kde&#8212;td19558924.html#a19558924</a></p>
+<dl class="method">
+<dt id="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dataset</em>, <em>covariance</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/nonparametric/kdecovclass.html#gaussian_kde_set_covariance.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>6.5.4.2.2.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.__init__.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.__init__" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(dataset,&nbsp;covariance)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.covariance_factor.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.covariance_factor" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.covariance_factor"><code class="xref py py-obj docutils literal"><span class="pre">covariance_factor</span></code></a>()</td>
+<td>Computes the coefficient (<cite>kde.factor</cite>) that multiplies the data covariance matrix to obtain the kernel covariance matrix.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.evaluate.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.evaluate" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.evaluate"><code class="xref py py-obj docutils literal"><span class="pre">evaluate</span></code></a>(points)</td>
+<td>Evaluate the estimated pdf on a set of points.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_box.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_box" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_box"><code class="xref py py-obj docutils literal"><span class="pre">integrate_box</span></code></a>(low_bounds,&nbsp;high_bounds[,&nbsp;maxpts])</td>
+<td>Computes the integral of a pdf over a rectangular interval.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_box_1d.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_box_1d" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_box_1d"><code class="xref py py-obj docutils literal"><span class="pre">integrate_box_1d</span></code></a>(low,&nbsp;high)</td>
+<td>Computes the integral of a 1D pdf between two bounds.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_gaussian.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_gaussian" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_gaussian"><code class="xref py py-obj docutils literal"><span class="pre">integrate_gaussian</span></code></a>(mean,&nbsp;cov)</td>
+<td>Multiply estimated density by a multivariate Gaussian and integrate over the whole space.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_kde.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_kde" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.integrate_kde"><code class="xref py py-obj docutils literal"><span class="pre">integrate_kde</span></code></a>(other)</td>
+<td>Computes the integral of the product of this  kernel density estimate with another.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.logpdf.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.logpdf" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.logpdf"><code class="xref py py-obj docutils literal"><span class="pre">logpdf</span></code></a>(x)</td>
+<td>Evaluate the log of the estimated pdf on a provided set of points.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.pdf.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.pdf" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.pdf"><code class="xref py py-obj docutils literal"><span class="pre">pdf</span></code></a>(x)</td>
+<td>Evaluate the estimated pdf on a provided set of points.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.resample.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.resample" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.resample"><code class="xref py py-obj docutils literal"><span class="pre">resample</span></code></a>([size])</td>
+<td>Randomly sample a dataset from the estimated pdf.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.scotts_factor.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.scotts_factor" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.scotts_factor"><code class="xref py py-obj docutils literal"><span class="pre">scotts_factor</span></code></a>()</td>
+<td>Computes the coefficient (<cite>kde.factor</cite>) that multiplies the data covariance matrix to obtain the kernel covariance matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.set_bandwidth.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.set_bandwidth" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.set_bandwidth"><code class="xref py py-obj docutils literal"><span class="pre">set_bandwidth</span></code></a>([bw_method])</td>
+<td>Compute the estimator bandwidth with given method.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.silverman_factor.html#statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.silverman_factor" title="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.silverman_factor"><code class="xref py py-obj docutils literal"><span class="pre">silverman_factor</span></code></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.__init__.html" class="btn btn-neutral float-right" title="6.5.4.2.2.1.1. statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_covfact.silverman_factor.html" class="btn btn-neutral" title="6.5.4.2.1.1.14. statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_covfact.silverman_factor" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

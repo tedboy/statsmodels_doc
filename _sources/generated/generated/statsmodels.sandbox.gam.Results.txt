@@ -1,0 +1,25 @@
+statsmodels.sandbox.gam.Results
+===============================
+
+.. currentmodule:: statsmodels.sandbox.gam
+.. autoclass:: Results
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Results.__init__
+   ~Results.linkinversepredict
+   ~Results.predict
+   ~Results.smoothed
+   ~Results.smoothed_demeaned
+
+
+
+
+

@@ -1,0 +1,28 @@
+statsmodels.nonparametric.api.KernelCensoredReg
+===============================================
+
+.. currentmodule:: statsmodels.nonparametric.api
+.. autoclass:: KernelCensoredReg
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KernelCensoredReg.__init__
+   ~KernelCensoredReg.aic_hurvich
+   ~KernelCensoredReg.censored
+   ~KernelCensoredReg.cv_loo
+   ~KernelCensoredReg.fit
+   ~KernelCensoredReg.loo_likelihood
+   ~KernelCensoredReg.r_squared
+   ~KernelCensoredReg.sig_test
+
+
+
+
+

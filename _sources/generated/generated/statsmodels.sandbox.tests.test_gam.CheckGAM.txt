@@ -1,0 +1,23 @@
+statsmodels.sandbox.tests.test_gam.CheckGAM
+===========================================
+
+.. currentmodule:: statsmodels.sandbox.tests.test_gam
+.. autoclass:: CheckGAM
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CheckGAM.test_mu
+   ~CheckGAM.test_params
+   ~CheckGAM.test_predict
+
+
+
+
+

@@ -1,0 +1,28 @@
+statsmodels.sandbox.nonparametric.smoothers.PolySmoother
+========================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.smoothers
+.. autoclass:: PolySmoother
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PolySmoother.__init__
+   ~PolySmoother.df_fit
+   ~PolySmoother.df_model
+   ~PolySmoother.df_resid
+   ~PolySmoother.fit
+   ~PolySmoother.gram
+   ~PolySmoother.predict
+   ~PolySmoother.smooth
+
+
+
+
+

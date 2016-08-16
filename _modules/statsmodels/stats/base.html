@@ -1,0 +1,317 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.stats.base &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.stats.base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.stats.base</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Base classes for statistical test results</span>
+
+<span class="sd">Created on Mon Apr 22 14:03:21 2013</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">lzip</span><span class="p">,</span> <span class="nb">zip</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="AllPairsResults"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.proportion.AllPairsResults.html#statsmodels.stats.base.AllPairsResults">[docs]</a><span class="k">class</span> <span class="nc">AllPairsResults</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Results class for pairwise comparisons, based on p-values</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pvals_raw : array_like, 1-D</span>
+<span class="sd">        p-values from a pairwise comparison test</span>
+<span class="sd">    all_pairs : list of tuples</span>
+<span class="sd">        list of indices, one pair for each comparison</span>
+<span class="sd">    multitest_method : string</span>
+<span class="sd">        method that is used by default for p-value correction. This is used</span>
+<span class="sd">        as default by the methods like if the multiple-testing method is not</span>
+<span class="sd">        specified as argument.</span>
+<span class="sd">    levels : None or list of strings</span>
+<span class="sd">        optional names of the levels or groups</span>
+<span class="sd">    n_levels : None or int</span>
+<span class="sd">        If None, then the number of levels or groups is inferred from the</span>
+<span class="sd">        other arguments. It can be explicitly specified, if the inferred</span>
+<span class="sd">        number is incorrect.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This class can also be used for other pairwise comparisons, for example</span>
+<span class="sd">    comparing several treatments to a control (as in Dunnet&#39;s test).</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="AllPairsResults.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.proportion.AllPairsResults.__init__.html#statsmodels.stats.base.AllPairsResults.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pvals_raw</span><span class="p">,</span> <span class="n">all_pairs</span><span class="p">,</span> <span class="n">multitest_method</span><span class="o">=</span><span class="s1">&#39;hs&#39;</span><span class="p">,</span>
+                 <span class="n">levels</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">n_levels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pvals_raw</span> <span class="o">=</span> <span class="n">pvals_raw</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">all_pairs</span> <span class="o">=</span> <span class="n">all_pairs</span>
+        <span class="k">if</span> <span class="n">n_levels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># for all_pairs nobs*(nobs-1)/2</span>
+            <span class="c1">#self.n_levels = (1. + np.sqrt(1 + 8 * len(all_pairs))) * 0.5</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">all_pairs</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_levels</span> <span class="o">=</span> <span class="n">n_levels</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">multitest_method</span> <span class="o">=</span> <span class="n">multitest_method</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">levels</span> <span class="o">=</span> <span class="n">levels</span>
+        <span class="k">if</span> <span class="n">levels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_pairs_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%r</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pairs</span><span class="p">,)</span> <span class="k">for</span> <span class="n">pairs</span> <span class="ow">in</span> <span class="n">all_pairs</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">all_pairs_names</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">-</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">levels</span><span class="p">[</span><span class="n">pairs</span><span class="p">[</span><span class="mi">0</span><span class="p">]],</span>
+                                               <span class="n">levels</span><span class="p">[</span><span class="n">pairs</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+                                               <span class="k">for</span> <span class="n">pairs</span> <span class="ow">in</span> <span class="n">all_pairs</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="AllPairsResults.pval_corrected"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.proportion.AllPairsResults.pval_corrected.html#statsmodels.stats.base.AllPairsResults.pval_corrected">[docs]</a>    <span class="k">def</span> <span class="nf">pval_corrected</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;p-values corrected for multiple testing problem</span>
+
+<span class="sd">        This uses the default p-value correction of the instance stored in</span>
+<span class="sd">        ``self.multitest_method`` if method is None.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">import</span> <span class="nn">statsmodels.stats.multitest</span> <span class="k">as</span> <span class="nn">smt</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">method</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">multitest_method</span>
+        <span class="c1">#TODO: breaks with method=None</span>
+        <span class="k">return</span> <span class="n">smt</span><span class="o">.</span><span class="n">multipletests</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pvals_raw</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span></div>
+
+    <span class="k">def</span> <span class="nf">__str__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+
+<div class="viewcode-block" id="AllPairsResults.pval_table"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.proportion.AllPairsResults.pval_table.html#statsmodels.stats.base.AllPairsResults.pval_table">[docs]</a>    <span class="k">def</span> <span class="nf">pval_table</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;create a (n_levels, n_levels) array with corrected p_values</span>
+
+<span class="sd">        this needs to improve, similar to R pairwise output</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_levels</span>
+        <span class="n">pvals_mat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">))</span>
+        <span class="c1"># if we don&#39;t assume we have all pairs</span>
+        <span class="n">pvals_mat</span><span class="p">[</span><span class="n">lzip</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">all_pairs</span><span class="p">)]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pval_corrected</span><span class="p">()</span>
+        <span class="c1">#pvals_mat[np.triu_indices(k, 1)] = self.pval_corrected()</span>
+        <span class="k">return</span> <span class="n">pvals_mat</span></div>
+
+<div class="viewcode-block" id="AllPairsResults.summary"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.proportion.AllPairsResults.summary.html#statsmodels.stats.base.AllPairsResults.summary">[docs]</a>    <span class="k">def</span> <span class="nf">summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;returns text summarizing the results</span>
+
+<span class="sd">        uses the default pvalue correction of the instance stored in</span>
+<span class="sd">        ``self.multitest_method``</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">import</span> <span class="nn">statsmodels.stats.multitest</span> <span class="k">as</span> <span class="nn">smt</span>
+        <span class="n">maxlevel</span> <span class="o">=</span> <span class="nb">max</span><span class="p">((</span><span class="nb">len</span><span class="p">(</span><span class="n">ss</span><span class="p">)</span> <span class="k">for</span> <span class="n">ss</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">all_pairs_names</span><span class="p">))</span>
+
+        <span class="n">text</span> <span class="o">=</span> <span class="s1">&#39;Corrected p-values using </span><span class="si">%s</span><span class="s1"> p-value correction</span><span class="se">\n\n</span><span class="s1">&#39;</span> <span class="o">%</span> \
+                        <span class="n">smt</span><span class="o">.</span><span class="n">multitest_methods_names</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">multitest_method</span><span class="p">]</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s1">&#39;Pairs&#39;</span> <span class="o">+</span> <span class="p">(</span><span class="s1">&#39; &#39;</span> <span class="o">*</span> <span class="p">(</span><span class="n">maxlevel</span> <span class="o">-</span> <span class="mi">5</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span> <span class="o">+</span> <span class="s1">&#39;p-values</span><span class="se">\n</span><span class="s1">&#39;</span>
+        <span class="n">text</span> <span class="o">+=</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">((</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">  </span><span class="si">%6.4g</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">pv</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">pairs</span><span class="p">,</span> <span class="n">pv</span><span class="p">)</span> <span class="ow">in</span>
+                <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">all_pairs_names</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pval_corrected</span><span class="p">())))</span>
+        <span class="k">return</span> <span class="n">text</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

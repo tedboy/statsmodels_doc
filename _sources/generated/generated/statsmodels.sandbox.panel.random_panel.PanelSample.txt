@@ -1,0 +1,23 @@
+statsmodels.sandbox.panel.random_panel.PanelSample
+==================================================
+
+.. currentmodule:: statsmodels.sandbox.panel.random_panel
+.. autoclass:: PanelSample
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PanelSample.__init__
+   ~PanelSample.generate_panel
+   ~PanelSample.get_y_true
+
+
+
+
+

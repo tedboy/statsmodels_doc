@@ -1,0 +1,44 @@
+statsmodels
+===========
+
+.. automodule:: statsmodels
+
+   
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      NoseWrapper
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.NoseWrapper
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      CacheWriteWarning
+      ConvergenceWarning
+      InvalidTestWarning
+      IterationLimitWarning
+   
+   

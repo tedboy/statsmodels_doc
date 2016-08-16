@@ -1,0 +1,25 @@
+statsmodels.regression.quantile_regression.RegressionResultsWrapper
+===================================================================
+
+.. currentmodule:: statsmodels.regression.quantile_regression
+.. autoclass:: RegressionResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~RegressionResultsWrapper.__init__
+   ~RegressionResultsWrapper.conf_int
+   ~RegressionResultsWrapper.cov_params
+   ~RegressionResultsWrapper.load
+   ~RegressionResultsWrapper.save
+
+
+
+
+

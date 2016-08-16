@@ -1,0 +1,29 @@
+statsmodels.tools.grouputils.GroupSorted
+========================================
+
+.. currentmodule:: statsmodels.tools.grouputils
+.. autoclass:: GroupSorted
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GroupSorted.__init__
+   ~GroupSorted.counts
+   ~GroupSorted.dummy
+   ~GroupSorted.group_demean
+   ~GroupSorted.group_iter
+   ~GroupSorted.group_sums
+   ~GroupSorted.interaction
+   ~GroupSorted.labels
+   ~GroupSorted.lag_indices
+
+
+
+
+

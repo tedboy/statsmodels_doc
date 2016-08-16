@@ -1,0 +1,41 @@
+statsmodels.tsa.tests.test_arima.ARMA
+=====================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: ARMA
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ARMA.__init__
+   ~ARMA.fit
+   ~ARMA.from_formula
+   ~ARMA.geterrors
+   ~ARMA.hessian
+   ~ARMA.information
+   ~ARMA.initialize
+   ~ARMA.loglike
+   ~ARMA.loglike_css
+   ~ARMA.loglike_kalman
+   ~ARMA.predict
+   ~ARMA.score
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~ARMA.endog_names
+   ~ARMA.exog_names
+

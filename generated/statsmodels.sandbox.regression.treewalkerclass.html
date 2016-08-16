@@ -1,0 +1,400 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.7.11. statsmodels.sandbox.regression.treewalkerclass &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.7.11.5.1. statsmodels.sandbox.regression.treewalkerclass.getbranches" href="statsmodels.sandbox.regression.treewalkerclass.getbranches.html"/>
+        <link rel="prev" title="6.7.10.1.11. statsmodels.sandbox.regression.tools.tstd_pdf" href="statsmodels.sandbox.regression.tools.tstd_pdf.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.anova_nistcertified.html">6.7.1. statsmodels.sandbox.regression.anova_nistcertified</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.ar_panel.html">6.7.2. statsmodels.sandbox.regression.ar_panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.example_kernridge.html">6.7.3. statsmodels.sandbox.regression.example_kernridge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.kernridgeregress_class.html">6.7.5. statsmodels.sandbox.regression.kernridgeregress_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.onewaygls.html">6.7.6. statsmodels.sandbox.regression.onewaygls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.penalized.html">6.7.7. statsmodels.sandbox.regression.penalized</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.predstd.html">6.7.8. statsmodels.sandbox.regression.predstd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.sympy_diff.html">6.7.9. statsmodels.sandbox.regression.sympy_diff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.tools.html">6.7.10. statsmodels.sandbox.regression.tools</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.7.11. statsmodels.sandbox.regression.treewalkerclass</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#formulas">6.7.11.1. Formulas</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#design">6.7.11.2. Design</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#bugs-problems">6.7.11.3. bugs/problems</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#todo">6.7.11.4. TODO</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">6.7.11.5. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">6.7.11.6. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.try_catdata.html">6.7.12. statsmodels.sandbox.regression.try_catdata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.try_ols_anova.html">6.7.13. statsmodels.sandbox.regression.try_ols_anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.regression.try_treewalker.html">6.7.14. statsmodels.sandbox.regression.try_treewalker</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.7.11. statsmodels.sandbox.regression.treewalkerclass</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.regression.treewalkerclass.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.regression.treewalkerclass">
+<span id="statsmodels-sandbox-regression-treewalkerclass"></span><h1>6.7.11. statsmodels.sandbox.regression.treewalkerclass<a class="headerlink" href="#module-statsmodels.sandbox.regression.treewalkerclass" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="formulas">
+<h2>6.7.11.1. Formulas<a class="headerlink" href="#formulas" title="Permalink to this headline">¶</a></h2>
+<p>This follows mostly Greene notation (in slides)
+partially ignoring factors tau or mu for now, ADDED
+(if all tau==1, then runmnl==clogit)</p>
+<p>leaf k probability :</p>
+<p>Prob(k|j) = exp(b_k * X_k / mu_j)/ sum_{i in L(j)} (exp(b_i * X_i / mu_j)</p>
+<p>branch j probabilities :</p>
+<p>Prob(j) = exp(b_j * X_j + mu*IV_j )/ sum_{i in NB(j)} (exp(b_i * X_i + mu_i*IV_i)</p>
+<p>inclusive value of branch j :</p>
+<p>IV_j = log( sum_{i in L(j)} (exp(b_i * X_i / mu_j) )</p>
+<p>this is the log of the denominator of the leaf probabilities</p>
+<p>L(j) : leaves at branch j, where k is child of j
+NB(j) : set of j and it&#8217;s siblings</p>
+</div>
+<div class="section" id="design">
+<h2>6.7.11.2. Design<a class="headerlink" href="#design" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">splitting calculation transmission between returns and changes to
+instance.probs
+- probability for each leaf is in instance.probs
+- inclusive values and contribution of exog on branch level need to be</p>
+<blockquote>
+<div><p>added separately. handed up the tree through returns</p>
+</div></blockquote>
+</li>
+<li><p class="first">question: should params array be accessed directly through
+<cite>self.recursionparams[self.parinddict[name]]</cite> or should the dictionary
+return the values of the params, e.g. <cite>self.params_node_dict[name]</cite>.
+The second would be easier for fixing tau=1 for degenerate branches.
+The easiest might be to do the latter only for the taus and default to 1 if
+the key (&#8216;<a href="#id1"><span class="problematic" id="id2">tau_</span></a>&#8216;+branchname) is not found. I also need to exclude tau for
+degenerate branches from params, but then I cannot change them from the
+outside for testing and experimentation. (?)</p>
+</li>
+<li><p class="first">SAS manual describes restrictions on tau (though their model is a bit
+different), e.g. equal tau across sibling branches, fixed tau. The also
+allow linear and non-linear (? not sure) restriction on params, the
+regression coefficients. Related to previous issue, callback without access
+to the underlying array, where params_node_dict returns the actual params
+value would provide more flexibility to impose different kinds of restrictions.</p>
+</li>
+</ul>
+</div>
+<div class="section" id="bugs-problems">
+<h2>6.7.11.3. bugs/problems<a class="headerlink" href="#bugs-problems" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>singleton branches return zero to <cite>top</cite>, not a value
+I&#8217;m not sure what they are supposed to return, given the split between returns
+and instance.probs DONE</li>
+<li>Why does &#8216;Air&#8217; (singleton branch) get probability exactly 0.5 ? DONE</li>
+</ul>
+</div>
+<div class="section" id="todo">
+<h2>6.7.11.4. TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>add tau, normalization for nested logit, currently tau is 1 (clogit)
+taus also needs to become part of params MOSTLY DONE</li>
+<li>add effect of branch level explanatory variables DONE</li>
+<li>write a generic multinomial logit that takes arbitrary probabilities, this
+would be the same for MNL, clogit and runmnl,
+delegate calculation of probabilities</li>
+<li>test on actual data,
+- tau=1 replicate clogit numbers,
+- transport example from Greene tests 1-level tree and degenerate sub-trees
+- test example for multi-level trees ???</li>
+<li>starting values: Greene mentiones that the starting values for the nested
+version come from the (non-nested) MNL version. SPSS uses constant equal
+(? check transformation) to sample frequencies and zeros for slope
+coefficient as starting values for (non-nested) MNL</li>
+<li>associated test statistics
+- (I don&#8217;t think I will fight with the gradient or hessian of the log-like.)
+- basic MLE statistics can be generic
+- tests specific to the model (?)</li>
+<li>nice printouts since I&#8217;m currently collecting a lot of information in the tree
+recursion and everything has names</li>
+</ul>
+<p>The only parts that are really necessary to get a functional nested logit are
+adding the taus (DONE) and the MLE wrapper class. The rest are enhancements.</p>
+<p>I added fake tau, one fixed tau for all branches. (OBSOLETE)
+It&#8217;s not clear where the tau for leaf should be added either at
+original assignment of self.probs, or as part of the one-step-down
+probability correction in the bottom branches. The second would be
+cleaner (would make treatment of leaves and branches more symmetric,
+but requires that initial assignment in the leaf only does
+initialization. e.g self.probs = 1.  ???</p>
+<p>DONE added taus</p>
+<p>still todo:
+- tau for degenerate branches are not identified, set to 1 for MLE
+- rename parinddict to paramsinddict</p>
+<p>Author: Josef Perktold
+License : BSD (3-clause)</p>
+</div>
+<div class="section" id="functions">
+<h2>6.7.11.5. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.treewalkerclass.getbranches.html#statsmodels.sandbox.regression.treewalkerclass.getbranches" title="statsmodels.sandbox.regression.treewalkerclass.getbranches"><code class="xref py py-obj docutils literal"><span class="pre">getbranches</span></code></a>(tree)</td>
+<td>walk tree to get list of branches</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.regression.treewalkerclass.getnodes.html#statsmodels.sandbox.regression.treewalkerclass.getnodes" title="statsmodels.sandbox.regression.treewalkerclass.getnodes"><code class="xref py py-obj docutils literal"><span class="pre">getnodes</span></code></a>(tree)</td>
+<td>walk tree to get list of branches and list of leaves</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.treewalkerclass.iteritems.html#statsmodels.sandbox.regression.treewalkerclass.iteritems" title="statsmodels.sandbox.regression.treewalkerclass.iteritems"><code class="xref py py-obj docutils literal"><span class="pre">iteritems</span></code></a>(obj,&nbsp;**kwargs)</td>
+<td>replacement for six&#8217;s iteritems for Python2/3 compat</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.regression.treewalkerclass.itervalues.html#statsmodels.sandbox.regression.treewalkerclass.itervalues" title="statsmodels.sandbox.regression.treewalkerclass.itervalues"><code class="xref py py-obj docutils literal"><span class="pre">itervalues</span></code></a>(obj,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.treewalkerclass.randintw.html#statsmodels.sandbox.regression.treewalkerclass.randintw" title="statsmodels.sandbox.regression.treewalkerclass.randintw"><code class="xref py py-obj docutils literal"><span class="pre">randintw</span></code></a>(w[,&nbsp;size])</td>
+<td>generate integer random variables given probabilties</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>6.7.11.6. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.treewalkerclass.RU2NMNL.html#statsmodels.sandbox.regression.treewalkerclass.RU2NMNL" title="statsmodels.sandbox.regression.treewalkerclass.RU2NMNL"><code class="xref py py-obj docutils literal"><span class="pre">RU2NMNL</span></code></a>(endog,&nbsp;exog,&nbsp;tree,&nbsp;paramsind)</td>
+<td>Nested Multinomial Logit with Random Utility 2 parameterization</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.regression.treewalkerclass.getbranches.html" class="btn btn-neutral float-right" title="6.7.11.5.1. statsmodels.sandbox.regression.treewalkerclass.getbranches" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.regression.tools.tstd_pdf.html" class="btn btn-neutral" title="6.7.10.1.11. statsmodels.sandbox.regression.tools.tstd_pdf" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

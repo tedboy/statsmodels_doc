@@ -1,0 +1,57 @@
+statsmodels.base.model.GenericLikelihoodModelResults
+====================================================
+
+.. currentmodule:: statsmodels.base.model
+.. autoclass:: GenericLikelihoodModelResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GenericLikelihoodModelResults.__init__
+   ~GenericLikelihoodModelResults.aic
+   ~GenericLikelihoodModelResults.bic
+   ~GenericLikelihoodModelResults.bootstrap
+   ~GenericLikelihoodModelResults.bse
+   ~GenericLikelihoodModelResults.bsejac
+   ~GenericLikelihoodModelResults.bsejhj
+   ~GenericLikelihoodModelResults.conf_int
+   ~GenericLikelihoodModelResults.cov_params
+   ~GenericLikelihoodModelResults.covjac
+   ~GenericLikelihoodModelResults.covjhj
+   ~GenericLikelihoodModelResults.df_modelwc
+   ~GenericLikelihoodModelResults.f_test
+   ~GenericLikelihoodModelResults.get_nlfun
+   ~GenericLikelihoodModelResults.hessv
+   ~GenericLikelihoodModelResults.initialize
+   ~GenericLikelihoodModelResults.jacv
+   ~GenericLikelihoodModelResults.llf
+   ~GenericLikelihoodModelResults.load
+   ~GenericLikelihoodModelResults.normalized_cov_params
+   ~GenericLikelihoodModelResults.predict
+   ~GenericLikelihoodModelResults.pvalues
+   ~GenericLikelihoodModelResults.remove_data
+   ~GenericLikelihoodModelResults.save
+   ~GenericLikelihoodModelResults.score_obsv
+   ~GenericLikelihoodModelResults.summary
+   ~GenericLikelihoodModelResults.t_test
+   ~GenericLikelihoodModelResults.tvalues
+   ~GenericLikelihoodModelResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~GenericLikelihoodModelResults.use_t
+

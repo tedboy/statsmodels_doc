@@ -1,0 +1,53 @@
+statsmodels.sandbox.distributions.transformed.Transf_gen
+========================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.transformed
+
+.. autoclass:: Transf_gen
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Transf_gen.__init__
+      ~Transf_gen.cdf
+      ~Transf_gen.entropy
+      ~Transf_gen.est_loc_scale
+      ~Transf_gen.expect
+      ~Transf_gen.fit
+      ~Transf_gen.fit_fr
+      ~Transf_gen.fit_loc_scale
+      ~Transf_gen.freeze
+      ~Transf_gen.interval
+      ~Transf_gen.isf
+      ~Transf_gen.logcdf
+      ~Transf_gen.logpdf
+      ~Transf_gen.logsf
+      ~Transf_gen.mean
+      ~Transf_gen.median
+      ~Transf_gen.moment
+      ~Transf_gen.nnlf
+      ~Transf_gen.nnlf_fr
+      ~Transf_gen.pdf
+      ~Transf_gen.ppf
+      ~Transf_gen.rvs
+      ~Transf_gen.sf
+      ~Transf_gen.stats
+      ~Transf_gen.std
+      ~Transf_gen.var
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~Transf_gen.random_state
+   
+   

@@ -1,0 +1,51 @@
+statsmodels.iolib.summary
+=========================
+
+.. automodule:: statsmodels.iolib.summary
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      forg
+      summary
+      summary_params
+      summary_params_2d
+      summary_params_2dflat
+      summary_params_frame
+      summary_return
+      summary_top
+      table_extend
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      SimpleTable
+      Summary
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.iolib.summary.SimpleTable
+       generated/statsmodels.iolib.summary.Summary
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,26 @@
+statsmodels.sandbox.stats.multicomp.MultiComparison
+===================================================
+
+.. currentmodule:: statsmodels.sandbox.stats.multicomp
+
+.. autoclass:: MultiComparison
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MultiComparison.__init__
+      ~MultiComparison.allpairtest
+      ~MultiComparison.getranks
+      ~MultiComparison.kruskal
+      ~MultiComparison.tukeyhsd
+   
+   
+
+   
+   
+   

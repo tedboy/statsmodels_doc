@@ -1,0 +1,47 @@
+statsmodels.discrete.discrete_margins
+=====================================
+
+.. automodule:: statsmodels.discrete.discrete_margins
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      margeff
+      margeff_cov_params
+      margeff_cov_with_se
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      DiscreteMargins
+      Margins
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.discrete.discrete_margins.DiscreteMargins
+       generated/statsmodels.discrete.discrete_margins.Margins
+       generated/statsmodels.discrete.discrete_margins.resettable_cache
+
+   
+   
+
+   
+   
+   

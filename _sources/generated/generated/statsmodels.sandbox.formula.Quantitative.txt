@@ -1,0 +1,30 @@
+statsmodels.sandbox.formula.Quantitative
+========================================
+
+.. currentmodule:: statsmodels.sandbox.formula
+.. autoclass:: Quantitative
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Quantitative.__init__
+   ~Quantitative.names
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Quantitative.namespace
+

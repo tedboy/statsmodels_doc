@@ -1,0 +1,51 @@
+statsmodels.formula.api.PHReg
+=============================
+
+.. currentmodule:: statsmodels.formula.api
+.. autoclass:: PHReg
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PHReg.__init__
+   ~PHReg.baseline_cumulative_hazard
+   ~PHReg.baseline_cumulative_hazard_function
+   ~PHReg.breslow_gradient
+   ~PHReg.breslow_hessian
+   ~PHReg.breslow_loglike
+   ~PHReg.efron_gradient
+   ~PHReg.efron_hessian
+   ~PHReg.efron_loglike
+   ~PHReg.fit
+   ~PHReg.fit_regularized
+   ~PHReg.from_formula
+   ~PHReg.get_distribution
+   ~PHReg.hessian
+   ~PHReg.information
+   ~PHReg.initialize
+   ~PHReg.loglike
+   ~PHReg.predict
+   ~PHReg.robust_covariance
+   ~PHReg.score
+   ~PHReg.score_residuals
+   ~PHReg.weighted_covariate_averages
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~PHReg.endog_names
+   ~PHReg.exog_names
+

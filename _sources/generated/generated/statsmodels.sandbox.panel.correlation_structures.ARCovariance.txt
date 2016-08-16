@@ -1,0 +1,25 @@
+statsmodels.sandbox.panel.correlation_structures.ARCovariance
+=============================================================
+
+.. currentmodule:: statsmodels.sandbox.panel.correlation_structures
+.. autoclass:: ARCovariance
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ARCovariance.__init__
+   ~ARCovariance.corr
+   ~ARCovariance.cov
+   ~ARCovariance.fit
+   ~ARCovariance.whiten
+
+
+
+
+

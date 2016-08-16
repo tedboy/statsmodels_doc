@@ -1,0 +1,34 @@
+statsmodels.sandbox.regression.tools
+====================================
+
+.. automodule:: statsmodels.sandbox.regression.tools
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      locscale_grad
+      mean_grad
+      norm_dlldy
+      norm_lls
+      norm_lls_grad
+      normgrad
+      ts_dlldy
+      ts_lls
+      tstd_dlldy
+      tstd_lls
+      tstd_pdf
+   
+   
+
+   
+   
+   
+
+   
+   
+   

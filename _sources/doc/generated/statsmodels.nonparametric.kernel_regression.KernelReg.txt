@@ -1,0 +1,28 @@
+statsmodels.nonparametric.kernel_regression.KernelReg
+=====================================================
+
+.. currentmodule:: statsmodels.nonparametric.kernel_regression
+
+.. autoclass:: KernelReg
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~KernelReg.__init__
+      ~KernelReg.aic_hurvich
+      ~KernelReg.cv_loo
+      ~KernelReg.fit
+      ~KernelReg.loo_likelihood
+      ~KernelReg.r_squared
+      ~KernelReg.sig_test
+   
+   
+
+   
+   
+   

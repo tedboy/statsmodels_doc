@@ -1,0 +1,23 @@
+statsmodels.base._penalties.PseudoHuber
+=======================================
+
+.. currentmodule:: statsmodels.base._penalties
+.. autoclass:: PseudoHuber
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PseudoHuber.__init__
+   ~PseudoHuber.func
+   ~PseudoHuber.grad
+
+
+
+
+

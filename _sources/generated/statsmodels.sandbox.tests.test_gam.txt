@@ -1,0 +1,65 @@
+statsmodels.sandbox.tests.test_gam
+==================================
+
+.. automodule:: statsmodels.sandbox.tests.test_gam
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      get_class
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      AdditiveModel
+      BaseAM
+      BaseGAM
+      CheckAM
+      CheckGAM
+      Dummy
+      GAM
+      GLM
+      OLS
+      TestAdditiveModel
+      TestGAMBinomial
+      TestGAMGamma
+      TestGAMPoisson
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.tests.test_gam.AdditiveModel
+       generated/statsmodels.sandbox.tests.test_gam.BaseAM
+       generated/statsmodels.sandbox.tests.test_gam.BaseGAM
+       generated/statsmodels.sandbox.tests.test_gam.CheckAM
+       generated/statsmodels.sandbox.tests.test_gam.CheckGAM
+       generated/statsmodels.sandbox.tests.test_gam.Dummy
+       generated/statsmodels.sandbox.tests.test_gam.GAM
+       generated/statsmodels.sandbox.tests.test_gam.GLM
+       generated/statsmodels.sandbox.tests.test_gam.OLS
+       generated/statsmodels.sandbox.tests.test_gam.TestAdditiveModel
+       generated/statsmodels.sandbox.tests.test_gam.TestGAMBinomial
+       generated/statsmodels.sandbox.tests.test_gam.TestGAMGamma
+       generated/statsmodels.sandbox.tests.test_gam.TestGAMPoisson
+
+   
+   
+
+   
+   
+   

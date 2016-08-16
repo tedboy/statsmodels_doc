@@ -1,0 +1,44 @@
+statsmodels.robust.scale
+========================
+
+.. automodule:: statsmodels.robust.scale
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      mad
+      stand_mad
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Huber
+      HuberScale
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.robust.scale.Huber
+       generated/statsmodels.robust.scale.HuberScale
+
+   
+   
+
+   
+   
+   

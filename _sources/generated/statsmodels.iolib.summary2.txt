@@ -1,0 +1,50 @@
+statsmodels.iolib.summary2
+==========================
+
+.. automodule:: statsmodels.iolib.summary2
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      iteritems
+      iterkeys
+      itervalues
+      summary_col
+      summary_model
+      summary_params
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      OrderedDict
+      SimpleTable
+      Summary
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.iolib.summary2.OrderedDict
+       generated/statsmodels.iolib.summary2.SimpleTable
+       generated/statsmodels.iolib.summary2.Summary
+
+   
+   
+
+   
+   
+   

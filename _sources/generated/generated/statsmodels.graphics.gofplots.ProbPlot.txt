@@ -1,0 +1,29 @@
+statsmodels.graphics.gofplots.ProbPlot
+======================================
+
+.. currentmodule:: statsmodels.graphics.gofplots
+.. autoclass:: ProbPlot
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ProbPlot.__init__
+   ~ProbPlot.ppplot
+   ~ProbPlot.probplot
+   ~ProbPlot.qqplot
+   ~ProbPlot.sample_percentiles
+   ~ProbPlot.sample_quantiles
+   ~ProbPlot.sorted_data
+   ~ProbPlot.theoretical_percentiles
+   ~ProbPlot.theoretical_quantiles
+
+
+
+
+

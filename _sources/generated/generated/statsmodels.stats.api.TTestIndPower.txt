@@ -1,0 +1,24 @@
+statsmodels.stats.api.TTestIndPower
+===================================
+
+.. currentmodule:: statsmodels.stats.api
+.. autoclass:: TTestIndPower
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TTestIndPower.__init__
+   ~TTestIndPower.plot_power
+   ~TTestIndPower.power
+   ~TTestIndPower.solve_power
+
+
+
+
+

@@ -1,0 +1,42 @@
+statsmodels.iolib.table.Row
+===========================
+
+.. currentmodule:: statsmodels.iolib.table
+.. autoclass:: Row
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Row.__init__
+   ~Row.add_format
+   ~Row.append
+   ~Row.as_string
+   ~Row.count
+   ~Row.extend
+   ~Row.get_aligns
+   ~Row.index
+   ~Row.insert
+   ~Row.insert_stub
+   ~Row.pop
+   ~Row.remove
+   ~Row.reverse
+   ~Row.sort
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Row.data
+

@@ -1,0 +1,25 @@
+statsmodels.nonparametric.kernel_density.KDEMultivariateConditional
+===================================================================
+
+.. currentmodule:: statsmodels.nonparametric.kernel_density
+.. autoclass:: KDEMultivariateConditional
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KDEMultivariateConditional.__init__
+   ~KDEMultivariateConditional.cdf
+   ~KDEMultivariateConditional.imse
+   ~KDEMultivariateConditional.loo_likelihood
+   ~KDEMultivariateConditional.pdf
+
+
+
+
+

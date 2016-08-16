@@ -1,0 +1,42 @@
+statsmodels.discrete.discrete_model.OrderedModel
+================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: OrderedModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OrderedModel.__init__
+   ~OrderedModel.cdf
+   ~OrderedModel.cov_params_func_l1
+   ~OrderedModel.fit
+   ~OrderedModel.fit_regularized
+   ~OrderedModel.from_formula
+   ~OrderedModel.hessian
+   ~OrderedModel.information
+   ~OrderedModel.initialize
+   ~OrderedModel.loglike
+   ~OrderedModel.pdf
+   ~OrderedModel.predict
+   ~OrderedModel.score
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~OrderedModel.endog_names
+   ~OrderedModel.exog_names
+

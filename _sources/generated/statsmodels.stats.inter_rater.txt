@@ -1,0 +1,46 @@
+statsmodels.stats.inter_rater
+=============================
+
+.. automodule:: statsmodels.stats.inter_rater
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      aggregate_raters
+      cohens_kappa
+      fleiss_kappa
+      to_table
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      KappaResults
+      ResultsBunch
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.inter_rater.KappaResults
+       generated/statsmodels.stats.inter_rater.ResultsBunch
+
+   
+   
+
+   
+   
+   

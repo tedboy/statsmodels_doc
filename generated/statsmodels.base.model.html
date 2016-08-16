@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.1.7. statsmodels.base.model &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="4. Other modules of interest" href="../submain.html"/>
+        <link rel="next" title="4.1.7.1.1. statsmodels.base.model.approx_fprime" href="statsmodels.base.model.approx_fprime.html"/>
+        <link rel="prev" title="4.1.6.1.2. statsmodels.base.l1_solvers_common.qc_results" href="statsmodels.base.l1_solvers_common.qc_results.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../submain.html#statsmodel-base">4.1. statsmodel.base</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.base.html">4.1.1. statsmodels.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.base._constraints.html">4.1.2. statsmodels.base._constraints</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.base.covtype.html">4.1.3. statsmodels.base.covtype</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.base.data.html">4.1.4. statsmodels.base.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.base.l1_slsqp.html">4.1.5. statsmodels.base.l1_slsqp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.base.l1_solvers_common.html">4.1.6. statsmodels.base.l1_solvers_common</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.1.7. statsmodels.base.model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">4.1.7.1. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">4.1.7.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.base.optimizer.html">4.1.8. statsmodels.base.optimizer</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.base._penalties.html">4.1.9. statsmodels.base._penalties</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.base.wrapper.html">4.1.10. statsmodels.base.wrapper</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+      <li>4.1.7. statsmodels.base.model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.base.model.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.base.model">
+<span id="statsmodels-base-model"></span><h1>4.1.7. statsmodels.base.model<a class="headerlink" href="#module-statsmodels.base.model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functions">
+<h2>4.1.7.1. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.base.model.approx_fprime.html#statsmodels.base.model.approx_fprime" title="statsmodels.base.model.approx_fprime"><code class="xref py py-obj docutils literal"><span class="pre">approx_fprime</span></code></a>(x,&nbsp;f[,&nbsp;epsilon,&nbsp;args,&nbsp;kwargs,&nbsp;...])</td>
+<td>Gradient of function, or Jacobian if function f returns 1d array</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.base.model.handle_data.html#statsmodels.base.model.handle_data" title="statsmodels.base.model.handle_data"><code class="xref py py-obj docutils literal"><span class="pre">handle_data</span></code></a>(endog,&nbsp;exog[,&nbsp;missing,&nbsp;hasconst])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.base.model.handle_formula_data.html#statsmodels.base.model.handle_formula_data" title="statsmodels.base.model.handle_formula_data"><code class="xref py py-obj docutils literal"><span class="pre">handle_formula_data</span></code></a>(Y,&nbsp;X,&nbsp;formula[,&nbsp;depth,&nbsp;...])</td>
+<td>Returns endog, exog, and the model specification from arrays and formula</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.base.model.iterkeys.html#statsmodels.base.model.iterkeys" title="statsmodels.base.model.iterkeys"><code class="xref py py-obj docutils literal"><span class="pre">iterkeys</span></code></a>(obj,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.base.model.nan_dot.html#statsmodels.base.model.nan_dot" title="statsmodels.base.model.nan_dot"><code class="xref py py-obj docutils literal"><span class="pre">nan_dot</span></code></a>(A,&nbsp;B)</td>
+<td>Returns np.dot(left_matrix, right_matrix) with the convention that nan * 0 = 0 and nan * x = nan if x != 0.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.base.model.recipr.html#statsmodels.base.model.recipr" title="statsmodels.base.model.recipr"><code class="xref py py-obj docutils literal"><span class="pre">recipr</span></code></a>(X)</td>
+<td>Return the reciprocal of an array, setting all entries less than or equal to 0 to 0.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>4.1.7.2. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.base.model.ContrastResults.html#statsmodels.base.model.ContrastResults" title="statsmodels.base.model.ContrastResults"><code class="xref py py-obj docutils literal"><span class="pre">ContrastResults</span></code></a>([t,&nbsp;F,&nbsp;sd,&nbsp;effect,&nbsp;...])</td>
+<td>Class for results of tests of linear restrictions on coefficients in a model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.base.model.GenericLikelihoodModel.html#statsmodels.base.model.GenericLikelihoodModel" title="statsmodels.base.model.GenericLikelihoodModel"><code class="xref py py-obj docutils literal"><span class="pre">GenericLikelihoodModel</span></code></a>(endog[,&nbsp;exog,&nbsp;...])</td>
+<td>Allows the fitting of any likelihood function via maximum likelihood.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.base.model.GenericLikelihoodModelResults.html#statsmodels.base.model.GenericLikelihoodModelResults" title="statsmodels.base.model.GenericLikelihoodModelResults"><code class="xref py py-obj docutils literal"><span class="pre">GenericLikelihoodModelResults</span></code></a>(model,&nbsp;mlefit)</td>
+<td>A results class for the discrete dependent variable models.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.base.model.LikelihoodModel.html#statsmodels.base.model.LikelihoodModel" title="statsmodels.base.model.LikelihoodModel"><code class="xref py py-obj docutils literal"><span class="pre">LikelihoodModel</span></code></a>(endog[,&nbsp;exog])</td>
+<td>Likelihood model is a subclass of Model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.base.model.LikelihoodModelResults.html#statsmodels.base.model.LikelihoodModelResults" title="statsmodels.base.model.LikelihoodModelResults"><code class="xref py py-obj docutils literal"><span class="pre">LikelihoodModelResults</span></code></a>(model,&nbsp;params[,&nbsp;...])</td>
+<td>Class to contain results from likelihood models</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.base.model.LikelihoodResultsWrapper.html#statsmodels.base.model.LikelihoodResultsWrapper" title="statsmodels.base.model.LikelihoodResultsWrapper"><code class="xref py py-obj docutils literal"><span class="pre">LikelihoodResultsWrapper</span></code></a>(results)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.base.model.Model.html#statsmodels.base.model.Model" title="statsmodels.base.model.Model"><code class="xref py py-obj docutils literal"><span class="pre">Model</span></code></a>(endog[,&nbsp;exog])</td>
+<td>A (predictive) statistical model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.base.model.Optimizer.html#statsmodels.base.model.Optimizer" title="statsmodels.base.model.Optimizer"><code class="xref py py-obj docutils literal"><span class="pre">Optimizer</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.base.model.ResultMixin.html#statsmodels.base.model.ResultMixin" title="statsmodels.base.model.ResultMixin"><code class="xref py py-obj docutils literal"><span class="pre">ResultMixin</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.base.model.Results.html#statsmodels.base.model.Results" title="statsmodels.base.model.Results"><code class="xref py py-obj docutils literal"><span class="pre">Results</span></code></a>(model,&nbsp;params,&nbsp;**kwd)</td>
+<td>Class to contain model results</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.base.model.resettable_cache.html#statsmodels.base.model.resettable_cache" title="statsmodels.base.model.resettable_cache"><code class="xref py py-obj docutils literal"><span class="pre">resettable_cache</span></code></a></td>
+<td>alias of <code class="xref py py-class docutils literal"><span class="pre">ResettableCache</span></code></td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.base.model.approx_fprime.html" class="btn btn-neutral float-right" title="4.1.7.1.1. statsmodels.base.model.approx_fprime" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.base.l1_solvers_common.qc_results.html" class="btn btn-neutral" title="4.1.6.1.2. statsmodels.base.l1_solvers_common.qc_results" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

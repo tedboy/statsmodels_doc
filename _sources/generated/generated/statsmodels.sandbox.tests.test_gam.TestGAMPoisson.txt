@@ -1,0 +1,25 @@
+statsmodels.sandbox.tests.test_gam.TestGAMPoisson
+=================================================
+
+.. currentmodule:: statsmodels.sandbox.tests.test_gam
+.. autoclass:: TestGAMPoisson
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestGAMPoisson.__init__
+   ~TestGAMPoisson.init
+   ~TestGAMPoisson.test_mu
+   ~TestGAMPoisson.test_params
+   ~TestGAMPoisson.test_predict
+
+
+
+
+

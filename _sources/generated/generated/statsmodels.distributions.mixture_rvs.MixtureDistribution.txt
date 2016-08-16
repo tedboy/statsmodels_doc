@@ -1,0 +1,23 @@
+statsmodels.distributions.mixture_rvs.MixtureDistribution
+=========================================================
+
+.. currentmodule:: statsmodels.distributions.mixture_rvs
+.. autoclass:: MixtureDistribution
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MixtureDistribution.cdf
+   ~MixtureDistribution.pdf
+   ~MixtureDistribution.rvs
+
+
+
+
+

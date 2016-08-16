@@ -1,0 +1,62 @@
+statsmodels.stats.sandwich_covariance
+=====================================
+
+.. automodule:: statsmodels.stats.sandwich_covariance
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      S_crosssection
+      S_hac_groupsum
+      S_hac_simple
+      S_nw_panel
+      S_white_simple
+      cov_cluster
+      cov_cluster_2groups
+      cov_crosssection_0
+      cov_hac
+      cov_hac_simple
+      cov_hc0
+      cov_hc1
+      cov_hc2
+      cov_hc3
+      cov_nw_groupsum
+      cov_nw_panel
+      cov_white_simple
+      group_sums
+      lagged_groups
+      se_cov
+      weights_bartlett
+      weights_uniform
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Group
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.sandwich_covariance.Group
+
+   
+   
+
+   
+   
+   

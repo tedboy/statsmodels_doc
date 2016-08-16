@@ -1,0 +1,462 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.panel.panel_short &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.panel.panel_short</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.panel.panel_short</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Panel data analysis for short T and large N</span>
+
+<span class="sd">Created on Sat Dec 17 19:32:00 2011</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License: BSD-3</span>
+
+
+<span class="sd">starting from scratch before looking at references again</span>
+<span class="sd">just a stub to get the basic structure for group handling</span>
+<span class="sd">target outsource as much as possible for reuse</span>
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+
+<span class="sd">this is the basic version using a loop over individuals which will be more</span>
+<span class="sd">widely applicable. Depending on the special cases, there will be faster</span>
+<span class="sd">implementations possible (sparse, kroneker, ...)</span>
+
+<span class="sd">the only two group specific methods or get_within_cov and whiten</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">statsmodels.regression.linear_model</span> <span class="k">import</span> <span class="n">OLS</span><span class="p">,</span> <span class="n">GLS</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tools.grouputils</span> <span class="k">import</span> <span class="n">Group</span><span class="p">,</span> <span class="n">GroupSorted</span>
+
+<span class="c1">#not used</span>
+<div class="viewcode-block" id="Unit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.Unit.html#statsmodels.sandbox.panel.panel_short.Unit">[docs]</a><span class="k">class</span> <span class="nc">Unit</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Unit.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.Unit.__init__.html#statsmodels.sandbox.panel.panel_short.Unit.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">=</span> <span class="n">endog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="n">exog</span></div></div>
+
+
+<div class="viewcode-block" id="sum_outer_product_loop"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.panel_short.sum_outer_product_loop.html#statsmodels.sandbox.panel.panel_short.sum_outer_product_loop">[docs]</a><span class="k">def</span> <span class="nf">sum_outer_product_loop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">group_iter</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;sum outerproduct dot(x_i, x_i.T) over individuals</span>
+
+<span class="sd">    loop version</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">mom</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">group_iter</span><span class="p">():</span>
+        <span class="n">x_g</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">g</span><span class="p">]</span>
+        <span class="c1">#print &#39;x_g.shape&#39;, x_g.shape</span>
+        <span class="n">mom</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">x_g</span><span class="p">,</span> <span class="n">x_g</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mom</span></div>
+
+<div class="viewcode-block" id="sum_outer_product_balanced"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.panel_short.sum_outer_product_balanced.html#statsmodels.sandbox.panel.panel_short.sum_outer_product_balanced">[docs]</a><span class="k">def</span> <span class="nf">sum_outer_product_balanced</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">n_groups</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;sum outerproduct dot(x_i, x_i.T) over individuals</span>
+
+<span class="sd">    where x_i is (nobs_i, 1), and result is (nobs_i, nobs_i)</span>
+
+<span class="sd">    reshape-dot version, for x.ndim=1 only</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">xrs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_groups</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">xrs</span><span class="p">,</span> <span class="n">xrs</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>  <span class="c1">#should be (nobs_i, nobs_i)</span></div>
+
+    <span class="c1">#x.reshape(n_groups, nobs_i,  k_vars) #, order=&#39;F&#39;)</span>
+    <span class="c1">#... ? this is getting 3-dimensional  dot, tensordot?</span>
+    <span class="c1">#needs (n_groups, k_vars, k_vars) array with sum over groups</span>
+    <span class="c1">#NOT</span>
+    <span class="c1">#I only need this for x is 1d, i.e. residual</span>
+
+
+<div class="viewcode-block" id="whiten_individuals_loop"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.panel_short.whiten_individuals_loop.html#statsmodels.sandbox.panel.panel_short.whiten_individuals_loop">[docs]</a><span class="k">def</span> <span class="nf">whiten_individuals_loop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">transform</span><span class="p">,</span> <span class="n">group_iter</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;apply linear transform for each individual</span>
+
+<span class="sd">    loop version</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1">#Note: figure out dimension of transformed variable</span>
+    <span class="c1">#so we can pre-allocate</span>
+    <span class="n">x_new</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">group_iter</span><span class="p">():</span>
+        <span class="n">x_g</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">g</span><span class="p">]</span>
+        <span class="n">x_new</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">transform</span><span class="p">,</span> <span class="n">x_g</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(</span><span class="n">x_new</span><span class="p">)</span> <span class="c1">#np.vstack(x_new)  #or np.array(x_new) #check shape</span></div>
+
+
+
+<div class="viewcode-block" id="ShortPanelGLS2"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS2">[docs]</a><span class="k">class</span> <span class="nc">ShortPanelGLS2</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Short Panel with general intertemporal within correlation</span>
+
+<span class="sd">    assumes data is stacked by individuals, panel is balanced and</span>
+<span class="sd">    within correlation structure is identical across individuals.</span>
+
+<span class="sd">    It looks like this can just inherit GLS and overwrite whiten</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ShortPanelGLS2.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.__init__.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">group</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">=</span> <span class="n">endog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="n">exog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">GroupSorted</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">n_groups</span></div>
+        <span class="c1">#self.nobs_group =   #list for unbalanced?</span>
+
+<div class="viewcode-block" id="ShortPanelGLS2.fit_ols"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.fit_ols.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.fit_ols">[docs]</a>    <span class="k">def</span> <span class="nf">fit_ols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res_pooled</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">res_pooled</span>  <span class="c1">#return or not</span></div>
+
+<div class="viewcode-block" id="ShortPanelGLS2.get_within_cov"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.get_within_cov.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.get_within_cov">[docs]</a>    <span class="k">def</span> <span class="nf">get_within_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resid</span><span class="p">):</span>
+        <span class="c1">#central moment or not?</span>
+        <span class="n">mom</span> <span class="o">=</span> <span class="n">sum_outer_product_loop</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">group_iter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mom</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_groups</span>   <span class="c1">#df correction ?</span></div>
+
+<div class="viewcode-block" id="ShortPanelGLS2.whiten_groups"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.whiten_groups.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.whiten_groups">[docs]</a>    <span class="k">def</span> <span class="nf">whiten_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">cholsigmainv_i</span><span class="p">):</span>
+        <span class="c1">#from scipy import sparse #use sparse</span>
+        <span class="n">wx</span> <span class="o">=</span> <span class="n">whiten_individuals_loop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cholsigmainv_i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">group_iter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wx</span></div>
+
+<div class="viewcode-block" id="ShortPanelGLS2.fit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.fit.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res_pooled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit_ols</span><span class="p">()</span> <span class="c1">#get starting estimate</span>
+        <span class="n">sigma_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_within_cov</span><span class="p">(</span><span class="n">res_pooled</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">sigma_i</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">wendog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">whiten_groups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv_i</span><span class="p">)</span>
+        <span class="n">wexog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">whiten_groups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv_i</span><span class="p">)</span>
+        <span class="c1">#print wendog.shape, wexog.shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="n">wendog</span><span class="p">,</span> <span class="n">wexog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">res1</span></div></div>
+
+<div class="viewcode-block" id="ShortPanelGLS"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS">[docs]</a><span class="k">class</span> <span class="nc">ShortPanelGLS</span><span class="p">(</span><span class="n">GLS</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Short Panel with general intertemporal within correlation</span>
+
+<span class="sd">    assumes data is stacked by individuals, panel is balanced and</span>
+<span class="sd">    within correlation structure is identical across individuals.</span>
+
+<span class="sd">    It looks like this can just inherit GLS and overwrite whiten</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ShortPanelGLS.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS.__init__.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">sigma_i</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group</span> <span class="o">=</span> <span class="n">GroupSorted</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">n_groups</span>
+        <span class="c1">#self.nobs_group =   #list for unbalanced?</span>
+        <span class="n">nobs_i</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">endog</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_groups</span> <span class="c1">#endog might later not be an ndarray</span>
+        <span class="c1">#balanced only for now,</span>
+        <span class="c1">#which is a requirement anyway in this case (full cov)</span>
+        <span class="c1">#needs to change for parameterized sigma_i</span>
+
+        <span class="c1">#</span>
+        <span class="k">if</span> <span class="n">sigma_i</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sigma_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nobs_i</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">sigma_i</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="c1">#super is taking care of endog, exog and sigma</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ShortPanelGLS.get_within_cov"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS.get_within_cov.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS.get_within_cov">[docs]</a>    <span class="k">def</span> <span class="nf">get_within_cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">resid</span><span class="p">):</span>
+        <span class="c1">#central moment or not?</span>
+        <span class="n">mom</span> <span class="o">=</span> <span class="n">sum_outer_product_loop</span><span class="p">(</span><span class="n">resid</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">group_iter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mom</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_groups</span>   <span class="c1">#df correction ?</span></div>
+
+<div class="viewcode-block" id="ShortPanelGLS.whiten_groups"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS.whiten_groups.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS.whiten_groups">[docs]</a>    <span class="k">def</span> <span class="nf">whiten_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">cholsigmainv_i</span><span class="p">):</span>
+        <span class="c1">#from scipy import sparse #use sparse</span>
+        <span class="n">wx</span> <span class="o">=</span> <span class="n">whiten_individuals_loop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cholsigmainv_i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">group_iter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wx</span></div>
+
+    <span class="k">def</span> <span class="nf">_fit_ols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#used as starting estimate in old explicity version</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res_pooled</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">res_pooled</span>  <span class="c1">#return or not</span>
+
+    <span class="k">def</span> <span class="nf">_fit_old</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#old explicit version</span>
+        <span class="n">res_pooled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fit_ols</span><span class="p">()</span> <span class="c1">#get starting estimate</span>
+        <span class="n">sigma_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_within_cov</span><span class="p">(</span><span class="n">res_pooled</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">sigma_i</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">wendog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">whiten_groups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv_i</span><span class="p">)</span>
+        <span class="n">wexog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">whiten_groups</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv_i</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="n">wendog</span><span class="p">,</span> <span class="n">wexog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">res1</span>
+
+<div class="viewcode-block" id="ShortPanelGLS.whiten"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS.whiten.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS.whiten">[docs]</a>    <span class="k">def</span> <span class="nf">whiten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1">#whiten x by groups, will be applied to endog and exog</span>
+        <span class="n">wx</span> <span class="o">=</span> <span class="n">whiten_individuals_loop</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv_i</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span><span class="o">.</span><span class="n">group_iter</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">wx</span></div>
+
+    <span class="c1">#copied from GLSHet and adjusted (boiler plate?)</span>
+<div class="viewcode-block" id="ShortPanelGLS.fit_iterative"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS.fit_iterative.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS.fit_iterative">[docs]</a>    <span class="k">def</span> <span class="nf">fit_iterative</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Perform an iterative two-step procedure to estimate the GLS model.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        maxiter : integer, optional</span>
+<span class="sd">            the number of iterations</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        maxiter=1: returns the estimated based on given weights</span>
+<span class="sd">        maxiter=2: performs a second estimation with the updated weights,</span>
+<span class="sd">                   this is 2-step estimation</span>
+<span class="sd">        maxiter&gt;2: iteratively estimate and update the weights</span>
+
+<span class="sd">        TODO: possible extension stop iteration if change in parameter</span>
+<span class="sd">            estimates is smaller than x_tol</span>
+
+<span class="sd">        Repeated calls to fit_iterative, will do one redundant pinv_wexog</span>
+<span class="sd">        calculation. Calling fit_iterative(maxiter) once does not do any</span>
+<span class="sd">        redundant recalculations (whitening or calculating pinv_wexog).</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#Note: in contrast to GLSHet, we don&#39;t have an auxilliary regression here</span>
+        <span class="c1">#      might be needed if there is more structure in cov_i</span>
+
+        <span class="c1">#because we only have the loop we are not attaching the ols_pooled</span>
+        <span class="c1">#initial estimate anymore compared to original version</span>
+
+        <span class="k">if</span> <span class="n">maxiter</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;maxiter needs to be at least 1&#39;</span><span class="p">)</span>
+
+        <span class="kn">import</span> <span class="nn">collections</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">history</span> <span class="o">=</span> <span class="n">collections</span><span class="o">.</span><span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span> <span class="c1">#not really necessary</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">maxiter</span><span class="p">):</span>
+            <span class="c1">#pinv_wexog is cached, delete it to force recalculation</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;pinv_wexog&#39;</span><span class="p">):</span>
+                <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">pinv_wexog</span>
+
+            <span class="c1">#fit with current cov, GLS, i.e. OLS on whitened endog, exog</span>
+            <span class="n">results</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">history</span><span class="p">[</span><span class="s1">&#39;self_params&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">==</span> <span class="n">maxiter</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>  <span class="c1">#skip for last iteration, could break instead</span>
+                <span class="c1">#print &#39;ols&#39;,</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">results_old</span> <span class="o">=</span> <span class="n">results</span> <span class="c1">#store previous results for debugging</span>
+
+                <span class="c1">#get cov from residuals of previous regression</span>
+                <span class="n">sigma_i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_within_cov</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">resid</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv_i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">sigma_i</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+
+                <span class="c1">#calculate new whitened endog and exog</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">initialize</span><span class="p">()</span>
+
+        <span class="c1">#note results is the wrapper, results._results is the results instance</span>
+        <span class="c1">#results._results.results_residual_regression = res_resid</span>
+        <span class="k">return</span> <span class="n">results</span></div></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="k">pass</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

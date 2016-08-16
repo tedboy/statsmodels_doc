@@ -1,0 +1,23 @@
+statsmodels.emplike.originregress.ELOriginRegress
+=================================================
+
+.. currentmodule:: statsmodels.emplike.originregress
+.. autoclass:: ELOriginRegress
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ELOriginRegress.__init__
+   ~ELOriginRegress.fit
+   ~ELOriginRegress.predict
+
+
+
+
+

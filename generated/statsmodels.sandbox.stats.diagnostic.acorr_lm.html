@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.8.3.2.4. statsmodels.sandbox.stats.diagnostic.acorr_lm &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6.8.3. statsmodels.sandbox.stats.diagnostic" href="statsmodels.sandbox.stats.diagnostic.html"/>
+        <link rel="next" title="6.8.3.2.5. statsmodels.sandbox.stats.diagnostic.add_constant" href="statsmodels.sandbox.stats.diagnostic.add_constant.html"/>
+        <link rel="prev" title="6.8.3.2.3. statsmodels.sandbox.stats.diagnostic.acorr_ljungbox" href="statsmodels.sandbox.stats.diagnostic.acorr_ljungbox.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.html">6.8.1. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.html">6.8.2. statsmodels.sandbox.stats.contrast_tools</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.html">6.8.3. statsmodels.sandbox.stats.diagnostic</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.html#notes">6.8.3.1. Notes</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.html#functions">6.8.3.2. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.html#classes">6.8.3.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.ex_newtests.html">6.8.4. statsmodels.sandbox.stats.ex_newtests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.html">6.8.5. statsmodels.sandbox.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.runs.html">6.8.6. statsmodels.sandbox.stats.runs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.stats_dhuard.html">6.8.7. statsmodels.sandbox.stats.stats_dhuard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="statsmodels.sandbox.stats.diagnostic.html">6.8.3. statsmodels.sandbox.stats.diagnostic</a> &raquo;</li>
+        
+      <li>6.8.3.2.4. statsmodels.sandbox.stats.diagnostic.acorr_lm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.stats.diagnostic.acorr_lm.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-stats-diagnostic-acorr-lm">
+<h1>6.8.3.2.4. statsmodels.sandbox.stats.diagnostic.acorr_lm<a class="headerlink" href="#statsmodels-sandbox-stats-diagnostic-acorr-lm" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.sandbox.stats.diagnostic.acorr_lm">
+<code class="descclassname">statsmodels.sandbox.stats.diagnostic.</code><code class="descname">acorr_lm</code><span class="sig-paren">(</span><em>x</em>, <em>maxlag=None</em>, <em>autolag='AIC'</em>, <em>store=False</em>, <em>regresults=False</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/statsmodels/sandbox/stats/diagnostic.html#acorr_lm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.stats.diagnostic.acorr_lm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lagrange Multiplier tests for autocorrelation</p>
+<p>This is a generic Lagrange Multiplier test for autocorrelation. I don&#8217;t
+have a reference for it, but it returns Engle&#8217;s ARCH test if x is the
+squared residual array. A variation on it with additional exogenous
+variables is the Breush-Godfrey autocorrelation test.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>resid</strong> : ndarray, (nobs,)</p>
+<blockquote>
+<div><p>residuals from an estimation, or time series</p>
+</div></blockquote>
+<p><strong>maxlag</strong> : int</p>
+<blockquote>
+<div><p>highest lag to use</p>
+</div></blockquote>
+<p><strong>autolag</strong> : None or string</p>
+<blockquote>
+<div><p>If None, then a fixed number of lags given by maxlag is used.</p>
+</div></blockquote>
+<p><strong>store</strong> : bool</p>
+<blockquote>
+<div><p>If true then the intermediate results are also returned</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>lm</strong> : float</p>
+<blockquote>
+<div><p>Lagrange multiplier test statistic</p>
+</div></blockquote>
+<p><strong>lmpval</strong> : float</p>
+<blockquote>
+<div><p>p-value for Lagrange multiplier test</p>
+</div></blockquote>
+<p><strong>fval</strong> : float</p>
+<blockquote>
+<div><p>fstatistic for F test, alternative version of the same test based on
+F test for the parameter restriction</p>
+</div></blockquote>
+<p><strong>fpval</strong> : float</p>
+<blockquote>
+<div><p>pvalue for F test</p>
+</div></blockquote>
+<p><strong>resstore</strong> : instance (optional)</p>
+<blockquote class="last">
+<div><p>a class instance that holds intermediate results. Only returned if
+store=True</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.het_arch.html#statsmodels.sandbox.stats.diagnostic.het_arch" title="statsmodels.sandbox.stats.diagnostic.het_arch"><code class="xref py py-obj docutils literal"><span class="pre">het_arch</span></code></a>, <a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.acorr_breush_godfrey.html#statsmodels.sandbox.stats.diagnostic.acorr_breush_godfrey" title="statsmodels.sandbox.stats.diagnostic.acorr_breush_godfrey"><code class="xref py py-obj docutils literal"><span class="pre">acorr_breush_godfrey</span></code></a>, <code class="xref py py-obj docutils literal"><span class="pre">acorr_ljung_box</span></code></p>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.stats.diagnostic.add_constant.html" class="btn btn-neutral float-right" title="6.8.3.2.5. statsmodels.sandbox.stats.diagnostic.add_constant" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.stats.diagnostic.acorr_ljungbox.html" class="btn btn-neutral" title="6.8.3.2.3. statsmodels.sandbox.stats.diagnostic.acorr_ljungbox" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

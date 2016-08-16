@@ -1,0 +1,126 @@
+statsmodels.discrete.discrete_model
+===================================
+
+.. automodule:: statsmodels.discrete.discrete_model
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      approx_fprime
+      approx_fprime_cs
+      approx_hess
+      approx_hess_cs
+      fit_l1_slsqp
+      handle_data
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      BinaryModel
+      BinaryResults
+      BinaryResultsWrapper
+      CountModel
+      CountResults
+      CountResultsWrapper
+      DiscreteModel
+      DiscreteResults
+      L1BinaryResults
+      L1BinaryResultsWrapper
+      L1CountResults
+      L1CountResultsWrapper
+      L1MultinomialResults
+      L1MultinomialResultsWrapper
+      L1NegativeBinomialResults
+      L1NegativeBinomialResultsWrapper
+      L1PoissonResults
+      L1PoissonResultsWrapper
+      Logit
+      LogitResults
+      MNLogit
+      MultinomialModel
+      MultinomialResults
+      MultinomialResultsWrapper
+      NegativeBinomial
+      NegativeBinomialResults
+      NegativeBinomialResultsWrapper
+      OLS
+      OrderedModel
+      OrderedResults
+      OrderedResultsWrapper
+      Poisson
+      PoissonResults
+      PoissonResultsWrapper
+      Probit
+      ProbitResults
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.discrete.discrete_model.BinaryModel
+       generated/statsmodels.discrete.discrete_model.BinaryResults
+       generated/statsmodels.discrete.discrete_model.BinaryResultsWrapper
+       generated/statsmodels.discrete.discrete_model.CountModel
+       generated/statsmodels.discrete.discrete_model.CountResults
+       generated/statsmodels.discrete.discrete_model.CountResultsWrapper
+       generated/statsmodels.discrete.discrete_model.DiscreteModel
+       generated/statsmodels.discrete.discrete_model.DiscreteResults
+       generated/statsmodels.discrete.discrete_model.L1BinaryResults
+       generated/statsmodels.discrete.discrete_model.L1BinaryResultsWrapper
+       generated/statsmodels.discrete.discrete_model.L1CountResults
+       generated/statsmodels.discrete.discrete_model.L1CountResultsWrapper
+       generated/statsmodels.discrete.discrete_model.L1MultinomialResults
+       generated/statsmodels.discrete.discrete_model.L1MultinomialResultsWrapper
+       generated/statsmodels.discrete.discrete_model.L1NegativeBinomialResults
+       generated/statsmodels.discrete.discrete_model.L1NegativeBinomialResultsWrapper
+       generated/statsmodels.discrete.discrete_model.L1PoissonResults
+       generated/statsmodels.discrete.discrete_model.L1PoissonResultsWrapper
+       generated/statsmodels.discrete.discrete_model.Logit
+       generated/statsmodels.discrete.discrete_model.LogitResults
+       generated/statsmodels.discrete.discrete_model.MNLogit
+       generated/statsmodels.discrete.discrete_model.MultinomialModel
+       generated/statsmodels.discrete.discrete_model.MultinomialResults
+       generated/statsmodels.discrete.discrete_model.MultinomialResultsWrapper
+       generated/statsmodels.discrete.discrete_model.NegativeBinomial
+       generated/statsmodels.discrete.discrete_model.NegativeBinomialResults
+       generated/statsmodels.discrete.discrete_model.NegativeBinomialResultsWrapper
+       generated/statsmodels.discrete.discrete_model.OLS
+       generated/statsmodels.discrete.discrete_model.OrderedModel
+       generated/statsmodels.discrete.discrete_model.OrderedResults
+       generated/statsmodels.discrete.discrete_model.OrderedResultsWrapper
+       generated/statsmodels.discrete.discrete_model.Poisson
+       generated/statsmodels.discrete.discrete_model.PoissonResults
+       generated/statsmodels.discrete.discrete_model.PoissonResultsWrapper
+       generated/statsmodels.discrete.discrete_model.Probit
+       generated/statsmodels.discrete.discrete_model.ProbitResults
+       generated/statsmodels.discrete.discrete_model.resettable_cache
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      PerfectSeparationError
+   
+   

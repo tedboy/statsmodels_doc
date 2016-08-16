@@ -1,0 +1,24 @@
+statsmodels.sandbox.distributions.transform_functions.AffineFunc
+================================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.transform_functions
+.. autoclass:: AffineFunc
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~AffineFunc.__init__
+   ~AffineFunc.deriv
+   ~AffineFunc.func
+   ~AffineFunc.inverse
+
+
+
+
+

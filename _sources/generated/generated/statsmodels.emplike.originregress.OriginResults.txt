@@ -1,0 +1,81 @@
+statsmodels.emplike.originregress.OriginResults
+===============================================
+
+.. currentmodule:: statsmodels.emplike.originregress
+.. autoclass:: OriginResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OriginResults.HC0_se
+   ~OriginResults.HC1_se
+   ~OriginResults.HC2_se
+   ~OriginResults.HC3_se
+   ~OriginResults.__init__
+   ~OriginResults.aic
+   ~OriginResults.bic
+   ~OriginResults.bse
+   ~OriginResults.centered_tss
+   ~OriginResults.compare_f_test
+   ~OriginResults.compare_lm_test
+   ~OriginResults.compare_lr_test
+   ~OriginResults.condition_number
+   ~OriginResults.conf_int
+   ~OriginResults.conf_int_el
+   ~OriginResults.cov_HC0
+   ~OriginResults.cov_HC1
+   ~OriginResults.cov_HC2
+   ~OriginResults.cov_HC3
+   ~OriginResults.cov_params
+   ~OriginResults.eigenvals
+   ~OriginResults.el_test
+   ~OriginResults.ess
+   ~OriginResults.f_pvalue
+   ~OriginResults.f_test
+   ~OriginResults.fittedvalues
+   ~OriginResults.fvalue
+   ~OriginResults.get_robustcov_results
+   ~OriginResults.initialize
+   ~OriginResults.llf
+   ~OriginResults.load
+   ~OriginResults.mse_model
+   ~OriginResults.mse_resid
+   ~OriginResults.mse_total
+   ~OriginResults.nobs
+   ~OriginResults.normalized_cov_params
+   ~OriginResults.predict
+   ~OriginResults.pvalues
+   ~OriginResults.remove_data
+   ~OriginResults.resid
+   ~OriginResults.resid_pearson
+   ~OriginResults.rsquared
+   ~OriginResults.rsquared_adj
+   ~OriginResults.save
+   ~OriginResults.scale
+   ~OriginResults.ssr
+   ~OriginResults.summary
+   ~OriginResults.summary2
+   ~OriginResults.t_test
+   ~OriginResults.tvalues
+   ~OriginResults.uncentered_tss
+   ~OriginResults.wald_test
+   ~OriginResults.wresid
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~OriginResults.use_t
+

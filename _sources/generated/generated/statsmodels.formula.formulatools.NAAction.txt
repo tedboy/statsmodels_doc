@@ -1,0 +1,24 @@
+statsmodels.formula.formulatools.NAAction
+=========================================
+
+.. currentmodule:: statsmodels.formula.formulatools
+.. autoclass:: NAAction
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NAAction.__init__
+   ~NAAction.handle_NA
+   ~NAAction.is_categorical_NA
+   ~NAAction.is_numerical_NA
+
+
+
+
+

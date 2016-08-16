@@ -1,0 +1,404 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7.6. Regression with Discrete Dependent Variable &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="7. From official doc" href="index.html"/>
+        <link rel="next" title="7.6.3.1. statsmodels.discrete.discrete_model.Logit" href="generated/statsmodels.discrete.discrete_model.Logit.html"/>
+        <link rel="prev" title="7.5.3.2. statsmodels.regression.mixed_linear_model.MixedLMResults" href="generated/statsmodels.regression.mixed_linear_model.MixedLMResults.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">7. From official doc</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="regression.html">7.1. Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glm.html">7.2. Generalized Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gee.html">7.3. Generalized Estimating Equations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rlm.html">7.4. Robust Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixed_linear.html">7.5. Linear Mixed Effects Models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7.6. Regression with Discrete Dependent Variable</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#examples">7.6.1. Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#technical-documentation">7.6.2. Technical Documentation</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#references">7.6.2.1. References</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-reference">7.6.3. Module Reference</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.Logit.html">7.6.3.1. statsmodels.discrete.discrete_model.Logit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.Probit.html">7.6.3.2. statsmodels.discrete.discrete_model.Probit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.MNLogit.html">7.6.3.3. statsmodels.discrete.discrete_model.MNLogit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.Poisson.html">7.6.3.4. statsmodels.discrete.discrete_model.Poisson</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.NegativeBinomial.html">7.6.3.5. statsmodels.discrete.discrete_model.NegativeBinomial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.LogitResults.html">7.6.3.6. statsmodels.discrete.discrete_model.LogitResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.ProbitResults.html">7.6.3.7. statsmodels.discrete.discrete_model.ProbitResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.CountResults.html">7.6.3.8. statsmodels.discrete.discrete_model.CountResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.MultinomialResults.html">7.6.3.9. statsmodels.discrete.discrete_model.MultinomialResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.NegativeBinomialResults.html">7.6.3.10. statsmodels.discrete.discrete_model.NegativeBinomialResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.DiscreteModel.html">7.6.3.11. statsmodels.discrete.discrete_model.DiscreteModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.DiscreteResults.html">7.6.3.12. statsmodels.discrete.discrete_model.DiscreteResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.BinaryModel.html">7.6.3.13. statsmodels.discrete.discrete_model.BinaryModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.BinaryResults.html">7.6.3.14. statsmodels.discrete.discrete_model.BinaryResults</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.CountModel.html">7.6.3.15. statsmodels.discrete.discrete_model.CountModel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.discrete.discrete_model.MultinomialModel.html">7.6.3.16. statsmodels.discrete.discrete_model.MultinomialModel</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="anova.html">7.7. ANOVA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html">7.8. Time Series analysis <code class="docutils literal"><span class="pre">tsa</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="duration.html">7.9. Models for Survival and Duration Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html">7.10. Statistics <code class="docutils literal"><span class="pre">stats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="nonparametric.html">7.11. Nonparametric Methods <code class="docutils literal"><span class="pre">nonparametric</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="gmm.html">7.12. Generalized Method of Moments <code class="docutils literal"><span class="pre">gmm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="emplike.html">7.13. Empirical Likelihood <code class="docutils literal"><span class="pre">emplike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscmodels.html">7.14. Other Models <code class="docutils literal"><span class="pre">miscmodels</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html">7.15. Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html">7.16. Graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iolib.html">7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">7.18. Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html">7.19. The Datasets Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sandbox.html">7.20. Sandbox</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">7. From official doc</a> &raquo;</li>
+        
+      <li>7.6. Regression with Discrete Dependent Variable</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/doc/discretemod.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="regression-with-discrete-dependent-variable">
+<span id="discretemod"></span><h1>7.6. Regression with Discrete Dependent Variable<a class="headerlink" href="#regression-with-discrete-dependent-variable" title="Permalink to this headline">¶</a></h1>
+<p>Regression models for limited and qualitative dependent variables. The module
+currently allows the estimation of models with binary (Logit, Probit), nominal
+(MNLogit), or count (Poisson) data.</p>
+<p>See <a class="reference internal" href="#module-reference">Module Reference</a> for commands and arguments.</p>
+<div class="section" id="examples">
+<h2>7.6.1. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="c1"># Load the data from Spector and Mazzeo (1980)</span>
+<span class="n">spector_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">spector</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="n">spector_data</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">spector_data</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span>
+
+<span class="c1"># Logit Model</span>
+<span class="n">logit_mod</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">Logit</span><span class="p">(</span><span class="n">spector_data</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="n">spector_data</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span>
+<span class="n">logit_res</span> <span class="o">=</span> <span class="n">logit_mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="nb">print</span> <span class="n">logit_res</span><span class="o">.</span><span class="n">summary</span><span class="p">()</span>
+</pre></div>
+</div>
+<p>Detailed examples can be found here:</p>
+<ul class="simple">
+<li><a class="reference external" href="http://statsmodels.sourceforge.net/stable/examples/notebooks/generated/discrete_choice_overview.html">Discrete Choice Models Overview</a></li>
+<li><a class="reference external" href="http://statsmodels.sourceforge.net/stable/examples/notebooks/generated/discrete_choice_example.html">Discrete Choice Models</a></li>
+</ul>
+</div>
+<div class="section" id="technical-documentation">
+<h2>7.6.2. Technical Documentation<a class="headerlink" href="#technical-documentation" title="Permalink to this headline">¶</a></h2>
+<p>Currently all models are estimated by Maximum Likelihood and assume
+independently and identically distributed errors.</p>
+<p>All discrete regression models define the same methods and follow the same
+structure, which is similar to the regression results but with some methods
+specific to discrete models. Additionally some of them contain additional model
+specific methods and attributes.</p>
+<div class="section" id="references">
+<h3>7.6.2.1. References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<p>General references for this class of models are:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span>A.C. Cameron and P.K. Trivedi.  `Regression Analysis of Count Data`.
+    Cambridge, 1998
+
+G.S. Madalla. `Limited-Dependent and Qualitative Variables in Econometrics`.
+    Cambridge, 1983.
+
+W. Greene. `Econometric Analysis`. Prentice Hall, 5th. edition. 2003.
+</pre></div>
+</div>
+</div>
+</div>
+<div class="section" id="module-reference">
+<h2>7.6.3. Module Reference<a class="headerlink" href="#module-reference" title="Permalink to this headline">¶</a></h2>
+<p>The specific model classes are:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.Logit.html#statsmodels.discrete.discrete_model.Logit" title="statsmodels.discrete.discrete_model.Logit"><code class="xref py py-obj docutils literal"><span class="pre">Logit</span></code></a>(endog,&nbsp;exog,&nbsp;**kwargs)</td>
+<td>Binary choice logit model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.Probit.html#statsmodels.discrete.discrete_model.Probit" title="statsmodels.discrete.discrete_model.Probit"><code class="xref py py-obj docutils literal"><span class="pre">Probit</span></code></a>(endog,&nbsp;exog,&nbsp;**kwargs)</td>
+<td>Binary choice Probit model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.MNLogit.html#statsmodels.discrete.discrete_model.MNLogit" title="statsmodels.discrete.discrete_model.MNLogit"><code class="xref py py-obj docutils literal"><span class="pre">MNLogit</span></code></a>(endog,&nbsp;exog,&nbsp;**kwargs)</td>
+<td>Multinomial logit model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.Poisson.html#statsmodels.discrete.discrete_model.Poisson" title="statsmodels.discrete.discrete_model.Poisson"><code class="xref py py-obj docutils literal"><span class="pre">Poisson</span></code></a>(endog,&nbsp;exog[,&nbsp;offset,&nbsp;exposure,&nbsp;missing])</td>
+<td>Poisson model for count data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.NegativeBinomial.html#statsmodels.discrete.discrete_model.NegativeBinomial" title="statsmodels.discrete.discrete_model.NegativeBinomial"><code class="xref py py-obj docutils literal"><span class="pre">NegativeBinomial</span></code></a>(endog,&nbsp;exog[,&nbsp;...])</td>
+<td>Negative Binomial Model for count data</td>
+</tr>
+</tbody>
+</table>
+<p>The specific result classes are:</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.LogitResults.html#statsmodels.discrete.discrete_model.LogitResults" title="statsmodels.discrete.discrete_model.LogitResults"><code class="xref py py-obj docutils literal"><span class="pre">LogitResults</span></code></a>(model,&nbsp;mlefit[,&nbsp;cov_type,&nbsp;...])</td>
+<td>A results class for Logit Model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.ProbitResults.html#statsmodels.discrete.discrete_model.ProbitResults" title="statsmodels.discrete.discrete_model.ProbitResults"><code class="xref py py-obj docutils literal"><span class="pre">ProbitResults</span></code></a>(model,&nbsp;mlefit[,&nbsp;cov_type,&nbsp;...])</td>
+<td>A results class for Probit Model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.CountResults.html#statsmodels.discrete.discrete_model.CountResults" title="statsmodels.discrete.discrete_model.CountResults"><code class="xref py py-obj docutils literal"><span class="pre">CountResults</span></code></a>(model,&nbsp;mlefit[,&nbsp;cov_type,&nbsp;...])</td>
+<td>A results class for count data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.MultinomialResults.html#statsmodels.discrete.discrete_model.MultinomialResults" title="statsmodels.discrete.discrete_model.MultinomialResults"><code class="xref py py-obj docutils literal"><span class="pre">MultinomialResults</span></code></a>(model,&nbsp;mlefit[,&nbsp;...])</td>
+<td>A results class for multinomial data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.NegativeBinomialResults.html#statsmodels.discrete.discrete_model.NegativeBinomialResults" title="statsmodels.discrete.discrete_model.NegativeBinomialResults"><code class="xref py py-obj docutils literal"><span class="pre">NegativeBinomialResults</span></code></a>(model,&nbsp;mlefit[,&nbsp;...])</td>
+<td>A results class for NegativeBinomial 1 and 2</td>
+</tr>
+</tbody>
+</table>
+<p><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.DiscreteModel.html#statsmodels.discrete.discrete_model.DiscreteModel" title="statsmodels.discrete.discrete_model.DiscreteModel"><code class="xref py py-class docutils literal"><span class="pre">DiscreteModel</span></code></a> is a superclass of all discrete regression models. The
+estimation results are returned as an instance of one of the subclasses of
+<a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.DiscreteResults.html#statsmodels.discrete.discrete_model.DiscreteResults" title="statsmodels.discrete.discrete_model.DiscreteResults"><code class="xref py py-class docutils literal"><span class="pre">DiscreteResults</span></code></a>. Each category of models, binary, count and
+multinomial, have their own intermediate level of model and results classes.
+This intermediate classes are mostly to facilitate the implementation of the
+methods and attributes defined by <a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.DiscreteModel.html#statsmodels.discrete.discrete_model.DiscreteModel" title="statsmodels.discrete.discrete_model.DiscreteModel"><code class="xref py py-class docutils literal"><span class="pre">DiscreteModel</span></code></a> and
+<a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.DiscreteResults.html#statsmodels.discrete.discrete_model.DiscreteResults" title="statsmodels.discrete.discrete_model.DiscreteResults"><code class="xref py py-class docutils literal"><span class="pre">DiscreteResults</span></code></a>.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.DiscreteModel.html#statsmodels.discrete.discrete_model.DiscreteModel" title="statsmodels.discrete.discrete_model.DiscreteModel"><code class="xref py py-obj docutils literal"><span class="pre">DiscreteModel</span></code></a>(endog,&nbsp;exog,&nbsp;**kwargs)</td>
+<td>Abstract class for discrete choice models.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.DiscreteResults.html#statsmodels.discrete.discrete_model.DiscreteResults" title="statsmodels.discrete.discrete_model.DiscreteResults"><code class="xref py py-obj docutils literal"><span class="pre">DiscreteResults</span></code></a>(model,&nbsp;mlefit[,&nbsp;cov_type,&nbsp;...])</td>
+<td>A results class for the discrete dependent variable models.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.BinaryModel.html#statsmodels.discrete.discrete_model.BinaryModel" title="statsmodels.discrete.discrete_model.BinaryModel"><code class="xref py py-obj docutils literal"><span class="pre">BinaryModel</span></code></a>(endog,&nbsp;exog,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.BinaryResults.html#statsmodels.discrete.discrete_model.BinaryResults" title="statsmodels.discrete.discrete_model.BinaryResults"><code class="xref py py-obj docutils literal"><span class="pre">BinaryResults</span></code></a>(model,&nbsp;mlefit[,&nbsp;cov_type,&nbsp;...])</td>
+<td>A results class for binary data</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.CountModel.html#statsmodels.discrete.discrete_model.CountModel" title="statsmodels.discrete.discrete_model.CountModel"><code class="xref py py-obj docutils literal"><span class="pre">CountModel</span></code></a>(endog,&nbsp;exog[,&nbsp;offset,&nbsp;exposure,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.discrete.discrete_model.MultinomialModel.html#statsmodels.discrete.discrete_model.MultinomialModel" title="statsmodels.discrete.discrete_model.MultinomialModel"><code class="xref py py-obj docutils literal"><span class="pre">MultinomialModel</span></code></a>(endog,&nbsp;exog,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/statsmodels.discrete.discrete_model.Logit.html" class="btn btn-neutral float-right" title="7.6.3.1. statsmodels.discrete.discrete_model.Logit" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.regression.mixed_linear_model.MixedLMResults.html" class="btn btn-neutral" title="7.5.3.2. statsmodels.regression.mixed_linear_model.MixedLMResults" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

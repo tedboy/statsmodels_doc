@@ -1,0 +1,49 @@
+statsmodels.nonparametric.kernel_density
+========================================
+
+.. automodule:: statsmodels.nonparametric.kernel_density
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      gpke
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      EstimatorSettings
+      GenericKDE
+      KDEMultivariate
+      KDEMultivariateConditional
+      LeaveOneOut
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.nonparametric.kernel_density.EstimatorSettings
+       generated/statsmodels.nonparametric.kernel_density.GenericKDE
+       generated/statsmodels.nonparametric.kernel_density.KDEMultivariate
+       generated/statsmodels.nonparametric.kernel_density.KDEMultivariateConditional
+       generated/statsmodels.nonparametric.kernel_density.LeaveOneOut
+
+   
+   
+
+   
+   
+   

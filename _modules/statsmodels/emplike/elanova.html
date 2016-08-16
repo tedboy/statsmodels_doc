@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.emplike.elanova &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.emplike.elanova</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.emplike.elanova</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This script contains empirical likelihood ANOVA.</span>
+
+<span class="sd">Currently the script only contains one feature that allows the user to compare</span>
+<span class="sd">means of multiple groups</span>
+
+<span class="sd">General References</span>
+<span class="sd">------------------</span>
+
+<span class="sd">Owen, A. B. (2001). Empirical Likelihood. Chapman and Hall.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.descriptive</span> <span class="k">import</span> <span class="n">_OptFuncts</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">optimize</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">chi2</span>
+
+
+<span class="k">class</span> <span class="nc">_ANOVAOpt</span><span class="p">(</span><span class="n">_OptFuncts</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">    Class containing functions that are optimized over when</span>
+<span class="sd">    conducting ANOVA</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">_opt_common_mu</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Optimizes the likelihood under the null hypothesis that all groups have</span>
+<span class="sd">        mean mu</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mu : float</span>
+<span class="sd">            The common mean</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        llr : float</span>
+<span class="sd">            -2 times the llr ratio, which is the test statistic</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span>
+        <span class="n">endog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">endog</span>
+        <span class="n">num_groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_groups</span>
+        <span class="n">endog_asarray</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nobs</span><span class="p">,</span> <span class="n">num_groups</span><span class="p">))</span>
+        <span class="n">obs_num</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">arr_num</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">endog</span><span class="p">)):</span>
+            <span class="n">new_obs_num</span> <span class="o">=</span> <span class="n">obs_num</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">endog</span><span class="p">[</span><span class="n">arr_num</span><span class="p">])</span>
+            <span class="n">endog_asarray</span><span class="p">[</span><span class="n">obs_num</span><span class="p">:</span> <span class="n">new_obs_num</span><span class="p">,</span> <span class="n">arr_num</span><span class="p">]</span> <span class="o">=</span> <span class="n">endog</span><span class="p">[</span><span class="n">arr_num</span><span class="p">]</span> <span class="o">-</span> \
+              <span class="n">mu</span>
+            <span class="n">obs_num</span> <span class="o">=</span> <span class="n">new_obs_num</span>
+        <span class="n">est_vect</span> <span class="o">=</span> <span class="n">endog_asarray</span>
+        <span class="n">wts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">est_vect</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="n">est_vect</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span>
+        <span class="n">eta_star</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_modif_newton</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">num_groups</span><span class="p">),</span> <span class="n">est_vect</span><span class="p">,</span> <span class="n">wts</span><span class="p">)</span>
+        <span class="n">denom</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">eta_star</span><span class="p">,</span> <span class="n">est_vect</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">new_weights</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">nobs</span> <span class="o">*</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">denom</span>
+        <span class="n">llr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">nobs</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_weights</span><span class="p">))</span>
+        <span class="k">return</span> <span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">llr</span>
+
+
+<div class="viewcode-block" id="ANOVA"><a class="viewcode-back" href="../../../generated/generated/statsmodels.emplike.elanova.ANOVA.html#statsmodels.emplike.api.ANOVA">[docs]</a><span class="k">class</span> <span class="nc">ANOVA</span><span class="p">(</span><span class="n">_ANOVAOpt</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A class for ANOVA and comparing means.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+
+<span class="sd">    endog : list of arrays</span>
+<span class="sd">        endog should be a list containing 1 dimensional arrays.  Each array</span>
+<span class="sd">        is the data collected from a certain group.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ANOVA.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.emplike.elanova.ANOVA.__init__.html#statsmodels.emplike.api.ANOVA.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">=</span> <span class="n">endog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">num_groups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">+</span> <span class="nb">len</span><span class="p">(</span><span class="n">i</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ANOVA.compute_ANOVA"><a class="viewcode-back" href="../../../generated/generated/statsmodels.emplike.elanova.ANOVA.compute_ANOVA.html#statsmodels.emplike.api.ANOVA.compute_ANOVA">[docs]</a>    <span class="k">def</span> <span class="nf">compute_ANOVA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mu_start</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">return_weights</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns -2 log likelihood, the pvalue and the maximum likelihood</span>
+<span class="sd">        estimate for a common mean.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+
+<span class="sd">        mu : float</span>
+<span class="sd">            If a mu is specified, ANOVA is conducted with mu as the</span>
+<span class="sd">            common mean.  Otherwise, the common mean is the maximum</span>
+<span class="sd">            empirical likelihood estimate of the common mean.</span>
+<span class="sd">            Default is None.</span>
+
+<span class="sd">        mu_start : float</span>
+<span class="sd">            Starting value for commean mean if specific mu is not specified.</span>
+<span class="sd">            Default = 0</span>
+
+<span class="sd">        return_weights : bool</span>
+<span class="sd">            if TRUE, returns the weights on observations that maximize the</span>
+<span class="sd">            likelihood.  Default is FALSE</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+
+<span class="sd">        res: tuple</span>
+<span class="sd">            The log-likelihood, p-value and estimate for the common mean.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">mu</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">llr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_opt_common_mu</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+            <span class="n">pval</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">chi2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">llr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_groups</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">return_weights</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">llr</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_weights</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">llr</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">mu</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">fmin_powell</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_opt_common_mu</span><span class="p">,</span> <span class="n">mu_start</span><span class="p">,</span>
+                                       <span class="n">full_output</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">llr</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">mu_common</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">pval</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">chi2</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">llr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">num_groups</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">return_weights</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">llr</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">mu_common</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">new_weights</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">llr</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">mu_common</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

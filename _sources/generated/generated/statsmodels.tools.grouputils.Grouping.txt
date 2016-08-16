@@ -1,0 +1,43 @@
+statsmodels.tools.grouputils.Grouping
+=====================================
+
+.. currentmodule:: statsmodels.tools.grouputils
+.. autoclass:: Grouping
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Grouping.__init__
+   ~Grouping.check_index
+   ~Grouping.count_categories
+   ~Grouping.dummies_groups
+   ~Grouping.dummies_time
+   ~Grouping.dummy_sparse
+   ~Grouping.get_slices
+   ~Grouping.reindex
+   ~Grouping.sort
+   ~Grouping.transform_array
+   ~Grouping.transform_dataframe
+   ~Grouping.transform_slices
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Grouping.group_names
+   ~Grouping.index_shape
+   ~Grouping.labels
+   ~Grouping.levels
+

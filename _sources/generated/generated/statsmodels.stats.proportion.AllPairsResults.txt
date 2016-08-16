@@ -1,0 +1,24 @@
+statsmodels.stats.proportion.AllPairsResults
+============================================
+
+.. currentmodule:: statsmodels.stats.proportion
+.. autoclass:: AllPairsResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~AllPairsResults.__init__
+   ~AllPairsResults.pval_corrected
+   ~AllPairsResults.pval_table
+   ~AllPairsResults.summary
+
+
+
+
+

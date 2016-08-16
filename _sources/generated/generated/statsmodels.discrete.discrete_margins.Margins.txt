@@ -1,0 +1,29 @@
+statsmodels.discrete.discrete_margins.Margins
+=============================================
+
+.. currentmodule:: statsmodels.discrete.discrete_margins
+.. autoclass:: Margins
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Margins.__init__
+   ~Margins.conf_int
+   ~Margins.cov_margins
+   ~Margins.get_margeff
+   ~Margins.margins_se
+   ~Margins.pvalues
+   ~Margins.summary
+   ~Margins.summary_frame
+   ~Margins.tvalues
+
+
+
+
+

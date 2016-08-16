@@ -1,0 +1,287 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.tests.test_pca &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.tests.test_pca</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.tests.test_pca</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;tests for pca and arma to ar and ma representation</span>
+
+<span class="sd">compared with matlab princomp, and garchar, garchma</span>
+
+<span class="sd">TODO:</span>
+<span class="sd">* convert to generators with yield to have individual tests</span>
+<span class="sd">* incomplete: test relationship of pca-evecs and pinv (adding constant)</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_array_almost_equal</span>
+<span class="kn">from</span> <span class="nn">statsmodels.sandbox</span> <span class="k">import</span> <span class="n">tools</span>
+<span class="kn">from</span> <span class="nn">statsmodels.sandbox.tools</span> <span class="k">import</span> <span class="n">pca</span><span class="p">,</span> <span class="n">pcasvd</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.arima_process</span> <span class="k">import</span> <span class="n">arma_impulse_response</span>
+
+<span class="kn">from</span> <span class="nn">.datamlw</span> <span class="k">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="check_pca_princomp"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.tests.test_pca.check_pca_princomp.html#statsmodels.sandbox.tests.test_pca.check_pca_princomp">[docs]</a><span class="k">def</span> <span class="nf">check_pca_princomp</span><span class="p">(</span><span class="n">pcares</span><span class="p">,</span> <span class="n">princomp</span><span class="p">):</span>
+    <span class="n">factors</span><span class="p">,</span> <span class="n">evals</span><span class="p">,</span> <span class="n">evecs</span> <span class="o">=</span> <span class="n">pcares</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="c1">#res_princomp.coef, res_princomp.factors, res_princomp.values</span>
+    <span class="n">msign</span> <span class="o">=</span> <span class="p">(</span><span class="n">evecs</span><span class="o">/</span><span class="n">princomp</span><span class="o">.</span><span class="n">coef</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">msign</span><span class="o">*</span><span class="n">evecs</span><span class="p">,</span> <span class="n">princomp</span><span class="o">.</span><span class="n">coef</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">msign</span><span class="o">*</span><span class="n">factors</span><span class="p">,</span> <span class="n">princomp</span><span class="o">.</span><span class="n">factors</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">evals</span><span class="p">,</span> <span class="n">princomp</span><span class="o">.</span><span class="n">values</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="mi">13</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="check_pca_svd"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.tests.test_pca.check_pca_svd.html#statsmodels.sandbox.tests.test_pca.check_pca_svd">[docs]</a><span class="k">def</span> <span class="nf">check_pca_svd</span><span class="p">(</span><span class="n">pcares</span><span class="p">,</span> <span class="n">pcasvdres</span><span class="p">):</span>
+    <span class="n">xreduced</span><span class="p">,</span> <span class="n">factors</span><span class="p">,</span> <span class="n">evals</span><span class="p">,</span> <span class="n">evecs</span>  <span class="o">=</span> <span class="n">pcares</span>
+    <span class="n">xred_svd</span><span class="p">,</span> <span class="n">factors_svd</span><span class="p">,</span> <span class="n">evals_svd</span><span class="p">,</span> <span class="n">evecs_svd</span> <span class="o">=</span> <span class="n">pcasvdres</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">evals_svd</span><span class="p">,</span> <span class="n">evals</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="n">msign</span> <span class="o">=</span> <span class="p">(</span><span class="n">evecs</span><span class="o">/</span><span class="n">evecs_svd</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">msign</span><span class="o">*</span><span class="n">evecs_svd</span><span class="p">,</span> <span class="n">evecs</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">msign</span><span class="o">*</span><span class="n">factors_svd</span><span class="p">,</span> <span class="n">factors</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">xred_svd</span><span class="p">,</span> <span class="n">xreduced</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span></div>
+
+
+<span class="n">xf</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">xo</span><span class="o">/</span><span class="mf">1000.</span>
+
+<div class="viewcode-block" id="test_pca_princomp"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.tests.test_pca.test_pca_princomp.html#statsmodels.sandbox.tests.test_pca.test_pca_princomp">[docs]</a><span class="k">def</span> <span class="nf">test_pca_princomp</span><span class="p">():</span>
+    <span class="n">pcares</span> <span class="o">=</span> <span class="n">pca</span><span class="p">(</span><span class="n">xf</span><span class="p">)</span>
+    <span class="n">check_pca_princomp</span><span class="p">(</span><span class="n">pcares</span><span class="p">,</span> <span class="n">princomp1</span><span class="p">)</span>
+    <span class="n">pcares</span> <span class="o">=</span> <span class="n">pca</span><span class="p">(</span><span class="n">xf</span><span class="p">[:</span><span class="mi">20</span><span class="p">,:])</span>
+    <span class="n">check_pca_princomp</span><span class="p">(</span><span class="n">pcares</span><span class="p">,</span> <span class="n">princomp2</span><span class="p">)</span>
+    <span class="n">pcares</span> <span class="o">=</span> <span class="n">pca</span><span class="p">(</span><span class="n">xf</span><span class="p">[:</span><span class="mi">20</span><span class="p">,:]</span><span class="o">-</span><span class="n">xf</span><span class="p">[:</span><span class="mi">20</span><span class="p">,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">check_pca_princomp</span><span class="p">(</span><span class="n">pcares</span><span class="p">,</span> <span class="n">princomp3</span><span class="p">)</span>
+    <span class="n">pcares</span> <span class="o">=</span> <span class="n">pca</span><span class="p">(</span><span class="n">xf</span><span class="p">[:</span><span class="mi">20</span><span class="p">,:]</span><span class="o">-</span><span class="n">xf</span><span class="p">[:</span><span class="mi">20</span><span class="p">,:]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">demean</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">check_pca_princomp</span><span class="p">(</span><span class="n">pcares</span><span class="p">,</span> <span class="n">princomp3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_pca_svd"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.tests.test_pca.test_pca_svd.html#statsmodels.sandbox.tests.test_pca.test_pca_svd">[docs]</a><span class="k">def</span> <span class="nf">test_pca_svd</span><span class="p">():</span>
+    <span class="n">xreduced</span><span class="p">,</span> <span class="n">factors</span><span class="p">,</span> <span class="n">evals</span><span class="p">,</span> <span class="n">evecs</span>  <span class="o">=</span> <span class="n">pca</span><span class="p">(</span><span class="n">xf</span><span class="p">)</span>
+    <span class="n">factors_wconst</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">factors</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">factors</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="mi">1</span><span class="p">))]</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">factors_wconst</span><span class="p">),</span> <span class="n">xf</span><span class="p">)</span>
+    <span class="c1">#np.dot(np.linalg.pinv(factors_wconst),x2/1000.).T[:,:4] - evecs</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">beta</span><span class="o">.</span><span class="n">T</span><span class="p">[:,:</span><span class="mi">4</span><span class="p">],</span> <span class="n">evecs</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+
+    <span class="n">xred_svd</span><span class="p">,</span> <span class="n">factors_svd</span><span class="p">,</span> <span class="n">evals_svd</span><span class="p">,</span> <span class="n">evecs_svd</span> <span class="o">=</span> <span class="n">pcasvd</span><span class="p">(</span><span class="n">xf</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">evals_svd</span><span class="p">,</span> <span class="n">evals</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="n">msign</span> <span class="o">=</span> <span class="p">(</span><span class="n">evecs</span><span class="o">/</span><span class="n">evecs_svd</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">msign</span><span class="o">*</span><span class="n">evecs_svd</span><span class="p">,</span> <span class="n">evecs</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">msign</span><span class="o">*</span><span class="n">factors_svd</span><span class="p">,</span> <span class="n">factors</span><span class="p">,</span> <span class="mi">12</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">xred_svd</span><span class="p">,</span> <span class="n">xreduced</span><span class="p">,</span> <span class="mi">13</span><span class="p">)</span>
+
+    <span class="n">pcares</span> <span class="o">=</span> <span class="n">pca</span><span class="p">(</span><span class="n">xf</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">pcasvdres</span> <span class="o">=</span> <span class="n">pcasvd</span><span class="p">(</span><span class="n">xf</span><span class="p">,</span> <span class="n">keepdim</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">check_pca_svd</span><span class="p">(</span><span class="n">pcares</span><span class="p">,</span> <span class="n">pcasvdres</span><span class="p">)</span></div>
+
+<span class="c1">#print np.dot(factors[:,:3], evecs.T[:3,:])[:5]</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">test_pca_svd</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

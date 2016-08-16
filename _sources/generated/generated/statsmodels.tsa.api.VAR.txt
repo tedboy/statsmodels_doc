@@ -1,0 +1,39 @@
+statsmodels.tsa.api.VAR
+=======================
+
+.. currentmodule:: statsmodels.tsa.api
+.. autoclass:: VAR
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~VAR.__init__
+   ~VAR.fit
+   ~VAR.from_formula
+   ~VAR.hessian
+   ~VAR.information
+   ~VAR.initialize
+   ~VAR.loglike
+   ~VAR.predict
+   ~VAR.score
+   ~VAR.select_order
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~VAR.endog_names
+   ~VAR.exog_names
+

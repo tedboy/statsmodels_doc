@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tools.dump2module &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tools.dump2module</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tools.dump2module</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Save a set of numpy arrays to a python module file that can be imported</span>
+
+<span class="sd">Author : Josef Perktold</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">iterkeys</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="HoldIt"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.dump2module.HoldIt.html#statsmodels.tools.dump2module.HoldIt">[docs]</a><span class="k">class</span> <span class="nc">HoldIt</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Class to write numpy arrays into a python module</span>
+
+<span class="sd">    Calling save on the instance of this class write all attributes of the</span>
+<span class="sd">    instance into a module file. For details see the save method.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="HoldIt.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.dump2module.HoldIt.__init__.html#statsmodels.tools.dump2module.HoldIt.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">name</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span></div>
+<div class="viewcode-block" id="HoldIt.save"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.dump2module.HoldIt.save.html#statsmodels.tools.dump2module.HoldIt.save">[docs]</a>    <span class="k">def</span> <span class="nf">save</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">what</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">filename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">useinstance</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+             <span class="n">comment</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">print_options</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;write attributes of this instance to python module given by filename</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        what : list or None</span>
+<span class="sd">            list of attributes that are added to the module. If None (default)</span>
+<span class="sd">            then all attributes in __dict__ that do not start with an underline</span>
+<span class="sd">            will be saved.</span>
+<span class="sd">        filename : string</span>
+<span class="sd">            specifies filename with path. If the file does not exist, it will be</span>
+<span class="sd">            created. If the file is already exists, then the new data will be</span>
+<span class="sd">            appended to the file.</span>
+<span class="sd">        header : bool</span>
+<span class="sd">            If true, then the imports of the module and the class definition are</span>
+<span class="sd">            written before writing the data.</span>
+<span class="sd">        useinstance : bool</span>
+<span class="sd">            If true, then the data in the module are attached to an instance of a</span>
+<span class="sd">            holder class. If false, then each array will be saved as separate</span>
+<span class="sd">            variable.</span>
+<span class="sd">        comment : string</span>
+<span class="sd">            If comment is not empty then this string will be attached as a</span>
+<span class="sd">            description comment to the data instance in the saved module.</span>
+<span class="sd">        print_options : dict or None</span>
+<span class="sd">            The print_options for the numpy arrays will be updated with this.</span>
+<span class="sd">            see notes</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The content of an numpy array are written using repr, which can be</span>
+<span class="sd">        controlled with the np.set_printoptions. The numpy default is updated</span>
+<span class="sd">        with:  precision=20, linewidth=100, nanstr=&#39;nan&#39;, infstr=&#39;inf&#39;</span>
+
+<span class="sd">        This should provide enough precision for double floating point numbers.</span>
+<span class="sd">        If one array has more than 1000 elements, then threshold should be</span>
+<span class="sd">        overwritten by the user, see keyword argument print_options.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="n">print_opt_old</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">get_printoptions</span><span class="p">()</span>
+        <span class="n">print_opt</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">nanstr</span><span class="o">=</span><span class="s1">&#39;nan&#39;</span><span class="p">,</span>
+                            <span class="n">infstr</span><span class="o">=</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">print_options</span><span class="p">:</span>
+            <span class="n">print_opt</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">print_options</span><span class="p">)</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="o">**</span><span class="n">print_opt</span><span class="p">)</span>
+        <span class="c1">#precision corrects for non-scientific notation</span>
+        <span class="k">if</span> <span class="n">what</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">what</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span> <span class="k">if</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="s1">&#39;_&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">header</span><span class="p">:</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;import numpy as np</span><span class="se">\n</span><span class="s1">&#39;</span>
+                   <span class="s1">&#39;from numpy import array, rec, inf, nan</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">useinstance</span><span class="p">:</span>
+                <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;class Holder(object):</span><span class="se">\n</span><span class="s1">    pass</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">txt</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">if</span> <span class="n">useinstance</span><span class="p">:</span>
+            <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> = Holder()&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.&#39;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">prefix</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">comment</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">comment = &#39;</span><span class="si">%s</span><span class="s2">&#39;&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">comment</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">what</span><span class="p">:</span>
+            <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1"> = </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">prefix</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">))))</span>
+        <span class="n">txt</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="s1">&#39;&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">])</span> <span class="c1">#add empty lines at end</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">filename</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">file</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s1">&#39;a+&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">txt</span><span class="p">))</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="o">**</span><span class="n">print_opt_old</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_filename</span> <span class="o">=</span> <span class="n">filename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_useinstance</span> <span class="o">=</span> <span class="n">useinstance</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_what</span> <span class="o">=</span> <span class="n">what</span>
+        <span class="k">return</span> <span class="n">txt</span></div>
+
+<div class="viewcode-block" id="HoldIt.verify"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.dump2module.HoldIt.verify.html#statsmodels.tools.dump2module.HoldIt.verify">[docs]</a>    <span class="k">def</span> <span class="nf">verify</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;load the saved module and verify the data</span>
+
+<span class="sd">        This tries several ways of comparing the saved and the attached data,</span>
+<span class="sd">        but might not work for all possible data structures.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        all_correct : bool</span>
+<span class="sd">            true if no differences are found, for floating point numbers</span>
+<span class="sd">            rtol=1e-16, atol=1e-16 is used to determine equality (allclose)</span>
+<span class="sd">        correctli : list</span>
+<span class="sd">            list of attribute names that compare as equal</span>
+<span class="sd">        incorrectli : list</span>
+<span class="sd">            list of attribute names that did not compare as equal, either</span>
+<span class="sd">            because they differ or because the comparison does not handle the</span>
+<span class="sd">            data structure correctly</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">module</span> <span class="o">=</span> <span class="nb">__import__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_filename</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;.py&#39;</span><span class="p">,</span><span class="s1">&#39;&#39;</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_useinstance</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;currently only implemented when&#39;</span>
+                                      <span class="s1">&#39;useinstance is true&#39;</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">module</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">correctli</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">incorrectli</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_what</span><span class="p">:</span>
+            <span class="n">self_item</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+            <span class="n">saved_item</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+            <span class="c1">#print(d)</span>
+            <span class="c1">#try simple equality</span>
+            <span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">item</span> <span class="o">==</span> <span class="n">saved_item</span><span class="p">)</span>
+            <span class="c1">#try allclose</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">correct</span> <span class="ow">and</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">item</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">):</span>
+                <span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">self_item</span><span class="p">,</span> <span class="n">saved_item</span><span class="p">,</span>
+                                  <span class="n">rtol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">16</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">correct</span><span class="p">:</span>
+                    <span class="kn">import</span> <span class="nn">warnings</span>
+                    <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="s2">&quot;inexact precision in &quot;</span><span class="o">+</span><span class="n">d</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+            <span class="c1">#try iterating, if object array</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">correct</span><span class="p">:</span>
+                <span class="n">correlem</span> <span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span>
+                                  <span class="nb">getattr</span><span class="p">(</span><span class="n">testsave</span><span class="o">.</span><span class="n">var_results</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()[</span><span class="n">k</span><span class="p">])</span>
+                           <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">iterkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())]</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">correlem</span><span class="p">:</span>
+                    <span class="c1">#print(d, &quot;wrong&quot;)</span>
+                    <span class="n">incorrectli</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+            <span class="n">correctli</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">incorrectli</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">,</span> <span class="n">correctli</span><span class="p">,</span> <span class="n">incorrectli</span></div></div>
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="s2">r&quot;E:\Josef\eclipsegworkspace\statsmodels-josef-experimental-030\dist\statsmodels-0.3.0dev_with_Winhelp_a2\statsmodels-0.3.0dev\scikits\statsmodels\tsa\vector_ar\tests\results\vars_results.npz&quot;</span><span class="p">)</span>
+    <span class="n">res_var</span> <span class="o">=</span>  <span class="n">HoldIt</span><span class="p">(</span><span class="s1">&#39;var_results&#39;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">res_var</span><span class="p">,</span> <span class="n">d</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="n">d</span><span class="p">])</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">set_printoptions</span><span class="p">(</span><span class="n">precision</span><span class="o">=</span><span class="mi">120</span><span class="p">,</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">res_var</span><span class="o">.</span><span class="n">save</span><span class="p">(</span><span class="n">filename</span><span class="o">=</span><span class="s1">&#39;testsave.py&#39;</span><span class="p">,</span> <span class="n">header</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                  <span class="n">comment</span><span class="o">=</span><span class="s1">&#39;VAR test data converted from vars_results.npz&#39;</span><span class="p">)</span>
+
+    <span class="kn">import</span> <span class="nn">testsave</span>
+
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">data</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">==</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">testsave</span><span class="o">.</span><span class="n">var_results</span><span class="p">,</span> <span class="n">d</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">correct</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">data</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">dtype</span><span class="p">(</span><span class="s1">&#39;object&#39;</span><span class="p">):</span>
+            <span class="n">correct</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">d</span><span class="p">],</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">testsave</span><span class="o">.</span><span class="n">var_results</span><span class="p">,</span> <span class="n">d</span><span class="p">),</span>
+                              <span class="n">rtol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">16</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">16</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">correct</span><span class="p">:</span> <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;inexact precision&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">correct</span><span class="p">:</span>
+            <span class="n">correlem</span> <span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()[</span><span class="n">k</span><span class="p">]</span> <span class="o">==</span>
+                              <span class="nb">getattr</span><span class="p">(</span><span class="n">testsave</span><span class="o">.</span><span class="n">var_results</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()[</span><span class="n">k</span><span class="p">])</span>
+                       <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="n">iterkeys</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="n">d</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">())]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">correlem</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="s2">&quot;wrong&quot;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">res_var</span><span class="o">.</span><span class="n">verify</span><span class="p">())</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

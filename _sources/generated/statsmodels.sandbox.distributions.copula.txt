@@ -1,0 +1,66 @@
+statsmodels.sandbox.distributions.copula
+========================================
+
+.. automodule:: statsmodels.sandbox.distributions.copula
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      copula_bv_archimedean
+      copula_bv_clayton
+      copula_bv_ev
+      copula_bv_frank
+      copula_bv_gauss
+      copula_bv_indep
+      copula_bv_max
+      copula_bv_min
+      copula_bv_t
+      copula_mv_archimedean
+      transform_bilogistic
+      transform_hr
+      transform_joe
+      transform_tawn
+      transform_tawn2
+      transform_tev
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CopulaBivariate
+      TransfClayton
+      TransfFrank
+      TransfGumbel
+      TransfIndep
+      Transforms
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.distributions.copula.CopulaBivariate
+       generated/statsmodels.sandbox.distributions.copula.TransfClayton
+       generated/statsmodels.sandbox.distributions.copula.TransfFrank
+       generated/statsmodels.sandbox.distributions.copula.TransfGumbel
+       generated/statsmodels.sandbox.distributions.copula.TransfIndep
+       generated/statsmodels.sandbox.distributions.copula.Transforms
+
+   
+   
+
+   
+   
+   

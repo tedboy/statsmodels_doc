@@ -1,0 +1,26 @@
+statsmodels.robust.norms.TukeyBiweight
+======================================
+
+.. currentmodule:: statsmodels.robust.norms
+
+.. autoclass:: TukeyBiweight
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TukeyBiweight.__init__
+      ~TukeyBiweight.psi
+      ~TukeyBiweight.psi_deriv
+      ~TukeyBiweight.rho
+      ~TukeyBiweight.weights
+   
+   
+
+   
+   
+   

@@ -1,0 +1,46 @@
+statsmodels.discrete.discrete_model.MNLogit
+===========================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: MNLogit
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MNLogit.__init__
+   ~MNLogit.cdf
+   ~MNLogit.cov_params_func_l1
+   ~MNLogit.fit
+   ~MNLogit.fit_regularized
+   ~MNLogit.from_formula
+   ~MNLogit.hessian
+   ~MNLogit.information
+   ~MNLogit.initialize
+   ~MNLogit.jac
+   ~MNLogit.loglike
+   ~MNLogit.loglike_and_score
+   ~MNLogit.loglikeobs
+   ~MNLogit.pdf
+   ~MNLogit.predict
+   ~MNLogit.score
+   ~MNLogit.score_obs
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~MNLogit.endog_names
+   ~MNLogit.exog_names
+

@@ -1,0 +1,292 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.9.1.2.2.1.8. statsmodels.regression.feasible_gls.GLSHet.iterative_fit &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="3.9.1.2.2. statsmodels.regression.feasible_gls.GLSHet" href="statsmodels.regression.feasible_gls.GLSHet.html"/>
+        <link rel="next" title="3.9.1.2.2.1.9. statsmodels.regression.feasible_gls.GLSHet.loglike" href="statsmodels.regression.feasible_gls.GLSHet.loglike.html"/>
+        <link rel="prev" title="3.9.1.2.2.1.7. statsmodels.regression.feasible_gls.GLSHet.initialize" href="statsmodels.regression.feasible_gls.GLSHet.initialize.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../main.html#statsmodels-regression">3.9. statsmodels.regression</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.regression.feasible_gls.html">3.9.1. statsmodels.regression.feasible_gls</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.regression.feasible_gls.html#functions">3.9.1.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.regression.feasible_gls.html#classes">3.9.1.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.regression.linear_model.html">3.9.2. statsmodels.regression.linear_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.regression.mixed_linear_model.html">3.9.3. statsmodels.regression.mixed_linear_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.regression.quantile_regression.html">3.9.4. statsmodels.regression.quantile_regression</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-stats">3.11. statsmodel.stats</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.regression.feasible_gls.html">3.9.1. statsmodels.regression.feasible_gls</a> &raquo;</li>
+        
+          <li><a href="statsmodels.regression.feasible_gls.GLSHet.html">3.9.1.2.2. statsmodels.regression.feasible_gls.GLSHet</a> &raquo;</li>
+        
+      <li>3.9.1.2.2.1.8. statsmodels.regression.feasible_gls.GLSHet.iterative_fit</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.regression.feasible_gls.GLSHet.iterative_fit.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-regression-feasible-gls-glshet-iterative-fit">
+<h1>3.9.1.2.2.1.8. statsmodels.regression.feasible_gls.GLSHet.iterative_fit<a class="headerlink" href="#statsmodels-regression-feasible-gls-glshet-iterative-fit" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="statsmodels.regression.feasible_gls.GLSHet.iterative_fit">
+<code class="descclassname">GLSHet.</code><code class="descname">iterative_fit</code><span class="sig-paren">(</span><em>maxiter=3</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/regression/feasible_gls.html#GLSHet.iterative_fit"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.regression.feasible_gls.GLSHet.iterative_fit" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform an iterative two-step procedure to estimate a WLS model.</p>
+<p>The model is assumed to have heteroscedastic errors.
+The variance is estimated by OLS regression of the link transformed
+squared residuals on Z, i.e.:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">link</span><span class="p">(</span><span class="n">sigma_i</span><span class="p">)</span> <span class="o">=</span> <span class="n">x_i</span><span class="o">*</span><span class="n">gamma</span><span class="o">.</span>
+</pre></div>
+</div>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>maxiter</strong> : integer, optional</p>
+<blockquote class="last">
+<div><p>the number of iterations</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>maxiter=1: returns the estimated based on given weights
+maxiter=2: performs a second estimation with the updated weights,</p>
+<blockquote>
+<div>this is 2-step estimation</div></blockquote>
+<p>maxiter&gt;2: iteratively estimate and update the weights</p>
+<dl class="docutils">
+<dt>TODO: possible extension stop iteration if change in parameter</dt>
+<dd>estimates is smaller than x_tol</dd>
+</dl>
+<p>Repeated calls to fit_iterative, will do one redundant pinv_wexog
+calculation. Calling fit_iterative(maxiter) ones does not do any
+redundant recalculations (whitening or calculating pinv_wexog).</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.regression.feasible_gls.GLSHet.loglike.html" class="btn btn-neutral float-right" title="3.9.1.2.2.1.9. statsmodels.regression.feasible_gls.GLSHet.loglike" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.regression.feasible_gls.GLSHet.initialize.html" class="btn btn-neutral" title="3.9.1.2.2.1.7. statsmodels.regression.feasible_gls.GLSHet.initialize" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

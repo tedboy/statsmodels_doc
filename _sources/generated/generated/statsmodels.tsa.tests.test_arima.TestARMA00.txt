@@ -1,0 +1,96 @@
+statsmodels.tsa.tests.test_arima.TestARMA00
+===========================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: TestARMA00
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestARMA00.__init__
+   ~TestARMA00.addCleanup
+   ~TestARMA00.addTypeEqualityFunc
+   ~TestARMA00.assertAlmostEqual
+   ~TestARMA00.assertAlmostEquals
+   ~TestARMA00.assertDictContainsSubset
+   ~TestARMA00.assertDictEqual
+   ~TestARMA00.assertEqual
+   ~TestARMA00.assertEquals
+   ~TestARMA00.assertFalse
+   ~TestARMA00.assertGreater
+   ~TestARMA00.assertGreaterEqual
+   ~TestARMA00.assertIn
+   ~TestARMA00.assertIs
+   ~TestARMA00.assertIsInstance
+   ~TestARMA00.assertIsNone
+   ~TestARMA00.assertIsNot
+   ~TestARMA00.assertIsNotNone
+   ~TestARMA00.assertItemsEqual
+   ~TestARMA00.assertLess
+   ~TestARMA00.assertLessEqual
+   ~TestARMA00.assertListEqual
+   ~TestARMA00.assertMultiLineEqual
+   ~TestARMA00.assertNotAlmostEqual
+   ~TestARMA00.assertNotAlmostEquals
+   ~TestARMA00.assertNotEqual
+   ~TestARMA00.assertNotEquals
+   ~TestARMA00.assertNotIn
+   ~TestARMA00.assertNotIsInstance
+   ~TestARMA00.assertNotRegexpMatches
+   ~TestARMA00.assertRaises
+   ~TestARMA00.assertRaisesRegexp
+   ~TestARMA00.assertRegexpMatches
+   ~TestARMA00.assertSequenceEqual
+   ~TestARMA00.assertSetEqual
+   ~TestARMA00.assertTrue
+   ~TestARMA00.assertTupleEqual
+   ~TestARMA00.assert_
+   ~TestARMA00.countTestCases
+   ~TestARMA00.debug
+   ~TestARMA00.defaultTestResult
+   ~TestARMA00.doCleanups
+   ~TestARMA00.fail
+   ~TestARMA00.failIf
+   ~TestARMA00.failIfAlmostEqual
+   ~TestARMA00.failIfEqual
+   ~TestARMA00.failUnless
+   ~TestARMA00.failUnlessAlmostEqual
+   ~TestARMA00.failUnlessEqual
+   ~TestARMA00.failUnlessRaises
+   ~TestARMA00.id
+   ~TestARMA00.run
+   ~TestARMA00.setUp
+   ~TestARMA00.setUpClass
+   ~TestARMA00.setup_class
+   ~TestARMA00.shortDescription
+   ~TestARMA00.skipTest
+   ~TestARMA00.tearDown
+   ~TestARMA00.tearDownClass
+   ~TestARMA00.test_arima
+   ~TestARMA00.test_arma_00_nc
+   ~TestARMA00.test_arma_exog_no_constant
+   ~TestARMA00.test_arma_ols
+   ~TestARMA00.test_css
+   ~TestARMA00.test_information_criteria
+   ~TestARMA00.test_parameters
+   ~TestARMA00.test_predictions
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TestARMA00.longMessage
+   ~TestARMA00.maxDiff
+

@@ -1,0 +1,27 @@
+statsmodels.genmod.cov_struct.Independence
+==========================================
+
+.. currentmodule:: statsmodels.genmod.cov_struct
+
+.. autoclass:: Independence
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Independence.__init__
+      ~Independence.covariance_matrix
+      ~Independence.covariance_matrix_solve
+      ~Independence.initialize
+      ~Independence.summary
+      ~Independence.update
+   
+   
+
+   
+   
+   

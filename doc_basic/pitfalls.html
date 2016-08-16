@@ -1,0 +1,328 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2.6. Pitfalls &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="2. Basic Documentation" href="index.html"/>
+        <link rel="next" title="2.7. Internal Classes" href="internal.html"/>
+        <link rel="prev" title="2.5. Import Paths and Structure" href="importpaths.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Basic Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html">2.1. Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_formulas.html">2.2. Fitting models using R-style formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="about.html">2.3. About Statsmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="endog_exog.html">2.4. <code class="docutils literal"><span class="pre">endog</span></code>, <code class="docutils literal"><span class="pre">exog</span></code>, what&#8217;s that?</a></li>
+<li class="toctree-l2"><a class="reference internal" href="importpaths.html">2.5. Import Paths and Structure</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.6. Pitfalls</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#repeated-calls-to-fit-with-different-parameters">2.6.1. Repeated calls to fit with different parameters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#unidentified-parameters">2.6.2. Unidentified Parameters</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#rank-deficient-exog-perfect-multicollinearity">2.6.2.1. Rank deficient exog, perfect multicollinearity</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#incomplete-convergence-in-maximum-likelihood-estimation">2.6.2.2. Incomplete convergence in maximum likelihood estimation</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#other-problems">2.6.3. Other Problems</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#insufficient-variation-in-the-data">2.6.3.1. Insufficient variation in the data</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="internal.html">2.7. Internal Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">2. Basic Documentation</a> &raquo;</li>
+        
+      <li>2.6. Pitfalls</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/doc_basic/pitfalls.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="pitfalls">
+<h1>2.6. Pitfalls<a class="headerlink" href="#pitfalls" title="Permalink to this headline">¶</a></h1>
+<p>This page lists issues which may arise while using statsmodels. These
+can be the result of data-related or statistical problems, software design,
+&#8220;non-standard&#8221; use of models, or edge cases.</p>
+<p>statsmodels provides several warnings and helper functions for diagnostic
+checking (see this <a class="reference external" href="http://jpktd.blogspot.ca/2012/01/anscombe-and-diagnostic-statistics.html">blog article</a>
+for an example of misspecification checks in linear regression). The coverage
+is of course not comprehensive, but more warnings and diagnostic functions will
+be added over time.</p>
+<p>While the underlying statistical problems are the same for all statistical
+packages, software implementations differ in the way extreme or corner cases
+are handled. Please report corner cases for which the models might not work, so
+we can treat them appropriately.</p>
+<div class="section" id="repeated-calls-to-fit-with-different-parameters">
+<h2>2.6.1. Repeated calls to fit with different parameters<a class="headerlink" href="#repeated-calls-to-fit-with-different-parameters" title="Permalink to this headline">¶</a></h2>
+<p>Result instances often need to access attributes from the corresponding model
+instance. Fitting a model multiple times with different arguments can change
+model attributes. This means that the result instance may no longer point to
+the correct model attributes after the model has been re-fit.</p>
+<p>It is therefore best practice to create separate model instances when we want
+to fit a model using different fit function arguments.</p>
+<p>For example, this works without problem because we are not keeping the results
+instance for further use</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mod</span> <span class="o">=</span> <span class="n">AR</span><span class="p">(</span><span class="n">endog</span><span class="p">)</span>
+<span class="n">aic</span> <span class="o">=</span> <span class="p">[]</span>
+<span class="k">for</span> <span class="n">lag</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">11</span><span class="p">):</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">maxlag</span><span class="o">=</span><span class="n">lag</span><span class="p">)</span>
+    <span class="n">aic</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">aic</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>However, when we want to hold on to two different estimation results, then it
+is recommended to create two separate model instances.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mod1</span> <span class="o">=</span> <span class="n">RLM</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span>
+<span class="n">res1</span> <span class="o">=</span> <span class="n">mod1</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">scale_est</span><span class="o">=</span><span class="s1">&#39;mad&#39;</span><span class="p">)</span>
+<span class="n">mod2</span> <span class="o">=</span> <span class="n">RLM</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span>
+<span class="n">res2</span> <span class="o">=</span> <span class="n">mod2</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">scale_est</span><span class="o">=</span><span class="s1">&#39;stand_mad&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="unidentified-parameters">
+<h2>2.6.2. Unidentified Parameters<a class="headerlink" href="#unidentified-parameters" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="rank-deficient-exog-perfect-multicollinearity">
+<h3>2.6.2.1. Rank deficient exog, perfect multicollinearity<a class="headerlink" href="#rank-deficient-exog-perfect-multicollinearity" title="Permalink to this headline">¶</a></h3>
+<p>Models based on linear models, GLS, RLM, GLM and similar, use a generalized
+inverse. This means that:</p>
+<ul class="simple">
+<li>Rank deficient matrices will not raise an error</li>
+<li>Cases of almost perfect multicollinearity or ill-conditioned design matrices might produce numerically unstable results. Users need to manually check the rank or condition number of the matrix if this is not the desired behavior</li>
+</ul>
+<p>Note: Statsmodels currently fails on the NIST benchmark case for Filip if the
+data is not rescaled, see <a class="reference external" href="http://jpktd.blogspot.ca/2012/03/numerical-accuracy-in-linear-least.html">this blog</a></p>
+</div>
+<div class="section" id="incomplete-convergence-in-maximum-likelihood-estimation">
+<h3>2.6.2.2. Incomplete convergence in maximum likelihood estimation<a class="headerlink" href="#incomplete-convergence-in-maximum-likelihood-estimation" title="Permalink to this headline">¶</a></h3>
+<p>In some cases, the maximum likelihood estimator might not exist, parameters
+might be infinite or not unique (e.g. (quasi-)separation in models with binary
+endogenous variable). Under the default settings, statsmodels will print
+a warning if the optimization algorithm stops without reaching convergence.
+However, it is important to know that the convergence criteria may sometimes
+falsely indicate convergence (e.g. if the value of the objective function
+converged but not the parameters). In general, a user needs to verify
+convergence.</p>
+<p>For binary Logit and Probit models, statsmodels raises an exception if perfect
+prediction is detected. There is, however, no check for quasi-perfect
+prediction.</p>
+</div>
+</div>
+<div class="section" id="other-problems">
+<h2>2.6.3. Other Problems<a class="headerlink" href="#other-problems" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="insufficient-variation-in-the-data">
+<h3>2.6.3.1. Insufficient variation in the data<a class="headerlink" href="#insufficient-variation-in-the-data" title="Permalink to this headline">¶</a></h3>
+<p>It is possible that there is insufficient variation in the data for small
+datasets or for data with small groups in categorical variables. In these
+cases, the results might not be identified or some hidden problems might occur.</p>
+<p>The only currently known case is a perfect fit in robust linear model estimation.
+For RLM, if residuals are equal to zero, then it does not cause an exception,
+but having this perfect fit can produce NaNs in some results (scale=0 and 0/0
+division) (issue #55).</p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="internal.html" class="btn btn-neutral float-right" title="2.7. Internal Classes" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="importpaths.html" class="btn btn-neutral" title="2.5. Import Paths and Structure" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

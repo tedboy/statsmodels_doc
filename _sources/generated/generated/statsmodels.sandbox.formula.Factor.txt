@@ -1,0 +1,34 @@
+statsmodels.sandbox.formula.Factor
+==================================
+
+.. currentmodule:: statsmodels.sandbox.formula
+.. autoclass:: Factor
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Factor.__init__
+   ~Factor.get_columns
+   ~Factor.main_effect
+   ~Factor.names
+   ~Factor.values
+   ~Factor.verify
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Factor.namespace
+

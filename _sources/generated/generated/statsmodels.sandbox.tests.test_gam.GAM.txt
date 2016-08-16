@@ -1,0 +1,47 @@
+statsmodels.sandbox.tests.test_gam.GAM
+======================================
+
+.. currentmodule:: statsmodels.sandbox.tests.test_gam
+.. autoclass:: GAM
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GAM.__init__
+   ~GAM.cont
+   ~GAM.df_resid
+   ~GAM.estimate_scale
+   ~GAM.fit
+   ~GAM.fit_constrained
+   ~GAM.from_formula
+   ~GAM.hessian
+   ~GAM.hessian_factor
+   ~GAM.information
+   ~GAM.initialize
+   ~GAM.loglike
+   ~GAM.next
+   ~GAM.predict
+   ~GAM.score
+   ~GAM.score_factor
+   ~GAM.score_obs
+   ~GAM.score_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~GAM.endog_names
+   ~GAM.exog_names
+

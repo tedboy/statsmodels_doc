@@ -1,0 +1,311 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tsa.tests.test_ar.AR &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+      <li>statsmodels.tsa.tests.test_ar.AR</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.tsa.tests.test_ar.AR.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-tsa-tests-test-ar-ar">
+<h1>statsmodels.tsa.tests.test_ar.AR<a class="headerlink" href="#statsmodels-tsa-tests-test-ar-ar" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.tsa.tests.test_ar.AR">
+<em class="property">class </em><code class="descclassname">statsmodels.tsa.tests.test_ar.</code><code class="descname">AR</code><span class="sig-paren">(</span><em>endog</em>, <em>dates=None</em>, <em>freq=None</em>, <em>missing='none'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/tsa/ar_model.html#AR"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.tsa.tests.test_ar.AR" title="Permalink to this definition">¶</a></dt>
+<dd><p>Autoregressive AR(p) model</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>endog</strong> : array-like</p>
+<blockquote>
+<div><p>1-d endogenous response variable. The independent variable.</p>
+</div></blockquote>
+<p><strong>dates</strong> : array-like of datetime, optional</p>
+<blockquote>
+<div><p>An array-like object of datetime objects. If a pandas object is given
+for endog or exog, it is assumed to have a DateIndex.</p>
+</div></blockquote>
+<p><strong>freq</strong> : str, optional</p>
+<blockquote>
+<div><p>The frequency of the time-series. A Pandas offset or &#8216;B&#8217;, &#8216;D&#8217;, &#8216;W&#8217;,
+&#8216;M&#8217;, &#8216;A&#8217;, or &#8216;Q&#8217;. This is optional if dates are given.</p>
+</div></blockquote>
+<p><strong>missing</strong> : str</p>
+<blockquote class="last">
+<div><p>Available options are &#8216;none&#8217;, &#8216;drop&#8217;, and &#8216;raise&#8217;. If &#8216;none&#8217;, no nan
+checking is done. If &#8216;drop&#8217;, any observations with nans are dropped.
+If &#8216;raise&#8217;, an error is raised. Default is &#8216;none.&#8217;</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="statsmodels.tsa.tests.test_ar.AR.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>endog</em>, <em>dates=None</em>, <em>freq=None</em>, <em>missing='none'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/tsa/ar_model.html#AR.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.tsa.tests.test_ar.AR.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.__init__.html#statsmodels.tsa.tests.test_ar.AR.__init__" title="statsmodels.tsa.tests.test_ar.AR.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(endog[,&nbsp;dates,&nbsp;freq,&nbsp;missing])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.fit.html#statsmodels.tsa.tests.test_ar.AR.fit" title="statsmodels.tsa.tests.test_ar.AR.fit"><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code></a>([maxlag,&nbsp;method,&nbsp;ic,&nbsp;trend,&nbsp;...])</td>
+<td>Fit the unconditional maximum likelihood of an AR(p) process.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.from_formula.html#statsmodels.tsa.tests.test_ar.AR.from_formula" title="statsmodels.tsa.tests.test_ar.AR.from_formula"><code class="xref py py-obj docutils literal"><span class="pre">from_formula</span></code></a>(formula,&nbsp;data[,&nbsp;subset])</td>
+<td>Create a Model from a formula and dataframe.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.hessian.html#statsmodels.tsa.tests.test_ar.AR.hessian" title="statsmodels.tsa.tests.test_ar.AR.hessian"><code class="xref py py-obj docutils literal"><span class="pre">hessian</span></code></a>(params)</td>
+<td>Returns numerical hessian for now.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.information.html#statsmodels.tsa.tests.test_ar.AR.information" title="statsmodels.tsa.tests.test_ar.AR.information"><code class="xref py py-obj docutils literal"><span class="pre">information</span></code></a>(params)</td>
+<td>Not Implemented Yet</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.initialize.html#statsmodels.tsa.tests.test_ar.AR.initialize" title="statsmodels.tsa.tests.test_ar.AR.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.loglike.html#statsmodels.tsa.tests.test_ar.AR.loglike" title="statsmodels.tsa.tests.test_ar.AR.loglike"><code class="xref py py-obj docutils literal"><span class="pre">loglike</span></code></a>(params)</td>
+<td>The loglikelihood of an AR(p) process</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.predict.html#statsmodels.tsa.tests.test_ar.AR.predict" title="statsmodels.tsa.tests.test_ar.AR.predict"><code class="xref py py-obj docutils literal"><span class="pre">predict</span></code></a>(params[,&nbsp;start,&nbsp;end,&nbsp;dynamic])</td>
+<td>Returns in-sample and out-of-sample prediction.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.score.html#statsmodels.tsa.tests.test_ar.AR.score" title="statsmodels.tsa.tests.test_ar.AR.score"><code class="xref py py-obj docutils literal"><span class="pre">score</span></code></a>(params)</td>
+<td>Return the gradient of the loglikelihood at params.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.select_order.html#statsmodels.tsa.tests.test_ar.AR.select_order" title="statsmodels.tsa.tests.test_ar.AR.select_order"><code class="xref py py-obj docutils literal"><span class="pre">select_order</span></code></a>(maxlag,&nbsp;ic[,&nbsp;trend,&nbsp;method])</td>
+<td>Select the lag order according to the information criterion.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.endog_names.html#statsmodels.tsa.tests.test_ar.AR.endog_names" title="statsmodels.tsa.tests.test_ar.AR.endog_names"><code class="xref py py-obj docutils literal"><span class="pre">endog_names</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_ar.AR.exog_names.html#statsmodels.tsa.tests.test_ar.AR.exog_names" title="statsmodels.tsa.tests.test_ar.AR.exog_names"><code class="xref py py-obj docutils literal"><span class="pre">exog_names</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

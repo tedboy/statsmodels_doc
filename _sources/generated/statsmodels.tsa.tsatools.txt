@@ -1,0 +1,39 @@
+statsmodels.tsa.tsatools
+========================
+
+.. automodule:: statsmodels.tsa.tsatools
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      add_constant
+      add_lag
+      add_trend
+      commutation_matrix
+      detrend
+      duplication_matrix
+      elimination_matrix
+      freq_to_period
+      lagmat
+      lagmat2ds
+      unintegrate
+      unintegrate_levels
+      unvec
+      unvech
+      vec
+      vech
+   
+   
+
+   
+   
+   
+
+   
+   
+   

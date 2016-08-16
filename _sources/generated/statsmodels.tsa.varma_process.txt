@@ -1,0 +1,48 @@
+statsmodels.tsa.varma_process
+=============================
+
+.. automodule:: statsmodels.tsa.varma_process
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      ar2full
+      ar2lhs
+      lagmat
+      padone
+      trimone
+      varfilter
+      vargenerate
+      varinversefilter
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      VarmaPoly
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tsa.varma_process.VarmaPoly
+
+   
+   
+
+   
+   
+   

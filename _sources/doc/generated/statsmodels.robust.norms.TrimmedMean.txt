@@ -1,0 +1,26 @@
+statsmodels.robust.norms.TrimmedMean
+====================================
+
+.. currentmodule:: statsmodels.robust.norms
+
+.. autoclass:: TrimmedMean
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TrimmedMean.__init__
+      ~TrimmedMean.psi
+      ~TrimmedMean.psi_deriv
+      ~TrimmedMean.rho
+      ~TrimmedMean.weights
+   
+   
+
+   
+   
+   

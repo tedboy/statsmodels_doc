@@ -1,0 +1,303 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.datasets.randhie.data &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.datasets.randhie.data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.datasets.randhie.data</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;RAND Health Insurance Experiment Data&quot;&quot;&quot;</span>
+
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s1">&#39;restructuredtext&#39;</span>
+
+<span class="n">COPYRIGHT</span>   <span class="o">=</span> <span class="s2">&quot;&quot;&quot;This is in the public domain.&quot;&quot;&quot;</span>
+<span class="n">TITLE</span>       <span class="o">=</span> <span class="n">__doc__</span>
+<span class="n">SOURCE</span>      <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">The data was collected by the RAND corporation as part of the Health</span>
+<span class="s2">Insurance Experiment (HIE).</span>
+
+<span class="s2">http://www.rand.org/health/projects/hie.html</span>
+
+<span class="s2">This data was used in::</span>
+
+<span class="s2">    Cameron, A.C. amd Trivedi, P.K. 2005.  `Microeconometrics: Methods</span>
+<span class="s2">        and Applications,` Cambridge: New York.</span>
+
+<span class="s2">And was obtained from: &lt;http://cameron.econ.ucdavis.edu/mmabook/mmadata.html&gt;</span>
+
+<span class="s2">See randhie/src for the original data and description.  The data included</span>
+<span class="s2">here contains only a subset of the original data.  The data varies slightly</span>
+<span class="s2">compared to that reported in Cameron and Trivedi.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">DESCRSHORT</span>  <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The RAND Co. Health Insurance Experiment Data&quot;&quot;&quot;</span>
+
+<span class="n">DESCRLONG</span>   <span class="o">=</span> <span class="s2">&quot;&quot;&quot;&quot;&quot;&quot;</span>
+
+<span class="n">NOTE</span>        <span class="o">=</span> <span class="s2">&quot;&quot;&quot;::</span>
+
+<span class="s2">    Number of observations - 20,190</span>
+<span class="s2">    Number of variables - 10</span>
+<span class="s2">    Variable name definitions::</span>
+
+<span class="s2">        mdvis   - Number of outpatient visits to an MD</span>
+<span class="s2">        lncoins - ln(coinsurance + 1), 0 &lt;= coninsurance &lt;= 100</span>
+<span class="s2">        idp     - 1 if individual deductible plan, 0 otherwise</span>
+<span class="s2">        lpi     - ln(max(1, annual participation incentive payment))</span>
+<span class="s2">        fmde    - 0 if idp = 1; ln(max(1, MDE/(0.01 coinsurance))) otherwise</span>
+<span class="s2">        physlm  - 1 if the person has a physical limitation</span>
+<span class="s2">        disea   - number of chronic diseases</span>
+<span class="s2">        hlthg   - 1 if self-rated health is good</span>
+<span class="s2">        hlthf   - 1 if self-rated health is fair</span>
+<span class="s2">        hlthp   - 1 if self-rated health is poor</span>
+<span class="s2">        (Omitted category is excellent self-rated health)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">recfromtxt</span><span class="p">,</span> <span class="n">column_stack</span><span class="p">,</span> <span class="n">array</span>
+<span class="kn">from</span> <span class="nn">statsmodels.datasets</span> <span class="k">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">du</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">abspath</span>
+
+<span class="n">PATH</span> <span class="o">=</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">/</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">dirname</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">)),</span> <span class="s1">&#39;randhie.csv&#39;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../../generated/statsmodels.datasets.randhie.load.html#statsmodels.datasets.randhie.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads the RAND HIE data and returns a Dataset class.</span>
+
+<span class="sd">    ----------</span>
+<span class="sd">    endog - response variable, mdvis</span>
+<span class="sd">    exog - design</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    Load instance:</span>
+<span class="sd">        a class of the data with array attrbutes &#39;endog&#39; and &#39;exog&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_get_data</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">du</span><span class="o">.</span><span class="n">process_recarray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">endog_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="load_pandas"><a class="viewcode-back" href="../../../../generated/statsmodels.datasets.randhie.load_pandas.html#statsmodels.datasets.randhie.load_pandas">[docs]</a><span class="k">def</span> <span class="nf">load_pandas</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Loads the RAND HIE data and returns a Dataset class.</span>
+
+<span class="sd">    ----------</span>
+<span class="sd">    endog - response variable, mdvis</span>
+<span class="sd">    exog - design</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    Load instance:</span>
+<span class="sd">        a class of the data with array attrbutes &#39;endog&#39; and &#39;exog&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">read_csv</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">read_csv</span><span class="p">(</span><span class="n">PATH</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">du</span><span class="o">.</span><span class="n">process_recarray_pandas</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">endog_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_get_data</span><span class="p">():</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">recfromtxt</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">PATH</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">),</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

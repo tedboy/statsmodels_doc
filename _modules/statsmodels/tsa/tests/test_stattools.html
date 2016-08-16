@@ -1,0 +1,559 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tsa.tests.test_stattools &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tsa.tests.test_stattools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tsa.tests.test_stattools</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">lrange</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.stattools</span> <span class="k">import</span> <span class="p">(</span><span class="n">adfuller</span><span class="p">,</span> <span class="n">acf</span><span class="p">,</span> <span class="n">pacf_ols</span><span class="p">,</span> <span class="n">pacf_yw</span><span class="p">,</span>
+                                               <span class="n">pacf</span><span class="p">,</span> <span class="n">grangercausalitytests</span><span class="p">,</span>
+                                               <span class="n">coint</span><span class="p">,</span> <span class="n">acovf</span><span class="p">,</span>
+                                               <span class="n">arma_order_select_ic</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.base.datetools</span> <span class="k">import</span> <span class="n">dates_from_range</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="p">(</span><span class="n">assert_almost_equal</span><span class="p">,</span> <span class="n">assert_equal</span><span class="p">,</span> <span class="n">assert_raises</span><span class="p">,</span>
+                           <span class="n">dec</span><span class="p">,</span> <span class="n">assert_</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">genfromtxt</span><span class="c1">#, concatenate</span>
+<span class="kn">from</span> <span class="nn">statsmodels.datasets</span> <span class="k">import</span> <span class="n">macrodata</span><span class="p">,</span> <span class="n">sunspots</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">Series</span><span class="p">,</span> <span class="n">Index</span><span class="p">,</span> <span class="n">DataFrame</span>
+<span class="kn">import</span> <span class="nn">os</span>
+
+
+<span class="n">DECIMAL_8</span> <span class="o">=</span> <span class="mi">8</span>
+<span class="n">DECIMAL_6</span> <span class="o">=</span> <span class="mi">6</span>
+<span class="n">DECIMAL_5</span> <span class="o">=</span> <span class="mi">5</span>
+<span class="n">DECIMAL_4</span> <span class="o">=</span> <span class="mi">4</span>
+<span class="n">DECIMAL_3</span> <span class="o">=</span> <span class="mi">3</span>
+<span class="n">DECIMAL_2</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="n">DECIMAL_1</span> <span class="o">=</span> <span class="mi">1</span>
+
+<div class="viewcode-block" id="CheckADF"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.CheckADF.html#statsmodels.tsa.tests.test_stattools.CheckADF">[docs]</a><span class="k">class</span> <span class="nc">CheckADF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test Augmented Dickey-Fuller</span>
+
+<span class="sd">    Test values taken from Stata.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1%&#39;</span><span class="p">,</span> <span class="s1">&#39;5%&#39;</span><span class="p">,</span> <span class="s1">&#39;10%&#39;</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;realgdp&#39;</span><span class="p">]</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;infl&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CheckADF.test_teststat"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.CheckADF.test_teststat.html#statsmodels.tsa.tests.test_stattools.CheckADF.test_teststat">[docs]</a>    <span class="k">def</span> <span class="nf">test_teststat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">teststat</span><span class="p">,</span> <span class="n">DECIMAL_5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CheckADF.test_pvalue"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.CheckADF.test_pvalue.html#statsmodels.tsa.tests.test_stattools.CheckADF.test_pvalue">[docs]</a>    <span class="k">def</span> <span class="nf">test_pvalue</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span><span class="p">,</span> <span class="n">DECIMAL_5</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CheckADF.test_critvalues"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.CheckADF.test_critvalues.html#statsmodels.tsa.tests.test_stattools.CheckADF.test_critvalues">[docs]</a>    <span class="k">def</span> <span class="nf">test_critvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">critvalues</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="p">[</span><span class="mi">4</span><span class="p">][</span><span class="n">lev</span><span class="p">]</span> <span class="k">for</span> <span class="n">lev</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">levels</span><span class="p">]</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">critvalues</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">critvalues</span><span class="p">,</span> <span class="n">DECIMAL_2</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="TestADFConstant"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFConstant.html#statsmodels.tsa.tests.test_stattools.TestADFConstant">[docs]</a><span class="k">class</span> <span class="nc">TestADFConstant</span><span class="p">(</span><span class="n">CheckADF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dickey-Fuller test for unit root</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TestADFConstant.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFConstant.__init__.html#statsmodels.tsa.tests.test_stattools.TestADFConstant.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">regression</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">autolag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">maxlag</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teststat</span> <span class="o">=</span> <span class="o">.</span><span class="mi">97505319</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span> <span class="o">=</span> <span class="o">.</span><span class="mi">99399563</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">critvalues</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">3.476</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.883</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.573</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="TestADFConstantTrend"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFConstantTrend.html#statsmodels.tsa.tests.test_stattools.TestADFConstantTrend">[docs]</a><span class="k">class</span> <span class="nc">TestADFConstantTrend</span><span class="p">(</span><span class="n">CheckADF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TestADFConstantTrend.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFConstantTrend.__init__.html#statsmodels.tsa.tests.test_stattools.TestADFConstantTrend.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">regression</span><span class="o">=</span><span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="n">autolag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">maxlag</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teststat</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.8566374</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span> <span class="o">=</span> <span class="o">.</span><span class="mi">67682968</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">critvalues</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.007</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.437</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.137</span><span class="p">]</span></div></div>
+
+<span class="c1">#class TestADFConstantTrendSquared(CheckADF):</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    &quot;&quot;&quot;</span>
+<span class="c1">#    pass</span>
+<span class="c1">#TODO: get test values from R?</span>
+
+<div class="viewcode-block" id="TestADFNoConstant"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFNoConstant.html#statsmodels.tsa.tests.test_stattools.TestADFNoConstant">[docs]</a><span class="k">class</span> <span class="nc">TestADFNoConstant</span><span class="p">(</span><span class="n">CheckADF</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TestADFNoConstant.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFNoConstant.__init__.html#statsmodels.tsa.tests.test_stattools.TestADFNoConstant.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">regression</span><span class="o">=</span><span class="s2">&quot;nc&quot;</span><span class="p">,</span> <span class="n">autolag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">maxlag</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teststat</span> <span class="o">=</span> <span class="mf">3.5227498</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span> <span class="o">=</span> <span class="o">.</span><span class="mi">99999</span> <span class="c1"># Stata does not return a p-value for noconstant.</span>
+                        <span class="c1"># Tau^max in MacKinnon (1994) is missing, so it is</span>
+                        <span class="c1"># assumed that its right-tail is well-behaved</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">critvalues</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.587</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.950</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.617</span><span class="p">]</span></div></div>
+
+<span class="c1"># No Unit Root</span>
+
+<div class="viewcode-block" id="TestADFConstant2"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFConstant2.html#statsmodels.tsa.tests.test_stattools.TestADFConstant2">[docs]</a><span class="k">class</span> <span class="nc">TestADFConstant2</span><span class="p">(</span><span class="n">CheckADF</span><span class="p">):</span>
+<div class="viewcode-block" id="TestADFConstant2.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFConstant2.__init__.html#statsmodels.tsa.tests.test_stattools.TestADFConstant2.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">regression</span><span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">,</span> <span class="n">autolag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">maxlag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teststat</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.3346988</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span> <span class="o">=</span> <span class="o">.</span><span class="mi">00038661</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">critvalues</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">3.476</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.883</span><span class="p">,</span> <span class="o">-</span><span class="mf">2.573</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="TestADFConstantTrend2"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFConstantTrend2.html#statsmodels.tsa.tests.test_stattools.TestADFConstantTrend2">[docs]</a><span class="k">class</span> <span class="nc">TestADFConstantTrend2</span><span class="p">(</span><span class="n">CheckADF</span><span class="p">):</span>
+<div class="viewcode-block" id="TestADFConstantTrend2.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFConstantTrend2.__init__.html#statsmodels.tsa.tests.test_stattools.TestADFConstantTrend2.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">regression</span><span class="o">=</span><span class="s2">&quot;ct&quot;</span><span class="p">,</span> <span class="n">autolag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">maxlag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teststat</span> <span class="o">=</span> <span class="o">-</span><span class="mf">4.425093</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span> <span class="o">=</span> <span class="o">.</span><span class="mi">00199633</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">critvalues</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">4.006</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.437</span><span class="p">,</span> <span class="o">-</span><span class="mf">3.137</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="TestADFNoConstant2"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFNoConstant2.html#statsmodels.tsa.tests.test_stattools.TestADFNoConstant2">[docs]</a><span class="k">class</span> <span class="nc">TestADFNoConstant2</span><span class="p">(</span><span class="n">CheckADF</span><span class="p">):</span>
+<div class="viewcode-block" id="TestADFNoConstant2.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestADFNoConstant2.__init__.html#statsmodels.tsa.tests.test_stattools.TestADFNoConstant2.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">adfuller</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">regression</span><span class="o">=</span><span class="s2">&quot;nc&quot;</span><span class="p">,</span> <span class="n">autolag</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                <span class="n">maxlag</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teststat</span> <span class="o">=</span> <span class="o">-</span><span class="mf">2.4511596</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pvalue</span> <span class="o">=</span> <span class="mf">0.013747</span> <span class="c1"># Stata does not return a p-value for noconstant</span>
+                               <span class="c1"># this value is just taken from our results</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">critvalues</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mf">2.587</span><span class="p">,</span><span class="o">-</span><span class="mf">1.950</span><span class="p">,</span><span class="o">-</span><span class="mf">1.617</span><span class="p">]</span></div></div>
+
+<div class="viewcode-block" id="CheckCorrGram"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.CheckCorrGram.html#statsmodels.tsa.tests.test_stattools.CheckCorrGram">[docs]</a><span class="k">class</span> <span class="nc">CheckCorrGram</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Set up for ACF, PACF tests.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;realgdp&#39;</span><span class="p">]</span>
+    <span class="n">filename</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">dirname</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span><span class="o">+</span>\
+            <span class="s2">&quot;/results/results_corrgram.csv&quot;</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">genfromtxt</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filename</span><span class="p">,</span> <span class="s2">&quot;rb&quot;</span><span class="p">),</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span><span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+    <span class="c1">#not needed: add 1. for lag zero</span>
+    <span class="c1">#self.results[&#39;acvar&#39;] = np.concatenate(([1.], self.results[&#39;acvar&#39;]))</span>
+
+
+<div class="viewcode-block" id="TestACF"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestACF.html#statsmodels.tsa.tests.test_stattools.TestACF">[docs]</a><span class="k">class</span> <span class="nc">TestACF</span><span class="p">(</span><span class="n">CheckCorrGram</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test Autocorrelation Function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TestACF.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestACF.__init__.html#statsmodels.tsa.tests.test_stattools.TestACF.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;acvar&#39;</span><span class="p">]</span>
+        <span class="c1">#self.acf = np.concatenate(([1.], self.acf))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qstat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Q1&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">acf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">qstat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">05</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">confint_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[[</span><span class="s1">&#39;acvar_lb&#39;</span><span class="p">,</span><span class="s1">&#39;acvar_ub&#39;</span><span class="p">]]</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span>
+                                                                            <span class="mi">2</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TestACF.test_acf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestACF.test_acf.html#statsmodels.tsa.tests.test_stattools.TestACF.test_acf">[docs]</a>    <span class="k">def</span> <span class="nf">test_acf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:</span><span class="mi">41</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">acf</span><span class="p">,</span> <span class="n">DECIMAL_8</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestACF.test_confint"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestACF.test_confint.html#statsmodels.tsa.tests.test_stattools.TestACF.test_confint">[docs]</a>    <span class="k">def</span> <span class="nf">test_confint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">centered</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">centered</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">41</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">confint_res</span><span class="p">,</span> <span class="n">DECIMAL_8</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestACF.test_qstat"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestACF.test_qstat.html#statsmodels.tsa.tests.test_stattools.TestACF.test_qstat">[docs]</a>    <span class="k">def</span> <span class="nf">test_qstat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="p">[</span><span class="mi">2</span><span class="p">][:</span><span class="mi">40</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">qstat</span><span class="p">,</span> <span class="n">DECIMAL_3</span><span class="p">)</span></div></div>
+        <span class="c1"># 3 decimal places because of stata rounding</span>
+
+<span class="c1">#    def pvalue(self):</span>
+<span class="c1">#        pass</span>
+<span class="c1">#NOTE: shouldn&#39;t need testing if Q stat is correct</span>
+
+
+<div class="viewcode-block" id="TestACF_FFT"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestACF_FFT.html#statsmodels.tsa.tests.test_stattools.TestACF_FFT">[docs]</a><span class="k">class</span> <span class="nc">TestACF_FFT</span><span class="p">(</span><span class="n">CheckCorrGram</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test Autocorrelation Function using FFT</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TestACF_FFT.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestACF_FFT.__init__.html#statsmodels.tsa.tests.test_stattools.TestACF_FFT.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">acf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;acvarfft&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">qstat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;Q1&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res1</span> <span class="o">=</span> <span class="n">acf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">qstat</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fft</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestACF_FFT.test_acf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestACF_FFT.test_acf.html#statsmodels.tsa.tests.test_stattools.TestACF_FFT.test_acf">[docs]</a>    <span class="k">def</span> <span class="nf">test_acf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">acf</span><span class="p">,</span> <span class="n">DECIMAL_8</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestACF_FFT.test_qstat"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestACF_FFT.test_qstat.html#statsmodels.tsa.tests.test_stattools.TestACF_FFT.test_qstat">[docs]</a>    <span class="k">def</span> <span class="nf">test_qstat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#todo why is res1/qstat 1 short</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">res1</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">qstat</span><span class="p">,</span> <span class="n">DECIMAL_3</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="TestPACF"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestPACF.html#statsmodels.tsa.tests.test_stattools.TestPACF">[docs]</a><span class="k">class</span> <span class="nc">TestPACF</span><span class="p">(</span><span class="n">CheckCorrGram</span><span class="p">):</span>
+<div class="viewcode-block" id="TestPACF.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestPACF.__init__.html#statsmodels.tsa.tests.test_stattools.TestPACF.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pacfols</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;PACOLS&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pacfyw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="s1">&#39;PACYW&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="TestPACF.test_ols"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestPACF.test_ols.html#statsmodels.tsa.tests.test_stattools.TestPACF.test_ols">[docs]</a>    <span class="k">def</span> <span class="nf">test_ols</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pacfols</span><span class="p">,</span> <span class="n">confint</span> <span class="o">=</span> <span class="n">pacf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=.</span><span class="mi">05</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ols&quot;</span><span class="p">)</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">pacfols</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pacfols</span><span class="p">,</span> <span class="n">DECIMAL_6</span><span class="p">)</span>
+        <span class="n">centered</span> <span class="o">=</span> <span class="n">confint</span> <span class="o">-</span> <span class="n">confint</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="c1"># from edited Stata ado file</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="p">[[</span><span class="o">-.</span><span class="mi">1375625</span><span class="p">,</span> <span class="o">.</span><span class="mi">1375625</span><span class="p">]]</span> <span class="o">*</span> <span class="mi">40</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">centered</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="mi">41</span><span class="p">],</span> <span class="n">res</span><span class="p">,</span> <span class="n">DECIMAL_6</span><span class="p">)</span>
+        <span class="c1"># check lag 0</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="n">centered</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.</span><span class="p">])</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="n">confint</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="n">pacfols</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">1</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TestPACF.test_yw"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestPACF.test_yw.html#statsmodels.tsa.tests.test_stattools.TestPACF.test_yw">[docs]</a>    <span class="k">def</span> <span class="nf">test_yw</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pacfyw</span> <span class="o">=</span> <span class="n">pacf_yw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mle&quot;</span><span class="p">)</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">pacfyw</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="bp">self</span><span class="o">.</span><span class="n">pacfyw</span><span class="p">,</span> <span class="n">DECIMAL_8</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestPACF.test_ld"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestPACF.test_ld.html#statsmodels.tsa.tests.test_stattools.TestPACF.test_ld">[docs]</a>    <span class="k">def</span> <span class="nf">test_ld</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">pacfyw</span> <span class="o">=</span> <span class="n">pacf_yw</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;mle&quot;</span><span class="p">)</span>
+        <span class="n">pacfld</span> <span class="o">=</span> <span class="n">pacf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ldb&quot;</span><span class="p">)</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">pacfyw</span><span class="p">,</span> <span class="n">pacfld</span><span class="p">,</span> <span class="n">DECIMAL_8</span><span class="p">)</span>
+
+        <span class="n">pacfyw</span> <span class="o">=</span> <span class="n">pacf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;yw&quot;</span><span class="p">)</span>
+        <span class="n">pacfld</span> <span class="o">=</span> <span class="n">pacf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="mi">40</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ldu&quot;</span><span class="p">)</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">pacfyw</span><span class="p">,</span> <span class="n">pacfld</span><span class="p">,</span> <span class="n">DECIMAL_8</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="CheckCoint"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.CheckCoint.html#statsmodels.tsa.tests.test_stattools.CheckCoint">[docs]</a><span class="k">class</span> <span class="nc">CheckCoint</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Test Cointegration Test Results for 2-variable system</span>
+
+<span class="sd">    Test values taken from Stata</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">levels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;1%&#39;</span><span class="p">,</span> <span class="s1">&#39;5%&#39;</span><span class="p">,</span> <span class="s1">&#39;10%&#39;</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;realcons&#39;</span><span class="p">]</span>
+    <span class="n">y2</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="s1">&#39;realgdp&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="CheckCoint.test_tstat"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.CheckCoint.test_tstat.html#statsmodels.tsa.tests.test_stattools.CheckCoint.test_tstat">[docs]</a>    <span class="k">def</span> <span class="nf">test_tstat</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coint_t</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">teststat</span><span class="p">,</span> <span class="n">DECIMAL_4</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="TestCoint_t"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestCoint_t.html#statsmodels.tsa.tests.test_stattools.TestCoint_t">[docs]</a><span class="k">class</span> <span class="nc">TestCoint_t</span><span class="p">(</span><span class="n">CheckCoint</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Get AR(1) parameter on residuals</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="TestCoint_t.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestCoint_t.__init__.html#statsmodels.tsa.tests.test_stattools.TestCoint_t.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coint_t</span> <span class="o">=</span> <span class="n">coint</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">y1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y2</span><span class="p">,</span> <span class="n">regression</span> <span class="o">=</span><span class="s2">&quot;c&quot;</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">teststat</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.8208817</span></div></div>
+
+
+<div class="viewcode-block" id="TestGrangerCausality"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestGrangerCausality.html#statsmodels.tsa.tests.test_stattools.TestGrangerCausality">[docs]</a><span class="k">class</span> <span class="nc">TestGrangerCausality</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestGrangerCausality.test_grangercausality"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestGrangerCausality.test_grangercausality.html#statsmodels.tsa.tests.test_stattools.TestGrangerCausality.test_grangercausality">[docs]</a>    <span class="k">def</span> <span class="nf">test_grangercausality</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># some example data</span>
+        <span class="n">mdata</span> <span class="o">=</span> <span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">mdata</span> <span class="o">=</span> <span class="n">mdata</span><span class="p">[[</span><span class="s1">&#39;realgdp&#39;</span><span class="p">,</span> <span class="s1">&#39;realcons&#39;</span><span class="p">]]</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">mdata</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="c1">#R: lmtest:grangertest</span>
+        <span class="n">r_result</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.243097</span><span class="p">,</span> <span class="mf">0.7844328</span><span class="p">,</span> <span class="mi">195</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>  <span class="c1"># f_test</span>
+        <span class="n">gr</span> <span class="o">=</span> <span class="n">grangercausalitytests</span><span class="p">(</span><span class="n">data</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">r_result</span><span class="p">,</span> <span class="n">gr</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;ssr_ftest&#39;</span><span class="p">],</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span>
+        <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">gr</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;params_ftest&#39;</span><span class="p">],</span> <span class="n">gr</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">][</span><span class="s1">&#39;ssr_ftest&#39;</span><span class="p">],</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestGrangerCausality.test_granger_fails_on_nobs_check"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.tests.test_stattools.TestGrangerCausality.test_granger_fails_on_nobs_check.html#statsmodels.tsa.tests.test_stattools.TestGrangerCausality.test_granger_fails_on_nobs_check">[docs]</a>    <span class="k">def</span> <span class="nf">test_granger_fails_on_nobs_check</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># Test that if maxlag is too large, Granger Test raises a clear error.</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+        <span class="n">grangercausalitytests</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># This should pass.</span>
+        <span class="n">assert_raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">grangercausalitytests</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">verbose</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span></div></div>
+
+
+
+<div class="viewcode-block" id="test_pandasacovf"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_stattools.test_pandasacovf.html#statsmodels.tsa.tests.test_stattools.test_pandasacovf">[docs]</a><span class="k">def</span> <span class="nf">test_pandasacovf</span><span class="p">():</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">Series</span><span class="p">(</span><span class="n">lrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">11</span><span class="p">))</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">acovf</span><span class="p">(</span><span class="n">s</span><span class="p">),</span> <span class="n">acovf</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">values</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="test_acovf2d"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_stattools.test_acovf2d.html#statsmodels.tsa.tests.test_stattools.test_acovf2d">[docs]</a><span class="k">def</span> <span class="nf">test_acovf2d</span><span class="p">():</span>
+    <span class="n">dta</span> <span class="o">=</span> <span class="n">sunspots</span><span class="o">.</span><span class="n">load_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
+    <span class="n">dta</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">Index</span><span class="p">(</span><span class="n">dates_from_range</span><span class="p">(</span><span class="s1">&#39;1700&#39;</span><span class="p">,</span> <span class="s1">&#39;2008&#39;</span><span class="p">))</span>
+    <span class="k">del</span> <span class="n">dta</span><span class="p">[</span><span class="s2">&quot;YEAR&quot;</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">acovf</span><span class="p">(</span><span class="n">dta</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="n">acovf</span><span class="p">(</span><span class="n">dta</span><span class="o">.</span><span class="n">values</span><span class="p">))</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">random</span><span class="p">((</span><span class="mi">10</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">assert_raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">acovf</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_acovf_fft_vs_convolution"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_stattools.test_acovf_fft_vs_convolution.html#statsmodels.tsa.tests.test_stattools.test_acovf_fft_vs_convolution">[docs]</a><span class="k">def</span> <span class="nf">test_acovf_fft_vs_convolution</span><span class="p">():</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">demean</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+        <span class="k">for</span> <span class="n">unbiased</span> <span class="ow">in</span> <span class="p">[</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">]:</span>
+            <span class="n">F1</span> <span class="o">=</span> <span class="n">acovf</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="n">demean</span><span class="p">,</span> <span class="n">unbiased</span><span class="o">=</span><span class="n">unbiased</span><span class="p">,</span> <span class="n">fft</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">F2</span> <span class="o">=</span> <span class="n">acovf</span><span class="p">(</span><span class="n">q</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="n">demean</span><span class="p">,</span> <span class="n">unbiased</span><span class="o">=</span><span class="n">unbiased</span><span class="p">,</span> <span class="n">fft</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">F1</span><span class="p">,</span> <span class="n">F2</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">7</span><span class="p">)</span></div>
+
+<span class="nd">@dec</span><span class="o">.</span><span class="n">slow</span>
+<div class="viewcode-block" id="test_arma_order_select_ic"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_stattools.test_arma_order_select_ic.html#statsmodels.tsa.tests.test_stattools.test_arma_order_select_ic">[docs]</a><span class="k">def</span> <span class="nf">test_arma_order_select_ic</span><span class="p">():</span>
+    <span class="c1"># smoke test, assumes info-criteria are right</span>
+    <span class="kn">from</span> <span class="nn">statsmodels.tsa.arima_process</span> <span class="k">import</span> <span class="n">arma_generate_sample</span>
+    <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+
+    <span class="n">arparams</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">.</span><span class="mi">75</span><span class="p">,</span> <span class="o">-.</span><span class="mi">25</span><span class="p">])</span>
+    <span class="n">maparams</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">.</span><span class="mi">65</span><span class="p">,</span> <span class="o">.</span><span class="mi">35</span><span class="p">])</span>
+    <span class="n">arparams</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">arparams</span><span class="p">]</span>
+    <span class="n">maparam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="n">maparams</span><span class="p">]</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">250</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">2014</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">arma_generate_sample</span><span class="p">(</span><span class="n">arparams</span><span class="p">,</span> <span class="n">maparams</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">arma_order_select_ic</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ic</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;aic&#39;</span><span class="p">,</span> <span class="s1">&#39;bic&#39;</span><span class="p">],</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;nc&#39;</span><span class="p">)</span>
+    <span class="c1"># regression tests in case we change algorithm to minic in sas</span>
+    <span class="n">aic_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span>       <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>  <span class="mf">552.7342255</span> <span class="p">,</span>  <span class="mf">484.29687843</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">562.10924262</span><span class="p">,</span>  <span class="mf">485.5197969</span> <span class="p">,</span>  <span class="mf">480.32858497</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">507.04581344</span><span class="p">,</span>  <span class="mf">482.91065829</span><span class="p">,</span>  <span class="mf">481.91926034</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">484.03995962</span><span class="p">,</span>  <span class="mf">482.14868032</span><span class="p">,</span>  <span class="mf">483.86378955</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">481.8849479</span> <span class="p">,</span>  <span class="mf">483.8377379</span> <span class="p">,</span>  <span class="mf">485.83756612</span><span class="p">]])</span>
+    <span class="n">bic_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span>       <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span>  <span class="mf">559.77714733</span><span class="p">,</span>  <span class="mf">494.86126118</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">569.15216446</span><span class="p">,</span>  <span class="mf">496.08417966</span><span class="p">,</span>  <span class="mf">494.41442864</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">517.61019619</span><span class="p">,</span>  <span class="mf">496.99650196</span><span class="p">,</span>  <span class="mf">499.52656493</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">498.12580329</span><span class="p">,</span>  <span class="mf">499.75598491</span><span class="p">,</span>  <span class="mf">504.99255506</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">499.49225249</span><span class="p">,</span>  <span class="mf">504.96650341</span><span class="p">,</span>  <span class="mf">510.48779255</span><span class="p">]])</span>
+    <span class="n">aic</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">aic_x</span> <span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">lrange</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">lrange</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">bic</span> <span class="o">=</span> <span class="n">DataFrame</span><span class="p">(</span><span class="n">bic_x</span> <span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">lrange</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="n">columns</span><span class="o">=</span><span class="n">lrange</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">aic</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">aic</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">bic</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">bic</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">aic_min_order</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">bic_min_order</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">assert_</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">aic</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">aic</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+    <span class="n">assert_</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">aic</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">aic</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+    <span class="n">assert_</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">bic</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">bic</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+    <span class="n">assert_</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">bic</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">bic</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">arma_order_select_ic</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">ic</span><span class="o">=</span><span class="s1">&#39;aic&#39;</span><span class="p">,</span> <span class="n">trend</span><span class="o">=</span><span class="s1">&#39;nc&#39;</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">aic</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="n">aic</span><span class="o">.</span><span class="n">values</span><span class="p">,</span> <span class="mi">5</span><span class="p">)</span>
+    <span class="n">assert_</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">aic</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">aic</span><span class="o">.</span><span class="n">index</span><span class="p">))</span>
+    <span class="n">assert_</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">aic</span><span class="o">.</span><span class="n">columns</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">aic</span><span class="o">.</span><span class="n">columns</span><span class="p">))</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">aic_min_order</span><span class="p">,</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="test_arma_order_select_ic_failure"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_stattools.test_arma_order_select_ic_failure.html#statsmodels.tsa.tests.test_stattools.test_arma_order_select_ic_failure">[docs]</a><span class="k">def</span> <span class="nf">test_arma_order_select_ic_failure</span><span class="p">():</span>
+    <span class="c1"># this should trigger an SVD convergence failure, smoke test that it</span>
+    <span class="c1"># returns, likely platform dependent failure...</span>
+    <span class="c1"># looks like AR roots may be cancelling out for 4, 1?</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">0.86074377817203640006</span><span class="p">,</span>  <span class="mf">0.85316549067906921611</span><span class="p">,</span>
+        <span class="mf">0.87104653774363305363</span><span class="p">,</span>  <span class="mf">0.60692382068987393851</span><span class="p">,</span>
+        <span class="mf">0.69225941967301307667</span><span class="p">,</span>  <span class="mf">0.73336177248909339976</span><span class="p">,</span>
+        <span class="mf">0.03661329261479619179</span><span class="p">,</span>  <span class="mf">0.15693067239962379955</span><span class="p">,</span>
+        <span class="mf">0.12777403512447857437</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.27531446294481976</span>   <span class="p">,</span>
+       <span class="o">-</span><span class="mf">0.24198139631653581283</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.23903317951236391359</span><span class="p">,</span>
+       <span class="o">-</span><span class="mf">0.26000241325906497947</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.21282920015519238288</span><span class="p">,</span>
+       <span class="o">-</span><span class="mf">0.15943768324388354896</span><span class="p">,</span>  <span class="mf">0.25169301564268781179</span><span class="p">,</span>
+        <span class="mf">0.1762305709151877342</span> <span class="p">,</span>  <span class="mf">0.12678133368791388857</span><span class="p">,</span>
+        <span class="mf">0.89755829086753169399</span><span class="p">,</span>  <span class="mf">0.82667068795350151511</span><span class="p">])</span>
+    <span class="kn">import</span> <span class="nn">warnings</span>
+    <span class="k">with</span> <span class="n">warnings</span><span class="o">.</span><span class="n">catch_warnings</span><span class="p">():</span>
+        <span class="c1"># catch a hessian inversion and convergence failure warning</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">simplefilter</span><span class="p">(</span><span class="s2">&quot;ignore&quot;</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">arma_order_select_ic</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_acf_fft_dataframe"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_stattools.test_acf_fft_dataframe.html#statsmodels.tsa.tests.test_stattools.test_acf_fft_dataframe">[docs]</a><span class="k">def</span> <span class="nf">test_acf_fft_dataframe</span><span class="p">():</span>
+    <span class="c1"># regression test #322</span>
+
+    <span class="n">result</span> <span class="o">=</span> <span class="n">acf</span><span class="p">(</span><span class="n">sunspots</span><span class="o">.</span><span class="n">load_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;SUNACTIVITY&#39;</span><span class="p">]],</span> <span class="n">fft</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">result</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="n">__name__</span><span class="o">==</span><span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">nose</span>
+<span class="c1">#    nose.runmodule(argv=[__file__, &#39;-vvs&#39;,&#39;-x&#39;,&#39;-pdb&#39;], exit=False)</span>
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">run_module_suite</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

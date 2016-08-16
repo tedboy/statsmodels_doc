@@ -1,0 +1,28 @@
+statsmodels.sandbox.panel.mixed.Unit
+====================================
+
+.. currentmodule:: statsmodels.sandbox.panel.mixed
+.. autoclass:: Unit
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Unit.__init__
+   ~Unit.compute_P
+   ~Unit.compute_xtwx
+   ~Unit.compute_xtwy
+   ~Unit.cov_random
+   ~Unit.deviance
+   ~Unit.fit
+   ~Unit.logL
+
+
+
+
+

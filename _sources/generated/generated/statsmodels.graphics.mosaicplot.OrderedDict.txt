@@ -1,0 +1,39 @@
+statsmodels.graphics.mosaicplot.OrderedDict
+===========================================
+
+.. currentmodule:: statsmodels.graphics.mosaicplot
+.. autoclass:: OrderedDict
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OrderedDict.__init__
+   ~OrderedDict.clear
+   ~OrderedDict.copy
+   ~OrderedDict.fromkeys
+   ~OrderedDict.get
+   ~OrderedDict.has_key
+   ~OrderedDict.items
+   ~OrderedDict.iteritems
+   ~OrderedDict.iterkeys
+   ~OrderedDict.itervalues
+   ~OrderedDict.keys
+   ~OrderedDict.pop
+   ~OrderedDict.popitem
+   ~OrderedDict.setdefault
+   ~OrderedDict.update
+   ~OrderedDict.values
+   ~OrderedDict.viewitems
+   ~OrderedDict.viewkeys
+   ~OrderedDict.viewvalues
+
+
+
+
+

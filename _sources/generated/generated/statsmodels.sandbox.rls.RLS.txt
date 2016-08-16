@@ -1,0 +1,48 @@
+statsmodels.sandbox.rls.RLS
+===========================
+
+.. currentmodule:: statsmodels.sandbox.rls
+.. autoclass:: RLS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~RLS.__init__
+   ~RLS.fit
+   ~RLS.fit_regularized
+   ~RLS.from_formula
+   ~RLS.hessian
+   ~RLS.information
+   ~RLS.initialize
+   ~RLS.loglike
+   ~RLS.predict
+   ~RLS.score
+   ~RLS.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~RLS.coeffs
+   ~RLS.df_model
+   ~RLS.df_resid
+   ~RLS.endog_names
+   ~RLS.exog_names
+   ~RLS.inv_rwexog
+   ~RLS.rnorm_cov_params
+   ~RLS.rwendog
+   ~RLS.rwexog
+   ~RLS.wrnorm_cov_params
+

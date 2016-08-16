@@ -1,0 +1,28 @@
+statsmodels.iolib.summary.Summary
+=================================
+
+.. currentmodule:: statsmodels.iolib.summary
+.. autoclass:: Summary
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Summary.__init__
+   ~Summary.add_extra_txt
+   ~Summary.add_table_2cols
+   ~Summary.add_table_params
+   ~Summary.as_csv
+   ~Summary.as_html
+   ~Summary.as_latex
+   ~Summary.as_text
+
+
+
+
+

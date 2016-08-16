@@ -1,0 +1,30 @@
+statsmodels.stats.weightstats.CompareMeans
+==========================================
+
+.. currentmodule:: statsmodels.stats.weightstats
+.. autoclass:: CompareMeans
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CompareMeans.__init__
+   ~CompareMeans.dof_satt
+   ~CompareMeans.std_meandiff_pooledvar
+   ~CompareMeans.std_meandiff_separatevar
+   ~CompareMeans.tconfint_diff
+   ~CompareMeans.ttest_ind
+   ~CompareMeans.ttost_ind
+   ~CompareMeans.zconfint_diff
+   ~CompareMeans.ztest_ind
+   ~CompareMeans.ztost_ind
+
+
+
+
+

@@ -1,0 +1,30 @@
+statsmodels.sandbox.panel.sandwich_covariance_generic
+=====================================================
+
+.. automodule:: statsmodels.sandbox.panel.sandwich_covariance_generic
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      S_all_hac
+      S_cluster
+      S_white
+      S_within_hac
+      aggregate_cov
+      kernel
+      weights_bartlett
+   
+   
+
+   
+   
+   
+
+   
+   
+   

@@ -1,0 +1,24 @@
+statsmodels.stats.api.GofChisquarePower
+=======================================
+
+.. currentmodule:: statsmodels.stats.api
+.. autoclass:: GofChisquarePower
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GofChisquarePower.__init__
+   ~GofChisquarePower.plot_power
+   ~GofChisquarePower.power
+   ~GofChisquarePower.solve_power
+
+
+
+
+

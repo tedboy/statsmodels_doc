@@ -1,0 +1,32 @@
+statsmodels.sandbox.nonparametric.kernels.NdKernel
+==================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernels
+.. autoclass:: NdKernel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NdKernel.__init__
+   ~NdKernel.density
+   ~NdKernel.getH
+   ~NdKernel.setH
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~NdKernel.H
+

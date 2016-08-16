@@ -1,0 +1,579 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.regression.penalized &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.regression.penalized</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.regression.penalized</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;linear model with Theil prior probabilistic restrictions, generalized Ridge</span>
+
+<span class="sd">Created on Tue Dec 20 00:10:10 2011</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License: BSD-3</span>
+
+<span class="sd">open issues</span>
+<span class="sd">* selection of smoothing factor, strength of prior, cross validation</span>
+<span class="sd">* GLS, does this really work this way</span>
+<span class="sd">* None of inherited results have been checked yet,</span>
+<span class="sd">  I&#39;m not sure if any need to be adjusted or if only interpretation changes</span>
+<span class="sd">  One question is which results are based on likelihood (residuals) and which</span>
+<span class="sd">  are based on &quot;posterior&quot; as for example bse and cov_params</span>
+
+<span class="sd">* helper functions to construct priors?</span>
+<span class="sd">* increasing penalization for ordered regressors, e.g. polynomials</span>
+
+<span class="sd">* compare with random/mixed effects/coefficient, like estimated priors</span>
+
+
+
+<span class="sd">there is something fishy with the result instance, some things, e.g.</span>
+<span class="sd">normalized_cov_params, don&#39;t look like they update correctly as we</span>
+<span class="sd">search over lambda -&gt; some stale state again ?</span>
+
+<span class="sd">I added df_model to result class using the hatmatrix, but df_model is defined</span>
+<span class="sd">in model instance not in result instance. -&gt; not clear where refactoring should</span>
+<span class="sd">occur. df_resid doesn&#39;t get updated correctly.</span>
+<span class="sd">problem with definition of df_model, it has 1 subtracted for constant</span>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">lrange</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">statsmodels.base.model</span> <span class="k">as</span> <span class="nn">base</span>
+<span class="kn">from</span> <span class="nn">statsmodels.regression.linear_model</span> <span class="k">import</span> <span class="n">OLS</span><span class="p">,</span> <span class="n">GLS</span><span class="p">,</span> <span class="n">RegressionResults</span>
+
+
+<div class="viewcode-block" id="atleast_2dcols"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.penalized.atleast_2dcols.html#statsmodels.sandbox.regression.penalized.atleast_2dcols">[docs]</a><span class="k">def</span> <span class="nf">atleast_2dcols</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+
+
+<div class="viewcode-block" id="TheilGLS"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.penalized.TheilGLS.html#statsmodels.sandbox.regression.penalized.TheilGLS">[docs]</a><span class="k">class</span> <span class="nc">TheilGLS</span><span class="p">(</span><span class="n">GLS</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;GLS with probabilistic restrictions</span>
+
+<span class="sd">    essentially Bayes with informative prior</span>
+
+<span class="sd">    note: I&#39;m making up the GLS part, might work only for OLS</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+<div class="viewcode-block" id="TheilGLS.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.penalized.TheilGLS.__init__.html#statsmodels.sandbox.regression.penalized.TheilGLS.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">r_matrix</span><span class="p">,</span> <span class="n">q_matrix</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma_prior</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">r_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">r_matrix</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">q_matrix</span> <span class="o">=</span> <span class="n">atleast_2dcols</span><span class="p">(</span><span class="n">q_matrix</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">sigma_prior</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">sigma_prior</span> <span class="o">=</span> <span class="n">sigma_prior</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">r_matrix</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span> <span class="c1">#no numerical shortcuts</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_prior</span> <span class="o">=</span> <span class="n">sigma_prior</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma_prior_inv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">sigma_prior</span><span class="p">)</span> <span class="c1">#or inv</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TheilGLS.fit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.penalized.TheilGLS.fit.html#statsmodels.sandbox.regression.penalized.TheilGLS.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+        <span class="c1">#this does duplicate transformation, but I need resid not wresid</span>
+        <span class="n">res_gls</span> <span class="o">=</span> <span class="n">GLS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">res_gls</span> <span class="o">=</span> <span class="n">res_gls</span>
+        <span class="n">sigma2_e</span> <span class="o">=</span> <span class="n">res_gls</span><span class="o">.</span><span class="n">mse_resid</span>
+
+        <span class="n">r_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_matrix</span>
+        <span class="n">q_matrix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">q_matrix</span>
+        <span class="n">sigma_prior_inv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma_prior_inv</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wexog</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wendog</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="c1">#why are sigma2_e * lambd multiplied, not ratio?</span>
+        <span class="c1">#larger lambd -&gt; stronger prior  (it&#39;s not the variance)</span>
+        <span class="c1">#print(&#39;lambd inside fit&#39;, lambd</span>
+        <span class="n">xpx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> \
+              <span class="n">sigma2_e</span> <span class="o">*</span> <span class="n">lambd</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r_matrix</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sigma_prior_inv</span><span class="p">,</span> <span class="n">r_matrix</span><span class="p">))</span>
+        <span class="n">xpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="o">+</span> \
+              <span class="n">sigma2_e</span> <span class="o">*</span> <span class="n">lambd</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">r_matrix</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sigma_prior_inv</span><span class="p">,</span> <span class="n">q_matrix</span><span class="p">))</span>
+        <span class="c1">#xpy = xpy[:,None]</span>
+
+        <span class="n">xpxi</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">xpx</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">xpxi</span><span class="p">,</span> <span class="n">xpy</span><span class="p">)</span>    <span class="c1">#or solve</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalized_cov_params</span> <span class="o">=</span> <span class="n">xpxi</span>    <span class="c1">#why attach it to self, i.e. model?</span>
+
+        <span class="n">lfit</span> <span class="o">=</span> <span class="n">TheilRegressionResults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span>
+                       <span class="n">normalized_cov_params</span><span class="o">=</span><span class="n">xpxi</span><span class="p">)</span>
+
+        <span class="n">lfit</span><span class="o">.</span><span class="n">penalization_factor</span> <span class="o">=</span> <span class="n">lambd</span>
+        <span class="k">return</span> <span class="n">lfit</span></div>
+
+<div class="viewcode-block" id="TheilGLS.fit_minic"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.penalized.TheilGLS.fit_minic.html#statsmodels.sandbox.regression.penalized.TheilGLS.fit_minic">[docs]</a>    <span class="k">def</span> <span class="nf">fit_minic</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#this doesn&#39;t make sense, since number of parameters stays unchanged</span>
+        <span class="c1">#need leave-one-out, gcv; or some penalization for weak priors</span>
+        <span class="c1">#added extra penalization for lambd</span>
+        <span class="k">def</span> <span class="nf">get_bic</span><span class="p">(</span><span class="n">lambd</span><span class="p">):</span>
+            <span class="c1">#return self.fit(lambd).bic #+lambd #+ 1./lambd  #added 1/lambd for checking</span>
+            <span class="c1">#return self.fit(lambd).gcv()</span>
+            <span class="c1">#return self.fit(lambd).cv()</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">lambd</span><span class="p">)</span><span class="o">.</span><span class="n">aicc</span><span class="p">()</span>
+
+        <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">optimize</span>
+        <span class="n">lambd</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">fmin</span><span class="p">(</span><span class="n">get_bic</span><span class="p">,</span> <span class="mf">1.</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">lambd</span></div></div>
+
+<span class="c1">#TODO:</span>
+<span class="c1">#I need the hatmatrix in the model if I want to do iterative fitting, e.g. GCV</span>
+<span class="c1">#move to model or use it from a results instance inside the model,</span>
+<span class="c1">#    each call to fit returns results instance</span>
+
+<div class="viewcode-block" id="TheilRegressionResults"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.penalized.TheilRegressionResults.html#statsmodels.sandbox.regression.penalized.TheilRegressionResults">[docs]</a><span class="k">class</span> <span class="nc">TheilRegressionResults</span><span class="p">(</span><span class="n">RegressionResults</span><span class="p">):</span>
+
+    <span class="c1">#cache</span>
+<div class="viewcode-block" id="TheilRegressionResults.hatmatrix_diag"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.penalized.TheilRegressionResults.hatmatrix_diag.html#statsmodels.sandbox.regression.penalized.TheilRegressionResults.hatmatrix_diag">[docs]</a>    <span class="k">def</span> <span class="nf">hatmatrix_diag</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">        diag(X&#39; xpxi X)</span>
+
+<span class="sd">        where xpxi = (X&#39;X + lambd * sigma_prior)^{-1}</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+
+<span class="sd">        uses wexog, so this includes weights or sigma - check this case</span>
+
+<span class="sd">        not clear whether I need to multiply by sigmahalf, i.e.</span>
+
+<span class="sd">        (W^{-0.5} X) (X&#39; W X)^{-1} (W^{-0.5} X)&#39;  or</span>
+<span class="sd">        (W X) (X&#39; W X)^{-1} (W X)&#39;</span>
+
+<span class="sd">        projection y_hat = H y    or in terms of transformed variables (W^{-0.5} y)</span>
+
+<span class="sd">        might be wrong for WLS and GLS case</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">xpxi</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">normalized_cov_params</span>
+        <span class="c1">#something fishy with self.normalized_cov_params in result, doesn&#39;t update</span>
+        <span class="c1">#print(self.model.wexog.shape, np.dot(xpxi, self.model.wexog.T).shape</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">wexog</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">xpxi</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">wexog</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TheilRegressionResults.hatmatrix_trace"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.penalized.TheilRegressionResults.hatmatrix_trace.html#statsmodels.sandbox.regression.penalized.TheilRegressionResults.hatmatrix_trace">[docs]</a>    <span class="k">def</span> <span class="nf">hatmatrix_trace</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hatmatrix_diag</span><span class="p">()</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
+
+    <span class="c1">#this doesn&#39;t update df_resid</span>
+    <span class="nd">@property</span>   <span class="c1">#needs to be property or attribute (no call)</span>
+    <span class="k">def</span> <span class="nf">df_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">hatmatrix_trace</span><span class="p">()</span>
+
+    <span class="c1">#Note: mse_resid uses df_resid not nobs-k_vars, which might differ if df_model, tr(H), is used</span>
+    <span class="c1">#in paper for gcv ess/nobs is used instead of mse_resid</span>
+<div class="viewcode-block" id="TheilRegressionResults.gcv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.penalized.TheilRegressionResults.gcv.html#statsmodels.sandbox.regression.penalized.TheilRegressionResults.gcv">[docs]</a>    <span class="k">def</span> <span class="nf">gcv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mse_resid</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">hatmatrix_trace</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span></div>
+
+<div class="viewcode-block" id="TheilRegressionResults.cv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.penalized.TheilRegressionResults.cv.html#statsmodels.sandbox.regression.penalized.TheilRegressionResults.cv">[docs]</a>    <span class="k">def</span> <span class="nf">cv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">resid</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">hatmatrix_diag</span><span class="p">()))</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span></div>
+
+<div class="viewcode-block" id="TheilRegressionResults.aicc"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.penalized.TheilRegressionResults.aicc.html#statsmodels.sandbox.regression.penalized.TheilRegressionResults.aicc">[docs]</a>    <span class="k">def</span> <span class="nf">aicc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">aic</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mse_resid</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">aic</span> <span class="o">+=</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">hatmatrix_trace</span><span class="p">())</span> <span class="o">/</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">hatmatrix_trace</span><span class="p">()</span> <span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">aic</span></div></div>
+
+
+<span class="c1">#contrast/restriction matrices, temporary location</span>
+
+<div class="viewcode-block" id="coef_restriction_meandiff"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.penalized.coef_restriction_meandiff.html#statsmodels.sandbox.regression.penalized.coef_restriction_meandiff">[docs]</a><span class="k">def</span> <span class="nf">coef_restriction_meandiff</span><span class="p">(</span><span class="n">n_coeffs</span><span class="p">,</span> <span class="n">n_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+    <span class="n">reduced</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_coeffs</span><span class="p">)</span> <span class="o">-</span> <span class="mf">1.</span><span class="o">/</span><span class="n">n_coeffs</span>
+    <span class="k">if</span> <span class="n">n_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">reduced</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_coeffs</span><span class="p">,</span> <span class="n">n_vars</span><span class="p">))</span>
+        <span class="n">full</span><span class="p">[:,</span> <span class="n">position</span><span class="p">:</span><span class="n">position</span><span class="o">+</span><span class="n">n_coeffs</span><span class="p">]</span> <span class="o">=</span> <span class="n">reduced</span>
+        <span class="k">return</span> <span class="n">full</span></div>
+
+<div class="viewcode-block" id="coef_restriction_diffbase"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.penalized.coef_restriction_diffbase.html#statsmodels.sandbox.regression.penalized.coef_restriction_diffbase">[docs]</a><span class="k">def</span> <span class="nf">coef_restriction_diffbase</span><span class="p">(</span><span class="n">n_coeffs</span><span class="p">,</span> <span class="n">n_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">base_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+
+    <span class="n">reduced</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_coeffs</span><span class="p">)</span>  <span class="c1">#make all rows, drop one row later</span>
+    <span class="n">reduced</span><span class="p">[:,</span> <span class="n">base_idx</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="n">keep</span> <span class="o">=</span> <span class="n">lrange</span><span class="p">(</span><span class="n">n_coeffs</span><span class="p">)</span>
+    <span class="k">del</span> <span class="n">keep</span><span class="p">[</span><span class="n">base_idx</span><span class="p">]</span>
+    <span class="n">reduced</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">take</span><span class="p">(</span><span class="n">reduced</span><span class="p">,</span> <span class="n">keep</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">n_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">reduced</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_coeffs</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_vars</span><span class="p">))</span>
+        <span class="n">full</span><span class="p">[:,</span> <span class="n">position</span><span class="p">:</span><span class="n">position</span><span class="o">+</span><span class="n">n_coeffs</span><span class="p">]</span> <span class="o">=</span> <span class="n">reduced</span>
+        <span class="k">return</span> <span class="n">full</span></div>
+
+<div class="viewcode-block" id="next_odd"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.penalized.next_odd.html#statsmodels.sandbox.regression.penalized.next_odd">[docs]</a><span class="k">def</span> <span class="nf">next_odd</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">d</span> <span class="o">+</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">d</span> <span class="o">%</span> <span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="coef_restriction_diffseq"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.penalized.coef_restriction_diffseq.html#statsmodels.sandbox.regression.penalized.coef_restriction_diffseq">[docs]</a><span class="k">def</span> <span class="nf">coef_restriction_diffseq</span><span class="p">(</span><span class="n">n_coeffs</span><span class="p">,</span> <span class="n">degree</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">position</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">base_idx</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="c1">#check boundaries, returns &quot;valid&quot; ?</span>
+
+    <span class="k">if</span> <span class="n">degree</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">diff_coeffs</span> <span class="o">=</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+        <span class="n">n_points</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">elif</span> <span class="n">degree</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">misc</span>
+        <span class="n">n_points</span> <span class="o">=</span> <span class="n">next_odd</span><span class="p">(</span><span class="n">degree</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>  <span class="c1">#next odd integer after degree+1</span>
+        <span class="n">diff_coeffs</span> <span class="o">=</span> <span class="n">misc</span><span class="o">.</span><span class="n">central_diff_weights</span><span class="p">(</span><span class="n">n_points</span><span class="p">,</span> <span class="n">ndiv</span><span class="o">=</span><span class="n">degree</span><span class="p">)</span>
+
+    <span class="n">dff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">diff_coeffs</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_coeffs</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_coeffs</span><span class="p">))))</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">linalg</span>
+    <span class="n">reduced</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">toeplitz</span><span class="p">(</span><span class="n">dff</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_coeffs</span> <span class="o">-</span> <span class="nb">len</span><span class="p">(</span><span class="n">diff_coeffs</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1">#reduced = np.kron(np.eye(n_coeffs-n_points), diff_coeffs)</span>
+
+    <span class="k">if</span> <span class="n">n_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">reduced</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">full</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_coeffs</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_vars</span><span class="p">))</span>
+        <span class="n">full</span><span class="p">[:,</span> <span class="n">position</span><span class="p">:</span><span class="n">position</span><span class="o">+</span><span class="n">n_coeffs</span><span class="p">]</span> <span class="o">=</span> <span class="n">reduced</span>
+        <span class="k">return</span> <span class="n">full</span></div>
+
+
+<span class="c1">##</span>
+<span class="c1">##    R = np.c_[np.zeros((n_groups, k_vars-1)), np.eye(n_groups)]</span>
+<span class="c1">##    r = np.zeros(n_groups)</span>
+<span class="c1">##    R = np.c_[np.zeros((n_groups-1, k_vars)),</span>
+<span class="c1">##              np.eye(n_groups-1)-1./n_groups * np.ones((n_groups-1, n_groups-1))]</span>
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+    <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+
+    <span class="n">examples</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">765367</span><span class="p">)</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">97653679</span><span class="p">)</span>
+    <span class="n">nsample</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span> <span class="n">nsample</span><span class="p">)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">x</span><span class="p">,</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="mf">5.</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">)),</span> <span class="n">prepend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">10</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">nsample</span><span class="p">)</span>
+
+    <span class="n">res_ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+    <span class="n">R</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span> <span class="p">,</span> <span class="mi">1</span><span class="p">]]</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="c1">#, 0, 0 , 0]</span>
+    <span class="n">lambd</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#1e-4</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">TheilGLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">r_matrix</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">q_matrix</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">sigma_prior</span><span class="o">=</span><span class="n">lambd</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">res_ols</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="c1">#example 2</span>
+    <span class="c1">#I need more flexible penalization in example, the penalization should</span>
+    <span class="c1">#get stronger for higher order terms</span>
+    <span class="c1">#np.random.seed(1)</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="n">k_vars</span> <span class="o">=</span> <span class="mi">10</span>
+    <span class="n">k_true</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">sig_e</span> <span class="o">=</span> <span class="mf">0.25</span>   <span class="c1">#0.5</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+    <span class="c1">#X = sm.add_constant(np.column_stack((x, x**2, (x/5.)**3)), prepend=True)</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">/</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">())[:,</span><span class="kc">None</span><span class="p">]</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">k_vars</span><span class="p">)</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k_vars</span><span class="p">)</span>
+    <span class="n">beta</span><span class="p">[:</span><span class="n">k_true</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">])[:</span><span class="n">k_true</span><span class="p">]</span>
+    <span class="n">y_true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y_true</span> <span class="o">+</span> <span class="n">sig_e</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+
+    <span class="n">res_ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+
+    <span class="c1">#R = np.c_[np.zeros((k_vars-4, 4)), np.eye(k_vars-4)]  # has two large true coefficients penalized</span>
+    <span class="n">not_penalized</span> <span class="o">=</span> <span class="mi">4</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k_vars</span><span class="o">-</span><span class="n">not_penalized</span><span class="p">,</span> <span class="n">not_penalized</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">k_vars</span><span class="o">-</span><span class="n">not_penalized</span><span class="p">)]</span>
+    <span class="c1">#increasingly strong penalization</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">k_vars</span><span class="o">-</span><span class="n">not_penalized</span><span class="p">,</span> <span class="n">not_penalized</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">k_vars</span><span class="o">-</span><span class="n">not_penalized</span><span class="p">)))]</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k_vars</span><span class="o">-</span><span class="n">not_penalized</span><span class="p">)</span>
+<span class="c1">##    R = -coef_restriction_diffseq(6, 1, n_vars=10, position=4)  #doesn&#39;t make sense for polynomial</span>
+<span class="c1">##    R = np.vstack((R, np.zeros(R.shape[1])))</span>
+<span class="c1">##    R[-1,-1] = 1</span>
+    <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">R</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">lambd</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1">#1e-4</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">TheilGLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">r_matrix</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">q_matrix</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">sigma_prior</span><span class="o">=</span><span class="n">lambd</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">res_ols</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+    <span class="n">res_bic</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit_minic</span><span class="p">()</span>   <span class="c1">#this will just return zero</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">res_bic</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">res_bic</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">lambd</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">80</span><span class="p">,</span> <span class="mi">21</span><span class="p">):</span>
+        <span class="n">res_l</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">lambd</span><span class="p">)</span>
+        <span class="c1">#print(lambd, res_l.params[-2:], res_l.bic, res_l.bic + 1./lambd, res.df_model</span>
+        <span class="nb">print</span><span class="p">((</span><span class="n">lambd</span><span class="p">,</span> <span class="n">res_l</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:],</span> <span class="n">res_l</span><span class="o">.</span><span class="n">bic</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">df_model</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">trace</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">normalized_cov_params</span><span class="p">)))</span>
+
+
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">beta</span><span class="p">,</span> <span class="s1">&#39;k-o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;true&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">res_ols</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;ols&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">,</span> <span class="s1">&#39;-o&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;theil&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Polynomial fitting: estimated coefficients&#39;</span><span class="p">)</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y_true</span><span class="p">,</span> <span class="s1">&#39;k-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;true&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">res_ols</span><span class="o">.</span><span class="n">fittedvalues</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;ols&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">fittedvalues</span><span class="p">,</span> <span class="s1">&#39;-&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;theil&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Polynomial fitting: fitted values&#39;</span><span class="p">)</span>
+    <span class="c1">#plt.show()</span>
+
+    <span class="k">if</span> <span class="mi">3</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+        <span class="c1">#example 3</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="mi">600</span>
+        <span class="n">nobs_i</span> <span class="o">=</span> <span class="mi">20</span>
+        <span class="n">n_groups</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">//</span> <span class="n">nobs_i</span>
+        <span class="n">k_vars</span> <span class="o">=</span> <span class="mi">3</span>
+
+        <span class="kn">from</span> <span class="nn">statsmodels.sandbox.panel.random_panel</span> <span class="k">import</span> <span class="n">PanelSample</span>
+        <span class="n">dgp</span> <span class="o">=</span> <span class="n">PanelSample</span><span class="p">(</span><span class="n">nobs</span><span class="p">,</span> <span class="n">k_vars</span><span class="p">,</span> <span class="n">n_groups</span><span class="p">)</span>
+        <span class="n">dgp</span><span class="o">.</span><span class="n">group_means</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n_groups</span><span class="p">)</span> <span class="c1">#add random intercept</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;seed&#39;</span><span class="p">,</span> <span class="n">dgp</span><span class="o">.</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="n">dgp</span><span class="o">.</span><span class="n">generate_panel</span><span class="p">()</span>
+        <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">dgp</span><span class="o">.</span><span class="n">exog</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:],</span>
+                               <span class="n">dgp</span><span class="o">.</span><span class="n">groups</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n_groups</span><span class="p">)))</span>
+        <span class="n">res_ols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_groups</span><span class="p">,</span> <span class="n">k_vars</span><span class="o">-</span><span class="mi">1</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_groups</span><span class="p">)]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_groups</span><span class="p">)</span>
+        <span class="n">R</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_groups</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">k_vars</span><span class="p">)),</span>
+                  <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n_groups</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mf">1.</span><span class="o">/</span><span class="n">n_groups</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">n_groups</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">n_groups</span><span class="o">-</span><span class="mi">1</span><span class="p">))]</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n_groups</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">R</span><span class="p">[:,</span> <span class="n">k_vars</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+
+        <span class="n">lambd</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#1e-4</span>
+        <span class="n">mod</span> <span class="o">=</span> <span class="n">TheilGLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">r_matrix</span><span class="o">=</span><span class="n">R</span><span class="p">,</span> <span class="n">q_matrix</span><span class="o">=</span><span class="n">r</span><span class="p">,</span> <span class="n">sigma_prior</span><span class="o">=</span><span class="n">lambd</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="n">params_l</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">lambd</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="mi">21</span><span class="p">):</span>
+            <span class="n">params_l</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="mf">5.</span><span class="o">*</span><span class="n">lambd</span><span class="p">)</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+
+        <span class="n">params_l</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">params_l</span><span class="p">)</span>
+
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">params_l</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Panel Data with random intercept: shrinkage to being equal&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;parameter index&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">params_l</span><span class="p">[:,</span><span class="n">k_vars</span><span class="p">:])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Panel Data with random intercept: shrinkage to being equal&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;strength of prior&#39;</span><span class="p">)</span>
+
+        <span class="c1">#plt.show()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

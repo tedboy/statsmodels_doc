@@ -1,0 +1,25 @@
+statsmodels.discrete.discrete_model.L1PoissonResultsWrapper
+===========================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: L1PoissonResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~L1PoissonResultsWrapper.__init__
+   ~L1PoissonResultsWrapper.conf_int
+   ~L1PoissonResultsWrapper.cov_params
+   ~L1PoissonResultsWrapper.load
+   ~L1PoissonResultsWrapper.save
+
+
+
+
+

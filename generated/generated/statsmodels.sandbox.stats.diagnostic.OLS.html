@@ -1,0 +1,406 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.8.3.3.4. statsmodels.sandbox.stats.diagnostic.OLS &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.8.3. statsmodels.sandbox.stats.diagnostic" href="../statsmodels.sandbox.stats.diagnostic.html"/>
+        <link rel="next" title="6.8.3.3.4.1.1. statsmodels.sandbox.stats.diagnostic.OLS.__init__" href="statsmodels.sandbox.stats.diagnostic.OLS.__init__.html"/>
+        <link rel="prev" title="6.8.3.3.3.1.1. statsmodels.sandbox.stats.diagnostic.HetGoldfeldQuandt.run" href="statsmodels.sandbox.stats.diagnostic.HetGoldfeldQuandt.run.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.stats.html">6.8.1. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.stats.contrast_tools.html">6.8.2. statsmodels.sandbox.stats.contrast_tools</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.stats.diagnostic.html">6.8.3. statsmodels.sandbox.stats.diagnostic</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.stats.diagnostic.html#notes">6.8.3.1. Notes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.stats.diagnostic.html#functions">6.8.3.2. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.stats.diagnostic.html#classes">6.8.3.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.stats.ex_newtests.html">6.8.4. statsmodels.sandbox.stats.ex_newtests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.stats.multicomp.html">6.8.5. statsmodels.sandbox.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.stats.runs.html">6.8.6. statsmodels.sandbox.stats.runs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.stats.stats_dhuard.html">6.8.7. statsmodels.sandbox.stats.stats_dhuard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.stats.diagnostic.html">6.8.3. statsmodels.sandbox.stats.diagnostic</a> &raquo;</li>
+        
+      <li>6.8.3.3.4. statsmodels.sandbox.stats.diagnostic.OLS</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.stats.diagnostic.OLS.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-stats-diagnostic-ols">
+<h1>6.8.3.3.4. statsmodels.sandbox.stats.diagnostic.OLS<a class="headerlink" href="#statsmodels-sandbox-stats-diagnostic-ols" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.sandbox.stats.diagnostic.OLS">
+<em class="property">class </em><code class="descclassname">statsmodels.sandbox.stats.diagnostic.</code><code class="descname">OLS</code><span class="sig-paren">(</span><em>endog</em>, <em>exog=None</em>, <em>missing='none'</em>, <em>hasconst=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/regression/linear_model.html#OLS"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.stats.diagnostic.OLS" title="Permalink to this definition">¶</a></dt>
+<dd><p>A simple ordinary least squares model.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>endog</strong> : array-like</p>
+<blockquote>
+<div><p>1-d endogenous response variable. The dependent variable.</p>
+</div></blockquote>
+<p><strong>exog</strong> : array-like</p>
+<blockquote>
+<div><p>A nobs x k array where <cite>nobs</cite> is the number of observations and <cite>k</cite>
+is the number of regressors. An intercept is not included by default
+and should be added by the user. See
+<code class="xref py py-func docutils literal"><span class="pre">statsmodels.tools.add_constant()</span></code>.</p>
+</div></blockquote>
+<p><strong>missing</strong> : str</p>
+<blockquote>
+<div><p>Available options are &#8216;none&#8217;, &#8216;drop&#8217;, and &#8216;raise&#8217;. If &#8216;none&#8217;, no nan
+checking is done. If &#8216;drop&#8217;, any observations with nans are dropped.
+If &#8216;raise&#8217;, an error is raised. Default is &#8216;none.&#8217;</p>
+</div></blockquote>
+<p><strong>hasconst</strong> : None or bool</p>
+<blockquote class="last">
+<div><p>Indicates whether the RHS includes a user-supplied constant. If True,
+a constant is not checked for and k_constant is set to 1 and all
+result statistics are calculated as if a constant is present. If
+False, a constant is not checked for and k_constant is set to 0.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">GLS</span></code></p>
+</div>
+<p class="rubric">Notes</p>
+<p>No constant is added by the model unless you are using formulas.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">Y</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">8</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">X</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">model</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span><span class="n">X</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">params</span>
+<span class="go">array([ 2.14285714,  0.25      ])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span><span class="o">.</span><span class="n">tvalues</span>
+<span class="go">array([ 1.87867287,  0.98019606])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">t_test</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">])))</span>
+<span class="go">&lt;T test: effect=array([ 2.14285714]), sd=array([[ 1.14062282]]), t=array([[ 1.87867287]]), p=array([[ 0.05953974]]), df_denom=5&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">f_test</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span>
+<span class="go">&lt;F test: F=array([[ 19.46078431]]), p=[[ 0.00437251]], df_denom=5, df_num=2&gt;</span>
+</pre></div>
+</div>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="9%" />
+<col width="91%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>weights</td>
+<td>(scalar) Has an attribute weights = array(1.0) due to inheritance from WLS.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="statsmodels.sandbox.stats.diagnostic.OLS.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>endog</em>, <em>exog=None</em>, <em>missing='none'</em>, <em>hasconst=None</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/regression/linear_model.html#OLS.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.stats.diagnostic.OLS.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>6.8.3.3.4.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.__init__.html#statsmodels.sandbox.stats.diagnostic.OLS.__init__" title="statsmodels.sandbox.stats.diagnostic.OLS.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(endog[,&nbsp;exog,&nbsp;missing,&nbsp;hasconst])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.fit.html#statsmodels.sandbox.stats.diagnostic.OLS.fit" title="statsmodels.sandbox.stats.diagnostic.OLS.fit"><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code></a>([method,&nbsp;cov_type,&nbsp;cov_kwds,&nbsp;use_t])</td>
+<td>Full fit of the model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.fit_regularized.html#statsmodels.sandbox.stats.diagnostic.OLS.fit_regularized" title="statsmodels.sandbox.stats.diagnostic.OLS.fit_regularized"><code class="xref py py-obj docutils literal"><span class="pre">fit_regularized</span></code></a>([method,&nbsp;maxiter,&nbsp;alpha,&nbsp;...])</td>
+<td>Return a regularized fit to a linear regression model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.from_formula.html#statsmodels.sandbox.stats.diagnostic.OLS.from_formula" title="statsmodels.sandbox.stats.diagnostic.OLS.from_formula"><code class="xref py py-obj docutils literal"><span class="pre">from_formula</span></code></a>(formula,&nbsp;data[,&nbsp;subset])</td>
+<td>Create a Model from a formula and dataframe.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.hessian.html#statsmodels.sandbox.stats.diagnostic.OLS.hessian" title="statsmodels.sandbox.stats.diagnostic.OLS.hessian"><code class="xref py py-obj docutils literal"><span class="pre">hessian</span></code></a>(params)</td>
+<td>The Hessian matrix of the model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.information.html#statsmodels.sandbox.stats.diagnostic.OLS.information" title="statsmodels.sandbox.stats.diagnostic.OLS.information"><code class="xref py py-obj docutils literal"><span class="pre">information</span></code></a>(params)</td>
+<td>Fisher information matrix of model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.initialize.html#statsmodels.sandbox.stats.diagnostic.OLS.initialize" title="statsmodels.sandbox.stats.diagnostic.OLS.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.loglike.html#statsmodels.sandbox.stats.diagnostic.OLS.loglike" title="statsmodels.sandbox.stats.diagnostic.OLS.loglike"><code class="xref py py-obj docutils literal"><span class="pre">loglike</span></code></a>(params)</td>
+<td>The likelihood function for the clasical OLS model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.predict.html#statsmodels.sandbox.stats.diagnostic.OLS.predict" title="statsmodels.sandbox.stats.diagnostic.OLS.predict"><code class="xref py py-obj docutils literal"><span class="pre">predict</span></code></a>(params[,&nbsp;exog])</td>
+<td>Return linear predicted values from a design matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.score.html#statsmodels.sandbox.stats.diagnostic.OLS.score" title="statsmodels.sandbox.stats.diagnostic.OLS.score"><code class="xref py py-obj docutils literal"><span class="pre">score</span></code></a>(params)</td>
+<td>Score vector of model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.whiten.html#statsmodels.sandbox.stats.diagnostic.OLS.whiten" title="statsmodels.sandbox.stats.diagnostic.OLS.whiten"><code class="xref py py-obj docutils literal"><span class="pre">whiten</span></code></a>(Y)</td>
+<td>OLS model whitener does nothing: returns Y.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>6.8.3.3.4.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.df_model.html#statsmodels.sandbox.stats.diagnostic.OLS.df_model" title="statsmodels.sandbox.stats.diagnostic.OLS.df_model"><code class="xref py py-obj docutils literal"><span class="pre">df_model</span></code></a></td>
+<td>The model degree of freedom, defined as the rank of the regressor matrix minus 1 if a constant is included.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.df_resid.html#statsmodels.sandbox.stats.diagnostic.OLS.df_resid" title="statsmodels.sandbox.stats.diagnostic.OLS.df_resid"><code class="xref py py-obj docutils literal"><span class="pre">df_resid</span></code></a></td>
+<td>The residual degree of freedom, defined as the number of observations minus the rank of the regressor matrix.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.endog_names.html#statsmodels.sandbox.stats.diagnostic.OLS.endog_names" title="statsmodels.sandbox.stats.diagnostic.OLS.endog_names"><code class="xref py py-obj docutils literal"><span class="pre">endog_names</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.OLS.exog_names.html#statsmodels.sandbox.stats.diagnostic.OLS.exog_names" title="statsmodels.sandbox.stats.diagnostic.OLS.exog_names"><code class="xref py py-obj docutils literal"><span class="pre">exog_names</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.stats.diagnostic.OLS.__init__.html" class="btn btn-neutral float-right" title="6.8.3.3.4.1.1. statsmodels.sandbox.stats.diagnostic.OLS.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.stats.diagnostic.HetGoldfeldQuandt.run.html" class="btn btn-neutral" title="6.8.3.3.3.1.1. statsmodels.sandbox.stats.diagnostic.HetGoldfeldQuandt.run" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

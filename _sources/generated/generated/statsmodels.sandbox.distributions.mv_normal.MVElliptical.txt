@@ -1,0 +1,44 @@
+statsmodels.sandbox.distributions.mv_normal.MVElliptical
+========================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.mv_normal
+.. autoclass:: MVElliptical
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MVElliptical.__init__
+   ~MVElliptical.affine_transformed
+   ~MVElliptical.cdf
+   ~MVElliptical.expect_mc
+   ~MVElliptical.logpdf
+   ~MVElliptical.marginal
+   ~MVElliptical.normalize
+   ~MVElliptical.normalized
+   ~MVElliptical.normalized2
+   ~MVElliptical.pdf
+   ~MVElliptical.rvs
+   ~MVElliptical.standardize
+   ~MVElliptical.standardized
+   ~MVElliptical.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~MVElliptical.corr
+   ~MVElliptical.std
+   ~MVElliptical.std_sigma
+

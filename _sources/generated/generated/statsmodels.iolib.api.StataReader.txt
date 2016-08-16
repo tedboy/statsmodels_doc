@@ -1,0 +1,38 @@
+statsmodels.iolib.api.StataReader
+=================================
+
+.. currentmodule:: statsmodels.iolib.api
+.. autoclass:: StataReader
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~StataReader.__init__
+   ~StataReader.dataset
+   ~StataReader.file_format
+   ~StataReader.file_headers
+   ~StataReader.file_label
+   ~StataReader.file_timestamp
+   ~StataReader.variables
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~StataReader.DTYPE_MAP
+   ~StataReader.MISSING_VALUES
+   ~StataReader.TYPE_MAP
+   ~StataReader.i
+

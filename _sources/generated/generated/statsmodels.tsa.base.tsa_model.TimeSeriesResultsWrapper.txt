@@ -1,0 +1,26 @@
+statsmodels.tsa.base.tsa_model.TimeSeriesResultsWrapper
+=======================================================
+
+.. currentmodule:: statsmodels.tsa.base.tsa_model
+.. autoclass:: TimeSeriesResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TimeSeriesResultsWrapper.__init__
+   ~TimeSeriesResultsWrapper.conf_int
+   ~TimeSeriesResultsWrapper.cov_params
+   ~TimeSeriesResultsWrapper.load
+   ~TimeSeriesResultsWrapper.predict
+   ~TimeSeriesResultsWrapper.save
+
+
+
+
+

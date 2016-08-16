@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.7.7. statsmodels.tools.grouputils &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="4. Other modules of interest" href="../submain.html"/>
+        <link rel="next" title="4.7.7.1.1.1. statsmodels.tools.grouputils.combine_indices" href="statsmodels.tools.grouputils.combine_indices.html"/>
+        <link rel="prev" title="4.7.6.1.18. statsmodels.tools.eval_measures.vare" href="statsmodels.tools.eval_measures.vare.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../submain.html#statsmodel-tools">4.7. statsmodel.tools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.catadd.html">4.7.1. statsmodels.tools.catadd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.compatibility.html">4.7.2. statsmodels.tools.compatibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.data.html">4.7.3. statsmodels.tools.data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.decorators.html">4.7.4. statsmodels.tools.decorators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.dump2module.html">4.7.5. statsmodels.tools.dump2module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.eval_measures.html">4.7.6. statsmodels.tools.eval_measures</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.7.7. statsmodels.tools.grouputils</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#notes">4.7.7.1. Notes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.linalg.html">4.7.8. statsmodels.tools.linalg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.numdiff.html">4.7.9. statsmodels.tools.numdiff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.parallel.html">4.7.10. statsmodels.tools.parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.rootfinding.html">4.7.11. statsmodels.tools.rootfinding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.sm_exceptions.html">4.7.12. statsmodels.tools.sm_exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.testing.html">4.7.13. statsmodels.tools.testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.tools.html">4.7.14. statsmodels.tools.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.transform_model.html">4.7.15. statsmodels.tools.transform_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tools.web.html">4.7.16. statsmodels.tools.web</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+      <li>4.7.7. statsmodels.tools.grouputils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.tools.grouputils.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.tools.grouputils">
+<span id="statsmodels-tools-grouputils"></span><h1>4.7.7. statsmodels.tools.grouputils<a class="headerlink" href="#module-statsmodels.tools.grouputils" title="Permalink to this headline">¶</a></h1>
+<p>Tools for working with groups</p>
+<p>This provides several functions to work with groups and a Group class that
+keeps track of the different representations and has methods to work more
+easily with groups.</p>
+<p>Author: Josef Perktold,
+Author: Nathaniel Smith, recipe for sparse_dummies on scipy user mailing list</p>
+<p>Created on Tue Nov 29 15:44:53 2011 : sparse_dummies
+Created on Wed Nov 30 14:28:24 2011 : combine_indices
+changes: add Group class</p>
+<div class="section" id="notes">
+<h2>4.7.7.1. Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p>This reverses the class I used before, where the class was for the data and
+the group was auxiliary. Here, it is only the group, no data is kept.</p>
+<p>sparse_dummies needs checking for corner cases, e.g.
+what if a category level has zero elements? This can happen with subset</p>
+<blockquote>
+<div>selection even if the original groups where defined as arange.</div></blockquote>
+<p>Not all methods and options have been tried out yet after refactoring</p>
+<p>need more efficient loop if groups are sorted -&gt; see GroupSorted.group_iter</p>
+<div class="section" id="functions">
+<h3>4.7.7.1.1. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.grouputils.combine_indices.html#statsmodels.tools.grouputils.combine_indices" title="statsmodels.tools.grouputils.combine_indices"><code class="xref py py-obj docutils literal"><span class="pre">combine_indices</span></code></a>(groups[,&nbsp;prefix,&nbsp;sep,&nbsp;...])</td>
+<td>use np.unique to get integer group indices for product, intersection</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.grouputils.dummy_sparse.html#statsmodels.tools.grouputils.dummy_sparse" title="statsmodels.tools.grouputils.dummy_sparse"><code class="xref py py-obj docutils literal"><span class="pre">dummy_sparse</span></code></a>(groups)</td>
+<td>create a sparse indicator from a group array with integer labels</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.grouputils.group_sums.html#statsmodels.tools.grouputils.group_sums" title="statsmodels.tools.grouputils.group_sums"><code class="xref py py-obj docutils literal"><span class="pre">group_sums</span></code></a>(x,&nbsp;group[,&nbsp;use_bincount])</td>
+<td>simple bincount version, again</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.grouputils.group_sums_dummy.html#statsmodels.tools.grouputils.group_sums_dummy" title="statsmodels.tools.grouputils.group_sums_dummy"><code class="xref py py-obj docutils literal"><span class="pre">group_sums_dummy</span></code></a>(x,&nbsp;group_dummy)</td>
+<td>sum by groups given group dummy variable</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.grouputils.npc_unique.html#statsmodels.tools.grouputils.npc_unique" title="statsmodels.tools.grouputils.npc_unique"><code class="xref py py-obj docutils literal"><span class="pre">npc_unique</span></code></a>(ar[,&nbsp;return_index,&nbsp;return_inverse])</td>
+<td>Find the unique elements of an array.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h3>4.7.7.1.2. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tools.grouputils.Group.html#statsmodels.tools.grouputils.Group" title="statsmodels.tools.grouputils.Group"><code class="xref py py-obj docutils literal"><span class="pre">Group</span></code></a>(group[,&nbsp;name])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tools.grouputils.GroupSorted.html#statsmodels.tools.grouputils.GroupSorted" title="statsmodels.tools.grouputils.GroupSorted"><code class="xref py py-obj docutils literal"><span class="pre">GroupSorted</span></code></a>(group[,&nbsp;name])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tools.grouputils.Grouping.html#statsmodels.tools.grouputils.Grouping" title="statsmodels.tools.grouputils.Grouping"><code class="xref py py-obj docutils literal"><span class="pre">Grouping</span></code></a>(index[,&nbsp;names])</td>
+<td>index : index-like</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.tools.grouputils.combine_indices.html" class="btn btn-neutral float-right" title="4.7.7.1.1.1. statsmodels.tools.grouputils.combine_indices" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.tools.eval_measures.vare.html" class="btn btn-neutral" title="4.7.6.1.18. statsmodels.tools.eval_measures.vare" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

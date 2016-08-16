@@ -1,0 +1,41 @@
+statsmodels.base._penalties
+===========================
+
+.. automodule:: statsmodels.base._penalties
+
+   
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CovariancePenalty
+      L2
+      PSD
+      Penalty
+      PseudoHuber
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.base._penalties.CovariancePenalty
+       generated/statsmodels.base._penalties.L2
+       generated/statsmodels.base._penalties.PSD
+       generated/statsmodels.base._penalties.Penalty
+       generated/statsmodels.base._penalties.PseudoHuber
+
+   
+   
+
+   
+   
+   

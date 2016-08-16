@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.8.6. statsmodels.sandbox.stats.runs &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.8.6.1.1. statsmodels.sandbox.stats.runs.cochrans_q" href="statsmodels.sandbox.stats.runs.cochrans_q.html"/>
+        <link rel="prev" title="6.8.5.3.5.1.3. statsmodels.sandbox.stats.multicomp.TukeyHSDResults.summary" href="generated/statsmodels.sandbox.stats.multicomp.TukeyHSDResults.summary.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.html">6.8.1. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.html">6.8.2. statsmodels.sandbox.stats.contrast_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.html">6.8.3. statsmodels.sandbox.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.ex_newtests.html">6.8.4. statsmodels.sandbox.stats.ex_newtests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.html">6.8.5. statsmodels.sandbox.stats.multicomp</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.8.6. statsmodels.sandbox.stats.runs</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">6.8.6.1. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">6.8.6.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.stats_dhuard.html">6.8.7. statsmodels.sandbox.stats.stats_dhuard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.8.6. statsmodels.sandbox.stats.runs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.stats.runs.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.stats.runs">
+<span id="statsmodels-sandbox-stats-runs"></span><h1>6.8.6. statsmodels.sandbox.stats.runs<a class="headerlink" href="#module-statsmodels.sandbox.stats.runs" title="Permalink to this headline">¶</a></h1>
+<p>runstest</p>
+<p>formulas for mean and var of runs taken from SAS manual NPAR tests, also idea
+for runstest_1samp and runstest_2samp</p>
+<p>Description in NIST handbook and dataplot doesn&#8217;t explain their expected
+values, or variance</p>
+<p>Note:
+There are (at least) two definitions of runs used in literature. The classical
+definition which is also used here, is that runs are sequences of identical
+observations separated by observations with different realizations.
+The second definition allows for overlapping runs, or runs where counting a
+run is also started after a run of a fixed length of the same kind.</p>
+<p>TODO
+* add one-sided tests where possible or where it makes sense</p>
+<div class="section" id="functions">
+<h2>6.8.6.1. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.runs.cochrans_q.html#statsmodels.sandbox.stats.runs.cochrans_q" title="statsmodels.sandbox.stats.runs.cochrans_q"><code class="xref py py-obj docutils literal"><span class="pre">cochrans_q</span></code></a>(x)</td>
+<td>Cochran&#8217;s Q test for identical effect of k treatments</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.runs.mcnemar.html#statsmodels.sandbox.stats.runs.mcnemar" title="statsmodels.sandbox.stats.runs.mcnemar"><code class="xref py py-obj docutils literal"><span class="pre">mcnemar</span></code></a>(x[,&nbsp;y,&nbsp;exact,&nbsp;correction])</td>
+<td>McNemar test</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.runs.median_test_ksample.html#statsmodels.sandbox.stats.runs.median_test_ksample" title="statsmodels.sandbox.stats.runs.median_test_ksample"><code class="xref py py-obj docutils literal"><span class="pre">median_test_ksample</span></code></a>(x,&nbsp;groups)</td>
+<td>chisquare test for equality of median/location</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.runs.runstest_1samp.html#statsmodels.sandbox.stats.runs.runstest_1samp" title="statsmodels.sandbox.stats.runs.runstest_1samp"><code class="xref py py-obj docutils literal"><span class="pre">runstest_1samp</span></code></a>(x[,&nbsp;cutoff,&nbsp;correction])</td>
+<td>use runs test on binary discretized data above/below cutoff</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.runs.runstest_2samp.html#statsmodels.sandbox.stats.runs.runstest_2samp" title="statsmodels.sandbox.stats.runs.runstest_2samp"><code class="xref py py-obj docutils literal"><span class="pre">runstest_2samp</span></code></a>(x[,&nbsp;y,&nbsp;groups,&nbsp;correction])</td>
+<td>Wald-Wolfowitz runstest for two samples</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.runs.symmetry_bowker.html#statsmodels.sandbox.stats.runs.symmetry_bowker" title="statsmodels.sandbox.stats.runs.symmetry_bowker"><code class="xref py py-obj docutils literal"><span class="pre">symmetry_bowker</span></code></a>(table)</td>
+<td>Test for symmetry of a (k, k) square contingency table</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>6.8.6.2. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.runs.Runs.html#statsmodels.sandbox.stats.runs.Runs" title="statsmodels.sandbox.stats.runs.Runs"><code class="xref py py-obj docutils literal"><span class="pre">Runs</span></code></a>(x)</td>
+<td>class for runs in a binary sequence</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.runs.RunsProb.html#statsmodels.sandbox.stats.runs.RunsProb" title="statsmodels.sandbox.stats.runs.RunsProb"><code class="xref py py-obj docutils literal"><span class="pre">RunsProb</span></code></a></td>
+<td>distribution of success runs of length k or more (classical definition)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.runs.TotalRunsProb.html#statsmodels.sandbox.stats.runs.TotalRunsProb" title="statsmodels.sandbox.stats.runs.TotalRunsProb"><code class="xref py py-obj docutils literal"><span class="pre">TotalRunsProb</span></code></a>(n0,&nbsp;n1)</td>
+<td>class for the probability distribution of total runs</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.stats.runs.cochrans_q.html" class="btn btn-neutral float-right" title="6.8.6.1.1. statsmodels.sandbox.stats.runs.cochrans_q" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.sandbox.stats.multicomp.TukeyHSDResults.summary.html" class="btn btn-neutral" title="6.8.5.3.5.1.3. statsmodels.sandbox.stats.multicomp.TukeyHSDResults.summary" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

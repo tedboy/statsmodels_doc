@@ -1,0 +1,35 @@
+statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray
+============================================================
+
+.. currentmodule:: statsmodels.sandbox.archive.linalg_decomp_1
+.. autoclass:: PlainMatrixArray
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PlainMatrixArray.__init__
+   ~PlainMatrixArray.m_y
+   ~PlainMatrixArray.mdet
+   ~PlainMatrixArray.meigh
+   ~PlainMatrixArray.mhalf
+   ~PlainMatrixArray.minv
+   ~PlainMatrixArray.minv_y
+   ~PlainMatrixArray.minvhalf
+   ~PlainMatrixArray.mlogdet
+   ~PlainMatrixArray.mpinv
+   ~PlainMatrixArray.xpinv
+   ~PlainMatrixArray.y_m_yt
+   ~PlainMatrixArray.y_minv_yt
+   ~PlainMatrixArray.yt_m_y
+   ~PlainMatrixArray.yt_minv_y
+
+
+
+
+

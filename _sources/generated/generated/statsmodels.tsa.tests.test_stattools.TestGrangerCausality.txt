@@ -1,0 +1,22 @@
+statsmodels.tsa.tests.test_stattools.TestGrangerCausality
+=========================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_stattools
+.. autoclass:: TestGrangerCausality
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestGrangerCausality.test_granger_fails_on_nobs_check
+   ~TestGrangerCausality.test_grangercausality
+
+
+
+
+

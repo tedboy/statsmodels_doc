@@ -1,0 +1,23 @@
+statsmodels.sandbox.distributions.transform_functions.LogFunc
+=============================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.transform_functions
+.. autoclass:: LogFunc
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~LogFunc.deriv
+   ~LogFunc.func
+   ~LogFunc.inverse
+
+
+
+
+

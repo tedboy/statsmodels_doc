@@ -1,0 +1,44 @@
+statsmodels.miscmodels.count.PoissonZiGMLE
+==========================================
+
+.. currentmodule:: statsmodels.miscmodels.count
+
+.. autoclass:: PoissonZiGMLE
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~PoissonZiGMLE.__init__
+      ~PoissonZiGMLE.expandparams
+      ~PoissonZiGMLE.fit
+      ~PoissonZiGMLE.from_formula
+      ~PoissonZiGMLE.hessian
+      ~PoissonZiGMLE.information
+      ~PoissonZiGMLE.initialize
+      ~PoissonZiGMLE.jac
+      ~PoissonZiGMLE.loglike
+      ~PoissonZiGMLE.loglikeobs
+      ~PoissonZiGMLE.nloglike
+      ~PoissonZiGMLE.nloglikeobs
+      ~PoissonZiGMLE.predict
+      ~PoissonZiGMLE.reduceparams
+      ~PoissonZiGMLE.score
+      ~PoissonZiGMLE.score_obs
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~PoissonZiGMLE.endog_names
+      ~PoissonZiGMLE.exog_names
+   
+   

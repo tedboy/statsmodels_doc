@@ -1,0 +1,360 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.distributions.quantize &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.distributions.quantize</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.distributions.quantize</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Quantizing a continuous distribution in 2d</span>
+
+<span class="sd">Author: josef-pktd</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span><span class="p">,</span> <span class="n">lmap</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="prob_bv_rectangle"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.quantize.prob_bv_rectangle.html#statsmodels.sandbox.distributions.quantize.prob_bv_rectangle">[docs]</a><span class="k">def</span> <span class="nf">prob_bv_rectangle</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">cdf</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;helper function for probability of a rectangle in a bivariate distribution</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    lower : array_like</span>
+<span class="sd">        tuple of lower integration bounds</span>
+<span class="sd">    upper : array_like</span>
+<span class="sd">        tuple of upper integration bounds</span>
+<span class="sd">    cdf : callable</span>
+<span class="sd">        cdf(x,y), cumulative distribution function of bivariate distribution</span>
+
+
+<span class="sd">    how does this generalize to more than 2 variates ?</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">probuu</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">(</span><span class="o">*</span><span class="n">upper</span><span class="p">)</span>
+    <span class="n">probul</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">(</span><span class="n">upper</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">lower</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">problu</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">(</span><span class="n">lower</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">upper</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="n">probll</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">(</span><span class="o">*</span><span class="n">lower</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">probuu</span> <span class="o">-</span> <span class="n">probul</span> <span class="o">-</span> <span class="n">problu</span> <span class="o">+</span> <span class="n">probll</span></div>
+
+<div class="viewcode-block" id="prob_mv_grid"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.quantize.prob_mv_grid.html#statsmodels.sandbox.distributions.quantize.prob_mv_grid">[docs]</a><span class="k">def</span> <span class="nf">prob_mv_grid</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">axis</span><span class="o">=-</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;helper function for probability of a rectangle grid in a multivariate distribution</span>
+
+<span class="sd">    how does this generalize to more than 2 variates ?</span>
+
+<span class="sd">    bins : tuple</span>
+<span class="sd">        tuple of bin edges, currently it is assumed that they broadcast</span>
+<span class="sd">        correctly</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">bins</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">):</span>
+        <span class="n">bins</span> <span class="o">=</span> <span class="n">lmap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span>
+        <span class="n">n_dim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span>
+        <span class="n">bins_</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1">#broadcast if binedges are 1d</span>
+        <span class="k">if</span> <span class="nb">all</span><span class="p">(</span><span class="n">lmap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">,</span> <span class="n">bins</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">n_dim</span><span class="p">)):</span>
+            <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_dim</span><span class="p">):</span>
+                <span class="n">sl</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">n_dim</span>
+                <span class="n">sl</span><span class="p">[</span><span class="n">d</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                <span class="n">bins_</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bins</span><span class="p">[</span><span class="n">d</span><span class="p">][</span><span class="n">sl</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span> <span class="c1">#assume it is already correctly broadcasted</span>
+        <span class="n">n_dim</span> <span class="o">=</span> <span class="n">bins</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">bins_</span> <span class="o">=</span> <span class="n">bins</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">))</span>
+    <span class="n">cdf_values</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">(</span><span class="n">bins_</span><span class="p">)</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">cdf_values</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="k">for</span> <span class="n">d</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_dim</span><span class="p">):</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">probs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="n">d</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">probs</span></div>
+
+
+<div class="viewcode-block" id="prob_quantize_cdf"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.quantize.prob_quantize_cdf.html#statsmodels.sandbox.distributions.quantize.prob_quantize_cdf">[docs]</a><span class="k">def</span> <span class="nf">prob_quantize_cdf</span><span class="p">(</span><span class="n">binsx</span><span class="p">,</span> <span class="n">binsy</span><span class="p">,</span> <span class="n">cdf</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;quantize a continuous distribution given by a cdf</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    binsx : array_like, 1d</span>
+<span class="sd">        binedges</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">binsx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binsx</span><span class="p">)</span>
+    <span class="n">binsy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binsy</span><span class="p">)</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binsx</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">ny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binsy</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">))</span> <span class="c1">#np.empty(nx,ny)</span>
+    <span class="n">cdf_values</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">(</span><span class="n">binsx</span><span class="p">[:,</span><span class="kc">None</span><span class="p">],</span> <span class="n">binsy</span><span class="p">)</span>
+    <span class="n">cdf_func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">cdf_values</span><span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">xind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nx</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">yind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ny</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="p">(</span><span class="n">xind</span><span class="p">,</span> <span class="n">yind</span><span class="p">)</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="p">(</span><span class="n">xind</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">yind</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1">#print upper,lower,</span>
+            <span class="n">probs</span><span class="p">[</span><span class="n">xind</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">yind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob_bv_rectangle</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">cdf_func</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">probs</span></div>
+
+<div class="viewcode-block" id="prob_quantize_cdf_old"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.quantize.prob_quantize_cdf_old.html#statsmodels.sandbox.distributions.quantize.prob_quantize_cdf_old">[docs]</a><span class="k">def</span> <span class="nf">prob_quantize_cdf_old</span><span class="p">(</span><span class="n">binsx</span><span class="p">,</span> <span class="n">binsy</span><span class="p">,</span> <span class="n">cdf</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;quantize a continuous distribution given by a cdf</span>
+
+<span class="sd">    old version without precomputing cdf values</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    binsx : array_like, 1d</span>
+<span class="sd">        binedges</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">binsx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binsx</span><span class="p">)</span>
+    <span class="n">binsy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">binsy</span><span class="p">)</span>
+    <span class="n">nx</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binsx</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">ny</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">binsy</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+    <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">nx</span><span class="p">,</span> <span class="n">ny</span><span class="p">))</span> <span class="c1">#np.empty(nx,ny)</span>
+    <span class="k">for</span> <span class="n">xind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nx</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">yind</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">ny</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="p">(</span><span class="n">binsx</span><span class="p">[</span><span class="n">xind</span><span class="p">],</span> <span class="n">binsy</span><span class="p">[</span><span class="n">yind</span><span class="p">])</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="p">(</span><span class="n">binsx</span><span class="p">[</span><span class="n">xind</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">binsy</span><span class="p">[</span><span class="n">yind</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1">#print upper,lower,</span>
+            <span class="n">probs</span><span class="p">[</span><span class="n">xind</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">yind</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">prob_bv_rectangle</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">cdf</span><span class="p">)</span>
+
+    <span class="k">assert</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span><span class="o">.</span><span class="n">any</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">probs</span></div>
+
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_almost_equal</span>
+    <span class="n">unif_2d</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">:</span> <span class="n">x</span><span class="o">*</span><span class="n">y</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">prob_bv_rectangle</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">unif_2d</span><span class="p">),</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">prob_bv_rectangle</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],</span> <span class="n">unif_2d</span><span class="p">),</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+
+    <span class="n">arr1b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">],</span>
+                       <span class="p">[</span> <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">],</span>
+                       <span class="p">[</span> <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">],</span>
+                       <span class="p">[</span> <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">],</span>
+                       <span class="p">[</span> <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">,</span>  <span class="mf">0.05</span><span class="p">]])</span>
+
+    <span class="n">arr1a</span> <span class="o">=</span> <span class="n">prob_quantize_cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="n">unif_2d</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">arr1a</span><span class="p">,</span> <span class="n">arr1b</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+
+    <span class="n">arr2b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.25</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">0.25</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">0.25</span><span class="p">],</span>
+                      <span class="p">[</span> <span class="mf">0.25</span><span class="p">]])</span>
+    <span class="n">arr2a</span> <span class="o">=</span> <span class="n">prob_quantize_cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">unif_2d</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">arr2a</span><span class="p">,</span> <span class="n">arr2b</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+
+    <span class="n">arr3b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">0.25</span><span class="p">,</span>  <span class="mf">0.25</span><span class="p">,</span>  <span class="mf">0.25</span><span class="p">,</span>  <span class="mf">0.25</span><span class="p">]])</span>
+    <span class="n">arr3a</span> <span class="o">=</span> <span class="n">prob_quantize_cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">5</span><span class="p">),</span> <span class="n">unif_2d</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">arr3a</span><span class="p">,</span> <span class="n">arr3b</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

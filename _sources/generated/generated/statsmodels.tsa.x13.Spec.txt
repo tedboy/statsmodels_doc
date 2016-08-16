@@ -1,0 +1,30 @@
+statsmodels.tsa.x13.Spec
+========================
+
+.. currentmodule:: statsmodels.tsa.x13
+.. autoclass:: Spec
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Spec.create_spec
+   ~Spec.set_options
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Spec.spec_name
+

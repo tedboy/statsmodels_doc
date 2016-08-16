@@ -1,0 +1,24 @@
+statsmodels.genmod.generalized_estimating_equations.Link
+========================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: Link
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Link.deriv
+   ~Link.deriv2
+   ~Link.inverse
+   ~Link.inverse_deriv
+
+
+
+
+

@@ -1,0 +1,29 @@
+statsmodels.genmod.generalized_estimating_equations.GlobalOddsRatio
+===================================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: GlobalOddsRatio
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GlobalOddsRatio.__init__
+   ~GlobalOddsRatio.covariance_matrix
+   ~GlobalOddsRatio.covariance_matrix_solve
+   ~GlobalOddsRatio.get_eyy
+   ~GlobalOddsRatio.initialize
+   ~GlobalOddsRatio.observed_crude_oddsratio
+   ~GlobalOddsRatio.pooled_odds_ratio
+   ~GlobalOddsRatio.summary
+   ~GlobalOddsRatio.update
+
+
+
+
+

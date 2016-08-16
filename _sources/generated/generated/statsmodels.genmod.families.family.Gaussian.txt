@@ -1,0 +1,40 @@
+statsmodels.genmod.families.family.Gaussian
+===========================================
+
+.. currentmodule:: statsmodels.genmod.families.family
+.. autoclass:: Gaussian
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Gaussian.__init__
+   ~Gaussian.deviance
+   ~Gaussian.fitted
+   ~Gaussian.loglike
+   ~Gaussian.predict
+   ~Gaussian.resid_anscombe
+   ~Gaussian.resid_dev
+   ~Gaussian.starting_mu
+   ~Gaussian.weights
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Gaussian.link
+   ~Gaussian.links
+   ~Gaussian.valid
+   ~Gaussian.variance
+

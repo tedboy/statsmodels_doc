@@ -1,0 +1,486 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tools.decorators &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tools.decorators</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tools.decorators</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tools.sm_exceptions</span> <span class="k">import</span> <span class="n">CacheWriteWarning</span>
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_equal</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">get_function_name</span>
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;resettable_cache&#39;</span><span class="p">,</span><span class="s1">&#39;cache_readonly&#39;</span><span class="p">,</span> <span class="s1">&#39;cache_writable&#39;</span><span class="p">]</span>
+
+<div class="viewcode-block" id="ResettableCache"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.decorators.ResettableCache.html#statsmodels.base.data.ResettableCache">[docs]</a><span class="k">class</span> <span class="nc">ResettableCache</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Dictionary whose elements mey depend one from another.</span>
+
+<span class="sd">    If entry `B` depends on entry `A`, changing the values of entry `A` will</span>
+<span class="sd">    reset the value of entry `B` to a default (None); deleteing entry `A` will</span>
+<span class="sd">    delete entry `B`.  The connections between entries are stored in a</span>
+<span class="sd">    `_resetdict` private attribute.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    reset : dictionary, optional</span>
+<span class="sd">        An optional dictionary, associated a sequence of entries to any key</span>
+<span class="sd">        of the object.</span>
+<span class="sd">    items : var, optional</span>
+<span class="sd">        An optional dictionary used to initialize the dictionary</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; reset = dict(a=(&#39;b&#39;,), b=(&#39;c&#39;,))</span>
+<span class="sd">    &gt;&gt;&gt; cache = resettable_cache(a=0, b=1, c=2, reset=reset)</span>
+<span class="sd">    &gt;&gt;&gt; assert_equal(cache, dict(a=0, b=1, c=2))</span>
+
+<span class="sd">    &gt;&gt;&gt; print(&quot;Try resetting a&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; cache[&#39;a&#39;] = 1</span>
+<span class="sd">    &gt;&gt;&gt; assert_equal(cache, dict(a=1, b=None, c=None))</span>
+<span class="sd">    &gt;&gt;&gt; cache[&#39;c&#39;] = 2</span>
+<span class="sd">    &gt;&gt;&gt; assert_equal(cache, dict(a=1, b=None, c=2))</span>
+<span class="sd">    &gt;&gt;&gt; cache[&#39;b&#39;] = 0</span>
+<span class="sd">    &gt;&gt;&gt; assert_equal(cache, dict(a=1, b=0, c=None))</span>
+
+<span class="sd">    &gt;&gt;&gt; print(&quot;Try deleting b&quot;)</span>
+<span class="sd">    &gt;&gt;&gt; del(cache[&#39;a&#39;])</span>
+<span class="sd">    &gt;&gt;&gt; assert_equal(cache, {})</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="ResettableCache.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.decorators.ResettableCache.__init__.html#statsmodels.base.data.ResettableCache.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_resetdict</span> <span class="o">=</span> <span class="n">reset</span> <span class="ow">or</span> <span class="p">{}</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">items</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="n">__setitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span>
+        <span class="c1">#if hasattr needed for unpickling with protocol=2</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_resetdict&#39;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">mustreset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resetdict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[]):</span>
+                <span class="bp">self</span><span class="p">[</span><span class="n">mustreset</span><span class="p">]</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="n">__delitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">mustreset</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">_resetdict</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">key</span><span class="p">,</span> <span class="p">[]):</span>
+            <span class="k">del</span><span class="p">(</span><span class="bp">self</span><span class="p">[</span><span class="n">mustreset</span><span class="p">])</span></div>
+
+<span class="c1">#    def __getstate__(self):</span>
+<span class="c1">#        print(&#39;pickling wrapper&#39;, self.__dict__)</span>
+<span class="c1">#        return self.__dict__</span>
+<span class="c1">#</span>
+<span class="c1">#    def __setstate__(self, dict_):</span>
+<span class="c1">#        print(&#39;unpickling wrapper&#39;, dict_)</span>
+<span class="c1">#        self.__dict__.update(dict_)</span>
+
+<span class="n">resettable_cache</span> <span class="o">=</span> <span class="n">ResettableCache</span>
+
+<div class="viewcode-block" id="CachedAttribute"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.decorators.CachedAttribute.html#statsmodels.base.data.CachedAttribute">[docs]</a><span class="k">class</span> <span class="nc">CachedAttribute</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="CachedAttribute.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.decorators.CachedAttribute.__init__.html#statsmodels.base.data.CachedAttribute.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">cachename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resetlist</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">fget</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">func</span><span class="o">.</span><span class="n">__name__</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cachename</span> <span class="o">=</span> <span class="n">cachename</span> <span class="ow">or</span> <span class="s1">&#39;_cache&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resetlist</span> <span class="o">=</span> <span class="n">resetlist</span> <span class="ow">or</span> <span class="p">()</span></div>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fget</span>
+        <span class="c1"># Get the cache or set a default one if needed</span>
+        <span class="n">_cachename</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cachename</span>
+        <span class="n">_cache</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_cachename</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_cache</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_cachename</span><span class="p">,</span> <span class="n">resettable_cache</span><span class="p">())</span>
+            <span class="n">_cache</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="n">_cachename</span><span class="p">)</span>
+        <span class="c1"># Get the name of the attribute to set and cache</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">_cachedval</span> <span class="o">=</span> <span class="n">_cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+<span class="c1">#        print(&quot;[_cachedval=%s]&quot; % _cachedval)</span>
+        <span class="k">if</span> <span class="n">_cachedval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Call the &quot;fget&quot; function</span>
+            <span class="n">_cachedval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fget</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+            <span class="c1"># Set the attribute in obj</span>
+<span class="c1">#            print(&quot;Setting %s in cache to %s&quot; % (name, _cachedval))</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">_cache</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">_cachedval</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="nb">setattr</span><span class="p">(</span><span class="n">_cache</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">_cachedval</span><span class="p">)</span>
+            <span class="c1"># Update the reset list if needed (and possible)</span>
+            <span class="n">resetlist</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resetlist</span>
+            <span class="k">if</span> <span class="n">resetlist</span> <span class="ow">is</span> <span class="ow">not</span> <span class="p">():</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">_cache</span><span class="o">.</span><span class="n">_resetdict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resetlist</span>
+                <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                    <span class="k">pass</span>
+<span class="c1">#        else:</span>
+<span class="c1">#            print(&quot;Reading %s from cache (%s)&quot; % (name, _cachedval))</span>
+        <span class="k">return</span> <span class="n">_cachedval</span>
+
+    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">errmsg</span> <span class="o">=</span> <span class="s2">&quot;The attribute &#39;</span><span class="si">%s</span><span class="s2">&#39; cannot be overwritten&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">errmsg</span><span class="p">,</span> <span class="n">CacheWriteWarning</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CachedWritableAttribute"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.decorators.CachedWritableAttribute.html#statsmodels.base.data.CachedWritableAttribute">[docs]</a><span class="k">class</span> <span class="nc">CachedWritableAttribute</span><span class="p">(</span><span class="n">CachedAttribute</span><span class="p">):</span>
+    <span class="c1">#</span>
+    <span class="k">def</span> <span class="nf">__set__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="n">_cache</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cachename</span><span class="p">)</span>
+        <span class="n">name</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">_cache</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">value</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="nb">setattr</span><span class="p">(</span><span class="n">_cache</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">value</span><span class="p">)</span></div>
+
+<span class="k">class</span> <span class="nc">_cache_readonly</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator for CachedAttribute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cachename</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">resetlist</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cachename</span> <span class="o">=</span> <span class="n">cachename</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resetlist</span> <span class="o">=</span> <span class="n">resetlist</span> <span class="ow">or</span> <span class="kc">None</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CachedAttribute</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>
+                               <span class="n">cachename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cachename</span><span class="p">,</span>
+                               <span class="n">resetlist</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resetlist</span><span class="p">)</span>
+<span class="n">cache_readonly</span> <span class="o">=</span> <span class="n">_cache_readonly</span><span class="p">()</span>
+
+<div class="viewcode-block" id="cache_writable"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.ar_model.cache_writable.html#statsmodels.base.data.cache_writable">[docs]</a><span class="k">class</span> <span class="nc">cache_writable</span><span class="p">(</span><span class="n">_cache_readonly</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Decorator for CachedWritableAttribute</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">CachedWritableAttribute</span><span class="p">(</span><span class="n">func</span><span class="p">,</span>
+                                       <span class="n">cachename</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">cachename</span><span class="p">,</span>
+                                       <span class="n">resetlist</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">resetlist</span><span class="p">)</span></div>
+
+
+<span class="c1">#this has been copied from nitime a long time ago</span>
+<span class="c1">#TODO: ceck whether class has change in nitime</span>
+<div class="viewcode-block" id="OneTimeProperty"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.decorators.OneTimeProperty.html#statsmodels.base.data.OneTimeProperty">[docs]</a><span class="k">class</span> <span class="nc">OneTimeProperty</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+
+    <span class="sd">&quot;&quot;&quot;A descriptor to make special properties that become normal attributes.</span>
+
+<span class="sd">    This is meant to be used mostly by the auto_attr decorator in this module.</span>
+<span class="sd">    Author: Fernando Perez, copied from nitime</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="OneTimeProperty.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.decorators.OneTimeProperty.__init__.html#statsmodels.base.data.OneTimeProperty.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">func</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;Create a OneTimeProperty instance.</span>
+
+<span class="sd">         Parameters</span>
+<span class="sd">         ----------</span>
+<span class="sd">           func : method</span>
+
+<span class="sd">             The method that will be called the first time to compute a value.</span>
+<span class="sd">             Afterwards, the method&#39;s name will be a standard attribute holding</span>
+<span class="sd">             the value of this computation.</span>
+<span class="sd">             &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getter</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">get_function_name</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This will be called on attribute access on the class or instance. &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Being called on the class, return the original function. This way,</span>
+            <span class="c1"># introspection works on the class.</span>
+            <span class="c1">#return func</span>
+            <span class="c1">#print(&#39;class access&#39;)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getter</span>
+
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getter</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="c1">#print(&quot;** auto_attr - loading &#39;%s&#39;&quot; % self.name  # dbg)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span></div>
+
+<span class="k">try</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">nose.tools</span> <span class="k">import</span> <span class="n">nottest</span>
+<span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+    <span class="c1"># make a dummy decorator so people that don&#39;t have nose installed</span>
+    <span class="c1"># don&#39;t get an error</span>
+    <span class="k">def</span> <span class="nf">nottest</span><span class="p">(</span><span class="n">fn</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">fn</span>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+<span class="c1">### Tests resettable_cache ----------------------------------------------------</span>
+    <span class="n">reset</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,),</span> <span class="n">b</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,))</span>
+    <span class="n">cache</span> <span class="o">=</span> <span class="n">resettable_cache</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="n">reset</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="c1">#</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Try resetting a&quot;</span><span class="p">)</span>
+    <span class="n">cache</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+    <span class="n">cache</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">cache</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+    <span class="c1">#</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Try deleting b&quot;</span><span class="p">)</span>
+    <span class="k">del</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">])</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="p">{})</span>
+<span class="c1">### ---------------------------------------------------------------------------</span>
+
+
+    <span class="k">class</span> <span class="nc">Example</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+        <span class="c1">#</span>
+        <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_cache</span> <span class="o">=</span> <span class="n">resettable_cache</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="c1">#</span>
+        <span class="nd">@cache_readonly</span>
+        <span class="k">def</span> <span class="nf">b</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">1</span>
+        <span class="nd">@cache_writable</span><span class="p">(</span><span class="n">resetlist</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">)</span>
+        <span class="k">def</span> <span class="nf">c</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">2</span>
+        <span class="nd">@cache_writable</span><span class="p">(</span><span class="n">resetlist</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">))</span>
+        <span class="k">def</span> <span class="nf">d</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">c</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="c1">#</span>
+        <span class="nd">@cache_readonly</span>
+        <span class="k">def</span> <span class="nf">e</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">4</span>
+        <span class="nd">@cache_readonly</span>
+        <span class="k">def</span> <span class="nf">f</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">e</span> <span class="o">+</span> <span class="mi">1</span>
+
+    <span class="n">ex</span> <span class="o">=</span> <span class="n">Example</span><span class="p">()</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(attrs  : </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">__dict__</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;(cached : </span><span class="si">%s</span><span class="s2">)&quot;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">_cache</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Try a   :&quot;</span><span class="p">,</span> <span class="n">ex</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Try accessing/setting a readonly attribute&quot;</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">__dict__</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">_cache</span><span class="o">=</span><span class="p">{}))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Try b #1:&quot;</span><span class="p">,</span> <span class="n">ex</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">ex</span><span class="o">.</span><span class="n">b</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">__dict__</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">_cache</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,)))</span>
+<span class="c1">#   assert_equal(ex.__dict__, dict(a=0, b=1, _cache=dict(b=1)))</span>
+    <span class="n">ex</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Try dict&quot;</span><span class="p">,</span> <span class="n">ex</span><span class="o">.</span><span class="n">__dict__</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">_cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,))</span>
+    <span class="c1">#</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Try accessing/resetting a cachewritable attribute&quot;</span><span class="p">)</span>
+    <span class="n">c</span> <span class="o">=</span> <span class="n">ex</span><span class="o">.</span><span class="n">c</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">_cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">ex</span><span class="o">.</span><span class="n">d</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">d</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">_cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">3</span><span class="p">))</span>
+    <span class="n">ex</span><span class="o">.</span><span class="n">c</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">_cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">ex</span><span class="o">.</span><span class="n">d</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">_cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+    <span class="n">ex</span><span class="o">.</span><span class="n">d</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">ex</span><span class="o">.</span><span class="n">_cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">e</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">f</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

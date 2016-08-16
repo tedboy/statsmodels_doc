@@ -1,0 +1,370 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.7.5.2.1. statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="3.7.5. statsmodels.miscmodels.try_mlecov" href="../statsmodels.miscmodels.try_mlecov.html"/>
+        <link rel="next" title="3.7.5.2.1.1.1. statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.__init__" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.__init__.html"/>
+        <link rel="prev" title="3.7.5.1.8. statsmodels.miscmodels.try_mlecov.mvn_nloglike_obs" href="../statsmodels.miscmodels.try_mlecov.mvn_nloglike_obs.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.miscmodels.api.html">3.7.1. statsmodels.miscmodels.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.miscmodels.count.html">3.7.2. statsmodels.miscmodels.count</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.miscmodels.nonlinls.html">3.7.3. statsmodels.miscmodels.nonlinls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.miscmodels.tmodel.html">3.7.4. statsmodels.miscmodels.tmodel</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.miscmodels.try_mlecov.html">3.7.5. statsmodels.miscmodels.try_mlecov</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.miscmodels.try_mlecov.html#functions">3.7.5.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.miscmodels.try_mlecov.html#classes">3.7.5.2. Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-stats">3.11. statsmodel.stats</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.miscmodels.try_mlecov.html">3.7.5. statsmodels.miscmodels.try_mlecov</a> &raquo;</li>
+        
+      <li>3.7.5.2.1. statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-miscmodels-try-mlecov-genericlikelihoodmodel">
+<h1>3.7.5.2.1. statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel<a class="headerlink" href="#statsmodels-miscmodels-try-mlecov-genericlikelihoodmodel" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel">
+<em class="property">class </em><code class="descclassname">statsmodels.miscmodels.try_mlecov.</code><code class="descname">GenericLikelihoodModel</code><span class="sig-paren">(</span><em>endog</em>, <em>exog=None</em>, <em>loglike=None</em>, <em>score=None</em>, <em>hessian=None</em>, <em>missing='none'</em>, <em>extra_params_names=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/base/model.html#GenericLikelihoodModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Allows the fitting of any likelihood function via maximum likelihood.</p>
+<p>A subclass needs to specify at least the log-likelihood
+If the log-likelihood is specified for each observation, then results that
+require the Jacobian will be available. (The other case is not tested yet.)</p>
+<p class="rubric">Notes</p>
+<p>Optimization methods that require only a likelihood function are &#8216;nm&#8217; and
+&#8216;powell&#8217;</p>
+<p>Optimization methods that require a likelihood function and a
+score/gradient are &#8216;bfgs&#8217;, &#8216;cg&#8217;, and &#8216;ncg&#8217;. A function to compute the
+Hessian is optional for &#8216;ncg&#8217;.</p>
+<p>Optimization method that require a likelihood function, a score/gradient,
+and a Hessian is &#8216;newton&#8217;</p>
+<p>If they are not overwritten by a subclass, then numerical gradient,
+Jacobian and Hessian of the log-likelihood are caclulated by numerical
+forward differentiation. This might results in some cases in precision
+problems, and the Hessian might not be positive definite. Even if the
+Hessian is not positive definite the covariance matrix of the parameter
+estimates based on the outer product of the Jacobian might still be valid.</p>
+<p class="rubric">Examples</p>
+<p>see also subclasses in directory miscmodels</p>
+<p>import statsmodels.api as sm
+data = sm.datasets.spector.load()
+data.exog = sm.add_constant(data.exog)
+# in this dir
+from model import GenericLikelihoodModel
+probit_mod = sm.Probit(data.endog, data.exog)
+probit_res = probit_mod.fit()
+loglike = probit_mod.loglike
+score = probit_mod.score
+mod = GenericLikelihoodModel(data.endog, data.exog, loglike, score)
+res = mod.fit(method=&#8221;nm&#8221;, maxiter = 500)
+import numpy as np
+np.allclose(res.params, probit_res.params)</p>
+<dl class="method">
+<dt id="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>endog</em>, <em>exog=None</em>, <em>loglike=None</em>, <em>score=None</em>, <em>hessian=None</em>, <em>missing='none'</em>, <em>extra_params_names=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/base/model.html#GenericLikelihoodModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>3.7.5.2.1.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.__init__.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.__init__" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(endog[,&nbsp;exog,&nbsp;loglike,&nbsp;score,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.expandparams.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.expandparams" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.expandparams"><code class="xref py py-obj docutils literal"><span class="pre">expandparams</span></code></a>(params)</td>
+<td>expand to full parameter array when some parameters are fixed</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.fit.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.fit" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.fit"><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code></a>([start_params,&nbsp;method,&nbsp;maxiter,&nbsp;...])</td>
+<td>Fit the model using maximum likelihood.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.from_formula.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.from_formula" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.from_formula"><code class="xref py py-obj docutils literal"><span class="pre">from_formula</span></code></a>(formula,&nbsp;data[,&nbsp;subset])</td>
+<td>Create a Model from a formula and dataframe.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.hessian.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.hessian" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.hessian"><code class="xref py py-obj docutils literal"><span class="pre">hessian</span></code></a>(params)</td>
+<td>Hessian of log-likelihood evaluated at params</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.information.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.information" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.information"><code class="xref py py-obj docutils literal"><span class="pre">information</span></code></a>(params)</td>
+<td>Fisher information matrix of model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.initialize.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.initialize" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.jac.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.jac" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.jac"><code class="xref py py-obj docutils literal"><span class="pre">jac</span></code></a>(*args,&nbsp;**kwds)</td>
+<td><cite>jac</cite> is deprecated, use <cite>score_obs</cite> instead!</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.loglike.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.loglike" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.loglike"><code class="xref py py-obj docutils literal"><span class="pre">loglike</span></code></a>(params)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.loglikeobs.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.loglikeobs" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.loglikeobs"><code class="xref py py-obj docutils literal"><span class="pre">loglikeobs</span></code></a>(params)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.nloglike.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.nloglike" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.nloglike"><code class="xref py py-obj docutils literal"><span class="pre">nloglike</span></code></a>(params)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.predict.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.predict" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.predict"><code class="xref py py-obj docutils literal"><span class="pre">predict</span></code></a>(params[,&nbsp;exog])</td>
+<td>After a model has been fit predict returns the fitted values.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.reduceparams.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.reduceparams" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.reduceparams"><code class="xref py py-obj docutils literal"><span class="pre">reduceparams</span></code></a>(params)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.score.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.score" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.score"><code class="xref py py-obj docutils literal"><span class="pre">score</span></code></a>(params)</td>
+<td>Gradient of log-likelihood evaluated at params</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.score_obs.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.score_obs" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.score_obs"><code class="xref py py-obj docutils literal"><span class="pre">score_obs</span></code></a>(params,&nbsp;**kwds)</td>
+<td>Jacobian/Gradient of log-likelihood evaluated at params for each observation.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>3.7.5.2.1.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.endog_names.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.endog_names" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.endog_names"><code class="xref py py-obj docutils literal"><span class="pre">endog_names</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.exog_names.html#statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.exog_names" title="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.exog_names"><code class="xref py py-obj docutils literal"><span class="pre">exog_names</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.__init__.html" class="btn btn-neutral float-right" title="3.7.5.2.1.1.1. statsmodels.miscmodels.try_mlecov.GenericLikelihoodModel.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../statsmodels.miscmodels.try_mlecov.mvn_nloglike_obs.html" class="btn btn-neutral" title="3.7.5.1.8. statsmodels.miscmodels.try_mlecov.mvn_nloglike_obs" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

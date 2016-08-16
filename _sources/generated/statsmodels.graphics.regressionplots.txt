@@ -1,0 +1,53 @@
+statsmodels.graphics.regressionplots
+====================================
+
+.. automodule:: statsmodels.graphics.regressionplots
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      abline_plot
+      add_lowess
+      influence_plot
+      lowess
+      maybe_unwrap_results
+      plot_ccpr
+      plot_ccpr_grid
+      plot_fit
+      plot_leverage_resid2
+      plot_partregress
+      plot_partregress_grid
+      plot_regress_exog
+      wls_prediction_std
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      OLS
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.graphics.regressionplots.OLS
+
+   
+   
+
+   
+   
+   

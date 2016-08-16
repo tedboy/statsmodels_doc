@@ -1,0 +1,55 @@
+statsmodels.sandbox.archive.linalg_covmat
+=========================================
+
+.. automodule:: statsmodels.sandbox.archive.linalg_covmat
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      ar2transform
+      loglike_ar1
+      mvn_loglike
+      mvn_nloglike_obs
+      tiny2zero
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      AffineTransform
+      MultivariateNormal
+      MultivariateNormalChol
+      OneTimeProperty
+      StandardNormal
+      SvdArray
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.archive.linalg_covmat.AffineTransform
+       generated/statsmodels.sandbox.archive.linalg_covmat.MultivariateNormal
+       generated/statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol
+       generated/statsmodels.sandbox.archive.linalg_covmat.OneTimeProperty
+       generated/statsmodels.sandbox.archive.linalg_covmat.StandardNormal
+       generated/statsmodels.sandbox.archive.linalg_covmat.SvdArray
+
+   
+   
+
+   
+   
+   

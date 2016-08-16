@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7.17. Input-Output iolib &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="7. From official doc" href="index.html"/>
+        <link rel="next" title="7.17.2.1. statsmodels.iolib.foreign.StataReader" href="generated/statsmodels.iolib.foreign.StataReader.html"/>
+        <link rel="prev" title="7.16.7.2. statsmodels.graphics.mosaicplot.mosaic" href="generated/statsmodels.graphics.mosaicplot.mosaic.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">7. From official doc</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="regression.html">7.1. Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glm.html">7.2. Generalized Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gee.html">7.3. Generalized Estimating Equations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rlm.html">7.4. Robust Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixed_linear.html">7.5. Linear Mixed Effects Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discretemod.html">7.6. Regression with Discrete Dependent Variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="anova.html">7.7. ANOVA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html">7.8. Time Series analysis <code class="docutils literal"><span class="pre">tsa</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="duration.html">7.9. Models for Survival and Duration Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html">7.10. Statistics <code class="docutils literal"><span class="pre">stats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="nonparametric.html">7.11. Nonparametric Methods <code class="docutils literal"><span class="pre">nonparametric</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="gmm.html">7.12. Generalized Method of Moments <code class="docutils literal"><span class="pre">gmm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="emplike.html">7.13. Empirical Likelihood <code class="docutils literal"><span class="pre">emplike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscmodels.html">7.14. Other Models <code class="docutils literal"><span class="pre">miscmodels</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html">7.15. Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html">7.16. Graphics</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#examples">7.17.1. Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-reference">7.17.2. Module Reference</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.iolib.foreign.StataReader.html">7.17.2.1. statsmodels.iolib.foreign.StataReader</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.iolib.foreign.StataWriter.html">7.17.2.2. statsmodels.iolib.foreign.StataWriter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.iolib.foreign.genfromdta.html">7.17.2.3. statsmodels.iolib.foreign.genfromdta</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.iolib.foreign.savetxt.html">7.17.2.4. statsmodels.iolib.foreign.savetxt</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.iolib.table.SimpleTable.html">7.17.2.5. statsmodels.iolib.table.SimpleTable</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.iolib.table.csv2st.html">7.17.2.6. statsmodels.iolib.table.csv2st</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.iolib.smpickle.save_pickle.html">7.17.2.7. statsmodels.iolib.smpickle.save_pickle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.iolib.smpickle.load_pickle.html">7.17.2.8. statsmodels.iolib.smpickle.load_pickle</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.iolib.summary.Summary.html">7.17.2.9. statsmodels.iolib.summary.Summary</a></li>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.iolib.summary2.Summary.html">7.17.2.10. statsmodels.iolib.summary2.Summary</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">7.18. Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html">7.19. The Datasets Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sandbox.html">7.20. Sandbox</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">7. From official doc</a> &raquo;</li>
+        
+      <li>7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/doc/iolib.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="input-output-iolib">
+<span id="iolib"></span><h1>7.17. Input-Output <code class="xref py py-mod docutils literal"><span class="pre">iolib</span></code><a class="headerlink" href="#input-output-iolib" title="Permalink to this headline">¶</a></h1>
+<p><code class="docutils literal"><span class="pre">statsmodels</span></code> offers some functions for input and output. These include a
+reader for STATA files, a class for generating tables for printing in several
+formats and two helper functions for pickling.</p>
+<p>Users can also leverage the powerful input/output functions provided by <span class="xref std std-ref">pandas.io</span>. Among other things, <code class="docutils literal"><span class="pre">pandas</span></code> (a <code class="docutils literal"><span class="pre">statsmodels</span></code> dependency) allows reading and writing to Excel, CSV, and HDF5 (PyTables).</p>
+<div class="section" id="examples">
+<h2>7.17.1. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><a class="reference external" href="examples/generated/example_wls.html#ols-vs-wls">SimpleTable: Basic example</a></div></blockquote>
+</div>
+<div class="section" id="module-reference">
+<h2>7.17.2. Module Reference<a class="headerlink" href="#module-reference" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.iolib.foreign.StataReader.html#statsmodels.iolib.foreign.StataReader" title="statsmodels.iolib.foreign.StataReader"><code class="xref py py-obj docutils literal"><span class="pre">foreign.StataReader</span></code></a>(fname[,&nbsp;missing_values,&nbsp;...])</td>
+<td>Stata .dta file reader.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.iolib.foreign.StataWriter.html#statsmodels.iolib.foreign.StataWriter" title="statsmodels.iolib.foreign.StataWriter"><code class="xref py py-obj docutils literal"><span class="pre">foreign.StataWriter</span></code></a>(fname,&nbsp;data[,&nbsp;...])</td>
+<td>A class for writing Stata binary dta files from array-like objects</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.iolib.foreign.genfromdta.html#statsmodels.iolib.foreign.genfromdta" title="statsmodels.iolib.foreign.genfromdta"><code class="xref py py-obj docutils literal"><span class="pre">foreign.genfromdta</span></code></a>(fname[,&nbsp;missing_flt,&nbsp;...])</td>
+<td>Returns an ndarray or DataFrame from a Stata .dta file.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.iolib.foreign.savetxt.html#statsmodels.iolib.foreign.savetxt" title="statsmodels.iolib.foreign.savetxt"><code class="xref py py-obj docutils literal"><span class="pre">foreign.savetxt</span></code></a>(fname,&nbsp;X[,&nbsp;names,&nbsp;fmt,&nbsp;...])</td>
+<td>Save an array to a text file.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.iolib.table.SimpleTable.html#statsmodels.iolib.table.SimpleTable" title="statsmodels.iolib.table.SimpleTable"><code class="xref py py-obj docutils literal"><span class="pre">table.SimpleTable</span></code></a>(data[,&nbsp;headers,&nbsp;stubs,&nbsp;...])</td>
+<td>Produce a simple ASCII, CSV, HTML, or LaTeX table from a <em>rectangular</em> (2d!) array of data, not necessarily numerical.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.iolib.table.csv2st.html#statsmodels.iolib.table.csv2st" title="statsmodels.iolib.table.csv2st"><code class="xref py py-obj docutils literal"><span class="pre">table.csv2st</span></code></a>(csvfile[,&nbsp;headers,&nbsp;stubs,&nbsp;title])</td>
+<td>Return SimpleTable instance, created from the data in <cite>csvfile</cite>, which is in comma separated values format.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.iolib.smpickle.save_pickle.html#statsmodels.iolib.smpickle.save_pickle" title="statsmodels.iolib.smpickle.save_pickle"><code class="xref py py-obj docutils literal"><span class="pre">smpickle.save_pickle</span></code></a>(obj,&nbsp;fname)</td>
+<td>Save the object to file via pickling.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.iolib.smpickle.load_pickle.html#statsmodels.iolib.smpickle.load_pickle" title="statsmodels.iolib.smpickle.load_pickle"><code class="xref py py-obj docutils literal"><span class="pre">smpickle.load_pickle</span></code></a>(fname)</td>
+<td>Load a previously saved object from file</td>
+</tr>
+</tbody>
+</table>
+<p>The following are classes and functions used to return the summary of
+estimation results, and mostly intended for internal use. There are currently
+two versions for creating summaries.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.iolib.summary.Summary.html#statsmodels.iolib.summary.Summary" title="statsmodels.iolib.summary.Summary"><code class="xref py py-obj docutils literal"><span class="pre">summary.Summary</span></code></a>()</td>
+<td>class to hold tables for result summary presentation</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.iolib.summary2.Summary.html#statsmodels.iolib.summary2.Summary" title="statsmodels.iolib.summary2.Summary"><code class="xref py py-obj docutils literal"><span class="pre">summary2.Summary</span></code></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/statsmodels.iolib.foreign.StataReader.html" class="btn btn-neutral float-right" title="7.17.2.1. statsmodels.iolib.foreign.StataReader" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.graphics.mosaicplot.mosaic.html" class="btn btn-neutral" title="7.16.7.2. statsmodels.graphics.mosaicplot.mosaic" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

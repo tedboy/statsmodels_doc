@@ -1,0 +1,34 @@
+statsmodels.tsa.tests.test_stattools.CheckADF
+=============================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_stattools
+.. autoclass:: CheckADF
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CheckADF.test_critvalues
+   ~CheckADF.test_pvalue
+   ~CheckADF.test_teststat
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~CheckADF.data
+   ~CheckADF.levels
+   ~CheckADF.x
+   ~CheckADF.y
+

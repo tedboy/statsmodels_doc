@@ -1,0 +1,42 @@
+statsmodels.regression.feasible_gls.WLS
+=======================================
+
+.. currentmodule:: statsmodels.regression.feasible_gls
+.. autoclass:: WLS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~WLS.__init__
+   ~WLS.fit
+   ~WLS.fit_regularized
+   ~WLS.from_formula
+   ~WLS.hessian
+   ~WLS.information
+   ~WLS.initialize
+   ~WLS.loglike
+   ~WLS.predict
+   ~WLS.score
+   ~WLS.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~WLS.df_model
+   ~WLS.df_resid
+   ~WLS.endog_names
+   ~WLS.exog_names
+

@@ -1,0 +1,381 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.base.l1_slsqp &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.base.l1_slsqp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.base.l1_slsqp</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Holds files for l1 regularization of LikelihoodModel, using</span>
+<span class="sd">scipy.optimize.slsqp</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.optimize</span> <span class="k">import</span> <span class="n">fmin_slsqp</span>
+<span class="kn">import</span> <span class="nn">statsmodels.base.l1_solvers_common</span> <span class="k">as</span> <span class="nn">l1_solvers_common</span>
+
+
+<div class="viewcode-block" id="fit_l1_slsqp"><a class="viewcode-back" href="../../../generated/statsmodels.discrete.discrete_model.fit_l1_slsqp.html#statsmodels.base.l1_slsqp.fit_l1_slsqp">[docs]</a><span class="k">def</span> <span class="nf">fit_l1_slsqp</span><span class="p">(</span>
+        <span class="n">f</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">start_params</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">kwargs</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">1000</span><span class="p">,</span>
+        <span class="n">callback</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">retall</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">hess</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Solve the l1 regularized problem using scipy.optimize.fmin_slsqp().</span>
+
+<span class="sd">    Specifically:  We convert the convex but non-smooth problem</span>
+
+<span class="sd">    .. math:: \\min_\\beta f(\\beta) + \\sum_k\\alpha_k |\\beta_k|</span>
+
+<span class="sd">    via the transformation to the smooth, convex, constrained problem in twice</span>
+<span class="sd">    as many variables (adding the &quot;added variables&quot; :math:`u_k`)</span>
+
+<span class="sd">    .. math:: \\min_{\\beta,u} f(\\beta) + \\sum_k\\alpha_k u_k,</span>
+
+<span class="sd">    subject to</span>
+
+<span class="sd">    .. math:: -u_k \\leq \\beta_k \\leq u_k.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    All the usual parameters from LikelhoodModel.fit</span>
+<span class="sd">    alpha : non-negative scalar or numpy array (same size as parameters)</span>
+<span class="sd">        The weight multiplying the l1 penalty term</span>
+<span class="sd">    trim_mode : &#39;auto, &#39;size&#39;, or &#39;off&#39;</span>
+<span class="sd">        If not &#39;off&#39;, trim (set to zero) parameters that would have been zero</span>
+<span class="sd">            if the solver reached the theoretical minimum.</span>
+<span class="sd">        If &#39;auto&#39;, trim params using the Theory above.</span>
+<span class="sd">        If &#39;size&#39;, trim params if they have very small absolute value</span>
+<span class="sd">    size_trim_tol : float or &#39;auto&#39; (default = &#39;auto&#39;)</span>
+<span class="sd">        For use when trim_mode === &#39;size&#39;</span>
+<span class="sd">    auto_trim_tol : float</span>
+<span class="sd">        For sue when trim_mode == &#39;auto&#39;.  Use</span>
+<span class="sd">    qc_tol : float</span>
+<span class="sd">        Print warning and don&#39;t allow auto trim when (ii) in &quot;Theory&quot; (above)</span>
+<span class="sd">        is violated by this much.</span>
+<span class="sd">    qc_verbose : Boolean</span>
+<span class="sd">        If true, print out a full QC report upon failure</span>
+<span class="sd">    acc : float (default 1e-6)</span>
+<span class="sd">        Requested accuracy as used by slsqp</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">start_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">start_params</span><span class="p">)</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+
+    <span class="c1">### Extract values</span>
+    <span class="c1"># k_params is total number of covariates,</span>
+    <span class="c1"># possibly including a leading constant.</span>
+    <span class="n">k_params</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">start_params</span><span class="p">)</span>
+    <span class="c1"># The start point</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">start_params</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">start_params</span><span class="p">))</span>
+    <span class="c1"># alpha is the regularization parameter</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;alpha_rescaled&#39;</span><span class="p">])</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="c1"># Make sure it&#39;s a vector</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">k_params</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="n">alpha</span><span class="o">.</span><span class="n">min</span><span class="p">()</span> <span class="o">&gt;=</span> <span class="mi">0</span>
+    <span class="c1"># Convert display parameters to scipy.optimize form</span>
+    <span class="n">disp_slsqp</span> <span class="o">=</span> <span class="n">_get_disp_slsqp</span><span class="p">(</span><span class="n">disp</span><span class="p">,</span> <span class="n">retall</span><span class="p">)</span>
+    <span class="c1"># Set/retrieve the desired accuracy</span>
+    <span class="n">acc</span> <span class="o">=</span> <span class="n">kwargs</span><span class="o">.</span><span class="n">setdefault</span><span class="p">(</span><span class="s1">&#39;acc&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+
+    <span class="c1">### Wrap up for use in fmin_slsqp</span>
+    <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x_full</span><span class="p">:</span> <span class="n">_objective_func</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x_full</span><span class="p">,</span> <span class="n">k_params</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">f_ieqcons_wrap</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x_full</span><span class="p">:</span> <span class="n">_f_ieqcons</span><span class="p">(</span><span class="n">x_full</span><span class="p">,</span> <span class="n">k_params</span><span class="p">)</span>
+    <span class="n">fprime_wrap</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x_full</span><span class="p">:</span> <span class="n">_fprime</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">x_full</span><span class="p">,</span> <span class="n">k_params</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)</span>
+    <span class="n">fprime_ieqcons_wrap</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x_full</span><span class="p">:</span> <span class="n">_fprime_ieqcons</span><span class="p">(</span><span class="n">x_full</span><span class="p">,</span> <span class="n">k_params</span><span class="p">)</span>
+
+    <span class="c1">### Call the solver</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">fmin_slsqp</span><span class="p">(</span>
+        <span class="n">func</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">f_ieqcons</span><span class="o">=</span><span class="n">f_ieqcons_wrap</span><span class="p">,</span> <span class="n">fprime</span><span class="o">=</span><span class="n">fprime_wrap</span><span class="p">,</span> <span class="n">acc</span><span class="o">=</span><span class="n">acc</span><span class="p">,</span>
+        <span class="nb">iter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">disp</span><span class="o">=</span><span class="n">disp_slsqp</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="n">full_output</span><span class="p">,</span>
+        <span class="n">fprime_ieqcons</span><span class="o">=</span><span class="n">fprime_ieqcons_wrap</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">results</span><span class="p">[</span><span class="mi">0</span><span class="p">][:</span><span class="n">k_params</span><span class="p">])</span>
+
+    <span class="c1">### Post-process</span>
+    <span class="c1"># QC</span>
+    <span class="n">qc_tol</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;qc_tol&#39;</span><span class="p">]</span>
+    <span class="n">qc_verbose</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;qc_verbose&#39;</span><span class="p">]</span>
+    <span class="n">passed</span> <span class="o">=</span> <span class="n">l1_solvers_common</span><span class="o">.</span><span class="n">qc_results</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">qc_tol</span><span class="p">,</span> <span class="n">qc_verbose</span><span class="p">)</span>
+    <span class="c1"># Possibly trim</span>
+    <span class="n">trim_mode</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;trim_mode&#39;</span><span class="p">]</span>
+    <span class="n">size_trim_tol</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;size_trim_tol&#39;</span><span class="p">]</span>
+    <span class="n">auto_trim_tol</span> <span class="o">=</span> <span class="n">kwargs</span><span class="p">[</span><span class="s1">&#39;auto_trim_tol&#39;</span><span class="p">]</span>
+    <span class="n">params</span><span class="p">,</span> <span class="n">trimmed</span> <span class="o">=</span> <span class="n">l1_solvers_common</span><span class="o">.</span><span class="n">do_trim_params</span><span class="p">(</span>
+        <span class="n">params</span><span class="p">,</span> <span class="n">k_params</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">score</span><span class="p">,</span> <span class="n">passed</span><span class="p">,</span> <span class="n">trim_mode</span><span class="p">,</span> <span class="n">size_trim_tol</span><span class="p">,</span>
+        <span class="n">auto_trim_tol</span><span class="p">)</span>
+
+    <span class="c1">### Pack up return values for statsmodels optimizers</span>
+    <span class="c1"># TODO These retvals are returned as mle_retvals...but the fit wasn&#39;t ML.</span>
+    <span class="c1"># This could be confusing someday.</span>
+    <span class="k">if</span> <span class="n">full_output</span><span class="p">:</span>
+        <span class="n">x_full</span><span class="p">,</span> <span class="n">fx</span><span class="p">,</span> <span class="n">its</span><span class="p">,</span> <span class="n">imode</span><span class="p">,</span> <span class="n">smode</span> <span class="o">=</span> <span class="n">results</span>
+        <span class="n">fopt</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x_full</span><span class="p">))</span>
+        <span class="n">converged</span> <span class="o">=</span> <span class="s1">&#39;True&#39;</span> <span class="k">if</span> <span class="n">imode</span> <span class="o">==</span> <span class="mi">0</span> <span class="k">else</span> <span class="n">smode</span>
+        <span class="n">iterations</span> <span class="o">=</span> <span class="n">its</span>
+        <span class="n">gopt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>     <span class="c1"># Objective is non-differentiable</span>
+        <span class="n">hopt</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;nan&#39;</span><span class="p">)</span>
+        <span class="n">retvals</span> <span class="o">=</span> <span class="p">{</span>
+            <span class="s1">&#39;fopt&#39;</span><span class="p">:</span> <span class="n">fopt</span><span class="p">,</span> <span class="s1">&#39;converged&#39;</span><span class="p">:</span> <span class="n">converged</span><span class="p">,</span> <span class="s1">&#39;iterations&#39;</span><span class="p">:</span> <span class="n">iterations</span><span class="p">,</span>
+            <span class="s1">&#39;gopt&#39;</span><span class="p">:</span> <span class="n">gopt</span><span class="p">,</span> <span class="s1">&#39;hopt&#39;</span><span class="p">:</span> <span class="n">hopt</span><span class="p">,</span> <span class="s1">&#39;trimmed&#39;</span><span class="p">:</span> <span class="n">trimmed</span><span class="p">}</span>
+
+    <span class="c1">### Return</span>
+    <span class="k">if</span> <span class="n">full_output</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">params</span><span class="p">,</span> <span class="n">retvals</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">params</span></div>
+
+
+<span class="k">def</span> <span class="nf">_get_disp_slsqp</span><span class="p">(</span><span class="n">disp</span><span class="p">,</span> <span class="n">retall</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">disp</span> <span class="ow">or</span> <span class="n">retall</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">disp</span><span class="p">:</span>
+            <span class="n">disp_slsqp</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">retall</span><span class="p">:</span>
+            <span class="n">disp_slsqp</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">disp_slsqp</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">disp_slsqp</span>
+
+
+<span class="k">def</span> <span class="nf">_objective_func</span><span class="p">(</span><span class="n">f</span><span class="p">,</span> <span class="n">x_full</span><span class="p">,</span> <span class="n">k_params</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The regularized objective function</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_params</span> <span class="o">=</span> <span class="n">x_full</span><span class="p">[:</span><span class="n">k_params</span><span class="p">]</span>
+    <span class="n">x_added</span> <span class="o">=</span> <span class="n">x_full</span><span class="p">[</span><span class="n">k_params</span><span class="p">:]</span>
+    <span class="c1">## Return</span>
+    <span class="k">return</span> <span class="n">f</span><span class="p">(</span><span class="n">x_params</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">alpha</span> <span class="o">*</span> <span class="n">x_added</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_fprime</span><span class="p">(</span><span class="n">score</span><span class="p">,</span> <span class="n">x_full</span><span class="p">,</span> <span class="n">k_params</span><span class="p">,</span> <span class="n">alpha</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The regularized derivative</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_params</span> <span class="o">=</span> <span class="n">x_full</span><span class="p">[:</span><span class="n">k_params</span><span class="p">]</span>
+    <span class="c1"># The derivative just appends a vector of constants</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">score</span><span class="p">(</span><span class="n">x_params</span><span class="p">),</span> <span class="n">alpha</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_f_ieqcons</span><span class="p">(</span><span class="n">x_full</span><span class="p">,</span> <span class="n">k_params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The inequality constraints.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x_params</span> <span class="o">=</span> <span class="n">x_full</span><span class="p">[:</span><span class="n">k_params</span><span class="p">]</span>
+    <span class="n">x_added</span> <span class="o">=</span> <span class="n">x_full</span><span class="p">[</span><span class="n">k_params</span><span class="p">:]</span>
+    <span class="c1"># All entries in this vector must be \geq 0 in a feasible solution</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">x_params</span> <span class="o">+</span> <span class="n">x_added</span><span class="p">,</span> <span class="n">x_added</span> <span class="o">-</span> <span class="n">x_params</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_fprime_ieqcons</span><span class="p">(</span><span class="n">x_full</span><span class="p">,</span> <span class="n">k_params</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Derivative of the inequality constraints</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">I</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">k_params</span><span class="p">)</span>
+    <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">I</span><span class="p">,</span> <span class="n">I</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="o">-</span><span class="n">I</span><span class="p">,</span> <span class="n">I</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="n">A</span><span class="p">,</span> <span class="n">B</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="c1">## Return</span>
+    <span class="k">return</span> <span class="n">C</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

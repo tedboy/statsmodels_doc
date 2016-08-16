@@ -1,0 +1,58 @@
+statsmodels.discrete.discrete_model.L1BinaryResults
+===================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: L1BinaryResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~L1BinaryResults.__init__
+   ~L1BinaryResults.aic
+   ~L1BinaryResults.bic
+   ~L1BinaryResults.bse
+   ~L1BinaryResults.conf_int
+   ~L1BinaryResults.cov_params
+   ~L1BinaryResults.f_test
+   ~L1BinaryResults.fittedvalues
+   ~L1BinaryResults.get_margeff
+   ~L1BinaryResults.initialize
+   ~L1BinaryResults.llf
+   ~L1BinaryResults.llnull
+   ~L1BinaryResults.llr
+   ~L1BinaryResults.llr_pvalue
+   ~L1BinaryResults.load
+   ~L1BinaryResults.normalized_cov_params
+   ~L1BinaryResults.pred_table
+   ~L1BinaryResults.predict
+   ~L1BinaryResults.prsquared
+   ~L1BinaryResults.pvalues
+   ~L1BinaryResults.remove_data
+   ~L1BinaryResults.resid_dev
+   ~L1BinaryResults.resid_pearson
+   ~L1BinaryResults.resid_response
+   ~L1BinaryResults.save
+   ~L1BinaryResults.summary
+   ~L1BinaryResults.summary2
+   ~L1BinaryResults.t_test
+   ~L1BinaryResults.tvalues
+   ~L1BinaryResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~L1BinaryResults.use_t
+

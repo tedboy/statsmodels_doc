@@ -1,0 +1,32 @@
+statsmodels.tsa.tests.test_stattools.CheckCoint
+===============================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_stattools
+.. autoclass:: CheckCoint
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CheckCoint.test_tstat
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~CheckCoint.data
+   ~CheckCoint.levels
+   ~CheckCoint.y1
+   ~CheckCoint.y2
+

@@ -1,0 +1,456 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.5.3.3.13. statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="3.5.3. statsmodels.genmod.generalized_estimating_equations" href="../statsmodels.genmod.generalized_estimating_equations.html"/>
+        <link rel="next" title="3.5.3.3.13.1.1. statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.__init__" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.__init__.html"/>
+        <link rel="prev" title="3.5.3.3.12.2.3. statsmodels.genmod.generalized_estimating_equations.OrdinalGEE.exog_names" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEE.exog_names.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.genmod.api.html">3.5.1. statsmodels.genmod.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.genmod.cov_struct.html">3.5.2. statsmodels.genmod.cov_struct</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.genmod.generalized_estimating_equations.html">3.5.3. statsmodels.genmod.generalized_estimating_equations</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.genmod.generalized_estimating_equations.html#references">3.5.3.1. References</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.genmod.generalized_estimating_equations.html#functions">3.5.3.2. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.genmod.generalized_estimating_equations.html#classes">3.5.3.3. Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.genmod.generalized_estimating_equations.html#exceptions">3.5.3.4. Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.genmod.generalized_linear_model.html">3.5.4. statsmodels.genmod.generalized_linear_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../../main.html#statsmodel-genmod-families">3.5.5. statsmodel.genmod.families</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-stats">3.11. statsmodel.stats</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.genmod.generalized_estimating_equations.html">3.5.3. statsmodels.genmod.generalized_estimating_equations</a> &raquo;</li>
+        
+      <li>3.5.3.3.13. statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-genmod-generalized-estimating-equations-ordinalgeeresults">
+<h1>3.5.3.3.13. statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults<a class="headerlink" href="#statsmodels-genmod-generalized-estimating-equations-ordinalgeeresults" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults">
+<em class="property">class </em><code class="descclassname">statsmodels.genmod.generalized_estimating_equations.</code><code class="descname">OrdinalGEEResults</code><span class="sig-paren">(</span><em>model</em>, <em>params</em>, <em>cov_params</em>, <em>scale</em>, <em>cov_type='robust'</em>, <em>use_t=False</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/genmod/generalized_estimating_equations.html#OrdinalGEEResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>This class summarizes the fit of a marginal regression modelfor an ordinal response using GEE.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Attributes</strong></p>
+<p><strong>cov_params_default</strong> : ndarray</p>
+<blockquote>
+<div><p>default covariance of the parameter estimates. Is chosen among one
+of the following three based on <cite>cov_type</cite></p>
+</div></blockquote>
+<p><strong>cov_robust</strong> : ndarray</p>
+<blockquote>
+<div><p>covariance of the parameter estimates that is robust</p>
+</div></blockquote>
+<p><strong>cov_naive</strong> : ndarray</p>
+<blockquote>
+<div><p>covariance of the parameter estimates that is not robust to
+correlation or variance misspecification</p>
+</div></blockquote>
+<p><strong>cov_robust_bc</strong> : ndarray</p>
+<blockquote>
+<div><p>covariance of the parameter estimates that is robust and bias
+reduced</p>
+</div></blockquote>
+<p><strong>converged</strong> : bool</p>
+<blockquote>
+<div><p>indicator for convergence of the optimization.
+True if the norm of the score is smaller than a threshold</p>
+</div></blockquote>
+<p><strong>cov_type</strong> : string</p>
+<blockquote>
+<div><p>string indicating whether a &#8220;robust&#8221;, &#8220;naive&#8221; or &#8220;bias_reduced&#8221;
+covariance is used as default</p>
+</div></blockquote>
+<p><strong>fit_history</strong> : dict</p>
+<blockquote>
+<div><p>Contains information about the iterations.</p>
+</div></blockquote>
+<p><strong>fittedvalues</strong> : array</p>
+<blockquote>
+<div><p>Linear predicted values for the fitted model.
+dot(exog, params)</p>
+</div></blockquote>
+<p><strong>model</strong> : class instance</p>
+<blockquote>
+<div><p>Pointer to GEE model instance that called <cite>fit</cite>.</p>
+</div></blockquote>
+<p><strong>normalized_cov_params</strong> : array</p>
+<blockquote>
+<div><p>See GEE docstring</p>
+</div></blockquote>
+<p><strong>params</strong> : array</p>
+<blockquote>
+<div><p>The coefficients of the fitted model.  Note that
+interpretation of the coefficients often depends on the
+distribution family and the data.</p>
+</div></blockquote>
+<p><strong>scale</strong> : float</p>
+<blockquote>
+<div><p>The estimate of the scale / dispersion for the model fit.
+See GEE.fit for more information.</p>
+</div></blockquote>
+<p><strong>score_norm</strong> : float</p>
+<blockquote>
+<div><p>norm of the score at the end of the iterative estimation.</p>
+</div></blockquote>
+<p><strong>bse</strong> : array</p>
+<blockquote class="last">
+<div><p>The standard errors of the fitted GEE parameters.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>model</em>, <em>params</em>, <em>cov_params</em>, <em>scale</em>, <em>cov_type='robust'</em>, <em>use_t=False</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="headerlink" href="#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>3.5.3.3.13.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.__init__.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.__init__" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(model,&nbsp;params,&nbsp;cov_params,&nbsp;scale[,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.bse.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.bse" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.bse"><code class="xref py py-obj docutils literal"><span class="pre">bse</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.centered_resid.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.centered_resid" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.centered_resid"><code class="xref py py-obj docutils literal"><span class="pre">centered_resid</span></code></a>()</td>
+<td>Returns the residuals centered within each group.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.conf_int.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.conf_int" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.conf_int"><code class="xref py py-obj docutils literal"><span class="pre">conf_int</span></code></a>([alpha,&nbsp;cols,&nbsp;cov_type])</td>
+<td>Returns confidence intervals for the fitted parameters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.cov_params.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.cov_params" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.cov_params"><code class="xref py py-obj docutils literal"><span class="pre">cov_params</span></code></a>([r_matrix,&nbsp;column,&nbsp;scale,&nbsp;cov_p,&nbsp;...])</td>
+<td>Returns the variance/covariance matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.f_test.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.f_test" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.f_test"><code class="xref py py-obj docutils literal"><span class="pre">f_test</span></code></a>(r_matrix[,&nbsp;cov_p,&nbsp;scale,&nbsp;invcov])</td>
+<td>Compute the F-test for a joint linear hypothesis.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.fittedvalues.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.fittedvalues" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.fittedvalues"><code class="xref py py-obj docutils literal"><span class="pre">fittedvalues</span></code></a>()</td>
+<td>Returns the fitted values from the model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.initialize.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.initialize" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>(model,&nbsp;params,&nbsp;**kwd)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.llf.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.llf" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.llf"><code class="xref py py-obj docutils literal"><span class="pre">llf</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.load.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.load" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a>(fname)</td>
+<td>load a pickle, (class method)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.normalized_cov_params.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.normalized_cov_params" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.normalized_cov_params"><code class="xref py py-obj docutils literal"><span class="pre">normalized_cov_params</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.params_sensitivity.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.params_sensitivity" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.params_sensitivity"><code class="xref py py-obj docutils literal"><span class="pre">params_sensitivity</span></code></a>(dep_params_first,&nbsp;...)</td>
+<td>Refits the GEE model using a sequence of values for the dependence parameters.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.plot_distribution.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.plot_distribution" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.plot_distribution"><code class="xref py py-obj docutils literal"><span class="pre">plot_distribution</span></code></a>([ax,&nbsp;exog_values])</td>
+<td>Plot the fitted probabilities of endog in an ordinal model, for specifed values of the predictors.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.plot_isotropic_dependence.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.plot_isotropic_dependence" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.plot_isotropic_dependence"><code class="xref py py-obj docutils literal"><span class="pre">plot_isotropic_dependence</span></code></a>([ax,&nbsp;xpoints,&nbsp;min_n])</td>
+<td>Create a plot of the pairwise products of within-group residuals against the corresponding time differences.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.predict.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.predict" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.predict"><code class="xref py py-obj docutils literal"><span class="pre">predict</span></code></a>([exog,&nbsp;transform])</td>
+<td>Call self.model.predict with self.params as the first argument.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.pvalues.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.pvalues" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.pvalues"><code class="xref py py-obj docutils literal"><span class="pre">pvalues</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.remove_data.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.remove_data" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.remove_data"><code class="xref py py-obj docutils literal"><span class="pre">remove_data</span></code></a>()</td>
+<td>remove data arrays, all nobs arrays from result and model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid"><code class="xref py py-obj docutils literal"><span class="pre">resid</span></code></a>()</td>
+<td>Returns the residuals, the endogeneous data minus the fitted values from the model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid_centered.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid_centered" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid_centered"><code class="xref py py-obj docutils literal"><span class="pre">resid_centered</span></code></a>()</td>
+<td>Returns the residuals centered within each group.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid_centered_split.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid_centered_split" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid_centered_split"><code class="xref py py-obj docutils literal"><span class="pre">resid_centered_split</span></code></a>()</td>
+<td>Returns the residuals centered within each group.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid_split.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid_split" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.resid_split"><code class="xref py py-obj docutils literal"><span class="pre">resid_split</span></code></a>()</td>
+<td>Returns the residuals, the endogeneous data minus the fitted values from the model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.save.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.save" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>(fname[,&nbsp;remove_data])</td>
+<td>save a pickle of this instance</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.sensitivity_params.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.sensitivity_params" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.sensitivity_params"><code class="xref py py-obj docutils literal"><span class="pre">sensitivity_params</span></code></a>(dep_params_first,&nbsp;...)</td>
+<td>Refits the GEE model using a sequence of values for the dependence parameters.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.split_centered_resid.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.split_centered_resid" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.split_centered_resid"><code class="xref py py-obj docutils literal"><span class="pre">split_centered_resid</span></code></a>()</td>
+<td>Returns the residuals centered within each group.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.split_resid.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.split_resid" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.split_resid"><code class="xref py py-obj docutils literal"><span class="pre">split_resid</span></code></a>()</td>
+<td>Returns the residuals, the endogeneous data minus the fitted values from the model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.standard_errors.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.standard_errors" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.standard_errors"><code class="xref py py-obj docutils literal"><span class="pre">standard_errors</span></code></a>([cov_type])</td>
+<td>This is a convenience function that returns the standard errors for any covariance type.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.summary.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.summary" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.summary"><code class="xref py py-obj docutils literal"><span class="pre">summary</span></code></a>([yname,&nbsp;xname,&nbsp;title,&nbsp;alpha])</td>
+<td>Summarize the GEE regression results</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.t_test.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.t_test" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.t_test"><code class="xref py py-obj docutils literal"><span class="pre">t_test</span></code></a>(r_matrix[,&nbsp;cov_p,&nbsp;scale,&nbsp;use_t])</td>
+<td>Compute a t-test for a each linear hypothesis of the form Rb = q</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.tvalues.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.tvalues" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.tvalues"><code class="xref py py-obj docutils literal"><span class="pre">tvalues</span></code></a>()</td>
+<td>Return the t-statistic for a given parameter estimate.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.wald_test.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.wald_test" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.wald_test"><code class="xref py py-obj docutils literal"><span class="pre">wald_test</span></code></a>(r_matrix[,&nbsp;cov_p,&nbsp;scale,&nbsp;invcov,&nbsp;...])</td>
+<td>Compute a Wald-test for a joint linear hypothesis.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>3.5.3.3.13.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.use_t.html#statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.use_t" title="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.use_t"><code class="xref py py-obj docutils literal"><span class="pre">use_t</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.__init__.html" class="btn btn-neutral float-right" title="3.5.3.3.13.1.1. statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.genmod.generalized_estimating_equations.OrdinalGEE.exog_names.html" class="btn btn-neutral" title="3.5.3.3.12.2.3. statsmodels.genmod.generalized_estimating_equations.OrdinalGEE.exog_names" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

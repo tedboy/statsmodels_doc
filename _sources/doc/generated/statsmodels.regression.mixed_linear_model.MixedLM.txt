@@ -1,0 +1,48 @@
+statsmodels.regression.mixed_linear_model.MixedLM
+=================================================
+
+.. currentmodule:: statsmodels.regression.mixed_linear_model
+
+.. autoclass:: MixedLM
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~MixedLM.EM
+      ~MixedLM.Estep
+      ~MixedLM.__init__
+      ~MixedLM.fit
+      ~MixedLM.fit_regularized
+      ~MixedLM.from_formula
+      ~MixedLM.get_scale
+      ~MixedLM.group_list
+      ~MixedLM.hessian
+      ~MixedLM.hessian_full
+      ~MixedLM.hessian_sqrt
+      ~MixedLM.information
+      ~MixedLM.initialize
+      ~MixedLM.loglike
+      ~MixedLM.predict
+      ~MixedLM.score
+      ~MixedLM.score_full
+      ~MixedLM.score_sqrt
+      ~MixedLM.starting_values
+      ~MixedLM.steepest_ascent
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~MixedLM.endog_names
+      ~MixedLM.exog_names
+   
+   

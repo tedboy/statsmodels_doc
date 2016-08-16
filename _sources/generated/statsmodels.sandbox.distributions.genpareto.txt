@@ -1,0 +1,47 @@
+statsmodels.sandbox.distributions.genpareto
+===========================================
+
+.. automodule:: statsmodels.sandbox.distributions.genpareto
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      meanexcess
+      meanexcess_dist
+      meanexcess_emp
+      meanexcess_plot
+      paramsfrompot
+      paramstopot
+      warnif
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      genpareto2_gen
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.distributions.genpareto.genpareto2_gen
+
+   
+   
+
+   
+   
+   

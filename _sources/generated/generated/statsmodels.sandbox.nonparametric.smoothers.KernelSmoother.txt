@@ -1,0 +1,26 @@
+statsmodels.sandbox.nonparametric.smoothers.KernelSmoother
+==========================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.smoothers
+.. autoclass:: KernelSmoother
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KernelSmoother.__init__
+   ~KernelSmoother.conf
+   ~KernelSmoother.fit
+   ~KernelSmoother.predict
+   ~KernelSmoother.std
+   ~KernelSmoother.var
+
+
+
+
+

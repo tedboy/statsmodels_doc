@@ -1,0 +1,524 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.miscmodels.nonlinls &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.miscmodels.nonlinls</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.miscmodels.nonlinls</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Non-linear least squares</span>
+
+
+
+<span class="sd">Author: Josef Perktold based on scipy.optimize.curve_fit</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">optimize</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.base.model</span> <span class="k">import</span> <span class="n">Model</span>
+
+
+<div class="viewcode-block" id="Results"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.Results.html#statsmodels.miscmodels.nonlinls.Results">[docs]</a><span class="k">class</span> <span class="nc">Results</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;just a dummy placeholder for now</span>
+<span class="sd">    most results from RegressionResults can be used here</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">pass</span></div>
+
+
+<span class="c1">##def getjaccov(retval, n):</span>
+<span class="c1">##    &#39;&#39;&#39;calculate something and raw covariance matrix from return of optimize.leastsq</span>
+<span class="c1">##</span>
+<span class="c1">##    I cannot figure out how to recover the Jacobian, or whether it is even</span>
+<span class="c1">##    possible</span>
+<span class="c1">##</span>
+<span class="c1">##    this is a partial copy of scipy.optimize.leastsq</span>
+<span class="c1">##    &#39;&#39;&#39;</span>
+<span class="c1">##    info = retval[-1]</span>
+<span class="c1">##    #n = len(x0)  #nparams, where do I get this</span>
+<span class="c1">##    cov_x = None</span>
+<span class="c1">##    if info in [1,2,3,4]:</span>
+<span class="c1">##        from numpy.dual import inv</span>
+<span class="c1">##        from numpy.linalg import LinAlgError</span>
+<span class="c1">##        perm = np.take(np.eye(n), retval[1][&#39;ipvt&#39;]-1,0)</span>
+<span class="c1">##        r = np.triu(np.transpose(retval[1][&#39;fjac&#39;])[:n,:])</span>
+<span class="c1">##        R = np.dot(r, perm)</span>
+<span class="c1">##        try:</span>
+<span class="c1">##            cov_x = inv(np.dot(np.transpose(R),R))</span>
+<span class="c1">##        except LinAlgError:</span>
+<span class="c1">##            print &#39;cov_x not available&#39;</span>
+<span class="c1">##            pass</span>
+<span class="c1">##        return r, R, cov_x</span>
+<span class="c1">##</span>
+<span class="c1">##def _general_function(params, xdata, ydata, function):</span>
+<span class="c1">##    return function(xdata, *params) - ydata</span>
+<span class="c1">##</span>
+<span class="c1">##def _weighted_general_function(params, xdata, ydata, function, weights):</span>
+<span class="c1">##    return weights * (function(xdata, *params) - ydata)</span>
+<span class="c1">##</span>
+
+
+
+<div class="viewcode-block" id="NonlinearLS"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.NonlinearLS.html#statsmodels.miscmodels.nonlinls.NonlinearLS">[docs]</a><span class="k">class</span> <span class="nc">NonlinearLS</span><span class="p">(</span><span class="n">Model</span><span class="p">):</span>  <span class="c1">#or subclass a model</span>
+    <span class="sd">&#39;&#39;&#39;Base class for estimation of a non-linear model with least squares</span>
+
+<span class="sd">    This class is supposed to be subclassed, and the subclass has to provide a method</span>
+<span class="sd">    `_predict` that defines the non-linear function `f(params) that is predicting the endogenous</span>
+<span class="sd">    variable. The model is assumed to be</span>
+
+<span class="sd">    :math: y = f(params) + error</span>
+
+<span class="sd">    and the estimator minimizes the sum of squares of the estimated error.</span>
+
+<span class="sd">    :math: min_parmas \sum (y - f(params))**2</span>
+
+<span class="sd">    f has to return the prediction for each observation. Exogenous or explanatory variables</span>
+<span class="sd">    should be accessed as attributes of the class instance, and can be given as arguments</span>
+<span class="sd">    when the instance is created.</span>
+
+<span class="sd">    Warning:</span>
+<span class="sd">    Weights are not correctly handled yet in the results statistics,</span>
+<span class="sd">    but included when estimating the parameters.</span>
+
+<span class="sd">    similar to scipy.optimize.curve_fit</span>
+<span class="sd">    API difference: params are array_like not split up, need n_params information</span>
+
+<span class="sd">    includes now weights similar to curve_fit</span>
+<span class="sd">    no general sigma yet (OLS and WLS, but no GLS)</span>
+
+<span class="sd">    This is currently holding on to intermediate results that are not necessary</span>
+<span class="sd">    but useful for testing.</span>
+
+<span class="sd">    Fit returns and instance of RegressionResult, in contrast to the linear</span>
+<span class="sd">    model, results in this case are based on a local approximation, essentially</span>
+<span class="sd">    y = f(X, params) is replaced by y = grad * params where grad is the Gradient</span>
+<span class="sd">    or Jacobian with the shape (nobs, nparams). See for example Greene</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    class Myfunc(NonlinearLS):</span>
+
+<span class="sd">        def _predict(self, params):</span>
+<span class="sd">            x = self.exog</span>
+<span class="sd">            a, b, c = params</span>
+<span class="sd">            return a*np.exp(-b*x) + c</span>
+
+<span class="sd">    Ff we have data (y, x), we can create an instance and fit it with</span>
+
+<span class="sd">    mymod = Myfunc(y, x)</span>
+<span class="sd">    myres = mymod.fit(nparams=3)</span>
+
+<span class="sd">    and use the non-linear regression results, for example</span>
+
+<span class="sd">    myres.params</span>
+<span class="sd">    myres.bse</span>
+<span class="sd">    myres.tvalues</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#NOTE: This needs to call super for data checking</span>
+<div class="viewcode-block" id="NonlinearLS.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.NonlinearLS.__init__.html#statsmodels.miscmodels.nonlinls.NonlinearLS.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">exog</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+            <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">=</span> <span class="n">endog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="n">exog</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sigma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">sigma</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">sigma</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;correlated errors are not handled yet&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="NonlinearLS.predict"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.NonlinearLS.predict.html#statsmodels.miscmodels.nonlinls.NonlinearLS.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1">#copied from GLS, Model has different signature</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span></div>
+
+
+    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="NonlinearLS.start_value"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.NonlinearLS.start_value.html#statsmodels.miscmodels.nonlinls.NonlinearLS.start_value">[docs]</a>    <span class="k">def</span> <span class="nf">start_value</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="NonlinearLS.geterrors"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.NonlinearLS.geterrors.html#statsmodels.miscmodels.nonlinls.NonlinearLS.geterrors">[docs]</a>    <span class="k">def</span> <span class="nf">geterrors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span>
+        <span class="k">return</span> <span class="n">weights</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">(</span><span class="n">params</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="NonlinearLS.errorsumsquares"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.NonlinearLS.errorsumsquares.html#statsmodels.miscmodels.nonlinls.NonlinearLS.errorsumsquares">[docs]</a>    <span class="k">def</span> <span class="nf">errorsumsquares</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geterrors</span><span class="p">(</span><span class="n">params</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="NonlinearLS.fit"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.NonlinearLS.fit.html#statsmodels.miscmodels.nonlinls.NonlinearLS.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nparams</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="c1">#if hasattr(self, &#39;start_value&#39;):</span>
+        <span class="c1">#I added start_value even if it&#39;s empty, not sure about it</span>
+        <span class="c1">#but it makes a visible placeholder</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">start_value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="n">start_value</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#nesting so that start_value is only calculated if it is needed</span>
+            <span class="n">p0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_value</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">p0</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">pass</span>
+            <span class="k">elif</span> <span class="ow">not</span> <span class="n">nparams</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">p0</span> <span class="o">=</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nparams</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;need information about start values for&#39;</span> <span class="o">+</span>
+                             <span class="s1">&#39;optimization&#39;</span><span class="p">)</span>
+
+        <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geterrors</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">leastsq</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">p0</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="p">(</span><span class="n">popt</span><span class="p">,</span> <span class="n">pcov</span><span class="p">,</span> <span class="n">infodict</span><span class="p">,</span> <span class="n">errmsg</span><span class="p">,</span> <span class="n">ier</span><span class="p">)</span> <span class="o">=</span> <span class="n">res</span>
+
+        <span class="k">if</span> <span class="n">ier</span> <span class="ow">not</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">]:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Optimal parameters not found: &quot;</span> <span class="o">+</span> <span class="n">errmsg</span>
+            <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="n">err</span> <span class="o">=</span> <span class="n">infodict</span><span class="p">[</span><span class="s1">&#39;fvec&#39;</span><span class="p">]</span>
+
+        <span class="n">ydata</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">endog</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ydata</span><span class="p">)</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">p0</span><span class="p">))</span> <span class="ow">and</span> <span class="n">pcov</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1">#this can use the returned errors instead of recalculating</span>
+
+            <span class="n">s_sq</span> <span class="o">=</span> <span class="p">(</span><span class="n">err</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">ydata</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">p0</span><span class="p">))</span>
+            <span class="n">pcov</span> <span class="o">=</span> <span class="n">pcov</span> <span class="o">*</span> <span class="n">s_sq</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">pcov</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_resid</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ydata</span><span class="p">)</span><span class="o">-</span><span class="nb">len</span><span class="p">(</span><span class="n">p0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">df_model</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">p0</span><span class="p">)</span>
+        <span class="n">fitres</span> <span class="o">=</span> <span class="n">Results</span><span class="p">()</span>
+        <span class="n">fitres</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">popt</span>
+        <span class="n">fitres</span><span class="o">.</span><span class="n">pcov</span> <span class="o">=</span> <span class="n">pcov</span>
+        <span class="n">fitres</span><span class="o">.</span><span class="n">rawres</span> <span class="o">=</span> <span class="n">res</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wendog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">endog</span>  <span class="c1">#add weights</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">wexog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">jac_predict</span><span class="p">(</span><span class="n">popt</span><span class="p">)</span>
+        <span class="n">pinv_wexog</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">wexog</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">normalized_cov_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">pinv_wexog</span><span class="p">,</span>
+                                         <span class="n">np</span><span class="o">.</span><span class="n">transpose</span><span class="p">(</span><span class="n">pinv_wexog</span><span class="p">))</span>
+
+        <span class="c1">#TODO: check effect of `weights` on result statistics</span>
+        <span class="c1">#I think they are correctly included in cov_params</span>
+        <span class="c1">#maybe not anymore, I&#39;m not using pcov of leastsq</span>
+        <span class="c1">#direct calculation with jac_predict misses the weights</span>
+
+<span class="c1">##        if not weights is None</span>
+<span class="c1">##            fitres.wexogw = self.weights * self.jacpredict(popt)</span>
+        <span class="kn">from</span> <span class="nn">statsmodels.regression</span> <span class="k">import</span> <span class="n">RegressionResults</span>
+        <span class="n">results</span> <span class="o">=</span> <span class="n">RegressionResults</span>
+
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">popt</span>
+        <span class="n">lfit</span> <span class="o">=</span> <span class="n">RegressionResults</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">beta</span><span class="p">,</span>
+                       <span class="n">normalized_cov_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">normalized_cov_params</span><span class="p">)</span>
+
+        <span class="n">lfit</span><span class="o">.</span><span class="n">fitres</span> <span class="o">=</span> <span class="n">fitres</span>   <span class="c1">#mainly for testing</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_results</span> <span class="o">=</span> <span class="n">lfit</span>
+        <span class="k">return</span> <span class="n">lfit</span></div>
+
+<div class="viewcode-block" id="NonlinearLS.fit_minimal"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.NonlinearLS.fit_minimal.html#statsmodels.miscmodels.nonlinls.NonlinearLS.fit_minimal">[docs]</a>    <span class="k">def</span> <span class="nf">fit_minimal</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start_value</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;minimal fitting with no extra calculations&#39;&#39;&#39;</span>
+        <span class="n">func</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geterrors</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">leastsq</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">start_value</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="NonlinearLS.fit_random"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.NonlinearLS.fit_random.html#statsmodels.miscmodels.nonlinls.NonlinearLS.fit_random">[docs]</a>    <span class="k">def</span> <span class="nf">fit_random</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ntries</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">rvs_generator</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nparams</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;fit with random starting values</span>
+
+<span class="sd">        this could be replaced with a global fitter</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="n">nparams</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">nparams</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nparams</span>
+        <span class="k">if</span> <span class="n">rvs_generator</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">rvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="n">low</span><span class="o">=-</span><span class="mi">10</span><span class="p">,</span> <span class="n">high</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">ntries</span><span class="p">,</span> <span class="n">nparams</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">rvs</span> <span class="o">=</span> <span class="n">rvs_generator</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">ntries</span><span class="p">,</span> <span class="n">nparams</span><span class="p">))</span>
+
+        <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">fit_minimal</span><span class="p">(</span><span class="n">rv</span><span class="p">),</span>  <span class="n">rv</span><span class="p">]</span> <span class="k">for</span> <span class="n">rv</span> <span class="ow">in</span> <span class="n">rvs</span><span class="p">])</span>
+        <span class="c1">#selct best results and check how many solutions are within 1e-6 of best</span>
+        <span class="c1">#not sure what leastsq returns</span>
+        <span class="k">return</span> <span class="n">results</span></div>
+
+<div class="viewcode-block" id="NonlinearLS.jac_predict"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.NonlinearLS.jac_predict.html#statsmodels.miscmodels.nonlinls.NonlinearLS.jac_predict">[docs]</a>    <span class="k">def</span> <span class="nf">jac_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;jacobian of prediction function using complex step derivative</span>
+
+<span class="sd">        This assumes that the predict function does not use complex variable</span>
+<span class="sd">        but is designed to do so.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">statsmodels.tools.numdiff</span> <span class="k">import</span> <span class="n">approx_fprime_cs</span>
+
+        <span class="n">jaccs_err</span> <span class="o">=</span> <span class="n">approx_fprime_cs</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_predict</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">jaccs_err</span></div></div>
+
+
+<div class="viewcode-block" id="Myfunc"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.nonlinls.Myfunc.html#statsmodels.miscmodels.nonlinls.Myfunc">[docs]</a><span class="k">class</span> <span class="nc">Myfunc</span><span class="p">(</span><span class="n">NonlinearLS</span><span class="p">):</span>
+
+    <span class="c1">#predict model.Model has a different signature</span>
+<span class="c1">##    def predict(self, params, exog=None):</span>
+<span class="c1">##        if not exog is None:</span>
+<span class="c1">##            x = exog</span>
+<span class="c1">##        else:</span>
+<span class="c1">##            x = self.exog</span>
+<span class="c1">##        a, b, c = params</span>
+<span class="c1">##        return a*np.exp(-b*x) + c</span>
+
+    <span class="k">def</span> <span class="nf">_predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span></div>
+
+
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="k">def</span> <span class="nf">func0</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>
+
+    <span class="k">def</span> <span class="nf">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">c</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="k">return</span> <span class="n">a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">b</span><span class="o">*</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">c</span>
+
+    <span class="k">def</span> <span class="nf">error</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">y</span> <span class="o">-</span> <span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">error2</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">y</span> <span class="o">-</span> <span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+
+
+
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">50</span><span class="p">)</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">2.5</span><span class="p">,</span> <span class="mf">1.3</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">])</span>
+    <span class="n">y0</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">params</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">y0</span> <span class="o">+</span> <span class="mf">0.2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">leastsq</span><span class="p">(</span><span class="n">error</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">),</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+<span class="c1">##    r, R, c = getjaccov(res[1:], 3)</span>
+
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">Myfunc</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+    <span class="n">resmy</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">nparams</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">cf_params</span><span class="p">,</span> <span class="n">cf_pcov</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">curve_fit</span><span class="p">(</span><span class="n">func0</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span>
+    <span class="n">cf_bse</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">cf_pcov</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cf_params</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">resmy</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cf_bse</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">resmy</span><span class="o">.</span><span class="n">bse</span><span class="p">)</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

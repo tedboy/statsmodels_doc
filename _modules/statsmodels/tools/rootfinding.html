@@ -1,0 +1,444 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tools.rootfinding &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tools.rootfinding</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tools.rootfinding</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="sd">Created on Mon Mar 18 15:48:23 2013</span>
+<span class="sd">Author: Josef Perktold</span>
+
+<span class="sd">TODO:</span>
+<span class="sd">  - test behavior if nans or infs are encountered during the evaluation.</span>
+<span class="sd">    now partially robust to nans, if increasing can be determined or is given.</span>
+<span class="sd">  - rewrite core loop to use for...except instead of while.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">optimize</span>
+
+<span class="n">DEBUG</span> <span class="o">=</span> <span class="kc">False</span>
+
+<span class="c1"># based on scipy.stats.distributions._ppf_single_call</span>
+<div class="viewcode-block" id="brentq_expanding"><a class="viewcode-back" href="../../../generated/statsmodels.tools.rootfinding.brentq_expanding.html#statsmodels.stats.power.brentq_expanding">[docs]</a><span class="k">def</span> <span class="nf">brentq_expanding</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">low</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">upp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">xtol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span>
+                     <span class="n">start_low</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">start_upp</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">increasing</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                     <span class="n">max_it</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">maxiter_bq</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">factor</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span>
+                     <span class="n">full_output</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;find the root of a function in one variable by expanding and brentq</span>
+
+<span class="sd">    Assumes function ``func`` is monotonic.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    func : callable</span>
+<span class="sd">        function for which we find the root ``x`` such that ``func(x) = 0``</span>
+<span class="sd">    low : float or None</span>
+<span class="sd">        lower bound for brentq</span>
+<span class="sd">    upp : float or None</span>
+<span class="sd">        upper bound for brentq</span>
+<span class="sd">    args : tuple</span>
+<span class="sd">        optional additional arguments for ``func``</span>
+<span class="sd">    xtol : float</span>
+<span class="sd">        parameter x tolerance given to brentq</span>
+<span class="sd">    start_low : float (positive) or None</span>
+<span class="sd">        starting bound for expansion with increasing ``x``. It needs to be</span>
+<span class="sd">        positive. If None, then it is set to 1.</span>
+<span class="sd">    start_upp : float (negative) or None</span>
+<span class="sd">        starting bound for expansion with decreasing ``x``. It needs to be</span>
+<span class="sd">        negative. If None, then it is set to -1.</span>
+<span class="sd">    increasing : bool or None</span>
+<span class="sd">        If None, then the function is evaluated at the initial bounds to</span>
+<span class="sd">        determine wether the function is increasing or not. If increasing is</span>
+<span class="sd">        True (False), then it is assumed that the function is monotonically</span>
+<span class="sd">        increasing (decreasing).</span>
+<span class="sd">    max_it : int</span>
+<span class="sd">        maximum number of expansion steps.</span>
+<span class="sd">    maxiter_bq : int</span>
+<span class="sd">        maximum number of iterations of brentq.</span>
+<span class="sd">    factor : float</span>
+<span class="sd">        expansion factor for step of shifting the bounds interval, default is</span>
+<span class="sd">        10.</span>
+<span class="sd">    full_output : bool, optional</span>
+<span class="sd">        If full_output is False, the root is returned. If full_output is True,</span>
+<span class="sd">        the return value is (x, r), where x is the root, and r is a</span>
+<span class="sd">        RootResults object.</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x : float</span>
+<span class="sd">        root of the function, value at which ``func(x) = 0``.</span>
+<span class="sd">    info : RootResult (optional)</span>
+<span class="sd">        returned if ``full_output`` is True.</span>
+<span class="sd">        attributes:</span>
+
+<span class="sd">         - start_bounds : starting bounds for expansion stage</span>
+<span class="sd">         - brentq_bounds : bounds used with ``brentq``</span>
+<span class="sd">         - iterations_expand : number of iterations in expansion stage</span>
+<span class="sd">         - converged : True if brentq converged.</span>
+<span class="sd">         - flag : return status, &#39;converged&#39; if brentq converged</span>
+<span class="sd">         - function_calls : number of function calls by ``brentq``</span>
+<span class="sd">         - iterations : number of iterations in ``brentq``</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    If increasing is None, then whether the function is monotonically</span>
+<span class="sd">    increasing or decreasing is inferred from evaluating the function at the</span>
+<span class="sd">    initial bounds. This can fail if there is numerically no variation in the</span>
+<span class="sd">    data in this range. In this case, using different starting bounds or</span>
+<span class="sd">    directly specifying ``increasing`` can make it possible to move the</span>
+<span class="sd">    expansion in the right direction.</span>
+
+<span class="sd">    If</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#TODO: rtol is missing, what does it do?</span>
+
+
+    <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">low</span><span class="p">,</span> <span class="n">upp</span>  <span class="c1">#alias</span>
+
+    <span class="c1"># start_upp first because of possible sl = -1 &gt; upp</span>
+    <span class="k">if</span> <span class="n">upp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">su</span> <span class="o">=</span> <span class="n">upp</span>
+    <span class="k">elif</span> <span class="n">start_upp</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">start_upp</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;start_upp needs to be positive&#39;</span><span class="p">)</span>
+        <span class="n">su</span> <span class="o">=</span> <span class="n">start_upp</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">su</span> <span class="o">=</span> <span class="mf">1.</span>
+
+
+    <span class="k">if</span> <span class="n">low</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">sl</span> <span class="o">=</span> <span class="n">low</span>
+    <span class="k">elif</span> <span class="n">start_low</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">start_low</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;start_low needs to be negative&#39;</span><span class="p">)</span>
+        <span class="n">sl</span> <span class="o">=</span> <span class="n">start_low</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sl</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span> <span class="n">su</span> <span class="o">-</span> <span class="mf">1.</span><span class="p">)</span>
+
+    <span class="c1"># need sl &lt; su</span>
+    <span class="k">if</span> <span class="n">upp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">su</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">su</span><span class="p">,</span> <span class="n">sl</span> <span class="o">+</span> <span class="mf">1.</span><span class="p">)</span>
+
+
+    <span class="c1"># increasing or not ?</span>
+    <span class="k">if</span> <span class="p">((</span><span class="n">low</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">upp</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">))</span> <span class="ow">and</span> <span class="n">increasing</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">sl</span> <span class="o">&lt;</span> <span class="n">su</span>  <span class="c1"># check during developement</span>
+        <span class="n">f_low</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">f_upp</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">su</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="c1"># special case for F-distribution (symmetric around zero for effect size)</span>
+        <span class="c1"># chisquare also takes an indefinite time (didn&#39;t wait see if it returns)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">f_upp</span> <span class="o">-</span> <span class="n">f_low</span><span class="p">))</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">15</span> <span class="ow">and</span> <span class="n">sl</span> <span class="o">==</span> <span class="o">-</span><span class="mi">1</span> <span class="ow">and</span> <span class="n">su</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">sl</span> <span class="o">=</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span>
+            <span class="n">f_low</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+            <span class="n">increasing</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_low</span> <span class="o">&lt;</span> <span class="n">f_upp</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;symm&#39;</span><span class="p">,</span> <span class="n">sl</span><span class="p">,</span> <span class="n">su</span><span class="p">,</span> <span class="n">f_low</span><span class="p">,</span> <span class="n">f_upp</span><span class="p">)</span>
+
+
+        <span class="c1"># possibly func returns nan</span>
+        <span class="n">delta</span> <span class="o">=</span> <span class="n">su</span> <span class="o">-</span> <span class="n">sl</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">f_low</span><span class="p">):</span>
+            <span class="c1"># try just 3 points to find ``increasing``</span>
+            <span class="c1"># don&#39;t change sl because brentq can handle one nan bound</span>
+            <span class="k">for</span> <span class="n">fraction</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]:</span>
+                <span class="n">sl_</span> <span class="o">=</span> <span class="n">sl</span> <span class="o">+</span> <span class="n">fraction</span> <span class="o">*</span> <span class="n">delta</span>
+                <span class="n">f_low</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">sl_</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">f_low</span><span class="p">):</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;could not determine whether function is &#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;increasing based on starting interval.&#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">specify increasing or change starting &#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;bounds&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">f_upp</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">fraction</span> <span class="ow">in</span> <span class="p">[</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]:</span>
+                <span class="n">su_</span> <span class="o">=</span> <span class="n">su</span> <span class="o">+</span> <span class="n">fraction</span> <span class="o">*</span> <span class="n">delta</span>
+                <span class="n">f_upp</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">su_</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">f_upp</span><span class="p">):</span>
+                    <span class="k">break</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;could not determine whether function is&#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;increasing based on starting interval.&#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">specify increasing or change starting &#39;</span> <span class="o">+</span>
+                                 <span class="s1">&#39;bounds&#39;</span><span class="p">)</span>
+
+        <span class="n">increasing</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_low</span> <span class="o">&lt;</span> <span class="n">f_upp</span><span class="p">)</span>
+
+
+
+    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;low, upp&#39;</span><span class="p">,</span> <span class="n">low</span><span class="p">,</span> <span class="n">upp</span><span class="p">,</span> <span class="n">func</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">),</span> <span class="n">func</span><span class="p">(</span><span class="n">su</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;increasing&#39;</span><span class="p">,</span> <span class="n">increasing</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sl, su&#39;</span><span class="p">,</span> <span class="n">sl</span><span class="p">,</span> <span class="n">su</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">increasing</span><span class="p">:</span>
+        <span class="n">sl</span><span class="p">,</span> <span class="n">su</span> <span class="o">=</span> <span class="n">su</span><span class="p">,</span> <span class="n">sl</span>
+        <span class="n">left</span><span class="p">,</span> <span class="n">right</span> <span class="o">=</span> <span class="n">right</span><span class="p">,</span> <span class="n">left</span>
+
+    <span class="n">n_it</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">if</span> <span class="n">left</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">sl</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="n">left</span> <span class="o">=</span> <span class="n">sl</span>
+        <span class="k">while</span> <span class="n">func</span><span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="c1">#condition is also false if func returns nan</span>
+            <span class="n">right</span> <span class="o">=</span> <span class="n">left</span>
+            <span class="n">left</span> <span class="o">*=</span> <span class="n">factor</span>
+            <span class="k">if</span> <span class="n">n_it</span> <span class="o">&gt;=</span> <span class="n">max_it</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">n_it</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># left is now such that func(left) &lt; q</span>
+    <span class="k">if</span> <span class="n">right</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">su</span> <span class="o">!=</span><span class="mi">0</span><span class="p">:</span>
+        <span class="n">right</span> <span class="o">=</span> <span class="n">su</span>
+        <span class="k">while</span> <span class="n">func</span><span class="p">(</span><span class="n">right</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">left</span> <span class="o">=</span> <span class="n">right</span>
+            <span class="n">right</span> <span class="o">*=</span> <span class="n">factor</span>
+            <span class="k">if</span> <span class="n">n_it</span> <span class="o">&gt;=</span> <span class="n">max_it</span><span class="p">:</span>
+                <span class="k">break</span>
+            <span class="n">n_it</span> <span class="o">+=</span> <span class="mi">1</span>
+        <span class="c1"># right is now such that func(right) &gt; q</span>
+
+    <span class="k">if</span> <span class="n">n_it</span> <span class="o">&gt;=</span> <span class="n">max_it</span><span class="p">:</span>
+        <span class="c1">#print(&#39;Warning: max_it reached&#39;)</span>
+        <span class="c1">#TODO: use Warnings, Note: brentq might still work even with max_it</span>
+        <span class="n">f_low</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">sl</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="n">f_upp</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">su</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">f_low</span><span class="p">)</span> <span class="ow">and</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">f_upp</span><span class="p">):</span>
+            <span class="c1"># can we still get here?</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;max_it reached&#39;</span> <span class="o">+</span>
+                             <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">the function values at boths bounds are NaN&#39;</span> <span class="o">+</span>
+                             <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">change the starting bounds, set bounds&#39;</span> <span class="o">+</span>
+                             <span class="s1">&#39;or increase max_it&#39;</span><span class="p">)</span>
+
+
+    <span class="n">res</span> <span class="o">=</span> <span class="n">optimize</span><span class="o">.</span><span class="n">brentq</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span>
+                          <span class="n">xtol</span><span class="o">=</span><span class="n">xtol</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter_bq</span><span class="p">,</span>
+                          <span class="n">full_output</span><span class="o">=</span><span class="n">full_output</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">full_output</span><span class="p">:</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">info</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">info</span><span class="o">.</span><span class="n">iterations_expand</span> <span class="o">=</span> <span class="n">n_it</span>
+        <span class="n">info</span><span class="o">.</span><span class="n">start_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">sl</span><span class="p">,</span> <span class="n">su</span><span class="p">)</span>
+        <span class="n">info</span><span class="o">.</span><span class="n">brentq_bounds</span> <span class="o">=</span> <span class="p">(</span><span class="n">left</span><span class="p">,</span> <span class="n">right</span><span class="p">)</span>
+        <span class="n">info</span><span class="o">.</span><span class="n">increasing</span> <span class="o">=</span> <span class="n">increasing</span>
+        <span class="k">return</span> <span class="n">val</span><span class="p">,</span> <span class="n">info</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

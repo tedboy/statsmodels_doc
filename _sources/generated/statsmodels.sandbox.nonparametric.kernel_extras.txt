@@ -1,0 +1,51 @@
+statsmodels.sandbox.nonparametric.kernel_extras
+===============================================
+
+.. automodule:: statsmodels.sandbox.nonparametric.kernel_extras
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      gpke
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      KDEMultivariate
+      KernelReg
+      LeaveOneOut
+      SemiLinear
+      SingleIndexModel
+      TestFForm
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.nonparametric.kernel_extras.KDEMultivariate
+       generated/statsmodels.sandbox.nonparametric.kernel_extras.KernelReg
+       generated/statsmodels.sandbox.nonparametric.kernel_extras.LeaveOneOut
+       generated/statsmodels.sandbox.nonparametric.kernel_extras.SemiLinear
+       generated/statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel
+       generated/statsmodels.sandbox.nonparametric.kernel_extras.TestFForm
+
+   
+   
+
+   
+   
+   

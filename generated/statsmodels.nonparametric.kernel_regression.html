@@ -1,0 +1,333 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.8.6. statsmodels.nonparametric.kernel_regression &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="3. Main modules of interest" href="../main.html"/>
+        <link rel="next" title="3.8.6.2.1. statsmodels.nonparametric.kernel_regression.gpke" href="statsmodels.nonparametric.kernel_regression.gpke.html"/>
+        <link rel="prev" title="3.8.5.3.5.1.1. statsmodels.nonparametric.kernel_density.LeaveOneOut.__init__" href="generated/statsmodels.nonparametric.kernel_density.LeaveOneOut.__init__.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.nonparametric.api.html">3.8.1. statsmodels.nonparametric.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.nonparametric.bandwidths.html">3.8.2. statsmodels.nonparametric.bandwidths</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.nonparametric.kde.html">3.8.3. statsmodels.nonparametric.kde</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.nonparametric.kdetools.html">3.8.4. statsmodels.nonparametric.kdetools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.nonparametric.kernel_density.html">3.8.5. statsmodels.nonparametric.kernel_density</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">3.8.6. statsmodels.nonparametric.kernel_regression</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#references">3.8.6.1. References</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">3.8.6.2. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">3.8.6.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.nonparametric.kernels.html">3.8.7. statsmodels.nonparametric.kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.nonparametric.smoothers_lowess_old.html">3.8.8. statsmodels.nonparametric.smoothers_lowess_old</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.nonparametric.smoothers_lowess.html">3.8.9. statsmodels.nonparametric.smoothers_lowess</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-stats">3.11. statsmodel.stats</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+      <li>3.8.6. statsmodels.nonparametric.kernel_regression</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.nonparametric.kernel_regression.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.nonparametric.kernel_regression">
+<span id="statsmodels-nonparametric-kernel-regression"></span><h1>3.8.6. statsmodels.nonparametric.kernel_regression<a class="headerlink" href="#module-statsmodels.nonparametric.kernel_regression" title="Permalink to this headline">¶</a></h1>
+<p>Multivariate Conditional and Unconditional Kernel Density Estimation
+with Mixed Data Types</p>
+<div class="section" id="references">
+<h2>3.8.6.1. References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<dl class="docutils">
+<dt>[1] Racine, J., Li, Q. Nonparametric econometrics: theory and practice.</dt>
+<dd>Princeton University Press. (2007)</dd>
+<dt>[2] Racine, Jeff. &#8220;Nonparametric Econometrics: A Primer,&#8221; Foundation</dt>
+<dd>and Trends in Econometrics: Vol 3: No 1, pp1-88. (2008)
+<a class="reference external" href="http://dx.doi.org/10.1561/0800000009">http://dx.doi.org/10.1561/0800000009</a></dd>
+<dt>[3] Racine, J., Li, Q. &#8220;Nonparametric Estimation of Distributions</dt>
+<dd>with Categorical and Continuous Data.&#8221; Working Paper. (2000)</dd>
+<dt>[4] Racine, J. Li, Q. &#8220;Kernel Estimation of Multivariate Conditional</dt>
+<dd>Distributions Annals of Economics and Finance 5, 211-235 (2004)</dd>
+<dt>[5] Liu, R., Yang, L. &#8220;Kernel estimation of multivariate</dt>
+<dd>cumulative distribution function.&#8221;
+Journal of Nonparametric Statistics (2008)</dd>
+<dt>[6] Li, R., Ju, G. &#8220;Nonparametric Estimation of Multivariate CDF</dt>
+<dd>with Categorical and Continuous Data.&#8221; Working Paper</dd>
+<dt>[7] Li, Q., Racine, J. &#8220;Cross-validated local linear nonparametric</dt>
+<dd>regression&#8221; Statistica Sinica 14(2004), pp. 485-512</dd>
+<dt>[8] Racine, J.: &#8220;Consistent Significance Testing for Nonparametric</dt>
+<dd>Regression&#8221; Journal of Business &amp; Economics Statistics</dd>
+<dt>[9] Racine, J., Hart, J., Li, Q., &#8220;Testing the Significance of</dt>
+<dd>Categorical Predictor Variables in Nonparametric Regression
+Models&#8221;, 2006, Econometric Reviews 25, 523-544</dd>
+</dl>
+</div>
+<div class="section" id="functions">
+<h2>3.8.6.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.nonparametric.kernel_regression.gpke.html#statsmodels.nonparametric.kernel_regression.gpke" title="statsmodels.nonparametric.kernel_regression.gpke"><code class="xref py py-obj docutils literal"><span class="pre">gpke</span></code></a>(bw,&nbsp;data,&nbsp;data_predict,&nbsp;var_type[,&nbsp;...])</td>
+<td>Returns the non-normalized Generalized Product Kernel Estimator</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>3.8.6.3. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_regression.EstimatorSettings.html#statsmodels.nonparametric.kernel_regression.EstimatorSettings" title="statsmodels.nonparametric.kernel_regression.EstimatorSettings"><code class="xref py py-obj docutils literal"><span class="pre">EstimatorSettings</span></code></a>([efficient,&nbsp;randomize,&nbsp;...])</td>
+<td>Object to specify settings for density estimation or regression.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_regression.GenericKDE.html#statsmodels.nonparametric.kernel_regression.GenericKDE" title="statsmodels.nonparametric.kernel_regression.GenericKDE"><code class="xref py py-obj docutils literal"><span class="pre">GenericKDE</span></code></a></td>
+<td>Base class for density estimation and regression KDE classes.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_regression.KernelCensoredReg.html#statsmodels.nonparametric.kernel_regression.KernelCensoredReg" title="statsmodels.nonparametric.kernel_regression.KernelCensoredReg"><code class="xref py py-obj docutils literal"><span class="pre">KernelCensoredReg</span></code></a>(endog,&nbsp;exog,&nbsp;var_type,&nbsp;...)</td>
+<td>Nonparametric censored regression.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_regression.KernelReg.html#statsmodels.nonparametric.kernel_regression.KernelReg" title="statsmodels.nonparametric.kernel_regression.KernelReg"><code class="xref py py-obj docutils literal"><span class="pre">KernelReg</span></code></a>(endog,&nbsp;exog,&nbsp;var_type[,&nbsp;reg_type,&nbsp;...])</td>
+<td>Nonparametric kernel regression class.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_regression.LeaveOneOut.html#statsmodels.nonparametric.kernel_regression.LeaveOneOut" title="statsmodels.nonparametric.kernel_regression.LeaveOneOut"><code class="xref py py-obj docutils literal"><span class="pre">LeaveOneOut</span></code></a>(X)</td>
+<td>Generator to give leave-one-out views on X.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_regression.TestRegCoefC.html#statsmodels.nonparametric.kernel_regression.TestRegCoefC" title="statsmodels.nonparametric.kernel_regression.TestRegCoefC"><code class="xref py py-obj docutils literal"><span class="pre">TestRegCoefC</span></code></a>(model,&nbsp;test_vars[,&nbsp;nboot,&nbsp;...])</td>
+<td>Significance test for continuous variables in a nonparametric regression.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.nonparametric.kernel_regression.TestRegCoefD.html#statsmodels.nonparametric.kernel_regression.TestRegCoefD" title="statsmodels.nonparametric.kernel_regression.TestRegCoefD"><code class="xref py py-obj docutils literal"><span class="pre">TestRegCoefD</span></code></a>(model,&nbsp;test_vars[,&nbsp;nboot,&nbsp;...])</td>
+<td>Significance test for the categorical variables in a nonparametric regression.</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.nonparametric.kernel_regression.gpke.html" class="btn btn-neutral float-right" title="3.8.6.2.1. statsmodels.nonparametric.kernel_regression.gpke" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.nonparametric.kernel_density.LeaveOneOut.__init__.html" class="btn btn-neutral" title="3.8.5.3.5.1.1. statsmodels.nonparametric.kernel_density.LeaveOneOut.__init__" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

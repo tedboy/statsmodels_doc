@@ -1,0 +1,43 @@
+statsmodels.regression.linear_model.GLSAR
+=========================================
+
+.. currentmodule:: statsmodels.regression.linear_model
+.. autoclass:: GLSAR
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GLSAR.__init__
+   ~GLSAR.fit
+   ~GLSAR.fit_regularized
+   ~GLSAR.from_formula
+   ~GLSAR.hessian
+   ~GLSAR.information
+   ~GLSAR.initialize
+   ~GLSAR.iterative_fit
+   ~GLSAR.loglike
+   ~GLSAR.predict
+   ~GLSAR.score
+   ~GLSAR.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~GLSAR.df_model
+   ~GLSAR.df_resid
+   ~GLSAR.endog_names
+   ~GLSAR.exog_names
+

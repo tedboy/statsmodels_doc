@@ -1,0 +1,38 @@
+statsmodels.api.OrdinalGEE
+==========================
+
+.. currentmodule:: statsmodels.api
+.. autoclass:: OrdinalGEE
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OrdinalGEE.__init__
+   ~OrdinalGEE.cluster_list
+   ~OrdinalGEE.estimate_scale
+   ~OrdinalGEE.fit
+   ~OrdinalGEE.from_formula
+   ~OrdinalGEE.predict
+   ~OrdinalGEE.setup_ordinal
+   ~OrdinalGEE.update_cached_means
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~OrdinalGEE.cached_means
+   ~OrdinalGEE.endog_names
+   ~OrdinalGEE.exog_names
+

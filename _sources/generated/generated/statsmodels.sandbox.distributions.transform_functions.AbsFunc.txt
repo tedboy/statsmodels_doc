@@ -1,0 +1,25 @@
+statsmodels.sandbox.distributions.transform_functions.AbsFunc
+=============================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.transform_functions
+.. autoclass:: AbsFunc
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~AbsFunc.derivminus
+   ~AbsFunc.derivplus
+   ~AbsFunc.func
+   ~AbsFunc.inverseminus
+   ~AbsFunc.inverseplus
+
+
+
+
+

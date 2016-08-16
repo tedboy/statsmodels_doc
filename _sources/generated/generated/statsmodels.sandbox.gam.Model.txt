@@ -1,0 +1,47 @@
+statsmodels.sandbox.gam.Model
+=============================
+
+.. currentmodule:: statsmodels.sandbox.gam
+.. autoclass:: Model
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Model.__init__
+   ~Model.cont
+   ~Model.df_resid
+   ~Model.estimate_scale
+   ~Model.fit
+   ~Model.fit_constrained
+   ~Model.from_formula
+   ~Model.hessian
+   ~Model.hessian_factor
+   ~Model.information
+   ~Model.initialize
+   ~Model.loglike
+   ~Model.next
+   ~Model.predict
+   ~Model.score
+   ~Model.score_factor
+   ~Model.score_obs
+   ~Model.score_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Model.endog_names
+   ~Model.exog_names
+

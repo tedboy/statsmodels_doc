@@ -1,0 +1,40 @@
+statsmodels.genmod.families.Gamma
+=================================
+
+.. currentmodule:: statsmodels.genmod.families
+.. autoclass:: Gamma
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Gamma.__init__
+   ~Gamma.deviance
+   ~Gamma.fitted
+   ~Gamma.loglike
+   ~Gamma.predict
+   ~Gamma.resid_anscombe
+   ~Gamma.resid_dev
+   ~Gamma.starting_mu
+   ~Gamma.weights
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Gamma.link
+   ~Gamma.links
+   ~Gamma.valid
+   ~Gamma.variance
+

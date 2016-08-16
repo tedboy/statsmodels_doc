@@ -1,0 +1,58 @@
+statsmodels.genmod.generalized_estimating_equations.NominalGEEResults
+=====================================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: NominalGEEResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NominalGEEResults.__init__
+   ~NominalGEEResults.bse
+   ~NominalGEEResults.centered_resid
+   ~NominalGEEResults.conf_int
+   ~NominalGEEResults.cov_params
+   ~NominalGEEResults.f_test
+   ~NominalGEEResults.fittedvalues
+   ~NominalGEEResults.initialize
+   ~NominalGEEResults.llf
+   ~NominalGEEResults.load
+   ~NominalGEEResults.normalized_cov_params
+   ~NominalGEEResults.params_sensitivity
+   ~NominalGEEResults.plot_distribution
+   ~NominalGEEResults.plot_isotropic_dependence
+   ~NominalGEEResults.predict
+   ~NominalGEEResults.pvalues
+   ~NominalGEEResults.remove_data
+   ~NominalGEEResults.resid
+   ~NominalGEEResults.resid_centered
+   ~NominalGEEResults.resid_centered_split
+   ~NominalGEEResults.resid_split
+   ~NominalGEEResults.save
+   ~NominalGEEResults.sensitivity_params
+   ~NominalGEEResults.split_centered_resid
+   ~NominalGEEResults.split_resid
+   ~NominalGEEResults.standard_errors
+   ~NominalGEEResults.summary
+   ~NominalGEEResults.t_test
+   ~NominalGEEResults.tvalues
+   ~NominalGEEResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~NominalGEEResults.use_t
+

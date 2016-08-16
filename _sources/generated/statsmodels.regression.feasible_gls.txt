@@ -1,0 +1,51 @@
+statsmodels.regression.feasible_gls
+===================================
+
+.. automodule:: statsmodels.regression.feasible_gls
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      atleast_2dcols
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      GLS
+      GLSHet
+      GLSHet2
+      OLS
+      RegressionResults
+      WLS
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.regression.feasible_gls.GLS
+       generated/statsmodels.regression.feasible_gls.GLSHet
+       generated/statsmodels.regression.feasible_gls.GLSHet2
+       generated/statsmodels.regression.feasible_gls.OLS
+       generated/statsmodels.regression.feasible_gls.RegressionResults
+       generated/statsmodels.regression.feasible_gls.WLS
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,25 @@
+statsmodels.robust.robust_linear_model.RLMResultsWrapper
+========================================================
+
+.. currentmodule:: statsmodels.robust.robust_linear_model
+.. autoclass:: RLMResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~RLMResultsWrapper.__init__
+   ~RLMResultsWrapper.conf_int
+   ~RLMResultsWrapper.cov_params
+   ~RLMResultsWrapper.load
+   ~RLMResultsWrapper.save
+
+
+
+
+

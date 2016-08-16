@@ -1,0 +1,42 @@
+statsmodels.stats.weightstats.DescrStatsW
+=========================================
+
+.. currentmodule:: statsmodels.stats.weightstats
+.. autoclass:: DescrStatsW
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~DescrStatsW.__init__
+   ~DescrStatsW.asrepeats
+   ~DescrStatsW.corrcoef
+   ~DescrStatsW.cov
+   ~DescrStatsW.demeaned
+   ~DescrStatsW.get_compare
+   ~DescrStatsW.mean
+   ~DescrStatsW.nobs
+   ~DescrStatsW.std
+   ~DescrStatsW.std_ddof
+   ~DescrStatsW.std_mean
+   ~DescrStatsW.sum
+   ~DescrStatsW.sum_weights
+   ~DescrStatsW.sumsquares
+   ~DescrStatsW.tconfint_mean
+   ~DescrStatsW.ttest_mean
+   ~DescrStatsW.ttost_mean
+   ~DescrStatsW.var
+   ~DescrStatsW.var_ddof
+   ~DescrStatsW.zconfint_mean
+   ~DescrStatsW.ztest_mean
+   ~DescrStatsW.ztost_mean
+
+
+
+
+

@@ -1,0 +1,25 @@
+statsmodels.sandbox.datarich.factormodels.FactorModelUnivariate
+===============================================================
+
+.. currentmodule:: statsmodels.sandbox.datarich.factormodels
+.. autoclass:: FactorModelUnivariate
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~FactorModelUnivariate.__init__
+   ~FactorModelUnivariate.calc_factors
+   ~FactorModelUnivariate.fit_find_nfact
+   ~FactorModelUnivariate.fit_fixed_nfact
+   ~FactorModelUnivariate.summary_find_nfact
+
+
+
+
+

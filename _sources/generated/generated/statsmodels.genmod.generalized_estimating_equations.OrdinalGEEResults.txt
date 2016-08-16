@@ -1,0 +1,58 @@
+statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResults
+=====================================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: OrdinalGEEResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OrdinalGEEResults.__init__
+   ~OrdinalGEEResults.bse
+   ~OrdinalGEEResults.centered_resid
+   ~OrdinalGEEResults.conf_int
+   ~OrdinalGEEResults.cov_params
+   ~OrdinalGEEResults.f_test
+   ~OrdinalGEEResults.fittedvalues
+   ~OrdinalGEEResults.initialize
+   ~OrdinalGEEResults.llf
+   ~OrdinalGEEResults.load
+   ~OrdinalGEEResults.normalized_cov_params
+   ~OrdinalGEEResults.params_sensitivity
+   ~OrdinalGEEResults.plot_distribution
+   ~OrdinalGEEResults.plot_isotropic_dependence
+   ~OrdinalGEEResults.predict
+   ~OrdinalGEEResults.pvalues
+   ~OrdinalGEEResults.remove_data
+   ~OrdinalGEEResults.resid
+   ~OrdinalGEEResults.resid_centered
+   ~OrdinalGEEResults.resid_centered_split
+   ~OrdinalGEEResults.resid_split
+   ~OrdinalGEEResults.save
+   ~OrdinalGEEResults.sensitivity_params
+   ~OrdinalGEEResults.split_centered_resid
+   ~OrdinalGEEResults.split_resid
+   ~OrdinalGEEResults.standard_errors
+   ~OrdinalGEEResults.summary
+   ~OrdinalGEEResults.t_test
+   ~OrdinalGEEResults.tvalues
+   ~OrdinalGEEResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~OrdinalGEEResults.use_t
+

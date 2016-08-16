@@ -1,0 +1,23 @@
+statsmodels.base._penalties.PSD
+===============================
+
+.. currentmodule:: statsmodels.base._penalties
+.. autoclass:: PSD
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PSD.__init__
+   ~PSD.func
+   ~PSD.grad
+
+
+
+
+

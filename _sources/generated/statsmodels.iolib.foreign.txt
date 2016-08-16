@@ -1,0 +1,45 @@
+statsmodels.iolib.foreign
+=========================
+
+.. automodule:: statsmodels.iolib.foreign
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      genfromdta
+      is_py3
+      savetxt
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      StataReader
+      StataWriter
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.iolib.foreign.StataReader
+       generated/statsmodels.iolib.foreign.StataWriter
+
+   
+   
+
+   
+   
+   

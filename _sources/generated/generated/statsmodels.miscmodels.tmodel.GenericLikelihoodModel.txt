@@ -1,0 +1,44 @@
+statsmodels.miscmodels.tmodel.GenericLikelihoodModel
+====================================================
+
+.. currentmodule:: statsmodels.miscmodels.tmodel
+.. autoclass:: GenericLikelihoodModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GenericLikelihoodModel.__init__
+   ~GenericLikelihoodModel.expandparams
+   ~GenericLikelihoodModel.fit
+   ~GenericLikelihoodModel.from_formula
+   ~GenericLikelihoodModel.hessian
+   ~GenericLikelihoodModel.information
+   ~GenericLikelihoodModel.initialize
+   ~GenericLikelihoodModel.jac
+   ~GenericLikelihoodModel.loglike
+   ~GenericLikelihoodModel.loglikeobs
+   ~GenericLikelihoodModel.nloglike
+   ~GenericLikelihoodModel.predict
+   ~GenericLikelihoodModel.reduceparams
+   ~GenericLikelihoodModel.score
+   ~GenericLikelihoodModel.score_obs
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~GenericLikelihoodModel.endog_names
+   ~GenericLikelihoodModel.exog_names
+

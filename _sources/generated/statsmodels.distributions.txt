@@ -1,0 +1,45 @@
+statsmodels.distributions
+=========================
+
+.. automodule:: statsmodels.distributions
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      monotone_fn_inverter
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ECDF
+      ExpandedNormal
+      StepFunction
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.distributions.ECDF
+       generated/statsmodels.distributions.ExpandedNormal
+       generated/statsmodels.distributions.StepFunction
+
+   
+   
+
+   
+   
+   

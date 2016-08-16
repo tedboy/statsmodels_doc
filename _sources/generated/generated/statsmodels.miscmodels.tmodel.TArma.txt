@@ -1,0 +1,52 @@
+statsmodels.miscmodels.tmodel.TArma
+===================================
+
+.. currentmodule:: statsmodels.miscmodels.tmodel
+.. autoclass:: TArma
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TArma.__init__
+   ~TArma.expandparams
+   ~TArma.fit
+   ~TArma.fit_mle
+   ~TArma.forecast
+   ~TArma.forecast2
+   ~TArma.forecast3
+   ~TArma.from_formula
+   ~TArma.generate_sample
+   ~TArma.geterrors
+   ~TArma.hessian
+   ~TArma.information
+   ~TArma.initialize
+   ~TArma.jac
+   ~TArma.loglike
+   ~TArma.loglikeobs
+   ~TArma.nloglike
+   ~TArma.nloglikeobs
+   ~TArma.predict
+   ~TArma.predicted
+   ~TArma.reduceparams
+   ~TArma.score
+   ~TArma.score_obs
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TArma.endog_names
+   ~TArma.exog_names
+

@@ -1,0 +1,33 @@
+statsmodels.iolib.table.Cell
+============================
+
+.. currentmodule:: statsmodels.iolib.table
+.. autoclass:: Cell
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Cell.__init__
+   ~Cell.alignment
+   ~Cell.format
+   ~Cell.get_datatype
+   ~Cell.set_datatype
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Cell.datatype
+

@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.8.2. statsmodels.sandbox.stats.contrast_tools &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.8.2.1.1. statsmodels.sandbox.stats.contrast_tools.contrast_all_one" href="statsmodels.sandbox.stats.contrast_tools.contrast_all_one.html"/>
+        <link rel="prev" title="6.8.1. statsmodels.sandbox.stats" href="statsmodels.sandbox.stats.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.html">6.8.1. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.8.2. statsmodels.sandbox.stats.contrast_tools</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">6.8.2.1. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">6.8.2.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.html">6.8.3. statsmodels.sandbox.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.ex_newtests.html">6.8.4. statsmodels.sandbox.stats.ex_newtests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.html">6.8.5. statsmodels.sandbox.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.runs.html">6.8.6. statsmodels.sandbox.stats.runs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.stats_dhuard.html">6.8.7. statsmodels.sandbox.stats.stats_dhuard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.8.2. statsmodels.sandbox.stats.contrast_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.stats.contrast_tools.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.stats.contrast_tools">
+<span id="statsmodels-sandbox-stats-contrast-tools"></span><h1>6.8.2. statsmodels.sandbox.stats.contrast_tools<a class="headerlink" href="#module-statsmodels.sandbox.stats.contrast_tools" title="Permalink to this headline">¶</a></h1>
+<p>functions to work with contrasts for multiple tests</p>
+<p>contrast matrices for comparing all pairs, all levels to reference level, ...
+extension to 2-way groups in progress</p>
+<p>TwoWay: class for bringing two-way analysis together and try out
+various helper functions</p>
+<p>Idea for second part
+- get all transformation matrices to move in between different full rank</p>
+<blockquote>
+<div>parameterizations</div></blockquote>
+<ul>
+<li><p class="first">standardize to one parameterization to get all interesting effects.</p>
+</li>
+<li><p class="first">multivariate normal distribution
+- exploit or expand what we have in LikelihoodResults, cov_params, f_test,</p>
+<blockquote>
+<div><p>t_test, example: resols_dropf_full.cov_params(C2)</p>
+</div></blockquote>
+<ul class="simple">
+<li>connect to new multiple comparison for contrast matrices, based on
+multivariate normal or t distribution (Hothorn, Bretz, Westfall)</li>
+</ul>
+</li>
+</ul>
+<div class="section" id="functions">
+<h2>6.8.2.1. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.contrast_all_one.html#statsmodels.sandbox.stats.contrast_tools.contrast_all_one" title="statsmodels.sandbox.stats.contrast_tools.contrast_all_one"><code class="xref py py-obj docutils literal"><span class="pre">contrast_all_one</span></code></a>(nm)</td>
+<td>contrast or restriction matrix for all against first comparison</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.contrast_allpairs.html#statsmodels.sandbox.stats.contrast_tools.contrast_allpairs" title="statsmodels.sandbox.stats.contrast_tools.contrast_allpairs"><code class="xref py py-obj docutils literal"><span class="pre">contrast_allpairs</span></code></a>(nm)</td>
+<td>contrast or restriction matrix for all pairs of nm variables</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.contrast_diff_mean.html#statsmodels.sandbox.stats.contrast_tools.contrast_diff_mean" title="statsmodels.sandbox.stats.contrast_tools.contrast_diff_mean"><code class="xref py py-obj docutils literal"><span class="pre">contrast_diff_mean</span></code></a>(nm)</td>
+<td>contrast or restriction matrix for all against mean comparison</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.contrast_labels.html#statsmodels.sandbox.stats.contrast_tools.contrast_labels" title="statsmodels.sandbox.stats.contrast_tools.contrast_labels"><code class="xref py py-obj docutils literal"><span class="pre">contrast_labels</span></code></a>(contrasts,&nbsp;names[,&nbsp;reverse])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.contrast_product.html#statsmodels.sandbox.stats.contrast_tools.contrast_product" title="statsmodels.sandbox.stats.contrast_tools.contrast_product"><code class="xref py py-obj docutils literal"><span class="pre">contrast_product</span></code></a>(names1,&nbsp;names2[,&nbsp;...])</td>
+<td>build contrast matrices for products of two categorical variables</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.dummy_1d.html#statsmodels.sandbox.stats.contrast_tools.dummy_1d" title="statsmodels.sandbox.stats.contrast_tools.dummy_1d"><code class="xref py py-obj docutils literal"><span class="pre">dummy_1d</span></code></a>(x[,&nbsp;varname])</td>
+<td>dummy variable for id integer groups</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.dummy_limits.html#statsmodels.sandbox.stats.contrast_tools.dummy_limits" title="statsmodels.sandbox.stats.contrast_tools.dummy_limits"><code class="xref py py-obj docutils literal"><span class="pre">dummy_limits</span></code></a>(d)</td>
+<td>start and endpoints of groups in a sorted dummy variable array</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.dummy_nested.html#statsmodels.sandbox.stats.contrast_tools.dummy_nested" title="statsmodels.sandbox.stats.contrast_tools.dummy_nested"><code class="xref py py-obj docutils literal"><span class="pre">dummy_nested</span></code></a>(d1,&nbsp;d2[,&nbsp;method])</td>
+<td>unfinished and incomplete mainly copy past dummy_product</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.dummy_product.html#statsmodels.sandbox.stats.contrast_tools.dummy_product" title="statsmodels.sandbox.stats.contrast_tools.dummy_product"><code class="xref py py-obj docutils literal"><span class="pre">dummy_product</span></code></a>(d1,&nbsp;d2[,&nbsp;method])</td>
+<td>dummy variable from product of two dummy variables</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.groupmean_d.html#statsmodels.sandbox.stats.contrast_tools.groupmean_d" title="statsmodels.sandbox.stats.contrast_tools.groupmean_d"><code class="xref py py-obj docutils literal"><span class="pre">groupmean_d</span></code></a>(x,&nbsp;d)</td>
+<td>groupmeans using dummy variables</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.signstr.html#statsmodels.sandbox.stats.contrast_tools.signstr" title="statsmodels.sandbox.stats.contrast_tools.signstr"><code class="xref py py-obj docutils literal"><span class="pre">signstr</span></code></a>(x[,&nbsp;noplus])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>6.8.2.2. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.contrast_tools.DummyTransform.html#statsmodels.sandbox.stats.contrast_tools.DummyTransform" title="statsmodels.sandbox.stats.contrast_tools.DummyTransform"><code class="xref py py-obj docutils literal"><span class="pre">DummyTransform</span></code></a>(d1,&nbsp;d2)</td>
+<td>Conversion between full rank dummy encodings</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.contrast_tools.TestContrastTools.html#statsmodels.sandbox.stats.contrast_tools.TestContrastTools" title="statsmodels.sandbox.stats.contrast_tools.TestContrastTools"><code class="xref py py-obj docutils literal"><span class="pre">TestContrastTools</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.contrast_tools.TwoWay.html#statsmodels.sandbox.stats.contrast_tools.TwoWay" title="statsmodels.sandbox.stats.contrast_tools.TwoWay"><code class="xref py py-obj docutils literal"><span class="pre">TwoWay</span></code></a>(endog,&nbsp;factor1,&nbsp;factor2[,&nbsp;varnames])</td>
+<td>a wrapper class for two way anova type of analysis with OLS</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.stats.contrast_tools.contrast_all_one.html" class="btn btn-neutral float-right" title="6.8.2.1.1. statsmodels.sandbox.stats.contrast_tools.contrast_all_one" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.stats.html" class="btn btn-neutral" title="6.8.1. statsmodels.sandbox.stats" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

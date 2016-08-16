@@ -1,0 +1,450 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.miscmodels.try_mlecov &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.miscmodels.try_mlecov</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.miscmodels.try_mlecov</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Multivariate Normal Model with full covariance matrix</span>
+
+<span class="sd">toeplitz structure is not exploited, need cholesky or inv for toeplitz</span>
+
+<span class="sd">Author: josef-pktd</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="c1">#from scipy import special #, stats</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">linalg</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">norm</span><span class="p">,</span> <span class="n">toeplitz</span>
+
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">from</span> <span class="nn">statsmodels.base.model</span> <span class="k">import</span> <span class="p">(</span><span class="n">GenericLikelihoodModel</span><span class="p">,</span>
+        <span class="n">LikelihoodModel</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.arima_process</span> <span class="k">import</span> <span class="n">arma_acovf</span><span class="p">,</span> <span class="n">arma_generate_sample</span>
+
+
+<div class="viewcode-block" id="mvn_loglike_sum"><a class="viewcode-back" href="../../../generated/statsmodels.miscmodels.try_mlecov.mvn_loglike_sum.html#statsmodels.miscmodels.try_mlecov.mvn_loglike_sum">[docs]</a><span class="k">def</span> <span class="nf">mvn_loglike_sum</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;loglike multivariate normal</span>
+
+<span class="sd">    copied from GLS and adjusted names</span>
+<span class="sd">    not sure why this differes from mvn_loglike</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">nobs2</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">/</span> <span class="mf">2.0</span>
+    <span class="n">SSR</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="n">llf</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">SSR</span><span class="p">)</span> <span class="o">*</span> <span class="n">nobs2</span>      <span class="c1"># concentrated likelihood</span>
+    <span class="n">llf</span> <span class="o">-=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="n">nobs2</span><span class="p">))</span><span class="o">*</span><span class="n">nobs2</span>  <span class="c1"># with likelihood constant</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span> <span class="ow">and</span> <span class="n">sigma</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+    <span class="c1">#FIXME: robust-enough check?  unneeded if _det_sigma gets defined</span>
+        <span class="n">llf</span> <span class="o">-=</span> <span class="o">.</span><span class="mi">5</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">llf</span></div>
+
+<div class="viewcode-block" id="mvn_loglike"><a class="viewcode-back" href="../../../generated/statsmodels.miscmodels.try_mlecov.mvn_loglike.html#statsmodels.miscmodels.try_mlecov.mvn_loglike">[docs]</a><span class="k">def</span> <span class="nf">mvn_loglike</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;loglike multivariate normal</span>
+
+<span class="sd">    assumes x is 1d, (nobs,) and sigma is 2d (nobs, nobs)</span>
+
+<span class="sd">    brute force from formula</span>
+<span class="sd">    no checking of correct inputs</span>
+<span class="sd">    use of inv and log-det should be replace with something more efficient</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#see numpy thread</span>
+    <span class="c1">#Sturla: sqmahal = (cx*cho_solve(cho_factor(S),cx.T).T).sum(axis=1)</span>
+    <span class="n">sigmainv</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="n">logdetsigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="n">llf</span> <span class="o">=</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sigmainv</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+    <span class="n">llf</span> <span class="o">-=</span> <span class="n">nobs</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">llf</span> <span class="o">-=</span> <span class="n">logdetsigma</span>
+    <span class="n">llf</span> <span class="o">*=</span> <span class="mf">0.5</span>
+    <span class="k">return</span> <span class="n">llf</span></div>
+
+<div class="viewcode-block" id="mvn_loglike_chol"><a class="viewcode-back" href="../../../generated/statsmodels.miscmodels.try_mlecov.mvn_loglike_chol.html#statsmodels.miscmodels.try_mlecov.mvn_loglike_chol">[docs]</a><span class="k">def</span> <span class="nf">mvn_loglike_chol</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;loglike multivariate normal</span>
+
+<span class="sd">    assumes x is 1d, (nobs,) and sigma is 2d (nobs, nobs)</span>
+
+<span class="sd">    brute force from formula</span>
+<span class="sd">    no checking of correct inputs</span>
+<span class="sd">    use of inv and log-det should be replace with something more efficient</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#see numpy thread</span>
+    <span class="c1">#Sturla: sqmahal = (cx*cho_solve(cho_factor(S),cx.T).T).sum(axis=1)</span>
+    <span class="n">sigmainv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="n">cholsigmainv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">sigmainv</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">x_whitened</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="n">logdetsigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;scipy.stats&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x_whitened</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+    <span class="n">llf</span> <span class="o">=</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x_whitened</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">x_whitened</span><span class="p">)</span>
+    <span class="n">llf</span> <span class="o">-=</span> <span class="n">nobs</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">llf</span> <span class="o">-=</span> <span class="n">logdetsigma</span>
+    <span class="n">llf</span> <span class="o">*=</span> <span class="mf">0.5</span>
+    <span class="k">return</span> <span class="n">llf</span><span class="p">,</span> <span class="n">logdetsigma</span><span class="p">,</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">)))</span></div>
+<span class="c1">#0.5 * np.dot(x_whitened.T, x_whitened) + nobs * np.log(2 * np.pi) + logdetsigma)</span>
+
+<div class="viewcode-block" id="mvn_nloglike_obs"><a class="viewcode-back" href="../../../generated/statsmodels.miscmodels.try_mlecov.mvn_nloglike_obs.html#statsmodels.miscmodels.try_mlecov.mvn_nloglike_obs">[docs]</a><span class="k">def</span> <span class="nf">mvn_nloglike_obs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;loglike multivariate normal</span>
+
+<span class="sd">    assumes x is 1d, (nobs,) and sigma is 2d (nobs, nobs)</span>
+
+<span class="sd">    brute force from formula</span>
+<span class="sd">    no checking of correct inputs</span>
+<span class="sd">    use of inv and log-det should be replace with something more efficient</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#see numpy thread</span>
+    <span class="c1">#Sturla: sqmahal = (cx*cho_solve(cho_factor(S),cx.T).T).sum(axis=1)</span>
+
+    <span class="c1">#Still wasteful to calculate pinv first</span>
+    <span class="n">sigmainv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="n">cholsigmainv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">sigmainv</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+    <span class="c1">#2 * np.sum(np.log(np.diagonal(np.linalg.cholesky(A)))) #Dag mailinglist</span>
+    <span class="c1"># logdet not needed ???</span>
+    <span class="c1">#logdetsigma = 2 * np.sum(np.log(np.diagonal(cholsigmainv)))</span>
+    <span class="n">x_whitened</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="c1">#sigmainv = linalg.cholesky(sigma)</span>
+    <span class="n">logdetsigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+
+    <span class="n">sigma2</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># error variance is included in sigma</span>
+
+    <span class="n">llike</span>  <span class="o">=</span>  <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">))</span>
+                          <span class="o">+</span> <span class="p">(</span><span class="n">x_whitened</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">sigma2</span>
+                          <span class="o">+</span>  <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">llike</span></div>
+
+<div class="viewcode-block" id="invertibleroots"><a class="viewcode-back" href="../../../generated/statsmodels.miscmodels.try_mlecov.invertibleroots.html#statsmodels.miscmodels.try_mlecov.invertibleroots">[docs]</a><span class="k">def</span> <span class="nf">invertibleroots</span><span class="p">(</span><span class="n">ma</span><span class="p">):</span>
+    <span class="kn">import</span> <span class="nn">numpy.polynomial</span> <span class="k">as</span> <span class="nn">poly</span>
+    <span class="n">pr</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">polyroots</span><span class="p">(</span><span class="n">ma</span><span class="p">)</span>
+    <span class="n">insideroots</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">1</span>
+    <span class="k">if</span> <span class="n">insideroots</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+        <span class="n">pr</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">pr</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">pnew</span> <span class="o">=</span> <span class="n">poly</span><span class="o">.</span><span class="n">Polynomial</span><span class="o">.</span><span class="n">fromroots</span><span class="p">(</span><span class="n">pr</span><span class="p">)</span>
+        <span class="n">mainv</span> <span class="o">=</span> <span class="n">pn</span><span class="o">.</span><span class="n">coef</span><span class="o">/</span><span class="n">pnew</span><span class="o">.</span><span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">wasinvertible</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">mainv</span> <span class="o">=</span> <span class="n">ma</span>
+        <span class="n">wasinvertible</span> <span class="o">=</span> <span class="kc">True</span>
+    <span class="k">return</span> <span class="n">mainv</span><span class="p">,</span> <span class="n">wasinvertible</span></div>
+
+<div class="viewcode-block" id="getpoly"><a class="viewcode-back" href="../../../generated/statsmodels.miscmodels.try_mlecov.getpoly.html#statsmodels.miscmodels.try_mlecov.getpoly">[docs]</a><span class="k">def</span> <span class="nf">getpoly</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">params</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">nar</span><span class="p">]]</span>
+    <span class="n">ma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">nma</span><span class="p">:]]</span>
+    <span class="kn">import</span> <span class="nn">numpy.polynomial</span> <span class="k">as</span> <span class="nn">poly</span>
+    <span class="k">return</span> <span class="n">poly</span><span class="o">.</span><span class="n">Polynomial</span><span class="p">(</span><span class="n">ar</span><span class="p">),</span> <span class="n">poly</span><span class="o">.</span><span class="n">Polynomial</span><span class="p">(</span><span class="n">ma</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MLEGLS"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.try_mlecov.MLEGLS.html#statsmodels.miscmodels.try_mlecov.MLEGLS">[docs]</a><span class="k">class</span> <span class="nc">MLEGLS</span><span class="p">(</span><span class="n">GenericLikelihoodModel</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;ARMA model with exact loglikelhood for short time series</span>
+
+<span class="sd">    Inverts (nobs, nobs) matrix, use only for nobs &lt;= 200 or so.</span>
+
+<span class="sd">    This class is a pattern for small sample GLS-like models. Intended use</span>
+<span class="sd">    for loglikelihood of initial observations for ARMA.</span>
+
+
+
+<span class="sd">    TODO:</span>
+<span class="sd">    This might be missing the error variance. Does it assume error is</span>
+<span class="sd">       distributed N(0,1)</span>
+<span class="sd">    Maybe extend to mean handling, or assume it is already removed.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+    <span class="k">def</span> <span class="nf">_params2cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">nobs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get autocovariance matrix from ARMA regression parameter</span>
+
+<span class="sd">        ar parameters are assumed to have rhs parameterization</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">ar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">params</span><span class="p">[:</span><span class="bp">self</span><span class="o">.</span><span class="n">nar</span><span class="p">]]</span>
+        <span class="n">ma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">nma</span><span class="p">:]]</span>
+        <span class="c1">#print(&#39;ar&#39;, ar</span>
+        <span class="c1">#print(&#39;ma&#39;, ma</span>
+        <span class="c1">#print(&#39;nobs&#39;, nobs</span>
+        <span class="n">autocov</span> <span class="o">=</span> <span class="n">arma_acovf</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="c1">#print(&#39;arma_acovf(%r, %r, nobs=%d)&#39; % (ar, ma, nobs)</span>
+        <span class="c1">#print(autocov.shape</span>
+        <span class="c1">#something is strange  fixed in aram_acovf</span>
+        <span class="n">autocov</span> <span class="o">=</span> <span class="n">autocov</span><span class="p">[:</span><span class="n">nobs</span><span class="p">]</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">toeplitz</span><span class="p">(</span><span class="n">autocov</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">sigma</span>
+
+<div class="viewcode-block" id="MLEGLS.loglike"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.try_mlecov.MLEGLS.loglike.html#statsmodels.miscmodels.try_mlecov.MLEGLS.loglike">[docs]</a>    <span class="k">def</span> <span class="nf">loglike</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_params2cov</span><span class="p">(</span><span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="n">sig</span> <span class="o">=</span> <span class="n">sig</span> <span class="o">*</span> <span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+        <span class="n">loglik</span> <span class="o">=</span> <span class="n">mvn_loglike</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="n">sig</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">loglik</span></div>
+
+<div class="viewcode-block" id="MLEGLS.fit_invertible"><a class="viewcode-back" href="../../../generated/generated/statsmodels.miscmodels.try_mlecov.MLEGLS.fit_invertible.html#statsmodels.miscmodels.try_mlecov.MLEGLS.fit_invertible">[docs]</a>    <span class="k">def</span> <span class="nf">fit_invertible</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">ma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[[</span><span class="mi">1</span><span class="p">],</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nar</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nar</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">nma</span><span class="p">]]</span>
+        <span class="n">mainv</span><span class="p">,</span> <span class="n">wasinvertible</span> <span class="o">=</span> <span class="n">invertibleroots</span><span class="p">(</span><span class="n">ma</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">wasinvertible</span><span class="p">:</span>
+            <span class="n">start_params</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">start_params</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">nar</span><span class="p">:</span> <span class="bp">self</span><span class="o">.</span><span class="n">nar</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">nma</span><span class="p">]</span> <span class="o">=</span> <span class="n">mainv</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="c1">#need to add args kwds</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">start_params</span><span class="o">=</span><span class="n">start_params</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div></div>
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">]</span>
+    <span class="n">ma</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.0</span><span class="p">,</span>  <span class="mf">0.1</span><span class="p">,</span>  <span class="mf">0.2</span><span class="p">]</span>
+    <span class="c1">#ma = [1]</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">9875789</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">arma_generate_sample</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span><span class="n">ma</span><span class="p">,</span><span class="n">nobs</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">-=</span> <span class="n">y</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="c1">#I haven&#39;t checked treatment of mean yet, so remove</span>
+    <span class="n">mod</span> <span class="o">=</span> <span class="n">MLEGLS</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">nar</span><span class="p">,</span> <span class="n">mod</span><span class="o">.</span><span class="n">nma</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span>   <span class="c1">#needs to be added, no init method</span>
+    <span class="n">mod</span><span class="o">.</span><span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">start_params</span><span class="o">=</span><span class="p">[</span><span class="mf">0.1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.8</span><span class="p">,</span> <span class="mf">0.2</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">1.</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;DGP&#39;</span><span class="p">,</span> <span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">statsmodels.regression</span> <span class="k">import</span> <span class="n">yule_walker</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">yule_walker</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="c1">#resi = mod.fit_invertible(start_params=[0.1,0,0.2,0, 0.5])</span>
+    <span class="c1">#print(resi.params</span>
+
+    <span class="n">arpoly</span><span class="p">,</span> <span class="n">mapoly</span> <span class="o">=</span> <span class="n">getpoly</span><span class="p">(</span><span class="n">mod</span><span class="p">,</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">sunspots</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+    <span class="c1">#ys = data.endog[-100:]</span>
+<span class="c1">##    ys = data.endog[12:]-data.endog[:-12]</span>
+<span class="c1">##    ys -= ys.mean()</span>
+<span class="c1">##    mods = MLEGLS(ys)</span>
+<span class="c1">##    mods.nar, mods.nma = 13, 1   #needs to be added, no init method</span>
+<span class="c1">##    mods.nobs = len(ys)</span>
+<span class="c1">##    ress = mods.fit(start_params=np.r_[0.4, np.zeros(12), [0.2, 5.]],maxiter=200)</span>
+<span class="c1">##    print(ress.params</span>
+<span class="c1">##    #from statsmodels.sandbox.tsa import arima as tsaa</span>
+<span class="c1">##    #tsaa</span>
+<span class="c1">##    import matplotlib.pyplot as plt</span>
+<span class="c1">##    plt.plot(data.endog[1])</span>
+<span class="c1">##    #plt.show()</span>
+
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">_params2cov</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">nobs</span><span class="p">)</span> <span class="o">*</span> <span class="n">res</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mvn_loglike</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sigma</span><span class="p">))</span>
+    <span class="n">llo</span> <span class="o">=</span> <span class="n">mvn_nloglike_obs</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">llo</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">llo</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mvn_loglike_chol</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sigma</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mvn_loglike_sum</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">sigma</span><span class="p">))</span>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

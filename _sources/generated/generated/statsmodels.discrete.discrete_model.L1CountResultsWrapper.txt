@@ -1,0 +1,25 @@
+statsmodels.discrete.discrete_model.L1CountResultsWrapper
+=========================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: L1CountResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~L1CountResultsWrapper.__init__
+   ~L1CountResultsWrapper.conf_int
+   ~L1CountResultsWrapper.cov_params
+   ~L1CountResultsWrapper.load
+   ~L1CountResultsWrapper.save
+
+
+
+
+

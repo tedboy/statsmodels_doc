@@ -1,0 +1,67 @@
+statsmodels.tsa.tests.test_arima.Test_ARIMA111
+==============================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: Test_ARIMA111
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Test_ARIMA111.setupClass
+   ~Test_ARIMA111.test_aic
+   ~Test_ARIMA111.test_arroots
+   ~Test_ARIMA111.test_bic
+   ~Test_ARIMA111.test_bse
+   ~Test_ARIMA111.test_covparams
+   ~Test_ARIMA111.test_dynamic_forecast
+   ~Test_ARIMA111.test_fittedvalues
+   ~Test_ARIMA111.test_forecast
+   ~Test_ARIMA111.test_forecasterr
+   ~Test_ARIMA111.test_freq
+   ~Test_ARIMA111.test_hqic
+   ~Test_ARIMA111.test_llf
+   ~Test_ARIMA111.test_maroots
+   ~Test_ARIMA111.test_order
+   ~Test_ARIMA111.test_params
+   ~Test_ARIMA111.test_predict_levels
+   ~Test_ARIMA111.test_pvalues
+   ~Test_ARIMA111.test_resid
+   ~Test_ARIMA111.test_sigma2
+   ~Test_ARIMA111.test_summary
+   ~Test_ARIMA111.test_tvalues
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Test_ARIMA111.decimal_aic
+   ~Test_ARIMA111.decimal_arroots
+   ~Test_ARIMA111.decimal_bic
+   ~Test_ARIMA111.decimal_bse
+   ~Test_ARIMA111.decimal_cov_params
+   ~Test_ARIMA111.decimal_fittedvalues
+   ~Test_ARIMA111.decimal_forecast
+   ~Test_ARIMA111.decimal_forecast_dyn
+   ~Test_ARIMA111.decimal_forecasterr
+   ~Test_ARIMA111.decimal_hqic
+   ~Test_ARIMA111.decimal_llf
+   ~Test_ARIMA111.decimal_maroots
+   ~Test_ARIMA111.decimal_params
+   ~Test_ARIMA111.decimal_predict_levels
+   ~Test_ARIMA111.decimal_pvalues
+   ~Test_ARIMA111.decimal_resid
+   ~Test_ARIMA111.decimal_sigma2
+   ~Test_ARIMA111.decimal_t
+

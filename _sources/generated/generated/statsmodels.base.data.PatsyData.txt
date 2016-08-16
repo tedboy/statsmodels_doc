@@ -1,0 +1,42 @@
+statsmodels.base.data.PatsyData
+===============================
+
+.. currentmodule:: statsmodels.base.data
+.. autoclass:: PatsyData
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PatsyData.__init__
+   ~PatsyData.attach_columns
+   ~PatsyData.attach_columns_eq
+   ~PatsyData.attach_cov
+   ~PatsyData.attach_cov_eq
+   ~PatsyData.attach_dates
+   ~PatsyData.attach_generic_columns
+   ~PatsyData.attach_generic_columns_2d
+   ~PatsyData.attach_rows
+   ~PatsyData.handle_missing
+   ~PatsyData.row_labels
+   ~PatsyData.wrap_output
+   ~PatsyData.xnames
+   ~PatsyData.ynames
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~PatsyData.param_names
+

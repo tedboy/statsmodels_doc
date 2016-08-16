@@ -1,0 +1,38 @@
+statsmodels.tsa.base.tsa_model.TimeSeriesModel
+==============================================
+
+.. currentmodule:: statsmodels.tsa.base.tsa_model
+.. autoclass:: TimeSeriesModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TimeSeriesModel.__init__
+   ~TimeSeriesModel.fit
+   ~TimeSeriesModel.from_formula
+   ~TimeSeriesModel.hessian
+   ~TimeSeriesModel.information
+   ~TimeSeriesModel.initialize
+   ~TimeSeriesModel.loglike
+   ~TimeSeriesModel.predict
+   ~TimeSeriesModel.score
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TimeSeriesModel.endog_names
+   ~TimeSeriesModel.exog_names
+

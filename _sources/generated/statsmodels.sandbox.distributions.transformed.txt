@@ -1,0 +1,61 @@
+statsmodels.sandbox.distributions.transformed
+=============================================
+
+.. automodule:: statsmodels.sandbox.distributions.transformed
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      absfunc
+      derivminus
+      derivplus
+      examples_transf
+      get_u_argskwargs
+      identit
+      inverse
+      inverseminus
+      inverseplus
+      inversew
+      inversew_inv
+      iteritems
+      negsquarefunc
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ExpTransf_gen
+      LogTransf_gen
+      SquareFunc
+      TransfTwo_gen
+      Transf_gen
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.distributions.transformed.ExpTransf_gen
+       generated/statsmodels.sandbox.distributions.transformed.LogTransf_gen
+       generated/statsmodels.sandbox.distributions.transformed.SquareFunc
+       generated/statsmodels.sandbox.distributions.transformed.TransfTwo_gen
+       generated/statsmodels.sandbox.distributions.transformed.Transf_gen
+
+   
+   
+
+   
+   
+   

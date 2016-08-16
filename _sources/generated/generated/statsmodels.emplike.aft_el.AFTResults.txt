@@ -1,0 +1,24 @@
+statsmodels.emplike.aft_el.AFTResults
+=====================================
+
+.. currentmodule:: statsmodels.emplike.aft_el
+.. autoclass:: AFTResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~AFTResults.__init__
+   ~AFTResults.ci_beta
+   ~AFTResults.params
+   ~AFTResults.test_beta
+
+
+
+
+

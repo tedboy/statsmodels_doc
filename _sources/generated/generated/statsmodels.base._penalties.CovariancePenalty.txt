@@ -1,0 +1,23 @@
+statsmodels.base._penalties.CovariancePenalty
+=============================================
+
+.. currentmodule:: statsmodels.base._penalties
+.. autoclass:: CovariancePenalty
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CovariancePenalty.__init__
+   ~CovariancePenalty.func
+   ~CovariancePenalty.grad
+
+
+
+
+

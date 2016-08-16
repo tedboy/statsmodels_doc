@@ -1,0 +1,24 @@
+statsmodels.base.model.ContrastResults
+======================================
+
+.. currentmodule:: statsmodels.base.model
+.. autoclass:: ContrastResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ContrastResults.__init__
+   ~ContrastResults.conf_int
+   ~ContrastResults.summary
+   ~ContrastResults.summary_frame
+
+
+
+
+

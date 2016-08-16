@@ -1,0 +1,49 @@
+statsmodels.sandbox.tools.cross_val
+===================================
+
+.. automodule:: statsmodels.sandbox.tools.cross_val
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      split
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      KFold
+      KStepAhead
+      LeaveOneLabelOut
+      LeaveOneOut
+      LeavePOut
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.tools.cross_val.KFold
+       generated/statsmodels.sandbox.tools.cross_val.KStepAhead
+       generated/statsmodels.sandbox.tools.cross_val.LeaveOneLabelOut
+       generated/statsmodels.sandbox.tools.cross_val.LeaveOneOut
+       generated/statsmodels.sandbox.tools.cross_val.LeavePOut
+
+   
+   
+
+   
+   
+   

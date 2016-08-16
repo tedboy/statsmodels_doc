@@ -1,0 +1,42 @@
+statsmodels.discrete.discrete_model.BinaryModel
+===============================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: BinaryModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~BinaryModel.__init__
+   ~BinaryModel.cdf
+   ~BinaryModel.cov_params_func_l1
+   ~BinaryModel.fit
+   ~BinaryModel.fit_regularized
+   ~BinaryModel.from_formula
+   ~BinaryModel.hessian
+   ~BinaryModel.information
+   ~BinaryModel.initialize
+   ~BinaryModel.loglike
+   ~BinaryModel.pdf
+   ~BinaryModel.predict
+   ~BinaryModel.score
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~BinaryModel.endog_names
+   ~BinaryModel.exog_names
+

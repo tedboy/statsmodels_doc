@@ -1,0 +1,62 @@
+statsmodels.tsa.x13
+===================
+
+.. automodule:: statsmodels.tsa.x13
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      iteritems
+      pandas_to_series_spec
+      run_spec
+      x13_arima_analysis
+      x13_arima_select_order
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Bunch
+      SeriesSpec
+      Spec
+      X13ArimaAnalysisResult
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tsa.x13.Bunch
+       generated/statsmodels.tsa.x13.SeriesSpec
+       generated/statsmodels.tsa.x13.Spec
+       generated/statsmodels.tsa.x13.X13ArimaAnalysisResult
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      IOWarning
+      X13Error
+      X13NotFoundError
+      X13Warning
+   
+   

@@ -1,0 +1,40 @@
+statsmodels.genmod.families.family.Poisson
+==========================================
+
+.. currentmodule:: statsmodels.genmod.families.family
+.. autoclass:: Poisson
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Poisson.__init__
+   ~Poisson.deviance
+   ~Poisson.fitted
+   ~Poisson.loglike
+   ~Poisson.predict
+   ~Poisson.resid_anscombe
+   ~Poisson.resid_dev
+   ~Poisson.starting_mu
+   ~Poisson.weights
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Poisson.link
+   ~Poisson.links
+   ~Poisson.valid
+   ~Poisson.variance
+

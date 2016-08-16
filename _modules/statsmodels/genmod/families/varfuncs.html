@@ -1,0 +1,491 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.genmod.families.varfuncs &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.genmod.families.varfuncs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.genmod.families.varfuncs</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Variance functions for use with the link functions in statsmodels.family.links</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s1">&#39;restructuredtext&#39;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="n">FLOAT_EPS</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">finfo</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span><span class="o">.</span><span class="n">eps</span>
+
+<div class="viewcode-block" id="VarianceFunction"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.genmod.families.varfuncs.VarianceFunction.html#statsmodels.genmod.families.VarianceFunction">[docs]</a><span class="k">class</span> <span class="nc">VarianceFunction</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Relates the variance of a random variable to its mean. Defaults to 1.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    call</span>
+<span class="sd">        Returns an array of ones that is the same shape as `mu`</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    After a variance function is initialized, its call method can be used.</span>
+
+<span class="sd">    Alias for VarianceFunction:</span>
+<span class="sd">    constant = VarianceFunction()</span>
+
+<span class="sd">    See also</span>
+<span class="sd">    --------</span>
+<span class="sd">    statsmodels.family.family</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Default variance function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        mu : array-like</span>
+<span class="sd">            mean parameters</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        v : array</span>
+<span class="sd">            ones(mu.shape)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">mu</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="VarianceFunction.deriv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.genmod.families.varfuncs.VarianceFunction.deriv.html#statsmodels.genmod.families.VarianceFunction.deriv">[docs]</a>    <span class="k">def</span> <span class="nf">deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Derivative of the variance function v&#39;(mu)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">statsmodels.tools.numdiff</span> <span class="k">import</span> <span class="n">approx_fprime_cs</span>
+        <span class="c1"># TODO: diag workaround proplem with numdiff for 1d</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">approx_fprime_cs</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span></div></div>
+
+
+<span class="n">constant</span> <span class="o">=</span> <span class="n">VarianceFunction</span><span class="p">()</span>
+<span class="n">constant</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">The call method of constant returns a constant variance, i.e., a vector of ones.</span>
+
+<span class="s2">constant is an alias of VarianceFunction()</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Power"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.genmod.families.varfuncs.Power.html#statsmodels.genmod.families.Power">[docs]</a><span class="k">class</span> <span class="nc">Power</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Power variance function</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    power : float</span>
+<span class="sd">        exponent used in power variance function</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    call</span>
+<span class="sd">        Returns the power variance</span>
+
+<span class="sd">    Formulas</span>
+<span class="sd">    --------</span>
+<span class="sd">    V(mu) = numpy.fabs(mu)**power</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Aliases for Power:</span>
+<span class="sd">    mu = Power()</span>
+<span class="sd">    mu_squared = Power(power=2)</span>
+<span class="sd">    mu_cubed = Power(power=3)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Power.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.genmod.families.varfuncs.Power.__init__.html#statsmodels.genmod.families.Power.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">power</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">power</span> <span class="o">=</span> <span class="n">power</span></div>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Power variance function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mu : array-like</span>
+<span class="sd">            mean parameters</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        variance : array</span>
+<span class="sd">            numpy.fabs(mu)**self.power</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">fabs</span><span class="p">(</span><span class="n">mu</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">power</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="Power.deriv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.genmod.families.varfuncs.Power.deriv.html#statsmodels.genmod.families.Power.deriv">[docs]</a>    <span class="k">def</span> <span class="nf">deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Derivative of the variance function v&#39;(mu)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">statsmodels.tools.numdiff</span> <span class="k">import</span> <span class="n">approx_fprime_cs</span><span class="p">,</span> <span class="n">approx_fprime</span>
+        <span class="c1">#return approx_fprime_cs(mu, self)  # TODO fix breaks in `fabs</span>
+        <span class="c1"># TODO: diag is workaround problem with numdiff for 1d</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">approx_fprime</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span></div></div>
+
+
+<span class="n">mu</span> <span class="o">=</span> <span class="n">Power</span><span class="p">()</span>
+<span class="n">mu</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Returns np.fabs(mu)</span>
+
+<span class="s2">Notes</span>
+<span class="s2">-----</span>
+<span class="s2">This is an alias of Power()</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">mu_squared</span> <span class="o">=</span> <span class="n">Power</span><span class="p">(</span><span class="n">power</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+<span class="n">mu_squared</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Returns np.fabs(mu)**2</span>
+
+<span class="s2">Notes</span>
+<span class="s2">-----</span>
+<span class="s2">This is an alias of statsmodels.family.links.Power(power=2)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">mu_cubed</span> <span class="o">=</span> <span class="n">Power</span><span class="p">(</span><span class="n">power</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="n">mu_cubed</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Returns np.fabs(mu)**3</span>
+
+<span class="s2">Notes</span>
+<span class="s2">-----</span>
+<span class="s2">This is an alias of statsmodels.family.links.Power(power=3)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Binomial"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.genmod.families.varfuncs.Binomial.html#statsmodels.genmod.families.Binomial">[docs]</a><span class="k">class</span> <span class="nc">Binomial</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Binomial variance function</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int, optional</span>
+<span class="sd">        The number of trials for a binomial variable.  The default is 1 for</span>
+<span class="sd">        p in (0,1)</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    call</span>
+<span class="sd">        Returns the binomial variance</span>
+
+<span class="sd">    Formulas</span>
+<span class="sd">    --------</span>
+<span class="sd">    V(mu) = p * (1 - p) * n</span>
+
+<span class="sd">    where p = mu / n</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Alias for Binomial:</span>
+<span class="sd">    binary = Binomial()</span>
+
+<span class="sd">    A private method _clean trims the data by machine epsilon so that p is</span>
+<span class="sd">    in (0,1)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Binomial.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.genmod.families.varfuncs.Binomial.__init__.html#statsmodels.genmod.families.Binomial.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span></div>
+
+    <span class="k">def</span> <span class="nf">_clean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">FLOAT_EPS</span><span class="p">,</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">FLOAT_EPS</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Binomial variance function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        -----------</span>
+<span class="sd">        mu : array-like</span>
+<span class="sd">            mean parameters</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        variance : array</span>
+<span class="sd">           variance = mu/n * (1 - mu/n) * self.n</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean</span><span class="p">(</span><span class="n">mu</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">p</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">p</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+
+    <span class="c1">#TODO: inherit from super</span>
+<div class="viewcode-block" id="Binomial.deriv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.genmod.families.varfuncs.Binomial.deriv.html#statsmodels.genmod.families.Binomial.deriv">[docs]</a>    <span class="k">def</span> <span class="nf">deriv</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Derivative of the variance function v&#39;(mu)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">statsmodels.tools.numdiff</span> <span class="k">import</span> <span class="n">approx_fprime_cs</span><span class="p">,</span> <span class="n">approx_fprime</span>
+        <span class="c1"># TODO: diag workaround proplem with numdiff for 1d</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">approx_fprime_cs</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="bp">self</span><span class="p">))</span></div></div>
+
+
+<span class="n">binary</span> <span class="o">=</span> <span class="n">Binomial</span><span class="p">()</span>
+<span class="n">binary</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">The binomial variance function for n = 1</span>
+
+<span class="s2">Notes</span>
+<span class="s2">-----</span>
+<span class="s2">This is an alias of Binomial(n=1)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="NegativeBinomial"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.genmod.families.varfuncs.NegativeBinomial.html#statsmodels.genmod.families.NegativeBinomial">[docs]</a><span class="k">class</span> <span class="nc">NegativeBinomial</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    Negative binomial variance function</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    alpha : float</span>
+<span class="sd">        The ancillary parameter for the negative binomial variance function.</span>
+<span class="sd">        `alpha` is assumed to be nonstochastic.  The default is 1.</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    call</span>
+<span class="sd">        Returns the negative binomial variance</span>
+
+<span class="sd">    Formulas</span>
+<span class="sd">    --------</span>
+<span class="sd">    V(mu) = mu + alpha*mu**2</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Alias for NegativeBinomial:</span>
+<span class="sd">    nbinom = NegativeBinomial()</span>
+
+<span class="sd">    A private method _clean trims the data by machine epsilon so that p is</span>
+<span class="sd">    in (0,inf)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="NegativeBinomial.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.genmod.families.varfuncs.NegativeBinomial.__init__.html#statsmodels.genmod.families.NegativeBinomial.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">alpha</span></div>
+
+    <span class="k">def</span> <span class="nf">_clean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">FLOAT_EPS</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mu</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Negative binomial variance function</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mu : array-like</span>
+<span class="sd">            mean parameters</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        variance : array</span>
+<span class="sd">            variance = mu + alpha*mu**2</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_clean</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">p</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="o">*</span><span class="n">p</span><span class="o">**</span><span class="mi">2</span></div>
+
+<span class="n">nbinom</span> <span class="o">=</span> <span class="n">NegativeBinomial</span><span class="p">()</span>
+<span class="n">nbinom</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Negative Binomial variance function.</span>
+
+<span class="s2">Notes</span>
+<span class="s2">-----</span>
+<span class="s2">This is an alias of NegativeBinomial(alpha=1.)</span>
+<span class="s2">&quot;&quot;&quot;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,279 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.2.4.24.2.1.1.11. statsmodels.datasets.sunspots.Dataset.keys &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="4.2.4.24.2.1. statsmodels.datasets.sunspots.Dataset" href="statsmodels.datasets.sunspots.Dataset.html"/>
+        <link rel="next" title="4.2.4.24.2.1.1.12. statsmodels.datasets.sunspots.Dataset.pop" href="statsmodels.datasets.sunspots.Dataset.pop.html"/>
+        <link rel="prev" title="4.2.4.24.2.1.1.10. statsmodels.datasets.sunspots.Dataset.itervalues" href="statsmodels.datasets.sunspots.Dataset.itervalues.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.datasets.html">4.2.1. statsmodels.datasets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.datasets.utils.html">4.2.2. statsmodels.datasets.utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.datasets.template_data.html">4.2.3. statsmodels.datasets.template_data</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../../submain.html#datasets-available">4.2.4. datasets available</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.anes96.html">4.2.4.1. statsmodels.datasets.anes96</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.cancer.html">4.2.4.2. statsmodels.datasets.cancer</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.ccard.html">4.2.4.3. statsmodels.datasets.ccard</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.co2.html">4.2.4.4. statsmodels.datasets.co2</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.committee.html">4.2.4.5. statsmodels.datasets.committee</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.copper.html">4.2.4.6. statsmodels.datasets.copper</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.cpunish.html">4.2.4.7. statsmodels.datasets.cpunish</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.elnino.html">4.2.4.8. statsmodels.datasets.elnino</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.engel.html">4.2.4.9. statsmodels.datasets.engel</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.fair.html">4.2.4.10. statsmodels.datasets.fair</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.grunfeld.html">4.2.4.11. statsmodels.datasets.grunfeld</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.heart.html">4.2.4.12. statsmodels.datasets.heart</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.longley.html">4.2.4.13. statsmodels.datasets.longley</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.macrodata.html">4.2.4.14. statsmodels.datasets.macrodata</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.modechoice.html">4.2.4.15. statsmodels.datasets.modechoice</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.nile.html">4.2.4.16. statsmodels.datasets.nile</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.randhie.html">4.2.4.17. statsmodels.datasets.randhie</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.scotland.html">4.2.4.18. statsmodels.datasets.scotland</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.spector.html">4.2.4.19. statsmodels.datasets.spector</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.stackloss.html">4.2.4.20. statsmodels.datasets.stackloss</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.star98.html">4.2.4.21. statsmodels.datasets.star98</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.statecrime.html">4.2.4.22. statsmodels.datasets.statecrime</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.datasets.strikes.html">4.2.4.23. statsmodels.datasets.strikes</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.datasets.sunspots.html">4.2.4.24. statsmodels.datasets.sunspots</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.datasets.sunspots.html">4.2.4.24. statsmodels.datasets.sunspots</a> &raquo;</li>
+        
+          <li><a href="statsmodels.datasets.sunspots.Dataset.html">4.2.4.24.2.1. statsmodels.datasets.sunspots.Dataset</a> &raquo;</li>
+        
+      <li>4.2.4.24.2.1.1.11. statsmodels.datasets.sunspots.Dataset.keys</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.datasets.sunspots.Dataset.keys.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-datasets-sunspots-dataset-keys">
+<h1>4.2.4.24.2.1.1.11. statsmodels.datasets.sunspots.Dataset.keys<a class="headerlink" href="#statsmodels-datasets-sunspots-dataset-keys" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="statsmodels.datasets.sunspots.Dataset.keys">
+<code class="descclassname">Dataset.</code><code class="descname">keys</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &rarr; list of D's keys<a class="headerlink" href="#statsmodels.datasets.sunspots.Dataset.keys" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.datasets.sunspots.Dataset.pop.html" class="btn btn-neutral float-right" title="4.2.4.24.2.1.1.12. statsmodels.datasets.sunspots.Dataset.pop" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.datasets.sunspots.Dataset.itervalues.html" class="btn btn-neutral" title="4.2.4.24.2.1.1.10. statsmodels.datasets.sunspots.Dataset.itervalues" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

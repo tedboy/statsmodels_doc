@@ -1,0 +1,24 @@
+statsmodels.stats.power.FTestAnovaPower
+=======================================
+
+.. currentmodule:: statsmodels.stats.power
+.. autoclass:: FTestAnovaPower
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~FTestAnovaPower.__init__
+   ~FTestAnovaPower.plot_power
+   ~FTestAnovaPower.power
+   ~FTestAnovaPower.solve_power
+
+
+
+
+

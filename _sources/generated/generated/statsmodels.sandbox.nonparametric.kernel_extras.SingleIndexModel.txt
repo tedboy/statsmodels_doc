@@ -1,0 +1,27 @@
+statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel
+================================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernel_extras
+.. autoclass:: SingleIndexModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~SingleIndexModel.__init__
+   ~SingleIndexModel.aic_hurvich
+   ~SingleIndexModel.cv_loo
+   ~SingleIndexModel.fit
+   ~SingleIndexModel.loo_likelihood
+   ~SingleIndexModel.r_squared
+   ~SingleIndexModel.sig_test
+
+
+
+
+

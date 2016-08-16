@@ -1,0 +1,82 @@
+statsmodels.tsa.tests.test_stattools
+====================================
+
+.. automodule:: statsmodels.tsa.tests.test_stattools
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      acf
+      acovf
+      adfuller
+      arma_order_select_ic
+      coint
+      dates_from_range
+      grangercausalitytests
+      pacf
+      pacf_ols
+      pacf_yw
+      test_acf_fft_dataframe
+      test_acovf2d
+      test_acovf_fft_vs_convolution
+      test_arma_order_select_ic
+      test_arma_order_select_ic_failure
+      test_pandasacovf
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CheckADF
+      CheckCoint
+      CheckCorrGram
+      TestACF
+      TestACF_FFT
+      TestADFConstant
+      TestADFConstant2
+      TestADFConstantTrend
+      TestADFConstantTrend2
+      TestADFNoConstant
+      TestADFNoConstant2
+      TestCoint_t
+      TestGrangerCausality
+      TestPACF
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tsa.tests.test_stattools.CheckADF
+       generated/statsmodels.tsa.tests.test_stattools.CheckCoint
+       generated/statsmodels.tsa.tests.test_stattools.CheckCorrGram
+       generated/statsmodels.tsa.tests.test_stattools.TestACF
+       generated/statsmodels.tsa.tests.test_stattools.TestACF_FFT
+       generated/statsmodels.tsa.tests.test_stattools.TestADFConstant
+       generated/statsmodels.tsa.tests.test_stattools.TestADFConstant2
+       generated/statsmodels.tsa.tests.test_stattools.TestADFConstantTrend
+       generated/statsmodels.tsa.tests.test_stattools.TestADFConstantTrend2
+       generated/statsmodels.tsa.tests.test_stattools.TestADFNoConstant
+       generated/statsmodels.tsa.tests.test_stattools.TestADFNoConstant2
+       generated/statsmodels.tsa.tests.test_stattools.TestCoint_t
+       generated/statsmodels.tsa.tests.test_stattools.TestGrangerCausality
+       generated/statsmodels.tsa.tests.test_stattools.TestPACF
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,25 @@
+statsmodels.genmod.generalized_estimating_equations.OrdinalGEEResultsWrapper
+============================================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: OrdinalGEEResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OrdinalGEEResultsWrapper.__init__
+   ~OrdinalGEEResultsWrapper.conf_int
+   ~OrdinalGEEResultsWrapper.cov_params
+   ~OrdinalGEEResultsWrapper.load
+   ~OrdinalGEEResultsWrapper.save
+
+
+
+
+

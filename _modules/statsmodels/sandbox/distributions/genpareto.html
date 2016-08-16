@@ -1,0 +1,454 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.distributions.genpareto &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.distributions.genpareto</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.distributions.genpareto</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Thu Aug 12 14:59:03 2010</span>
+
+<span class="sd">Warning: not tried out or tested yet, Done</span>
+
+<span class="sd">Author: josef-pktd</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="k">import</span> <span class="n">comb</span>
+<span class="kn">from</span> <span class="nn">scipy.stats.distributions</span> <span class="k">import</span> <span class="n">rv_continuous</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">where</span><span class="p">,</span> <span class="n">inf</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="nb">abs</span> <span class="k">as</span> <span class="n">np_abs</span>
+
+<span class="c1">## Generalized Pareto  with reversed sign of c as in literature</span>
+<div class="viewcode-block" id="genpareto2_gen"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.genpareto.genpareto2_gen.html#statsmodels.sandbox.distributions.genpareto.genpareto2_gen">[docs]</a><span class="k">class</span> <span class="nc">genpareto2_gen</span><span class="p">(</span><span class="n">rv_continuous</span><span class="p">):</span>
+    <span class="k">def</span> <span class="nf">_argcheck</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="n">c</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">c</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">where</span><span class="p">(</span><span class="n">c</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">1.0</span><span class="o">/</span><span class="n">np_abs</span><span class="p">(</span><span class="n">c</span><span class="p">),</span> <span class="n">inf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">where</span><span class="p">(</span><span class="n">c</span><span class="o">==</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="n">Px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">x</span><span class="p">,</span><span class="o">-</span><span class="mf">1.0</span><span class="o">+</span><span class="mf">1.0</span><span class="o">/</span><span class="n">c</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Px</span>
+    <span class="k">def</span> <span class="nf">_logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="o">-</span><span class="mf">1.0</span><span class="o">+</span><span class="mf">1.0</span><span class="o">/</span><span class="n">c</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log1p</span><span class="p">(</span><span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">1.0</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">c</span><span class="o">*</span><span class="n">x</span><span class="p">,</span><span class="mf">1.0</span><span class="o">/</span><span class="n">c</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="o">-</span><span class="mf">1.0</span><span class="o">/</span><span class="n">c</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">q</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">vals</span>
+    <span class="k">def</span> <span class="nf">_munp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">val</span> <span class="o">=</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="n">c</span><span class="p">)</span><span class="o">**</span><span class="n">n</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">comb</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="n">k</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.0</span><span class="o">+</span><span class="n">c</span><span class="o">*</span><span class="n">k</span><span class="p">),</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">where</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">n</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">val</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">):</span>
+        <span class="k">if</span> <span class="p">(</span><span class="n">c</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">):</span>
+            <span class="k">return</span> <span class="mi">1</span><span class="o">-</span><span class="n">c</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">/</span> <span class="n">c</span>
+            <span class="k">return</span> <span class="n">rv_continuous</span><span class="o">.</span><span class="n">_entropy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">c</span><span class="p">)</span></div>
+
+<span class="n">genpareto2</span> <span class="o">=</span> <span class="n">genpareto2_gen</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">name</span><span class="o">=</span><span class="s1">&#39;genpareto&#39;</span><span class="p">,</span>
+                          <span class="n">longname</span><span class="o">=</span><span class="s2">&quot;A generalized Pareto&quot;</span><span class="p">,</span>
+                          <span class="n">shapes</span><span class="o">=</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="n">extradoc</span><span class="o">=</span><span class="s2">&quot;&quot;&quot;</span>
+
+<span class="s2">Generalized Pareto distribution</span>
+
+<span class="s2">genpareto2.pdf(x,c) = (1+c*x)**(-1-1/c)</span>
+<span class="s2">for c != 0, and for x &gt;= 0 for all c, and x &lt; 1/abs(c) for c &lt; 0.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+                          <span class="p">)</span>
+
+<span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span>
+<span class="n">rv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">5</span><span class="p">)</span>
+<span class="n">quant</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.99</span><span class="p">]</span>
+<span class="k">for</span> <span class="n">method</span><span class="p">,</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[(</span><span class="s1">&#39;pdf&#39;</span><span class="p">,</span> <span class="n">rv</span><span class="p">),</span>
+                  <span class="p">(</span><span class="s1">&#39;cdf&#39;</span><span class="p">,</span> <span class="n">rv</span><span class="p">),</span>
+                  <span class="p">(</span><span class="s1">&#39;sf&#39;</span><span class="p">,</span> <span class="n">rv</span><span class="p">),</span>
+                  <span class="p">(</span><span class="s1">&#39;ppf&#39;</span><span class="p">,</span> <span class="n">quant</span><span class="p">),</span>
+                  <span class="p">(</span><span class="s1">&#39;isf&#39;</span><span class="p">,</span> <span class="n">quant</span><span class="p">)]:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">genpareto2</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">x</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="nb">getattr</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">genpareto</span><span class="p">,</span> <span class="n">method</span><span class="p">)(</span><span class="n">x</span><span class="p">,</span> <span class="o">-</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">genpareto2</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">moments</span><span class="o">=</span><span class="s1">&#39;mvsk&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">genpareto</span><span class="o">.</span><span class="n">stats</span><span class="p">(</span><span class="o">-</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">,</span> <span class="n">moments</span><span class="o">=</span><span class="s1">&#39;mvsk&#39;</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">genpareto2</span><span class="o">.</span><span class="n">entropy</span><span class="p">(</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">genpareto</span><span class="o">.</span><span class="n">entropy</span><span class="p">(</span><span class="o">-</span><span class="n">shape</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span>
+
+
+<div class="viewcode-block" id="paramstopot"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.genpareto.paramstopot.html#statsmodels.sandbox.distributions.genpareto.paramstopot">[docs]</a><span class="k">def</span> <span class="nf">paramstopot</span><span class="p">(</span><span class="n">thresh</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;transform shape scale for peak over threshold</span>
+
+<span class="sd">    y = x-u|x&gt;u ~ GPD(k, sigma-k*u) if x ~ GPD(k, sigma)</span>
+<span class="sd">    notation of de Zea Bermudez, Kotz</span>
+<span class="sd">    k, sigma is shape, scale</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">shape</span><span class="p">,</span> <span class="n">scale</span> <span class="o">-</span> <span class="n">shape</span><span class="o">*</span><span class="n">thresh</span></div>
+
+<div class="viewcode-block" id="paramsfrompot"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.genpareto.paramsfrompot.html#statsmodels.sandbox.distributions.genpareto.paramsfrompot">[docs]</a><span class="k">def</span> <span class="nf">paramsfrompot</span><span class="p">(</span><span class="n">thresh</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">scalepot</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">shape</span><span class="p">,</span> <span class="n">scalepot</span> <span class="o">+</span> <span class="n">shape</span><span class="o">*</span><span class="n">thresh</span></div>
+
+<div class="viewcode-block" id="warnif"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.genpareto.warnif.html#statsmodels.sandbox.distributions.genpareto.warnif">[docs]</a><span class="k">def</span> <span class="nf">warnif</span><span class="p">(</span><span class="n">cond</span><span class="p">,</span> <span class="n">msg</span><span class="p">):</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">cond</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">msg</span><span class="p">,</span> <span class="s1">&#39;does not hold&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="meanexcess"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.genpareto.meanexcess.html#statsmodels.sandbox.distributions.genpareto.meanexcess">[docs]</a><span class="k">def</span> <span class="nf">meanexcess</span><span class="p">(</span><span class="n">thresh</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">scale</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;mean excess function of genpareto</span>
+
+<span class="sd">    assert are inequality conditions in de Zea Bermudez, Kotz</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">warnif</span><span class="p">(</span><span class="n">shape</span> <span class="o">&gt;</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="s1">&#39;shape &gt; -1&#39;</span><span class="p">)</span>
+    <span class="n">warnif</span><span class="p">(</span><span class="n">thresh</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;thresh &gt;= 0&#39;</span><span class="p">)</span>  <span class="c1">#make it weak inequality</span>
+    <span class="n">warnif</span><span class="p">((</span><span class="n">scale</span> <span class="o">-</span> <span class="n">shape</span><span class="o">*</span><span class="n">thresh</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">,</span> <span class="s1">&#39;(scale - shape*thresh) &gt; 0&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">scale</span> <span class="o">-</span> <span class="n">shape</span><span class="o">*</span><span class="n">thresh</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">shape</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="meanexcess_plot"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.genpareto.meanexcess_plot.html#statsmodels.sandbox.distributions.genpareto.meanexcess_plot">[docs]</a><span class="k">def</span> <span class="nf">meanexcess_plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">lidx</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">uidx</span><span class="o">=</span><span class="mi">10</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;emp&#39;</span><span class="p">,</span> <span class="n">plot</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;est&#39;</span><span class="p">:</span>
+        <span class="c1">#doesn&#39;t make much sense yet,</span>
+        <span class="c1">#estimate the parameters and use theoretical meanexcess</span>
+        <span class="k">if</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">pass</span> <span class="c1">#estimate parames</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;emp&#39;</span><span class="p">:</span>
+        <span class="c1">#calculate meanexcess from data</span>
+        <span class="n">datasorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">meanexcess</span> <span class="o">=</span> <span class="p">(</span><span class="n">datasorted</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">())</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">datasorted</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">meanexcess</span> <span class="o">=</span> <span class="n">meanexcess</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">plot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">datasorted</span><span class="p">[:</span><span class="o">-</span><span class="n">uidx</span><span class="p">],</span> <span class="n">meanexcess</span><span class="p">[:</span><span class="o">-</span><span class="n">uidx</span><span class="p">])</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">shape</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="n">params</span>
+                <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">datasorted</span><span class="p">[:</span><span class="o">-</span><span class="n">uidx</span><span class="p">],</span> <span class="p">(</span><span class="n">scale</span> <span class="o">-</span> <span class="n">datasorted</span><span class="p">[:</span><span class="o">-</span><span class="n">uidx</span><span class="p">]</span> <span class="o">*</span> <span class="n">shape</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">+</span> <span class="n">shape</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">datasorted</span><span class="p">,</span> <span class="n">meanexcess</span></div>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="n">meanexcess</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">meanexcess</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">))</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">genpareto2</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="o">-</span><span class="mf">0.75</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+<span class="c1">#data = np.random.uniform(50, size=1000)</span>
+<span class="c1">#data = stats.norm.rvs(0, np.sqrt(50), size=1000)</span>
+<span class="c1">#data = stats.pareto.rvs(1.5, np.sqrt(50), size=1000)</span>
+<span class="n">tmp</span> <span class="o">=</span> <span class="n">meanexcess_plot</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="p">(</span><span class="o">-</span><span class="mf">0.75</span><span class="p">,</span> <span class="mi">5</span><span class="p">),</span> <span class="n">plot</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:])</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">tmp</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="o">-</span><span class="mi">20</span><span class="p">:])</span>
+<span class="c1">#plt.show()</span>
+
+<div class="viewcode-block" id="meanexcess_emp"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.genpareto.meanexcess_emp.html#statsmodels.sandbox.distributions.genpareto.meanexcess_emp">[docs]</a><span class="k">def</span> <span class="nf">meanexcess_emp</span><span class="p">(</span><span class="n">data</span><span class="p">):</span>
+    <span class="n">datasorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">)</span>
+    <span class="n">meanexcess</span> <span class="o">=</span> <span class="p">(</span><span class="n">datasorted</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">())</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="n">datasorted</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">meancont</span> <span class="o">=</span> <span class="p">(</span><span class="n">datasorted</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">())</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">meanexcess</span> <span class="o">=</span> <span class="n">meanexcess</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">datasorted</span><span class="p">,</span> <span class="n">meanexcess</span><span class="p">,</span> <span class="n">meancont</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="meanexcess_dist"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.genpareto.meanexcess_dist.html#statsmodels.sandbox.distributions.genpareto.meanexcess_dist">[docs]</a><span class="k">def</span> <span class="nf">meanexcess_dist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="c1">#default function in expect is identity</span>
+    <span class="c1"># need args in call</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">ndim</span><span class="p">(</span><span class="n">lb</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="n">lb</span><span class="p">,</span> <span class="n">conditional</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">expect</span><span class="p">(</span><span class="n">lb</span><span class="o">=</span><span class="n">lbb</span><span class="p">,</span> <span class="n">conditional</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span> <span class="k">for</span>
+                    <span class="n">lbb</span> <span class="ow">in</span> <span class="n">lb</span><span class="p">])</span></div>
+
+<span class="n">ds</span><span class="p">,</span> <span class="n">me</span><span class="p">,</span> <span class="n">mc</span> <span class="o">=</span> <span class="n">meanexcess_emp</span><span class="p">(</span><span class="mf">1.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">me</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mc</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">meanexcess_dist</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="mf">0.5</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">meanexcess_dist</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]))</span>
+<span class="n">rvs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="n">rvs</span> <span class="o">=</span> <span class="n">rvs</span> <span class="o">-</span> <span class="n">rvs</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">rvs</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">rvs</span><span class="p">[</span><span class="n">rvs</span><span class="o">&gt;-</span><span class="mf">0.5</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">rvs</span><span class="p">[</span><span class="n">rvs</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">rvs</span><span class="p">[</span><span class="n">rvs</span><span class="o">&gt;</span><span class="mf">0.5</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">C:\Programs\Python25\lib\site-packages\matplotlib-0.99.1-py2.5-win32.egg\matplotlib\rcsetup.py:117: UserWarning: rcParams key &quot;numerix&quot; is obsolete and has no effect;</span>
+<span class="sd"> please delete it from your matplotlibrc file</span>
+<span class="sd">  warnings.warn(&#39;rcParams key &quot;numerix&quot; is obsolete and has no effect;\n&#39;</span>
+<span class="sd">[ 1.   0.5  0.   0.   0. ]</span>
+<span class="sd">[ 1.   0.5  0.   0.   0. ]</span>
+<span class="sd">[ 0.    0.75  1.    1.    1.  ]</span>
+<span class="sd">[ 0.    0.75  1.    1.    1.  ]</span>
+<span class="sd">[ 1.    0.25  0.    0.    0.  ]</span>
+<span class="sd">[ 1.    0.25  0.    0.    0.  ]</span>
+<span class="sd">[ 0.01002513  0.1026334   0.58578644  1.36754447  1.8       ]</span>
+<span class="sd">[ 0.01002513  0.1026334   0.58578644  1.36754447  1.8       ]</span>
+<span class="sd">[ 1.8         1.36754447  0.58578644  0.1026334   0.01002513]</span>
+<span class="sd">[ 1.8         1.36754447  0.58578644  0.1026334   0.01002513]</span>
+<span class="sd">(array(0.66666666666666674), array(0.22222222222222243), array(0.56568542494923058), array(-0.60000000000032916))</span>
+<span class="sd">(array(0.66666666666666674), array(0.22222222222222243), array(0.56568542494923058), array(-0.60000000000032916))</span>
+<span class="sd">0.5</span>
+<span class="sd">0.5</span>
+<span class="sd">25.0</span>
+<span class="sd">shape &gt; -1 does not hold</span>
+<span class="sd">-20</span>
+<span class="sd">[  41.4980671    42.83145298   44.24197578   45.81622844   47.57145212</span>
+<span class="sd">   49.52692287   51.70553275   54.0830766    56.61358997   59.53409167</span>
+<span class="sd">   62.8970042    66.73494156   71.04227973   76.24015612   82.71835988</span>
+<span class="sd">   89.79611663   99.4252195   106.2372462    94.83432424    0.        ]</span>
+<span class="sd">[  15.79736355   16.16373531   17.44204268   17.47968055   17.73264951</span>
+<span class="sd">   18.23939099   19.02638455   20.79746264   23.7169161    24.48807136</span>
+<span class="sd">   25.90496638   28.35556795   32.27623618   34.65714495   37.37093362</span>
+<span class="sd">   47.32957609   51.27970515   78.98913941  129.04309012  189.66864848]</span>
+<span class="sd">&gt;&gt;&gt; np.arange(10)</span>
+<span class="sd">array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9])</span>
+<span class="sd">&gt;&gt;&gt; meanexcess_emp(np.arange(10))</span>
+<span class="sd">(array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), array([4, 4, 5, 5, 5, 6, 6, 5, 4, 0]), array([9, 8, 8, 7, 7, 6, 6, 5, 5, 4]))</span>
+<span class="sd">&gt;&gt;&gt; meanexcess_emp(1*np.arange(10))</span>
+<span class="sd">(array([0, 1, 2, 3, 4, 5, 6, 7, 8, 9]), array([4, 4, 5, 5, 5, 6, 6, 5, 4, 0]), array([9, 8, 8, 7, 7, 6, 6, 5, 5, 4]))</span>
+<span class="sd">&gt;&gt;&gt; meanexcess_emp(1.*np.arange(10))</span>
+<span class="sd">(array([ 0.,  1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.]), array([ 4.5       ,  4.88888889,  5.25      ,  5.57142857,  5.83333333,</span>
+<span class="sd">        6.        ,  6.        ,  5.66666667,  4.5       ,  0.        ]), array([ 9. ,  8.5,  8. ,  7.5,  7. ,  6.5,  6. ,  5.5,  5. ,  4.5]))</span>
+<span class="sd">&gt;&gt;&gt; meanexcess_emp(0.5**np.arange(10))</span>
+<span class="sd">(array([ 0.00195313,  0.00390625,  0.0078125 ,  0.015625  ,  0.03125   ,</span>
+<span class="sd">        0.0625    ,  0.125     ,  0.25      ,  0.5       ,  1.        ]), array([ 0.19960938,  0.22135417,  0.24804688,  0.28125   ,  0.32291667,</span>
+<span class="sd">        0.375     ,  0.4375    ,  0.5       ,  0.5       ,  0.        ]), array([ 1.        ,  0.75      ,  0.58333333,  0.46875   ,  0.3875    ,</span>
+<span class="sd">        0.328125  ,  0.28348214,  0.24902344,  0.22178819,  0.19980469]))</span>
+<span class="sd">&gt;&gt;&gt; meanexcess_emp(np.arange(10)**0.5)</span>
+<span class="sd">(array([ 0.        ,  1.        ,  1.41421356,  1.73205081,  2.        ,</span>
+<span class="sd">        2.23606798,  2.44948974,  2.64575131,  2.82842712,  3.        ]), array([ 1.93060005,  2.03400006,  2.11147337,  2.16567659,  2.19328936,</span>
+<span class="sd">        2.18473364,  2.11854461,  1.94280904,  1.5       ,  0.        ]), array([ 3.        ,  2.91421356,  2.82472615,  2.73091704,  2.63194723,</span>
+<span class="sd">        2.52662269,  2.41311242,  2.28825007,  2.14511117,  1.93060005]))</span>
+<span class="sd">&gt;&gt;&gt; meanexcess_emp(np.arange(10)**-2)</span>
+<span class="sd">(array([-2147483648,           0,           0,           0,           0,</span>
+<span class="sd">                 0,           0,           0,           0,           1]), array([0, 0, 0, 0, 0, 0, 0, 0, 0, 0]), array([         1,          0,          0,          0,          0,</span>
+<span class="sd">                0,          0,          0,          0, -214748365]))</span>
+<span class="sd">&gt;&gt;&gt; meanexcess_emp(np.arange(10)**(-0.5))</span>
+<span class="sd">(array([ 0.33333333,  0.35355339,  0.37796447,  0.40824829,  0.4472136 ,</span>
+<span class="sd">        0.5       ,  0.57735027,  0.70710678,  1.        ,         Inf]), array([ Inf,  Inf,  Inf,  Inf,  Inf,  Inf,  Inf,  Inf,  Inf,  NaN]), array([ Inf,  Inf,  Inf,  Inf,  Inf,  Inf,  Inf,  Inf,  Inf,  Inf]))</span>
+<span class="sd">&gt;&gt;&gt; np.arange(10)**(-0.5)</span>
+<span class="sd">array([        Inf,  1.        ,  0.70710678,  0.57735027,  0.5       ,</span>
+<span class="sd">        0.4472136 ,  0.40824829,  0.37796447,  0.35355339,  0.33333333])</span>
+<span class="sd">&gt;&gt;&gt; meanexcess_emp(np.arange(1,10)**(-0.5))</span>
+<span class="sd">(array([ 0.33333333,  0.35355339,  0.37796447,  0.40824829,  0.4472136 ,</span>
+<span class="sd">        0.5       ,  0.57735027,  0.70710678,  1.        ]), array([ 0.4857152 ,  0.50223543,  0.51998842,  0.53861177,  0.55689141,</span>
+<span class="sd">        0.57111426,  0.56903559,  0.5       ,  0.        ]), array([ 1.        ,  0.85355339,  0.76148568,  0.69611426,  0.64633413,</span>
+<span class="sd">        0.60665316,  0.57398334,  0.5464296 ,  0.52275224]))</span>
+<span class="sd">&gt;&gt;&gt; meanexcess_emp(np.arange(1,10))</span>
+<span class="sd">(array([1, 2, 3, 4, 5, 6, 7, 8, 9]), array([4, 5, 5, 5, 6, 6, 5, 4, 0]), array([9, 8, 8, 7, 7, 6, 6, 5, 5]))</span>
+<span class="sd">&gt;&gt;&gt; meanexcess_emp(1.*np.arange(1,10))</span>
+<span class="sd">(array([ 1.,  2.,  3.,  4.,  5.,  6.,  7.,  8.,  9.]), array([ 4.88888889,  5.25      ,  5.57142857,  5.83333333,  6.        ,</span>
+<span class="sd">        6.        ,  5.66666667,  4.5       ,  0.        ]), array([ 9. ,  8.5,  8. ,  7.5,  7. ,  6.5,  6. ,  5.5,  5. ]))</span>
+<span class="sd">&gt;&gt;&gt; datasorted = np.sort(1.*np.arange(1,10))</span>
+<span class="sd">&gt;&gt;&gt; (datasorted[::-1].cumsum()-datasorted[::-1])</span>
+<span class="sd">array([  0.,   9.,  17.,  24.,  30.,  35.,  39.,  42.,  44.])</span>
+<span class="sd">&gt;&gt;&gt; datasorted[::-1].cumsum()</span>
+<span class="sd">array([  9.,  17.,  24.,  30.,  35.,  39.,  42.,  44.,  45.])</span>
+<span class="sd">&gt;&gt;&gt; datasorted[::-1]</span>
+<span class="sd">array([ 9.,  8.,  7.,  6.,  5.,  4.,  3.,  2.,  1.])</span>
+<span class="sd">&gt;&gt;&gt;</span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

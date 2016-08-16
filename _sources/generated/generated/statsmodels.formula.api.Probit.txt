@@ -1,0 +1,45 @@
+statsmodels.formula.api.Probit
+==============================
+
+.. currentmodule:: statsmodels.formula.api
+.. autoclass:: Probit
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Probit.__init__
+   ~Probit.cdf
+   ~Probit.cov_params_func_l1
+   ~Probit.fit
+   ~Probit.fit_regularized
+   ~Probit.from_formula
+   ~Probit.hessian
+   ~Probit.information
+   ~Probit.initialize
+   ~Probit.jac
+   ~Probit.loglike
+   ~Probit.loglikeobs
+   ~Probit.pdf
+   ~Probit.predict
+   ~Probit.score
+   ~Probit.score_obs
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Probit.endog_names
+   ~Probit.exog_names
+

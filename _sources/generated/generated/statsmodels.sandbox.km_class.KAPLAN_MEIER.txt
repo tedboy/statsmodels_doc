@@ -1,0 +1,24 @@
+statsmodels.sandbox.km_class.KAPLAN_MEIER
+=========================================
+
+.. currentmodule:: statsmodels.sandbox.km_class
+.. autoclass:: KAPLAN_MEIER
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KAPLAN_MEIER.__init__
+   ~KAPLAN_MEIER.fit
+   ~KAPLAN_MEIER.plot
+   ~KAPLAN_MEIER.show_results
+
+
+
+
+

@@ -1,0 +1,393 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.8.1.1.20. statsmodels.tsa.api.x13_arima_analysis &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="4.8.1. statsmodels.tsa.api" href="statsmodels.tsa.api.html"/>
+        <link rel="next" title="4.8.1.1.21. statsmodels.tsa.api.x13_arima_select_order" href="statsmodels.tsa.api.x13_arima_select_order.html"/>
+        <link rel="prev" title="4.8.1.1.19. statsmodels.tsa.api.seasonal_decompose" href="statsmodels.tsa.api.seasonal_decompose.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="statsmodels.tsa.api.html">4.8.1. statsmodels.tsa.api</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="statsmodels.tsa.api.html#functions">4.8.1.1. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.tsa.api.html#classes">4.8.1.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.adfvalues.html">4.8.2. statsmodels.tsa.adfvalues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.ar_model.html">4.8.3. statsmodels.tsa.ar_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.descriptivestats.html">4.8.4. statsmodels.tsa.descriptivestats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.interp.denton.html">4.8.5. statsmodels.tsa.interp.denton</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.kalmanf.kalmanfilter.html">4.8.6. statsmodels.tsa.kalmanf.kalmanfilter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.mlemodel.html">4.8.7. statsmodels.tsa.mlemodel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.seasonal.html">4.8.8. statsmodels.tsa.seasonal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.tsatools.html">4.8.9. statsmodels.tsa.tsatools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.varma_process.html">4.8.10. statsmodels.tsa.varma_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.x13.html">4.8.11. statsmodels.tsa.x13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.base.datetools.html">4.8.12. statsmodels.tsa.base.datetools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.base.tsa_model.html">4.8.13. statsmodels.tsa.base.tsa_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.api.html">4.8.14. statsmodels.tsa.filters.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters._utils.html">4.8.15. statsmodels.tsa.filters._utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.bk_filter.html">4.8.16. statsmodels.tsa.filters.bk_filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.cf_filter.html">4.8.17. statsmodels.tsa.filters.cf_filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.filtertools.html">4.8.18. statsmodels.tsa.filters.filtertools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.hp_filter.html">4.8.19. statsmodels.tsa.filters.hp_filter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+          <li><a href="statsmodels.tsa.api.html">4.8.1. statsmodels.tsa.api</a> &raquo;</li>
+        
+      <li>4.8.1.1.20. statsmodels.tsa.api.x13_arima_analysis</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.tsa.api.x13_arima_analysis.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-tsa-api-x13-arima-analysis">
+<h1>4.8.1.1.20. statsmodels.tsa.api.x13_arima_analysis<a class="headerlink" href="#statsmodels-tsa-api-x13-arima-analysis" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.tsa.api.x13_arima_analysis">
+<code class="descclassname">statsmodels.tsa.api.</code><code class="descname">x13_arima_analysis</code><span class="sig-paren">(</span><em>endog</em>, <em>maxorder=(2</em>, <em>1)</em>, <em>maxdiff=(2</em>, <em>1)</em>, <em>diff=None</em>, <em>exog=None</em>, <em>log=None</em>, <em>outlier=True</em>, <em>trading=False</em>, <em>forecast_years=None</em>, <em>retspec=False</em>, <em>speconly=False</em>, <em>start=None</em>, <em>freq=None</em>, <em>print_stdout=False</em>, <em>x12path=None</em>, <em>prefer_x13=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/statsmodels/tsa/x13.html#x13_arima_analysis"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.tsa.api.x13_arima_analysis" title="Permalink to this definition">¶</a></dt>
+<dd><p>Perform x13-arima analysis for monthly or quarterly data.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>endog</strong> : array-like, pandas.Series</p>
+<blockquote>
+<div><p>The series to model. It is best to use a pandas object with a
+DatetimeIndex or PeriodIndex. However, you can pass an array-like
+object. If your object does not have a dates index then <code class="docutils literal"><span class="pre">start</span></code> and
+<code class="docutils literal"><span class="pre">freq</span></code> are not optional.</p>
+</div></blockquote>
+<p><strong>maxorder</strong> : tuple</p>
+<blockquote>
+<div><p>The maximum order of the regular and seasonal ARMA polynomials to
+examine during the model identification. The order for the regular
+polynomial must be greater than zero and no larger than 4. The
+order for the seaonal polynomial may be 1 or 2.</p>
+</div></blockquote>
+<p><strong>maxdiff</strong> : tuple</p>
+<blockquote>
+<div><p>The maximum orders for regular and seasonal differencing in the
+automatic differencing procedure. Acceptable inputs for regular
+differencing are 1 and 2. The maximum order for seasonal differencing
+is 1. If <code class="docutils literal"><span class="pre">diff</span></code> is specified then <code class="docutils literal"><span class="pre">maxdiff</span></code> should be None.
+Otherwise, <code class="docutils literal"><span class="pre">diff</span></code> will be ignored. See also <code class="docutils literal"><span class="pre">diff</span></code>.</p>
+</div></blockquote>
+<p><strong>diff</strong> : tuple</p>
+<blockquote>
+<div><p>Fixes the orders of differencing for the regular and seasonal
+differencing. Regular differencing may be 0, 1, or 2. Seasonal
+differencing may be 0 or 1. <code class="docutils literal"><span class="pre">maxdiff</span></code> must be None, otherwise
+<code class="docutils literal"><span class="pre">diff</span></code> is ignored.</p>
+</div></blockquote>
+<p><strong>exog</strong> : array-like</p>
+<blockquote>
+<div><p>Exogenous variables.</p>
+</div></blockquote>
+<p><strong>log</strong> : bool or None</p>
+<blockquote>
+<div><p>If None, it is automatically determined whether to log the series or
+not. If False, logs are not taken. If True, logs are taken.</p>
+</div></blockquote>
+<p><strong>outlier</strong> : bool</p>
+<blockquote>
+<div><p>Whether or not outliers are tested for and corrected, if detected.</p>
+</div></blockquote>
+<p><strong>trading</strong> : bool</p>
+<blockquote>
+<div><p>Whether or not trading day effects are tested for.</p>
+</div></blockquote>
+<p><strong>forecast_years</strong> : int</p>
+<blockquote>
+<div><p>Number of forecasts produced. The default is one year.</p>
+</div></blockquote>
+<p><strong>retspec</strong> : bool</p>
+<blockquote>
+<div><p>Whether to return the created specification file. Can be useful for
+debugging.</p>
+</div></blockquote>
+<p><strong>speconly</strong> : bool</p>
+<blockquote>
+<div><p>Whether to create the specification file and then return it without
+performing the analysis. Can be useful for debugging.</p>
+</div></blockquote>
+<p><strong>start</strong> : str, datetime</p>
+<blockquote>
+<div><p>Must be given if <code class="docutils literal"><span class="pre">endog</span></code> does not have date information in its index.
+Anything accepted by pandas.DatetimeIndex for the start value.</p>
+</div></blockquote>
+<p><strong>freq</strong> : str</p>
+<blockquote>
+<div><p>Must be givein if <code class="docutils literal"><span class="pre">endog</span></code> does not have date information in its
+index. Anything accapted by pandas.DatetimeIndex for the freq value.</p>
+</div></blockquote>
+<p><strong>print_stdout</strong> : bool</p>
+<blockquote>
+<div><p>The stdout from X12/X13 is suppressed. To print it out, set this
+to True. Default is False.</p>
+</div></blockquote>
+<p><strong>x12path</strong> : str or None</p>
+<blockquote>
+<div><p>The path to x12 or x13 binary. If None, the program will attempt
+to find x13as or x12a on the PATH or by looking at X13PATH or
+X12PATH depending on the value of prefer_x13.</p>
+</div></blockquote>
+<p><strong>prefer_x13</strong> : bool</p>
+<blockquote>
+<div><p>If True, will look for x13as first and will fallback to the X13PATH
+environmental variable. If False, will look for x12a first and will
+fallback to the X12PATH environmental variable. If x12path points
+to the path for the X12/X13 binary, it does nothing.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> : Bunch</p>
+<blockquote class="last">
+<div><p>A bunch object with the following attributes:</p>
+<ul class="simple">
+<li>results : str
+The full output from the X12/X13 run.</li>
+<li>seasadj : pandas.Series
+The final seasonally adjusted <code class="docutils literal"><span class="pre">endog</span></code></li>
+<li>trend : pandas.Series
+The trend-cycle component of <code class="docutils literal"><span class="pre">endog</span></code></li>
+<li>irregular : pandas.Series
+The final irregular component of <code class="docutils literal"><span class="pre">endog</span></code></li>
+<li>stdout : str
+The captured stdout produced by x12/x13.</li>
+<li>spec : str, optional
+Returned if <code class="docutils literal"><span class="pre">retspec</span></code> is True. The only thing returned if
+<code class="docutils literal"><span class="pre">speconly</span></code> is True.</li>
+</ul>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This works by creating a specification file, writing it to a temporary
+directory, invoking X12/X13 in a subprocess, and reading the output
+directory, invoking exog12/X13 in a subprocess, and reading the output
+back in.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.tsa.api.x13_arima_select_order.html" class="btn btn-neutral float-right" title="4.8.1.1.21. statsmodels.tsa.api.x13_arima_select_order" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.tsa.api.seasonal_decompose.html" class="btn btn-neutral" title="4.8.1.1.19. statsmodels.tsa.api.seasonal_decompose" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,25 @@
+statsmodels.emplike.api.DescStatMV
+==================================
+
+.. currentmodule:: statsmodels.emplike.api
+.. autoclass:: DescStatMV
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~DescStatMV.__init__
+   ~DescStatMV.ci_corr
+   ~DescStatMV.mv_mean_contour
+   ~DescStatMV.mv_test_mean
+   ~DescStatMV.test_corr
+
+
+
+
+

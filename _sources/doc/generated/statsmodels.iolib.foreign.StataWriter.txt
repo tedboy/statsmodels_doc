@@ -1,0 +1,32 @@
+statsmodels.iolib.foreign.StataWriter
+=====================================
+
+.. currentmodule:: statsmodels.iolib.foreign
+
+.. autoclass:: StataWriter
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~StataWriter.__init__
+      ~StataWriter.write_file
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~StataWriter.DTYPE_MAP
+      ~StataWriter.MISSING_VALUES
+      ~StataWriter.TYPE_MAP
+      ~StataWriter.i
+   
+   

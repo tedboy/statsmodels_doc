@@ -1,0 +1,463 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tsa.tests.test_arima &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>statsmodels.tsa.tests.test_arima</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.tsa.tests.test_arima.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.tsa.tests.test_arima">
+<span id="statsmodels-tsa-tests-test-arima"></span><h1>statsmodels.tsa.tests.test_arima<a class="headerlink" href="#module-statsmodels.tsa.tests.test_arima" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functions">
+<h2>Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.arma_generate_sample.html#statsmodels.tsa.tests.test_arima.arma_generate_sample" title="statsmodels.tsa.tests.test_arima.arma_generate_sample"><code class="xref py py-obj docutils literal"><span class="pre">arma_generate_sample</span></code></a>(ar,&nbsp;ma,&nbsp;nsample[,&nbsp;...])</td>
+<td>Generate a random sample of an ARMA process</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.assert_equal.html#statsmodels.tsa.tests.test_arima.assert_equal" title="statsmodels.tsa.tests.test_arima.assert_equal"><code class="xref py py-obj docutils literal"><span class="pre">assert_equal</span></code></a>(actual,&nbsp;desired[,&nbsp;err_msg,&nbsp;verbose])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.dates_from_range.html#statsmodels.tsa.tests.test_arima.dates_from_range" title="statsmodels.tsa.tests.test_arima.dates_from_range"><code class="xref py py-obj docutils literal"><span class="pre">dates_from_range</span></code></a>(start[,&nbsp;end,&nbsp;length])</td>
+<td>Turns a sequence of date strings and returns a list of datetime.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.load_macrodata.html#statsmodels.tsa.tests.test_arima.load_macrodata" title="statsmodels.tsa.tests.test_arima.load_macrodata"><code class="xref py py-obj docutils literal"><span class="pre">load_macrodata</span></code></a>()</td>
+<td>Load the US macro data and return a Dataset class.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.load_macrodata_pandas.html#statsmodels.tsa.tests.test_arima.load_macrodata_pandas" title="statsmodels.tsa.tests.test_arima.load_macrodata_pandas"><code class="xref py py-obj docutils literal"><span class="pre">load_macrodata_pandas</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_1dexog.html#statsmodels.tsa.tests.test_arima.test_1dexog" title="statsmodels.tsa.tests.test_arima.test_1dexog"><code class="xref py py-obj docutils literal"><span class="pre">test_1dexog</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_1123.html#statsmodels.tsa.tests.test_arima.test_arima_1123" title="statsmodels.tsa.tests.test_arima.test_arima_1123"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_1123</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_dataframe_integer_name.html#statsmodels.tsa.tests.test_arima.test_arima_dataframe_integer_name" title="statsmodels.tsa.tests.test_arima.test_arima_dataframe_integer_name"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_dataframe_integer_name</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_dates_startatend.html#statsmodels.tsa.tests.test_arima.test_arima_dates_startatend" title="statsmodels.tsa.tests.test_arima.test_arima_dates_startatend"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_dates_startatend</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_diff2.html#statsmodels.tsa.tests.test_arima.test_arima_diff2" title="statsmodels.tsa.tests.test_arima.test_arima_diff2"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_diff2</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_exog_predict_1d.html#statsmodels.tsa.tests.test_arima.test_arima_exog_predict_1d" title="statsmodels.tsa.tests.test_arima.test_arima_exog_predict_1d"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_exog_predict_1d</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_no_diff.html#statsmodels.tsa.tests.test_arima.test_arima_no_diff" title="statsmodels.tsa.tests.test_arima.test_arima_no_diff"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_no_diff</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_bug.html#statsmodels.tsa.tests.test_arima.test_arima_predict_bug" title="statsmodels.tsa.tests.test_arima.test_arima_predict_bug"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_bug</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_css.html#statsmodels.tsa.tests.test_arima.test_arima_predict_css" title="statsmodels.tsa.tests.test_arima.test_arima_predict_css"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_css</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_css_dates.html#statsmodels.tsa.tests.test_arima.test_arima_predict_css_dates" title="statsmodels.tsa.tests.test_arima.test_arima_predict_css_dates"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_css_dates</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_css_diffs.html#statsmodels.tsa.tests.test_arima.test_arima_predict_css_diffs" title="statsmodels.tsa.tests.test_arima.test_arima_predict_css_diffs"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_css_diffs</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_exog.html#statsmodels.tsa.tests.test_arima.test_arima_predict_exog" title="statsmodels.tsa.tests.test_arima.test_arima_predict_exog"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_exog</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_indices.html#statsmodels.tsa.tests.test_arima.test_arima_predict_indices" title="statsmodels.tsa.tests.test_arima.test_arima_predict_indices"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_indices</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_indices_css.html#statsmodels.tsa.tests.test_arima.test_arima_predict_indices_css" title="statsmodels.tsa.tests.test_arima.test_arima_predict_indices_css"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_indices_css</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_mle.html#statsmodels.tsa.tests.test_arima.test_arima_predict_mle" title="statsmodels.tsa.tests.test_arima.test_arima_predict_mle"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_mle</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_mle_dates.html#statsmodels.tsa.tests.test_arima.test_arima_predict_mle_dates" title="statsmodels.tsa.tests.test_arima.test_arima_predict_mle_dates"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_mle_dates</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_mle_diffs.html#statsmodels.tsa.tests.test_arima.test_arima_predict_mle_diffs" title="statsmodels.tsa.tests.test_arima.test_arima_predict_mle_diffs"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_mle_diffs</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_noma.html#statsmodels.tsa.tests.test_arima.test_arima_predict_noma" title="statsmodels.tsa.tests.test_arima.test_arima_predict_noma"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_noma</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_pandas_nofreq.html#statsmodels.tsa.tests.test_arima.test_arima_predict_pandas_nofreq" title="statsmodels.tsa.tests.test_arima.test_arima_predict_pandas_nofreq"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_pandas_nofreq</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_predict_q2.html#statsmodels.tsa.tests.test_arima.test_arima_predict_q2" title="statsmodels.tsa.tests.test_arima.test_arima_predict_q2"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_predict_q2</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_small_data_bug.html#statsmodels.tsa.tests.test_arima.test_arima_small_data_bug" title="statsmodels.tsa.tests.test_arima.test_arima_small_data_bug"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_small_data_bug</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arima_wrapper.html#statsmodels.tsa.tests.test_arima.test_arima_wrapper" title="statsmodels.tsa.tests.test_arima.test_arima_wrapper"><code class="xref py py-obj docutils literal"><span class="pre">test_arima_wrapper</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arimax.html#statsmodels.tsa.tests.test_arima.test_arimax" title="statsmodels.tsa.tests.test_arima.test_arimax"><code class="xref py py-obj docutils literal"><span class="pre">test_arimax</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arma_missing.html#statsmodels.tsa.tests.test_arima.test_arma_missing" title="statsmodels.tsa.tests.test_arima.test_arma_missing"><code class="xref py py-obj docutils literal"><span class="pre">test_arma_missing</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arma_predict_css_dates.html#statsmodels.tsa.tests.test_arima.test_arma_predict_css_dates" title="statsmodels.tsa.tests.test_arima.test_arma_predict_css_dates"><code class="xref py py-obj docutils literal"><span class="pre">test_arma_predict_css_dates</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arma_predict_indices.html#statsmodels.tsa.tests.test_arima.test_arma_predict_indices" title="statsmodels.tsa.tests.test_arima.test_arma_predict_indices"><code class="xref py py-obj docutils literal"><span class="pre">test_arma_predict_indices</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_arma_predict_mle_dates.html#statsmodels.tsa.tests.test_arima.test_arma_predict_mle_dates" title="statsmodels.tsa.tests.test_arima.test_arma_predict_mle_dates"><code class="xref py py-obj docutils literal"><span class="pre">test_arma_predict_mle_dates</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_bad_start_params.html#statsmodels.tsa.tests.test_arima.test_bad_start_params" title="statsmodels.tsa.tests.test_arima.test_bad_start_params"><code class="xref py py-obj docutils literal"><span class="pre">test_bad_start_params</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_compare_arma.html#statsmodels.tsa.tests.test_arima.test_compare_arma" title="statsmodels.tsa.tests.test_arima.test_compare_arma"><code class="xref py py-obj docutils literal"><span class="pre">test_compare_arma</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_plot_predict.html#statsmodels.tsa.tests.test_arima.test_plot_predict" title="statsmodels.tsa.tests.test_arima.test_plot_predict"><code class="xref py py-obj docutils literal"><span class="pre">test_plot_predict</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_reset_trend.html#statsmodels.tsa.tests.test_arima.test_reset_trend" title="statsmodels.tsa.tests.test_arima.test_reset_trend"><code class="xref py py-obj docutils literal"><span class="pre">test_reset_trend</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_small_data.html#statsmodels.tsa.tests.test_arima.test_small_data" title="statsmodels.tsa.tests.test_arima.test_small_data"><code class="xref py py-obj docutils literal"><span class="pre">test_small_data</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.tests.test_arima.test_start_params_bug.html#statsmodels.tsa.tests.test_arima.test_start_params_bug" title="statsmodels.tsa.tests.test_arima.test_start_params_bug"><code class="xref py py-obj docutils literal"><span class="pre">test_start_params_bug</span></code></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.ARIMA.html#statsmodels.tsa.tests.test_arima.ARIMA" title="statsmodels.tsa.tests.test_arima.ARIMA"><code class="xref py py-obj docutils literal"><span class="pre">ARIMA</span></code></a>(endog,&nbsp;order[,&nbsp;exog,&nbsp;dates,&nbsp;freq,&nbsp;missing])</td>
+<td>Autoregressive Integrated Moving Average ARIMA(p,d,q) Model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.ARMA.html#statsmodels.tsa.tests.test_arima.ARMA" title="statsmodels.tsa.tests.test_arima.ARMA"><code class="xref py py-obj docutils literal"><span class="pre">ARMA</span></code></a>(endog,&nbsp;order[,&nbsp;exog,&nbsp;dates,&nbsp;freq,&nbsp;missing])</td>
+<td>Autoregressive Moving Average ARMA(p,q) Model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Arma.html#statsmodels.tsa.tests.test_arima.Arma" title="statsmodels.tsa.tests.test_arima.Arma"><code class="xref py py-obj docutils literal"><span class="pre">Arma</span></code></a>(endog[,&nbsp;exog])</td>
+<td>univariate Autoregressive Moving Average model, conditional on initial values</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.CheckArimaResultsMixin.html#statsmodels.tsa.tests.test_arima.CheckArimaResultsMixin" title="statsmodels.tsa.tests.test_arima.CheckArimaResultsMixin"><code class="xref py py-obj docutils literal"><span class="pre">CheckArimaResultsMixin</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.CheckArmaResultsMixin.html#statsmodels.tsa.tests.test_arima.CheckArmaResultsMixin" title="statsmodels.tsa.tests.test_arima.CheckArmaResultsMixin"><code class="xref py py-obj docutils literal"><span class="pre">CheckArmaResultsMixin</span></code></a></td>
+<td>res2 are the results from gretl.  They are in results/results_arma.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.CheckDynamicForecastMixin.html#statsmodels.tsa.tests.test_arima.CheckDynamicForecastMixin" title="statsmodels.tsa.tests.test_arima.CheckDynamicForecastMixin"><code class="xref py py-obj docutils literal"><span class="pre">CheckDynamicForecastMixin</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.CheckForecastMixin.html#statsmodels.tsa.tests.test_arima.CheckForecastMixin" title="statsmodels.tsa.tests.test_arima.CheckForecastMixin"><code class="xref py py-obj docutils literal"><span class="pre">CheckForecastMixin</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.OLS.html#statsmodels.tsa.tests.test_arima.OLS" title="statsmodels.tsa.tests.test_arima.OLS"><code class="xref py py-obj docutils literal"><span class="pre">OLS</span></code></a>(endog[,&nbsp;exog,&nbsp;missing,&nbsp;hasconst])</td>
+<td>A simple ordinary least squares model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.TestARMA00.html#statsmodels.tsa.tests.test_arima.TestARMA00" title="statsmodels.tsa.tests.test_arima.TestARMA00"><code class="xref py py-obj docutils literal"><span class="pre">TestARMA00</span></code></a>([methodName])</td>
+<td>Create an instance of the class that will use the named test method when executed.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_ARIMA101.html#statsmodels.tsa.tests.test_arima.Test_ARIMA101" title="statsmodels.tsa.tests.test_arima.Test_ARIMA101"><code class="xref py py-obj docutils literal"><span class="pre">Test_ARIMA101</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_ARIMA111.html#statsmodels.tsa.tests.test_arima.Test_ARIMA111" title="statsmodels.tsa.tests.test_arima.Test_ARIMA111"><code class="xref py py-obj docutils literal"><span class="pre">Test_ARIMA111</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_ARIMA111CSS.html#statsmodels.tsa.tests.test_arima.Test_ARIMA111CSS" title="statsmodels.tsa.tests.test_arima.Test_ARIMA111CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_ARIMA111CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_ARIMA112CSS.html#statsmodels.tsa.tests.test_arima.Test_ARIMA112CSS" title="statsmodels.tsa.tests.test_arima.Test_ARIMA112CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_ARIMA112CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_Const.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_Const" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_Const"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA02_Const</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_Const_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_Const_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_Const_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA02_Const_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_NoConst.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_NoConst" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_NoConst"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA02_NoConst</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_NoConst_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_NoConst_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_NoConst_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA02_NoConst_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_Const.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_Const" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_Const"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA11_Const</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_Const_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_Const_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_Const_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA11_Const_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_NoConst.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_NoConst" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_NoConst"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA11_NoConst</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_NoConst_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_NoConst_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_NoConst_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA11_NoConst_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_Const.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_Const" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_Const"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA14_Const</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_Const_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_Const_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_Const_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA14_Const_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_NoConst.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_NoConst" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_NoConst"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA14_NoConst</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_NoConst_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_NoConst_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_NoConst_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA14_NoConst_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_Const.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_Const" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_Const"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA22_Const</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_Const_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_Const_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_Const_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA22_Const_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_NoConst.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_NoConst" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_NoConst"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA22_NoConst</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_NoConst_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_NoConst_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_NoConst_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA22_NoConst_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_Const.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_Const" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_Const"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA41_Const</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_Const_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_Const_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_Const_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA41_Const_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_NoConst.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_NoConst" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_NoConst"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA41_NoConst</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_NoConst_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_NoConst_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_NoConst_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA41_NoConst_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_Const.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_Const" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_Const"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA50_Const</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_Const_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_Const_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_Const_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA50_Const_CSS</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_NoConst.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_NoConst" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_NoConst"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA50_NoConst</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_NoConst_CSS.html#statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_NoConst_CSS" title="statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_NoConst_CSS"><code class="xref py py-obj docutils literal"><span class="pre">Test_Y_ARMA50_NoConst_CSS</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

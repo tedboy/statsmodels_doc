@@ -1,0 +1,25 @@
+statsmodels.stats.power.NormalIndPower
+======================================
+
+.. currentmodule:: statsmodels.stats.power
+
+.. autoclass:: NormalIndPower
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~NormalIndPower.__init__
+      ~NormalIndPower.plot_power
+      ~NormalIndPower.power
+      ~NormalIndPower.solve_power
+   
+   
+
+   
+   
+   

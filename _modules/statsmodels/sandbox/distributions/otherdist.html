@@ -1,0 +1,528 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.distributions.otherdist &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.distributions.otherdist</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.distributions.otherdist</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Parametric Mixture Distributions</span>
+
+<span class="sd">Created on Sat Jun 04 2011</span>
+
+<span class="sd">Author: Josef Perktold</span>
+
+
+<span class="sd">Notes:</span>
+
+<span class="sd">Compound Poisson has mass point at zero</span>
+<span class="sd">http://en.wikipedia.org/wiki/Compound_Poisson_distribution</span>
+<span class="sd">and would need special treatment</span>
+
+<span class="sd">need a distribution that has discrete mass points and contiuous range, e.g.</span>
+<span class="sd">compound Poisson, Tweedie (for some parameter range),</span>
+<span class="sd">pdf of Tobit model (?) - truncation with clipping</span>
+
+<span class="sd">Question: Metaclasses and class factories for generating new distributions from</span>
+<span class="sd">existing distributions by transformation, mixing, compounding</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+
+<div class="viewcode-block" id="ParametricMixtureD"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ParametricMixtureD.html#statsmodels.sandbox.distributions.otherdist.ParametricMixtureD">[docs]</a><span class="k">class</span> <span class="nc">ParametricMixtureD</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;mixtures with a discrete distribution</span>
+
+<span class="sd">    The mixing distribution is a discrete distribution like scipy.stats.poisson.</span>
+<span class="sd">    All distribution in the mixture of the same type and parameterized</span>
+<span class="sd">    by the outcome of the mixing distribution and have to be a continuous</span>
+<span class="sd">    distribution (or have a pdf method).</span>
+<span class="sd">    As an example, a mixture of normal distributed random variables with</span>
+<span class="sd">    Poisson as the mixing distribution.</span>
+
+
+<span class="sd">    assumes vectorized shape, loc and scale as in scipy.stats.distributions</span>
+
+<span class="sd">    assume mixing_dist is frozen</span>
+
+<span class="sd">    initialization looks fragile for all possible cases of lower and upper</span>
+<span class="sd">    bounds of the distributions.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="ParametricMixtureD.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ParametricMixtureD.__init__.html#statsmodels.sandbox.distributions.otherdist.ParametricMixtureD.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mixing_dist</span><span class="p">,</span> <span class="n">base_dist</span><span class="p">,</span> <span class="n">bd_args_func</span><span class="p">,</span> <span class="n">bd_kwds_func</span><span class="p">,</span>
+                 <span class="n">cutoff</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;create a mixture distribution</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        mixing_dist : discrete frozen distribution</span>
+<span class="sd">            mixing distribution</span>
+<span class="sd">        base_dist : continuous distribution</span>
+<span class="sd">            parameterized distributions in the mixture</span>
+<span class="sd">        bd_args_func : callable</span>
+<span class="sd">            function that builds the tuple of args for the base_dist.</span>
+<span class="sd">            The function obtains as argument the values in the support of</span>
+<span class="sd">            the mixing distribution and should return an empty tuple or</span>
+<span class="sd">            a tuple of arrays.</span>
+<span class="sd">        bd_kwds_func : callable</span>
+<span class="sd">            function that builds the dictionary of kwds for the base_dist.</span>
+<span class="sd">            The function obtains as argument the values in the support of</span>
+<span class="sd">            the mixing distribution and should return an empty dictionary or</span>
+<span class="sd">            a dictionary with arrays as values.</span>
+<span class="sd">        cutoff : float</span>
+<span class="sd">            If the mixing distribution has infinite support, then the</span>
+<span class="sd">            distribution is truncated with approximately (subject to integer</span>
+<span class="sd">            conversion) the cutoff probability in the missing tail. Random</span>
+<span class="sd">            draws that are outside the truncated range are clipped, that is</span>
+<span class="sd">            assigned to the highest or lowest value in the truncated support.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mixing_dist</span> <span class="o">=</span> <span class="n">mixing_dist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_dist</span> <span class="o">=</span> <span class="n">base_dist</span>
+        <span class="c1">#self.bd_args = bd_args</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isneginf</span><span class="p">(</span><span class="n">mixing_dist</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">a</span><span class="p">):</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">mixing_dist</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">a</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">lower</span> <span class="o">=</span> <span class="n">mixing_dist</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">isposinf</span><span class="p">(</span><span class="n">mixing_dist</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">b</span><span class="p">):</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">mixing_dist</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">b</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">upper</span> <span class="o">=</span> <span class="n">mixing_dist</span><span class="o">.</span><span class="n">isf</span><span class="p">(</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ma</span> <span class="o">=</span> <span class="n">lower</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mb</span> <span class="o">=</span> <span class="n">upper</span>
+        <span class="n">mixing_support</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mixing_probs</span> <span class="o">=</span> <span class="n">mixing_dist</span><span class="o">.</span><span class="n">pmf</span><span class="p">(</span><span class="n">mixing_support</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bd_args</span> <span class="o">=</span> <span class="n">bd_args_func</span><span class="p">(</span><span class="n">mixing_support</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bd_kwds</span> <span class="o">=</span> <span class="n">bd_kwds_func</span><span class="p">(</span><span class="n">mixing_support</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ParametricMixtureD.rvs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ParametricMixtureD.rvs.html#statsmodels.sandbox.distributions.otherdist.ParametricMixtureD.rvs">[docs]</a>    <span class="k">def</span> <span class="nf">rvs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">mrvs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mixing_dist</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="c1">#TODO: check strange cases ? this assumes continous integers</span>
+        <span class="n">mrvs_idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">clip</span><span class="p">(</span><span class="n">mrvs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mb</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ma</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+
+        <span class="n">bd_args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">md</span><span class="p">[</span><span class="n">mrvs_idx</span><span class="p">]</span> <span class="k">for</span> <span class="n">md</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bd_args</span><span class="p">)</span>
+        <span class="n">bd_kwds</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">bd_kwds</span><span class="p">[</span><span class="n">k</span><span class="p">][</span><span class="n">mrvs_idx</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">bd_kwds</span><span class="p">)</span>
+        <span class="n">kwds</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="n">size</span><span class="p">}</span>
+        <span class="n">kwds</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">bd_kwds</span><span class="p">)</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_dist</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">bd_args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rvs</span><span class="p">,</span> <span class="n">mrvs_idx</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="ParametricMixtureD.pdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ParametricMixtureD.pdf.html#statsmodels.sandbox.distributions.otherdist.ParametricMixtureD.pdf">[docs]</a>    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1">#[None, ...]</span>
+        <span class="n">bd_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_dist</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">bd_args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">bd_kwds</span><span class="p">)</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="p">(</span><span class="n">bd_probs</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mixing_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">prob</span><span class="p">,</span> <span class="n">bd_probs</span></div>
+
+<div class="viewcode-block" id="ParametricMixtureD.cdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ParametricMixtureD.cdf.html#statsmodels.sandbox.distributions.otherdist.ParametricMixtureD.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="c1">#[None, ...]</span>
+        <span class="n">bd_probs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">bd_args</span><span class="p">,</span> <span class="o">**</span><span class="bp">self</span><span class="o">.</span><span class="n">bd_kwds</span><span class="p">)</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="p">(</span><span class="n">bd_probs</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">mixing_probs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">prob</span><span class="p">,</span> <span class="n">bd_probs</span></div></div>
+
+
+<span class="c1">#try:</span>
+
+<div class="viewcode-block" id="ClippedContinuous"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ClippedContinuous.html#statsmodels.sandbox.distributions.otherdist.ClippedContinuous">[docs]</a><span class="k">class</span> <span class="nc">ClippedContinuous</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;clipped continuous distribution with a masspoint at clip_lower</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    first version, to try out possible designs</span>
+<span class="sd">    insufficient checks for valid arguments and not clear</span>
+<span class="sd">    whether it works for distributions that have compact support</span>
+
+<span class="sd">    clip_lower is fixed and independent of the distribution parameters.</span>
+<span class="sd">    The clip_lower point in the pdf has to be interpreted as a mass point,</span>
+<span class="sd">    i.e. different treatment in integration and expect function, which means</span>
+<span class="sd">    none of the generic methods for this can be used.</span>
+
+<span class="sd">    maybe this will be better designed as a mixture between a degenerate or</span>
+<span class="sd">    discrete and a continuous distribution</span>
+
+<span class="sd">    Warning: uses equality to check for clip_lower values in function</span>
+<span class="sd">    arguments, since these are floating points, the comparison might fail</span>
+<span class="sd">    if clip_lower values are not exactly equal.</span>
+<span class="sd">    We could add a check whether the values are in a small neighborhood, but</span>
+<span class="sd">    it would be expensive (need to search and check all values).</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ClippedContinuous.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ClippedContinuous.__init__.html#statsmodels.sandbox.distributions.otherdist.ClippedContinuous.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">base_dist</span><span class="p">,</span> <span class="n">clip_lower</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">base_dist</span> <span class="o">=</span> <span class="n">base_dist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">clip_lower</span> <span class="o">=</span> <span class="n">clip_lower</span></div>
+
+    <span class="k">def</span> <span class="nf">_get_clip_lower</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;helper method to get clip_lower from kwds or attribute</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;clip_lower&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="n">clip_lower</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_lower</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">clip_lower</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clip_lower&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">clip_lower</span><span class="p">,</span> <span class="n">kwds</span>
+
+<div class="viewcode-block" id="ClippedContinuous.rvs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ClippedContinuous.rvs.html#statsmodels.sandbox.distributions.otherdist.ClippedContinuous.rvs">[docs]</a>    <span class="k">def</span> <span class="nf">rvs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="n">clip_lower</span><span class="p">,</span> <span class="n">kwds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_clip_lower</span><span class="p">(</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">rvs_</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_dist</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="c1">#same as numpy.clip ?</span>
+        <span class="n">rvs_</span><span class="p">[</span><span class="n">rvs_</span> <span class="o">&lt;</span> <span class="n">clip_lower</span><span class="p">]</span> <span class="o">=</span> <span class="n">clip_lower</span>
+        <span class="k">return</span> <span class="n">rvs_</span></div>
+
+
+
+<div class="viewcode-block" id="ClippedContinuous.pdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ClippedContinuous.pdf.html#statsmodels.sandbox.distributions.otherdist.ClippedContinuous.pdf">[docs]</a>    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;clip_lower&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="n">clip_lower</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_lower</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#allow clip_lower to be a possible parameter</span>
+            <span class="n">clip_lower</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clip_lower&#39;</span><span class="p">)</span>
+        <span class="n">pdf_raw</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">base_dist</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">))</span>
+        <span class="n">clip_mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_lower</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">clip_mask</span><span class="p">):</span>
+            <span class="n">clip_prob</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">clip_lower</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+            <span class="n">pdf_raw</span><span class="p">[</span><span class="n">clip_mask</span><span class="p">]</span> <span class="o">=</span> <span class="n">clip_prob</span>
+
+        <span class="c1">#the following will be handled by sub-classing rv_continuous</span>
+        <span class="n">pdf_raw</span><span class="p">[</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">clip_lower</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="n">pdf_raw</span></div>
+
+<div class="viewcode-block" id="ClippedContinuous.cdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ClippedContinuous.cdf.html#statsmodels.sandbox.distributions.otherdist.ClippedContinuous.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;clip_lower&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="n">clip_lower</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_lower</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#allow clip_lower to be a possible parameter</span>
+            <span class="n">clip_lower</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clip_lower&#39;</span><span class="p">)</span>
+        <span class="n">cdf_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_dist</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+
+        <span class="c1">#not needed if equality test is used</span>
+<span class="c1">##        clip_mask = (x == self.clip_lower)</span>
+<span class="c1">##        if np.any(clip_mask):</span>
+<span class="c1">##            clip_prob = self.base_dist.cdf(clip_lower, *args, **kwds)</span>
+<span class="c1">##            pdf_raw[clip_mask] = clip_prob</span>
+
+        <span class="c1">#the following will be handled by sub-classing rv_continuous</span>
+        <span class="c1">#if self.a is defined</span>
+        <span class="n">cdf_raw</span><span class="p">[</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">clip_lower</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+        <span class="k">return</span> <span class="n">cdf_raw</span></div>
+
+<div class="viewcode-block" id="ClippedContinuous.sf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ClippedContinuous.sf.html#statsmodels.sandbox.distributions.otherdist.ClippedContinuous.sf">[docs]</a>    <span class="k">def</span> <span class="nf">sf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="s1">&#39;clip_lower&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="n">clip_lower</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">clip_lower</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#allow clip_lower to be a possible parameter</span>
+            <span class="n">clip_lower</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;clip_lower&#39;</span><span class="p">)</span>
+
+        <span class="n">sf_raw</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">base_dist</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">sf_raw</span><span class="p">[</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="n">clip_lower</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+        <span class="k">return</span> <span class="n">sf_raw</span></div>
+
+
+<div class="viewcode-block" id="ClippedContinuous.ppf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ClippedContinuous.ppf.html#statsmodels.sandbox.distributions.otherdist.ClippedContinuous.ppf">[docs]</a>    <span class="k">def</span> <span class="nf">ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span></div>
+
+<div class="viewcode-block" id="ClippedContinuous.plot"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.otherdist.ClippedContinuous.plot.html#statsmodels.sandbox.distributions.otherdist.ClippedContinuous.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+
+        <span class="n">clip_lower</span><span class="p">,</span> <span class="n">kwds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_clip_lower</span><span class="p">(</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">mass</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">clip_lower</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">xr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="n">clip_lower</span><span class="o">+</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="n">x</span><span class="o">&gt;</span><span class="n">clip_lower</span><span class="p">]))</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="c1">#x = np.linspace(-4, 4, 21)</span>
+        <span class="c1">#plt.figure()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">(</span><span class="n">clip_lower</span><span class="o">-</span><span class="mf">0.1</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="c1">#remove duplicate calculation</span>
+        <span class="n">xpdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="nb">max</span><span class="p">(</span><span class="n">mass</span><span class="p">,</span> <span class="n">xpdf</span><span class="o">.</span><span class="n">max</span><span class="p">())</span><span class="o">*</span><span class="mf">1.1</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xr</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">xr</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">))</span>
+        <span class="c1">#plt.vline(clip_lower, self.pdf(clip_lower, *args, **kwds))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">stem</span><span class="p">([</span><span class="n">clip_lower</span><span class="p">],</span> <span class="p">[</span><span class="n">mass</span><span class="p">],</span>
+                 <span class="n">linefmt</span><span class="o">=</span><span class="s1">&#39;b-&#39;</span><span class="p">,</span> <span class="n">markerfmt</span><span class="o">=</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span> <span class="n">basefmt</span><span class="o">=</span><span class="s1">&#39;r-&#39;</span><span class="p">)</span>
+        <span class="k">return</span></div></div>
+
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">doplots</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="c1">#*********** Poisson-Normal Mixture</span>
+    <span class="n">mdist</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="mf">2.</span><span class="p">)</span>
+    <span class="n">bdist</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span>
+    <span class="n">bd_args_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">()</span>
+    <span class="c1">#bd_kwds_fn = lambda x: {&#39;loc&#39;: np.atleast_2d(10./(1+x))}</span>
+    <span class="n">bd_kwds_fn</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;loc&#39;</span><span class="p">:</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">:</span> <span class="mf">0.1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)}</span> <span class="c1">#10./(1+x)}</span>
+
+
+    <span class="n">pd</span> <span class="o">=</span> <span class="n">ParametricMixtureD</span><span class="p">(</span><span class="n">mdist</span><span class="p">,</span> <span class="n">bdist</span><span class="p">,</span> <span class="n">bd_args_fn</span><span class="p">,</span> <span class="n">bd_kwds_fn</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="n">p</span><span class="p">,</span> <span class="n">bp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">21</span><span class="p">))</span>
+    <span class="n">pc</span><span class="p">,</span> <span class="n">bpc</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">20</span><span class="p">,</span><span class="mi">21</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">pd</span><span class="o">.</span><span class="n">rvs</span><span class="p">())</span>
+    <span class="n">rvs</span><span class="p">,</span> <span class="n">m</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">1000</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">bins</span> <span class="o">=</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;poisson mixture of normal distributions&#39;</span><span class="p">)</span>
+
+    <span class="c1">#********** clipped normal distribution (Tobit)</span>
+
+    <span class="n">bdist</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span>
+    <span class="n">clip_lower_</span> <span class="o">=</span> <span class="mf">0.</span> <span class="c1">#-0.5</span>
+    <span class="n">cnorm</span> <span class="o">=</span> <span class="n">ClippedContinuous</span><span class="p">(</span><span class="n">bdist</span><span class="p">,</span> <span class="n">clip_lower_</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">11</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cnorm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cnorm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">doplots</span><span class="p">:</span>
+        <span class="c1">#plt.figure()</span>
+        <span class="c1">#cnorm.plot(x)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">cnorm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">51</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;clipped normal distribution&#39;</span><span class="p">)</span>
+
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">loc</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">([</span><span class="mf">0.</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">1.</span><span class="p">,</span><span class="mf">2.</span><span class="p">]):</span>
+            <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">cnorm</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">51</span><span class="p">),</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;clipped normal, loc = </span><span class="si">%3.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">loc</span><span class="p">)</span>
+
+
+        <span class="n">loc</span> <span class="o">=</span> <span class="mf">1.5</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="n">cnorm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">2000</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;clipped normal rvs, loc = </span><span class="si">%3.2f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">loc</span><span class="p">)</span>
+
+
+    <span class="c1">#plt.show()</span>
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

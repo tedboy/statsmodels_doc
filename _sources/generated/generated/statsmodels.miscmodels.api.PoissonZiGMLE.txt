@@ -1,0 +1,45 @@
+statsmodels.miscmodels.api.PoissonZiGMLE
+========================================
+
+.. currentmodule:: statsmodels.miscmodels.api
+.. autoclass:: PoissonZiGMLE
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PoissonZiGMLE.__init__
+   ~PoissonZiGMLE.expandparams
+   ~PoissonZiGMLE.fit
+   ~PoissonZiGMLE.from_formula
+   ~PoissonZiGMLE.hessian
+   ~PoissonZiGMLE.information
+   ~PoissonZiGMLE.initialize
+   ~PoissonZiGMLE.jac
+   ~PoissonZiGMLE.loglike
+   ~PoissonZiGMLE.loglikeobs
+   ~PoissonZiGMLE.nloglike
+   ~PoissonZiGMLE.nloglikeobs
+   ~PoissonZiGMLE.predict
+   ~PoissonZiGMLE.reduceparams
+   ~PoissonZiGMLE.score
+   ~PoissonZiGMLE.score_obs
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~PoissonZiGMLE.endog_names
+   ~PoissonZiGMLE.exog_names
+

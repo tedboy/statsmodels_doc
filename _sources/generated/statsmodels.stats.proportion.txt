@@ -1,0 +1,55 @@
+statsmodels.stats.proportion
+============================
+
+.. automodule:: statsmodels.stats.proportion
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      binom_test
+      binom_test_reject_interval
+      binom_tost
+      binom_tost_reject_interval
+      power_binom_tost
+      power_ztost_prop
+      proportion_confint
+      proportion_effectsize
+      proportions_chisquare
+      proportions_chisquare_allpairs
+      proportions_chisquare_pairscontrol
+      proportions_ztest
+      proportions_ztost
+      samplesize_confint_proportion
+      std_prop
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      AllPairsResults
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.proportion.AllPairsResults
+
+   
+   
+
+   
+   
+   

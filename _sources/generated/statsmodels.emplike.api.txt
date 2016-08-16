@@ -1,0 +1,49 @@
+statsmodels.emplike.api
+=======================
+
+.. automodule:: statsmodels.emplike.api
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      DescStat
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ANOVA
+      DescStatMV
+      DescStatUV
+      ELOriginRegress
+      emplikeAFT
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.emplike.api.ANOVA
+       generated/statsmodels.emplike.api.DescStatMV
+       generated/statsmodels.emplike.api.DescStatUV
+       generated/statsmodels.emplike.api.ELOriginRegress
+       generated/statsmodels.emplike.api.emplikeAFT
+
+   
+   
+
+   
+   
+   

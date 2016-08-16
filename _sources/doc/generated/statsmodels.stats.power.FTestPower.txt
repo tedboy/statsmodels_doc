@@ -1,0 +1,25 @@
+statsmodels.stats.power.FTestPower
+==================================
+
+.. currentmodule:: statsmodels.stats.power
+
+.. autoclass:: FTestPower
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FTestPower.__init__
+      ~FTestPower.plot_power
+      ~FTestPower.power
+      ~FTestPower.solve_power
+   
+   
+
+   
+   
+   

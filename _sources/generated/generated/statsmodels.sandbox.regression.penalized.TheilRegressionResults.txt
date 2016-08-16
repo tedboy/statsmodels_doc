@@ -1,0 +1,85 @@
+statsmodels.sandbox.regression.penalized.TheilRegressionResults
+===============================================================
+
+.. currentmodule:: statsmodels.sandbox.regression.penalized
+.. autoclass:: TheilRegressionResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TheilRegressionResults.HC0_se
+   ~TheilRegressionResults.HC1_se
+   ~TheilRegressionResults.HC2_se
+   ~TheilRegressionResults.HC3_se
+   ~TheilRegressionResults.__init__
+   ~TheilRegressionResults.aic
+   ~TheilRegressionResults.aicc
+   ~TheilRegressionResults.bic
+   ~TheilRegressionResults.bse
+   ~TheilRegressionResults.centered_tss
+   ~TheilRegressionResults.compare_f_test
+   ~TheilRegressionResults.compare_lm_test
+   ~TheilRegressionResults.compare_lr_test
+   ~TheilRegressionResults.condition_number
+   ~TheilRegressionResults.conf_int
+   ~TheilRegressionResults.cov_HC0
+   ~TheilRegressionResults.cov_HC1
+   ~TheilRegressionResults.cov_HC2
+   ~TheilRegressionResults.cov_HC3
+   ~TheilRegressionResults.cov_params
+   ~TheilRegressionResults.cv
+   ~TheilRegressionResults.eigenvals
+   ~TheilRegressionResults.ess
+   ~TheilRegressionResults.f_pvalue
+   ~TheilRegressionResults.f_test
+   ~TheilRegressionResults.fittedvalues
+   ~TheilRegressionResults.fvalue
+   ~TheilRegressionResults.gcv
+   ~TheilRegressionResults.get_robustcov_results
+   ~TheilRegressionResults.hatmatrix_diag
+   ~TheilRegressionResults.hatmatrix_trace
+   ~TheilRegressionResults.initialize
+   ~TheilRegressionResults.llf
+   ~TheilRegressionResults.load
+   ~TheilRegressionResults.mse_model
+   ~TheilRegressionResults.mse_resid
+   ~TheilRegressionResults.mse_total
+   ~TheilRegressionResults.nobs
+   ~TheilRegressionResults.normalized_cov_params
+   ~TheilRegressionResults.predict
+   ~TheilRegressionResults.pvalues
+   ~TheilRegressionResults.remove_data
+   ~TheilRegressionResults.resid
+   ~TheilRegressionResults.resid_pearson
+   ~TheilRegressionResults.rsquared
+   ~TheilRegressionResults.rsquared_adj
+   ~TheilRegressionResults.save
+   ~TheilRegressionResults.scale
+   ~TheilRegressionResults.ssr
+   ~TheilRegressionResults.summary
+   ~TheilRegressionResults.summary2
+   ~TheilRegressionResults.t_test
+   ~TheilRegressionResults.tvalues
+   ~TheilRegressionResults.uncentered_tss
+   ~TheilRegressionResults.wald_test
+   ~TheilRegressionResults.wresid
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TheilRegressionResults.df_model
+   ~TheilRegressionResults.use_t
+

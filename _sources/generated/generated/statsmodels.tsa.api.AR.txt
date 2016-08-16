@@ -1,0 +1,39 @@
+statsmodels.tsa.api.AR
+======================
+
+.. currentmodule:: statsmodels.tsa.api
+.. autoclass:: AR
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~AR.__init__
+   ~AR.fit
+   ~AR.from_formula
+   ~AR.hessian
+   ~AR.information
+   ~AR.initialize
+   ~AR.loglike
+   ~AR.predict
+   ~AR.score
+   ~AR.select_order
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~AR.endog_names
+   ~AR.exog_names
+

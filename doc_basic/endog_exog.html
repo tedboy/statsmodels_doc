@@ -1,0 +1,329 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>2.4. endog, exog, what’s that? &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="2. Basic Documentation" href="index.html"/>
+        <link rel="next" title="2.5. Import Paths and Structure" href="importpaths.html"/>
+        <link rel="prev" title="2.3. About Statsmodels" href="about.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">2. Basic Documentation</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html">2.1. Getting started</a></li>
+<li class="toctree-l2"><a class="reference internal" href="example_formulas.html">2.2. Fitting models using R-style formulas</a></li>
+<li class="toctree-l2"><a class="reference internal" href="about.html">2.3. About Statsmodels</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">2.4. <code class="docutils literal"><span class="pre">endog</span></code>, <code class="docutils literal"><span class="pre">exog</span></code>, what&#8217;s that?</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#background">2.4.1. Background</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="importpaths.html">2.5. Import Paths and Structure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="pitfalls.html">2.6. Pitfalls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="internal.html">2.7. Internal Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">2. Basic Documentation</a> &raquo;</li>
+        
+      <li>2.4. <code class="docutils literal"><span class="pre">endog</span></code>, <code class="docutils literal"><span class="pre">exog</span></code>, what&#8217;s that?</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/doc_basic/endog_exog.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="endog-exog-what-s-that">
+<span id="endog-exog"></span><h1>2.4. <code class="docutils literal"><span class="pre">endog</span></code>, <code class="docutils literal"><span class="pre">exog</span></code>, what&#8217;s that?<a class="headerlink" href="#endog-exog-what-s-that" title="Permalink to this headline">¶</a></h1>
+<p>Statsmodels is using <code class="docutils literal"><span class="pre">endog</span></code> and <code class="docutils literal"><span class="pre">exog</span></code> as names for the data, the
+observed variables that are used in an estimation problem. Other names that
+are often used in different statistical packages or text books are, for
+example,</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="49%" />
+<col width="51%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">endog</th>
+<th class="head">exog</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>y</td>
+<td>x</td>
+</tr>
+<tr class="row-odd"><td>y variable</td>
+<td>x variable</td>
+</tr>
+<tr class="row-even"><td>left hand side (LHS)</td>
+<td>right hand side (RHS)</td>
+</tr>
+<tr class="row-odd"><td>dependent variable</td>
+<td>independent variable</td>
+</tr>
+<tr class="row-even"><td>regressand</td>
+<td>regressors</td>
+</tr>
+<tr class="row-odd"><td>outcome</td>
+<td>design</td>
+</tr>
+<tr class="row-even"><td>response variable</td>
+<td>explanatory variable</td>
+</tr>
+</tbody>
+</table>
+<p>The usage is quite often domain and model specific; however, we have chosen
+to use <cite>endog</cite> and <cite>exog</cite> almost exclusively. A mnenomic hint to keep the two
+terms apart is that exogenous has an &#8220;x&#8221;, as in x-variable, in it&#8217;s name.</p>
+<p><cite>x</cite> and <cite>y</cite> are one letter names that are sometimes used for temporary
+variables and are not informative in itself. To avoid one letter names we
+decided to use descriptive names and settled on <code class="docutils literal"><span class="pre">endog</span></code> and <code class="docutils literal"><span class="pre">exog</span></code>.
+Since this has been criticized, this might change in future.</p>
+<div class="section" id="background">
+<h2>2.4.1. Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h2>
+<p>Some informal definitions of the terms are</p>
+<p><cite>endogenous</cite>: caused by factors within the system</p>
+<p><cite>exogenous</cite>: caused by factors outside the system</p>
+<p><em>Endogenous variables designates variables in an economic/econometric model
+that are explained, or predicted, by that model.</em>
+<a class="reference external" href="http://stats.oecd.org/glossary/detail.asp?ID=794">http://stats.oecd.org/glossary/detail.asp?ID=794</a></p>
+<p><em>Exogenous variables designates variables that appear in an
+economic/econometric model, but are not explained by that model (i.e. they are
+taken as given by the model).</em>  <a class="reference external" href="http://stats.oecd.org/glossary/detail.asp?ID=890">http://stats.oecd.org/glossary/detail.asp?ID=890</a></p>
+<p>In econometrics and statistics the terms are defined more formally, and
+different definitions of exogeneity (weak, strong, strict) are used depending
+on the model. The usage in statsmodels as variable names cannot always be
+interpreted in a formal sense, but tries to follow the same principle.</p>
+<p>In the simplest form, a model relates an observed variable, y, to another set
+of variables, x, in some linear or nonlinear form</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">y</span> <span class="o">=</span> <span class="n">f</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">beta</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
+<span class="n">y</span> <span class="o">=</span> <span class="n">x</span> <span class="o">*</span> <span class="n">beta</span> <span class="o">+</span> <span class="n">noise</span>
+</pre></div>
+</div>
+<p>However, to have a statistical model we need additional assumptions on the
+properties of the explanatory variables, x, and the noise. One standard
+assumption for many basic models is that x is not correlated with the noise.
+In a more general definition, x being exogenous means that we do not have to
+consider how the explanatory variables in x were generated, whether by design
+or by random draws from some underlying distribution, when we want to estimate
+the effect or impact that x has on y, or test a hypothesis about this effect.</p>
+<p>In other words, y is <em>endogenous</em> to our model, x is <em>exogenous</em> to our model
+for the estimation.</p>
+<p>As an example, suppose you run an experiment and for the second session some
+subjects are not available anymore.
+Is the drop-out relevant for the conclusions you draw for the experiment?
+In other words, can we treat the drop-out decision as exogenous for our
+problem.</p>
+<p>It is up to the user to know (or to consult a text book to find out) what the
+underlying statistical assumptions for the models are. As an example, <code class="docutils literal"><span class="pre">exog</span></code>
+in <code class="docutils literal"><span class="pre">OLS</span></code> can have lagged dependent variables if the error or noise term is
+independently distributed over time (or uncorrelated over time). However, if
+the error terms are autocorrelated, then OLS does not have good statistical
+properties (is inconsistent) and the correct model will be ARMAX.
+<code class="docutils literal"><span class="pre">statsmodels</span></code> has functions for regression diagnostics to test whether some of
+the assumptions are justified or not.</p>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="importpaths.html" class="btn btn-neutral float-right" title="2.5. Import Paths and Structure" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="about.html" class="btn btn-neutral" title="2.3. About Statsmodels" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

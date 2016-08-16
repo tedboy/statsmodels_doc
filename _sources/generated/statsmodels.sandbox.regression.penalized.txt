@@ -1,0 +1,53 @@
+statsmodels.sandbox.regression.penalized
+========================================
+
+.. automodule:: statsmodels.sandbox.regression.penalized
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      atleast_2dcols
+      coef_restriction_diffbase
+      coef_restriction_diffseq
+      coef_restriction_meandiff
+      next_odd
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      GLS
+      OLS
+      RegressionResults
+      TheilGLS
+      TheilRegressionResults
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.regression.penalized.GLS
+       generated/statsmodels.sandbox.regression.penalized.OLS
+       generated/statsmodels.sandbox.regression.penalized.RegressionResults
+       generated/statsmodels.sandbox.regression.penalized.TheilGLS
+       generated/statsmodels.sandbox.regression.penalized.TheilRegressionResults
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,25 @@
+statsmodels.tsa.vector_ar.var_model.FEVD
+========================================
+
+.. currentmodule:: statsmodels.tsa.vector_ar.var_model
+
+.. autoclass:: FEVD
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~FEVD.__init__
+      ~FEVD.cov
+      ~FEVD.plot
+      ~FEVD.summary
+   
+   
+
+   
+   
+   

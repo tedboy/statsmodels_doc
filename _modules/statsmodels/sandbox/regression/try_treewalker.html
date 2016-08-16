@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.regression.try_treewalker &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.regression.try_treewalker</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.regression.try_treewalker</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Trying out tree structure for nested logit</span>
+
+<span class="sd">sum is standing for likelihood calculations</span>
+
+<span class="sd">should collect and aggregate likelihood contributions bottom up</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">iteritems</span><span class="p">,</span> <span class="n">itervalues</span><span class="p">,</span> <span class="n">lrange</span><span class="p">,</span> <span class="nb">zip</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]],[</span><span class="mi">7</span><span class="p">]]</span>
+<span class="c1">#singleton/degenerate branch needs to be list</span>
+
+<span class="n">xb</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">8</span><span class="p">)</span>
+<span class="n">testxb</span> <span class="o">=</span> <span class="mi">1</span> <span class="c1">#0</span>
+
+<div class="viewcode-block" id="branch"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.try_treewalker.branch.html#statsmodels.sandbox.regression.try_treewalker.branch">[docs]</a><span class="k">def</span> <span class="nf">branch</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;walking a tree bottom-up</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tree</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">):</span>   <span class="c1">#assumes leaves are int for choice index</span>
+        <span class="n">branchsum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">tree</span><span class="p">:</span>
+            <span class="n">branchsum</span> <span class="o">+=</span> <span class="n">branch</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;final branch with&#39;</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="n">tree</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">testxb</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">xb</span><span class="p">[</span><span class="n">tree</span><span class="p">])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">sum</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;working on branch&#39;</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">branchsum</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">branchsum</span></div>
+
+<span class="nb">print</span><span class="p">(</span><span class="n">branch</span><span class="p">(</span><span class="n">tree</span><span class="p">))</span>
+
+
+
+<span class="c1">#new version that also keeps track of branch name and allows V_j for a branch</span>
+<span class="c1">#   as in Greene, V_j + lamda * IV doesn&#39;t look the same as including the</span>
+<span class="c1">#   explanatory variables in leaf X_j, V_j is linear in X, IV is logsumexp of X,</span>
+
+
+<span class="n">testxb</span> <span class="o">=</span> <span class="mi">0</span><span class="c1">#1#0</span>
+<div class="viewcode-block" id="branch2"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.try_treewalker.branch2.html#statsmodels.sandbox.regression.try_treewalker.branch2">[docs]</a><span class="k">def</span> <span class="nf">branch2</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;walking a tree bottom-up based on dictionary</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span>  <span class="nb">tuple</span><span class="p">):</span>   <span class="c1">#assumes leaves are int for choice index</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">subtree</span> <span class="o">=</span> <span class="n">tree</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">data2</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;subtree&#39;</span><span class="p">,</span> <span class="n">subtree</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">testxb</span><span class="p">:</span>
+            <span class="n">branchsum</span> <span class="o">=</span> <span class="n">data2</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">branchsum</span> <span class="o">=</span> <span class="n">name</span>  <span class="c1">#0</span>
+        <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">subtree</span><span class="p">:</span>
+            <span class="c1">#branchsum += branch2(b)</span>
+            <span class="n">branchsum</span> <span class="o">=</span> <span class="n">branchsum</span> <span class="o">+</span> <span class="n">branch2</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">leavessum</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">((</span><span class="n">data2</span><span class="p">[</span><span class="n">bi</span><span class="p">]</span> <span class="k">for</span> <span class="n">bi</span> <span class="ow">in</span> <span class="n">tree</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;final branch with&#39;</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tree</span><span class="p">),</span> <span class="n">leavessum</span><span class="p">)</span> <span class="c1">#sum(tree)</span>
+        <span class="k">if</span> <span class="n">testxb</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">leavessum</span>  <span class="c1">#sum(xb[tree])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span> <span class="c1">#sum(tree)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;working on branch&#39;</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">branchsum</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">branchsum</span></div>
+
+<span class="n">tree</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">],[[</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">]],[</span><span class="mi">7</span><span class="p">]]</span>
+<span class="n">tree2</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;top&#39;</span><span class="p">,</span>
+            <span class="p">[(</span><span class="s1">&#39;B1&#39;</span><span class="p">,[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">]),</span>
+             <span class="p">(</span><span class="s1">&#39;B2&#39;</span><span class="p">,</span>
+                   <span class="p">[(</span><span class="s1">&#39;B21&#39;</span><span class="p">,[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">]),</span>
+                    <span class="p">(</span><span class="s1">&#39;B22&#39;</span><span class="p">,[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">])</span>
+                    <span class="p">]</span>
+              <span class="p">),</span>
+             <span class="p">(</span><span class="s1">&#39;B3&#39;</span><span class="p">,[</span><span class="s1">&#39;h&#39;</span><span class="p">])</span>
+            <span class="p">]</span>
+         <span class="p">)</span>
+
+<span class="n">data2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="s1">&#39;abcdefgh&#39;</span><span class="p">,</span><span class="n">lrange</span><span class="p">(</span><span class="mi">8</span><span class="p">))])</span>
+<span class="c1">#data2.update({&#39;top&#39;:1000, &#39;B1&#39;:100, &#39;B2&#39;:200, &#39;B21&#39;:300,&#39;B22&#39;:400, &#39;B3&#39;:400})</span>
+<span class="n">data2</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;top&#39;</span><span class="p">:</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;B1&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;B2&#39;</span><span class="p">:</span><span class="mi">200</span><span class="p">,</span> <span class="s1">&#39;B21&#39;</span><span class="p">:</span><span class="mi">21</span><span class="p">,</span><span class="s1">&#39;B22&#39;</span><span class="p">:</span><span class="mi">22</span><span class="p">,</span> <span class="s1">&#39;B3&#39;</span><span class="p">:</span><span class="mi">300</span><span class="p">})</span>
+
+<span class="c1">#data2</span>
+<span class="c1">#{&#39;a&#39;: 0, &#39;c&#39;: 2, &#39;b&#39;: 1, &#39;e&#39;: 4, &#39;d&#39;: 3, &#39;g&#39;: 6, &#39;f&#39;: 5, &#39;h&#39;: 7,</span>
+<span class="c1">#&#39;top&#39;: 1000, &#39;B22&#39;: 22, &#39;B21&#39;: 21, &#39;B1&#39;: 100, &#39;B2&#39;: 200, &#39;B3&#39;: 300}</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1"> tree with dictionary data&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">branch2</span><span class="p">(</span><span class="n">tree2</span><span class="p">))</span>  <span class="c1"># results look correct for testxb=0 and 1</span>
+
+
+<span class="c1">#parameters/coefficients map coefficient names to indices, list of indices into</span>
+<span class="c1">#a 1d params one for each leave and branch</span>
+
+<span class="c1">#Note: dict looses ordering</span>
+<span class="n">paramsind</span> <span class="o">=</span> <span class="p">{</span>
+ <span class="s1">&#39;B1&#39;</span><span class="p">:</span> <span class="p">[],</span>
+ <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;consta&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;constb&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;B2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;const2&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;B21&#39;</span><span class="p">:</span> <span class="p">[],</span>
+ <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;consta&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;consta&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;B22&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;x22&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;conste&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;hince&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;constt&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;hincf&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="p">[</span>          <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;hincg&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;B3&#39;</span><span class="p">:</span> <span class="p">[],</span>
+ <span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;consth&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">],</span>
+ <span class="s1">&#39;top&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+<span class="c1">#unique, parameter array names,</span>
+<span class="c1">#sorted alphabetically, order is/should be only internal</span>
+
+<span class="n">paramsnames</span> <span class="o">=</span> <span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itervalues</span><span class="p">(</span><span class="n">paramsind</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">j</span><span class="p">]))</span>
+
+<span class="c1">#mapping coefficient names to indices to unique/parameter array</span>
+<span class="n">paramsidx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">paramsnames</span><span class="p">))</span>
+
+<span class="c1">#mapping branch and leaf names to index in parameter array</span>
+<span class="n">inddict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,[</span><span class="n">paramsidx</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">v</span><span class="p">])</span> <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">paramsind</span><span class="p">))</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&gt;&gt;&gt; paramsnames</span>
+<span class="sd">[&#39;const2&#39;, &#39;consta&#39;, &#39;constb&#39;, &#39;conste&#39;, &#39;consth&#39;, &#39;constt&#39;, &#39;h&#39;, &#39;hince&#39;,</span>
+<span class="sd"> &#39;hincf&#39;, &#39;hincg&#39;, &#39;p&#39;, &#39;time&#39;, &#39;x2&#39;, &#39;x22&#39;]</span>
+<span class="sd">&gt;&gt;&gt; parmasidx</span>
+<span class="sd">{&#39;conste&#39;: 3, &#39;consta&#39;: 1, &#39;constb&#39;: 2, &#39;h&#39;: 6, &#39;time&#39;: 11, &#39;consth&#39;: 4,</span>
+<span class="sd"> &#39;p&#39;: 10, &#39;constt&#39;: 5, &#39;const2&#39;: 0, &#39;x2&#39;: 12, &#39;x22&#39;: 13, &#39;hince&#39;: 7,</span>
+<span class="sd"> &#39;hincg&#39;: 9, &#39;hincf&#39;: 8}</span>
+<span class="sd">&gt;&gt;&gt; inddict</span>
+<span class="sd">{&#39;a&#39;: [1, 10], &#39;c&#39;: [1, 10, 11], &#39;b&#39;: [2, 10], &#39;e&#39;: [3, 10, 7],</span>
+<span class="sd"> &#39;d&#39;: [1, 10, 11], &#39;g&#39;: [10, 9], &#39;f&#39;: [5, 10, 8], &#39;h&#39;: [4, 10, 6],</span>
+<span class="sd"> &#39;top&#39;: [], &#39;B22&#39;: [13], &#39;B21&#39;: [], &#39;B1&#39;: [], &#39;B2&#39;: [0, 12], &#39;B3&#39;: []}</span>
+<span class="sd">&gt;&gt;&gt; paramsind</span>
+<span class="sd">{&#39;a&#39;: [&#39;consta&#39;, &#39;p&#39;], &#39;c&#39;: [&#39;consta&#39;, &#39;p&#39;, &#39;time&#39;], &#39;b&#39;: [&#39;constb&#39;, &#39;p&#39;],</span>
+<span class="sd"> &#39;e&#39;: [&#39;conste&#39;, &#39;p&#39;, &#39;hince&#39;], &#39;d&#39;: [&#39;consta&#39;, &#39;p&#39;, &#39;time&#39;],</span>
+<span class="sd"> &#39;g&#39;: [&#39;p&#39;, &#39;hincg&#39;], &#39;f&#39;: [&#39;constt&#39;, &#39;p&#39;, &#39;hincf&#39;], &#39;h&#39;: [&#39;consth&#39;, &#39;p&#39;, &#39;h&#39;],</span>
+<span class="sd"> &#39;top&#39;: [], &#39;B22&#39;: [&#39;x22&#39;], &#39;B21&#39;: [], &#39;B1&#39;: [], &#39;B2&#39;: [&#39;const2&#39;, &#39;x2&#39;],</span>
+<span class="sd"> &#39;B3&#39;: []}</span>
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

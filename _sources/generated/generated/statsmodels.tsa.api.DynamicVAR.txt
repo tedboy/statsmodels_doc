@@ -1,0 +1,37 @@
+statsmodels.tsa.api.DynamicVAR
+==============================
+
+.. currentmodule:: statsmodels.tsa.api
+.. autoclass:: DynamicVAR
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~DynamicVAR.T
+   ~DynamicVAR.__init__
+   ~DynamicVAR.coefs
+   ~DynamicVAR.equations
+   ~DynamicVAR.forecast
+   ~DynamicVAR.plot_forecast
+   ~DynamicVAR.r2
+   ~DynamicVAR.resid
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~DynamicVAR.nobs
+   ~DynamicVAR.result_index
+

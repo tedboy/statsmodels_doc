@@ -1,0 +1,69 @@
+statsmodels.sandbox.stats.diagnostic
+====================================
+
+.. automodule:: statsmodels.sandbox.stats.diagnostic
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      acf
+      acorr_breush_godfrey
+      acorr_ljungbox
+      acorr_lm
+      add_constant
+      adfuller
+      breaks_AP
+      breaks_cusumolsresid
+      breaks_hansen
+      het_arch
+      het_breushpagan
+      het_white
+      iteritems
+      lagmat
+      linear_harvey_collier
+      linear_lm
+      linear_rainbow
+      recursive_olsresiduals
+      unitroot_adf
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CompareCox
+      CompareJ
+      HetGoldfeldQuandt
+      OLS
+      ResultsStore
+      StatTestMC
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.stats.diagnostic.CompareCox
+       generated/statsmodels.sandbox.stats.diagnostic.CompareJ
+       generated/statsmodels.sandbox.stats.diagnostic.HetGoldfeldQuandt
+       generated/statsmodels.sandbox.stats.diagnostic.OLS
+       generated/statsmodels.sandbox.stats.diagnostic.ResultsStore
+       generated/statsmodels.sandbox.stats.diagnostic.StatTestMC
+
+   
+   
+
+   
+   
+   

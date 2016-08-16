@@ -1,0 +1,35 @@
+statsmodels.sandbox.archive.linalg_decomp_1.CholArray
+=====================================================
+
+.. currentmodule:: statsmodels.sandbox.archive.linalg_decomp_1
+.. autoclass:: CholArray
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CholArray.__init__
+   ~CholArray.m_y
+   ~CholArray.mdet
+   ~CholArray.meigh
+   ~CholArray.mhalf
+   ~CholArray.minv
+   ~CholArray.minv_y
+   ~CholArray.minvhalf
+   ~CholArray.mlogdet
+   ~CholArray.mpinv
+   ~CholArray.xpinv
+   ~CholArray.y_m_yt
+   ~CholArray.y_minv_yt
+   ~CholArray.yt_m_y
+   ~CholArray.yt_minv_y
+
+
+
+
+

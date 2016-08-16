@@ -1,0 +1,27 @@
+statsmodels.genmod.cov_struct.Autoregressive
+============================================
+
+.. currentmodule:: statsmodels.genmod.cov_struct
+
+.. autoclass:: Autoregressive
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Autoregressive.__init__
+      ~Autoregressive.covariance_matrix
+      ~Autoregressive.covariance_matrix_solve
+      ~Autoregressive.initialize
+      ~Autoregressive.summary
+      ~Autoregressive.update
+   
+   
+
+   
+   
+   

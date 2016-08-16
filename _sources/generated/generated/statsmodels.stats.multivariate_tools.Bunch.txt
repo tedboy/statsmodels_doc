@@ -1,0 +1,39 @@
+statsmodels.stats.multivariate_tools.Bunch
+==========================================
+
+.. currentmodule:: statsmodels.stats.multivariate_tools
+.. autoclass:: Bunch
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Bunch.__init__
+   ~Bunch.clear
+   ~Bunch.copy
+   ~Bunch.fromkeys
+   ~Bunch.get
+   ~Bunch.has_key
+   ~Bunch.items
+   ~Bunch.iteritems
+   ~Bunch.iterkeys
+   ~Bunch.itervalues
+   ~Bunch.keys
+   ~Bunch.pop
+   ~Bunch.popitem
+   ~Bunch.setdefault
+   ~Bunch.update
+   ~Bunch.values
+   ~Bunch.viewitems
+   ~Bunch.viewkeys
+   ~Bunch.viewvalues
+
+
+
+
+

@@ -1,0 +1,33 @@
+statsmodels.tsa.tests.test_stattools.TestCoint_t
+================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_stattools
+.. autoclass:: TestCoint_t
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestCoint_t.__init__
+   ~TestCoint_t.test_tstat
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TestCoint_t.data
+   ~TestCoint_t.levels
+   ~TestCoint_t.y1
+   ~TestCoint_t.y2
+

@@ -1,0 +1,33 @@
+statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance
+=========================================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kdecovclass
+.. autoclass:: gaussian_kde_set_covariance
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~gaussian_kde_set_covariance.__init__
+   ~gaussian_kde_set_covariance.covariance_factor
+   ~gaussian_kde_set_covariance.evaluate
+   ~gaussian_kde_set_covariance.integrate_box
+   ~gaussian_kde_set_covariance.integrate_box_1d
+   ~gaussian_kde_set_covariance.integrate_gaussian
+   ~gaussian_kde_set_covariance.integrate_kde
+   ~gaussian_kde_set_covariance.logpdf
+   ~gaussian_kde_set_covariance.pdf
+   ~gaussian_kde_set_covariance.resample
+   ~gaussian_kde_set_covariance.scotts_factor
+   ~gaussian_kde_set_covariance.set_bandwidth
+   ~gaussian_kde_set_covariance.silverman_factor
+
+
+
+
+

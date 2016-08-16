@@ -1,0 +1,59 @@
+statsmodels.tools.tools
+=======================
+
+.. automodule:: statsmodels.tools.tools
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      add_constant
+      categorical
+      chain_dot
+      clean0
+      drop_missing
+      fullrank
+      isestimable
+      maybe_unwrap_results
+      monotone_fn_inverter
+      nan_dot
+      pinv_extended
+      rank
+      recipr
+      recipr0
+      unsqueeze
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Bunch
+      ECDF
+      StepFunction
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tools.tools.Bunch
+       generated/statsmodels.tools.tools.ECDF
+       generated/statsmodels.tools.tools.StepFunction
+
+   
+   
+
+   
+   
+   

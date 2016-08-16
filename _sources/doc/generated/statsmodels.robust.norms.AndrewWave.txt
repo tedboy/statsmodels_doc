@@ -1,0 +1,26 @@
+statsmodels.robust.norms.AndrewWave
+===================================
+
+.. currentmodule:: statsmodels.robust.norms
+
+.. autoclass:: AndrewWave
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~AndrewWave.__init__
+      ~AndrewWave.psi
+      ~AndrewWave.psi_deriv
+      ~AndrewWave.rho
+      ~AndrewWave.weights
+   
+   
+
+   
+   
+   

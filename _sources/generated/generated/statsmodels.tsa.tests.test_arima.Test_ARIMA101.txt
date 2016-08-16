@@ -1,0 +1,57 @@
+statsmodels.tsa.tests.test_arima.Test_ARIMA101
+==============================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: Test_ARIMA101
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Test_ARIMA101.setupClass
+   ~Test_ARIMA101.test_aic
+   ~Test_ARIMA101.test_arroots
+   ~Test_ARIMA101.test_bic
+   ~Test_ARIMA101.test_bse
+   ~Test_ARIMA101.test_covparams
+   ~Test_ARIMA101.test_fittedvalues
+   ~Test_ARIMA101.test_hqic
+   ~Test_ARIMA101.test_llf
+   ~Test_ARIMA101.test_maroots
+   ~Test_ARIMA101.test_params
+   ~Test_ARIMA101.test_pvalues
+   ~Test_ARIMA101.test_resid
+   ~Test_ARIMA101.test_sigma2
+   ~Test_ARIMA101.test_summary
+   ~Test_ARIMA101.test_tvalues
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Test_ARIMA101.decimal_aic
+   ~Test_ARIMA101.decimal_arroots
+   ~Test_ARIMA101.decimal_bic
+   ~Test_ARIMA101.decimal_bse
+   ~Test_ARIMA101.decimal_cov_params
+   ~Test_ARIMA101.decimal_fittedvalues
+   ~Test_ARIMA101.decimal_hqic
+   ~Test_ARIMA101.decimal_llf
+   ~Test_ARIMA101.decimal_maroots
+   ~Test_ARIMA101.decimal_params
+   ~Test_ARIMA101.decimal_pvalues
+   ~Test_ARIMA101.decimal_resid
+   ~Test_ARIMA101.decimal_sigma2
+   ~Test_ARIMA101.decimal_t
+

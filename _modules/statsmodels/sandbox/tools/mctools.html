@@ -1,0 +1,744 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.tools.mctools &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.tools.mctools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.tools.mctools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Helper class for Monte Carlo Studies for (currently) statistical tests</span>
+
+<span class="sd">Most of it should also be usable for Bootstrap, and for MC for estimators.</span>
+<span class="sd">Takes the sample generator, dgb, and the statistical results, statistic,</span>
+<span class="sd">as functions in the argument.</span>
+
+
+<span class="sd">Author: Josef Perktold (josef-pktd)</span>
+<span class="sd">License: BSD-3</span>
+
+
+<span class="sd">TODOs, Design</span>
+<span class="sd">-------------</span>
+<span class="sd">If we only care about univariate analysis, i.e. marginal if statistics returns</span>
+<span class="sd">more than one value, the we only need to store the sorted mcres not the</span>
+<span class="sd">original res. Do we want to extend to multivariate analysis?</span>
+
+<span class="sd">Use distribution function to keep track of MC results, ECDF, non-paramatric?</span>
+<span class="sd">Large parts are similar to a 2d array of independent multivariate random</span>
+<span class="sd">variables. Joint distribution is not used (yet).</span>
+
+<span class="sd">I guess this is currently only for one sided test statistics, e.g. for</span>
+<span class="sd">two-sided tests basend on t or normal distribution use the absolute value.</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">lrange</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.iolib.table</span> <span class="k">import</span> <span class="n">SimpleTable</span>
+
+<span class="c1">#copied from stattools</span>
+<div class="viewcode-block" id="StatTestMC"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.try_mctools.StatTestMC.html#statsmodels.sandbox.tools.mctools.StatTestMC">[docs]</a><span class="k">class</span> <span class="nc">StatTestMC</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;class to run Monte Carlo study on a statistical test&#39;&#39;&#39;</span>
+
+<span class="sd">    TODO</span>
+<span class="sd">    print(summary, for quantiles and for histogram</span>
+<span class="sd">    draft in trying out script log</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dgp : callable</span>
+<span class="sd">        Function that generates the data to be used in Monte Carlo that should</span>
+<span class="sd">        return a new sample with each call</span>
+<span class="sd">    statistic : callable</span>
+<span class="sd">        Function that calculates the test statistic, which can return either</span>
+<span class="sd">        a single statistic or a 1d array_like (tuple, list, ndarray).</span>
+<span class="sd">        see also statindices in description of run</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    many methods store intermediate results</span>
+
+<span class="sd">    self.mcres : ndarray (nrepl, nreturns) or (nrepl, len(statindices))</span>
+<span class="sd">        Monte Carlo results stored by run</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    .. Warning::</span>
+<span class="sd">       This is (currently) designed for a single call to run. If run is</span>
+<span class="sd">       called a second time with different arguments, then some attributes might</span>
+<span class="sd">       not be updated, and, therefore, not correspond to the same run.</span>
+
+<span class="sd">    .. Warning::</span>
+<span class="sd">       Under Construction, don&#39;t expect stability in Api or implementation</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    Define a function that defines our test statistic:</span>
+
+<span class="sd">    def lb(x):</span>
+<span class="sd">        s,p = acorr_ljungbox(x, lags=4)</span>
+<span class="sd">        return np.r_[s, p]</span>
+
+<span class="sd">    Note lb returns eight values.</span>
+
+<span class="sd">    Define a random sample generator, for example 500 independently, normal</span>
+<span class="sd">    distributed observations in a sample:</span>
+
+
+<span class="sd">    def normalnoisesim(nobs=500, loc=0.0):</span>
+<span class="sd">        return (loc+np.random.randn(nobs))</span>
+
+<span class="sd">    Create instance and run Monte Carlo. Using statindices=list(range(4)) means that</span>
+<span class="sd">    only the first for values of the return of the statistic (lb) are stored</span>
+<span class="sd">    in the Monte Carlo results.</span>
+
+<span class="sd">    mc1 = StatTestMC(normalnoisesim, lb)</span>
+<span class="sd">    mc1.run(5000, statindices=list(range(4)))</span>
+
+<span class="sd">    Most of the other methods take an idx which indicates for which columns</span>
+<span class="sd">    the results should be presented, e.g.</span>
+
+<span class="sd">    print(mc1.cdf(crit, [1,2,3])[1]</span>
+
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="StatTestMC.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.try_mctools.StatTestMC.__init__.html#statsmodels.sandbox.tools.mctools.StatTestMC.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dgp</span><span class="p">,</span> <span class="n">statistic</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dgp</span> <span class="o">=</span> <span class="n">dgp</span> <span class="c1">#staticmethod(dgp)  #no self</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span> <span class="o">=</span> <span class="n">statistic</span> <span class="c1"># staticmethod(statistic)  #no self</span></div>
+
+<div class="viewcode-block" id="StatTestMC.run"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.try_mctools.StatTestMC.run.html#statsmodels.sandbox.tools.mctools.StatTestMC.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nrepl</span><span class="p">,</span> <span class="n">statindices</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dgpargs</span><span class="o">=</span><span class="p">[],</span> <span class="n">statsargs</span><span class="o">=</span><span class="p">[]):</span>
+        <span class="sd">&#39;&#39;&#39;run the actual Monte Carlo and save results</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        nrepl : int</span>
+<span class="sd">            number of Monte Carlo repetitions</span>
+<span class="sd">        statindices : None or list of integers</span>
+<span class="sd">           determines which values of the return of the statistic</span>
+<span class="sd">           functions are stored in the Monte Carlo. Default None</span>
+<span class="sd">           means the entire return. If statindices is a list of</span>
+<span class="sd">           integers, then it will be used as index into the return.</span>
+<span class="sd">        dgpargs : tuple</span>
+<span class="sd">           optional parameters for the DGP</span>
+<span class="sd">        statsargs : tuple</span>
+<span class="sd">           optional parameters for the statistics function</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None, all results are attached</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nrepl</span> <span class="o">=</span> <span class="n">nrepl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statindices</span> <span class="o">=</span> <span class="n">statindices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dgpargs</span> <span class="o">=</span> <span class="n">dgpargs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">statsargs</span> <span class="o">=</span> <span class="n">statsargs</span>
+
+        <span class="n">dgp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dgp</span>
+        <span class="n">statfun</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">statistic</span> <span class="c1"># name ?</span>
+        <span class="c1">#introspect len of return of statfun,</span>
+        <span class="c1">#possible problems with ndim&gt;1, check ValueError</span>
+        <span class="n">mcres0</span> <span class="o">=</span> <span class="n">statfun</span><span class="p">(</span><span class="n">dgp</span><span class="p">(</span><span class="o">*</span><span class="n">dgpargs</span><span class="p">),</span> <span class="o">*</span><span class="n">statsargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nreturn</span> <span class="o">=</span> <span class="n">nreturns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">mcres0</span><span class="p">))</span>
+
+        <span class="c1">#single return statistic</span>
+        <span class="k">if</span> <span class="n">statindices</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1">#self.nreturn = nreturns = 1</span>
+            <span class="n">mcres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nrepl</span><span class="p">)</span>
+            <span class="n">mcres</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">mcres0</span>
+            <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">repl</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">nreturns</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">dgp</span><span class="p">(</span><span class="o">*</span><span class="n">dgpargs</span><span class="p">)</span> <span class="c1">#(1e-4+np.random.randn(nobs)).cumsum()</span>
+                <span class="c1">#should I ravel?</span>
+                <span class="n">mcres</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">statfun</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">statsargs</span><span class="p">)</span> <span class="c1">#unitroot_adf(x, 2,trendorder=0, autolag=None)</span>
+        <span class="c1">#more than one return statistic</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">nreturn</span> <span class="o">=</span> <span class="n">nreturns</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">statindices</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span> <span class="o">=</span> <span class="n">mcres</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrepl</span><span class="p">,</span> <span class="n">nreturns</span><span class="p">))</span>
+            <span class="n">mcres</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">mcres0</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">statindices</span><span class="p">]</span>
+            <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">-</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">dgp</span><span class="p">(</span><span class="o">*</span><span class="n">dgpargs</span><span class="p">)</span> <span class="c1">#(1e-4+np.random.randn(nobs)).cumsum()</span>
+                <span class="n">ret</span> <span class="o">=</span> <span class="n">statfun</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">statsargs</span><span class="p">)</span>
+                <span class="n">mcres</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">ret</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">statindices</span><span class="p">]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span> <span class="o">=</span> <span class="n">mcres</span></div>
+
+
+<div class="viewcode-block" id="StatTestMC.histogram"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.try_mctools.StatTestMC.histogram.html#statsmodels.sandbox.tools.mctools.StatTestMC.histogram">[docs]</a>    <span class="k">def</span> <span class="nf">histogram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">critval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;calculate histogram values</span>
+
+<span class="sd">        does not do any plotting</span>
+
+<span class="sd">        I don&#39;t remember what I wanted here, looks similar to the new cdf</span>
+<span class="sd">        method, but this also does a binned pdf (self.histo)</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span>  <span class="ow">not</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">mcres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span><span class="p">[:,</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;currently only 1 statistic at a time&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mcres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span>
+
+        <span class="k">if</span> <span class="n">critval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">histo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">mcres</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">critval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+                <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">critval</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">critval</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+                <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">bins</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">]</span>
+            <span class="n">histo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">mcres</span><span class="p">,</span>
+                                 <span class="n">bins</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">critval</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">histo</span> <span class="o">=</span> <span class="n">histo</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumhisto</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">histo</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">*</span><span class="mf">1.</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nrepl</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cumhistoreversed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">histo</span><span class="p">[</span><span class="mi">0</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">1.</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">nrepl</span>
+        <span class="k">return</span> <span class="n">histo</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumhisto</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">cumhistoreversed</span></div>
+
+    <span class="c1">#use cache decorator instead</span>
+<div class="viewcode-block" id="StatTestMC.get_mc_sorted"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.try_mctools.StatTestMC.get_mc_sorted.html#statsmodels.sandbox.tools.mctools.StatTestMC.get_mc_sorted">[docs]</a>    <span class="k">def</span> <span class="nf">get_mc_sorted</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;mcressort&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">mcressort</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mcres</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcressort</span></div>
+
+
+<div class="viewcode-block" id="StatTestMC.quantiles"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.try_mctools.StatTestMC.quantiles.html#statsmodels.sandbox.tools.mctools.StatTestMC.quantiles">[docs]</a>    <span class="k">def</span> <span class="nf">quantiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">frac</span><span class="o">=</span><span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.975</span><span class="p">]):</span>
+        <span class="sd">&#39;&#39;&#39;calculate quantiles of Monte Carlo results</span>
+
+<span class="sd">        similar to ppf</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        idx : None or list of integers</span>
+<span class="sd">            List of indices into the Monte Carlo results (columns) that should</span>
+<span class="sd">            be used in the calculation</span>
+<span class="sd">        frac : array_like, float</span>
+<span class="sd">            Defines which quantiles should be calculated. For example a frac</span>
+<span class="sd">            of 0.1 finds the 10% quantile, x such that cdf(x)=0.1</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        frac : ndarray</span>
+<span class="sd">            same values as input, TODO: I should drop this again ?</span>
+<span class="sd">        quantiles : ndarray, (len(frac), len(idx))</span>
+<span class="sd">            the quantiles with frac in rows and idx variables in columns</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+
+<span class="sd">        rename to ppf ? make frac required</span>
+<span class="sd">        change sequence idx, frac</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">mcres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span><span class="p">[:,</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;currently only 1 statistic at a time&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mcres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">frac</span> <span class="o">=</span> <span class="n">frac</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span>
+
+        <span class="n">mc_sorted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mc_sorted</span><span class="p">()[:,</span><span class="n">idx</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">frac</span><span class="p">,</span> <span class="n">mc_sorted</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">nrepl</span><span class="o">*</span><span class="n">frac</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span></div>
+
+<div class="viewcode-block" id="StatTestMC.cdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.try_mctools.StatTestMC.cdf.html#statsmodels.sandbox.tools.mctools.StatTestMC.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">idx</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;calculate cumulative probabilities of Monte Carlo results</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        idx : None or list of integers</span>
+<span class="sd">            List of indices into the Monte Carlo results (columns) that should</span>
+<span class="sd">            be used in the calculation</span>
+<span class="sd">        frac : array_like, float</span>
+<span class="sd">            Defines which quantiles should be calculated. For example a frac</span>
+<span class="sd">            of 0.1 finds the 10% quantile, x such that cdf(x)=0.1</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        x : ndarray</span>
+<span class="sd">            same as input, TODO: I should drop this again ?</span>
+<span class="sd">        probs : ndarray, (len(x), len(idx))</span>
+<span class="sd">            the quantiles with frac in rows and idx variables in columns</span>
+
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>  <span class="c1">#assure iterable, use list ?</span>
+
+<span class="c1">#        if self.mcres.ndim == 2:</span>
+<span class="c1">#            if not idx is None:</span>
+<span class="c1">#                mcres = self.mcres[:,idx]</span>
+<span class="c1">#            else:</span>
+<span class="c1">#                raise ValueError(&#39;currently only 1 statistic at a time&#39;)</span>
+<span class="c1">#        else:</span>
+<span class="c1">#            mcres = self.mcres</span>
+
+        <span class="n">mc_sorted</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_mc_sorted</span><span class="p">()</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1">#TODO:autodetect or explicit option ?</span>
+        <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">==</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+            <span class="n">use_xi</span> <span class="o">=</span> <span class="kc">True</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">use_xi</span> <span class="o">=</span> <span class="kc">False</span>
+
+        <span class="n">x_</span> <span class="o">=</span> <span class="n">x</span>  <span class="c1">#alias</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">ix</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">use_xi</span><span class="p">:</span>
+                <span class="n">x_</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">probs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">mc_sorted</span><span class="p">[:,</span><span class="n">ix</span><span class="p">],</span> <span class="n">x_</span><span class="p">)</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nrepl</span><span class="p">))</span>
+        <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">probs</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">probs</span></div>
+
+<div class="viewcode-block" id="StatTestMC.plot_hist"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.try_mctools.StatTestMC.plot_hist.html#statsmodels.sandbox.tools.mctools.StatTestMC.plot_hist">[docs]</a>    <span class="k">def</span> <span class="nf">plot_hist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">distpdf</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kwds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;plot the histogram against a reference distribution</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        idx : None or list of integers</span>
+<span class="sd">            List of indices into the Monte Carlo results (columns) that should</span>
+<span class="sd">            be used in the calculation</span>
+<span class="sd">        distpdf : callable</span>
+<span class="sd">            probability density function of reference distribution</span>
+<span class="sd">        bins : integer or array_like</span>
+<span class="sd">            used unchanged for matplotlibs hist call</span>
+<span class="sd">        ax : TODO: not implemented yet</span>
+<span class="sd">        kwds : None or tuple of dicts</span>
+<span class="sd">            extra keyword options to the calls to the matplotlib functions,</span>
+<span class="sd">            first dictionary is for his, second dictionary for plot of the</span>
+<span class="sd">            reference distribution</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        None</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">kwds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kwds</span> <span class="o">=</span> <span class="p">({},{})</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">idx</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">mcres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span><span class="p">[:,</span><span class="n">idx</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;currently only 1 statistic at a time&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mcres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">mcres</span>
+
+        <span class="n">lsp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">mcres</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">mcres</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">100</span><span class="p">)</span>
+
+
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="c1">#I don&#39;t want to figure this out now</span>
+<span class="c1">#        if ax=None:</span>
+<span class="c1">#            fig = plt.figure()</span>
+<span class="c1">#            ax = fig.addaxis()</span>
+        <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">mcres</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">bins</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">lsp</span><span class="p">,</span> <span class="n">distpdf</span><span class="p">(</span><span class="n">lsp</span><span class="p">),</span> <span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="StatTestMC.summary_quantiles"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.try_mctools.StatTestMC.summary_quantiles.html#statsmodels.sandbox.tools.mctools.StatTestMC.summary_quantiles">[docs]</a>    <span class="k">def</span> <span class="nf">summary_quantiles</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">distppf</span><span class="p">,</span> <span class="n">frac</span><span class="o">=</span><span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.975</span><span class="p">],</span>
+                          <span class="n">varnames</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;summary table for quantiles (critical values)</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        idx : None or list of integers</span>
+<span class="sd">            List of indices into the Monte Carlo results (columns) that should</span>
+<span class="sd">            be used in the calculation</span>
+<span class="sd">        distppf : callable</span>
+<span class="sd">            probability density function of reference distribution</span>
+<span class="sd">            TODO: use `crit` values instead or additional, see summary_cdf</span>
+<span class="sd">        frac : array_like, float</span>
+<span class="sd">            probabilities for which</span>
+<span class="sd">        varnames : None, or list of strings</span>
+<span class="sd">            optional list of variable names, same length as idx</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        table : instance of SimpleTable</span>
+<span class="sd">            use `print(table` to see results</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>  <span class="c1">#assure iterable, use list ?</span>
+
+        <span class="n">quant</span><span class="p">,</span> <span class="n">mcq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">quantiles</span><span class="p">(</span><span class="n">idx</span><span class="p">,</span> <span class="n">frac</span><span class="o">=</span><span class="n">frac</span><span class="p">)</span>
+        <span class="c1">#not sure whether this will work with single quantile</span>
+        <span class="c1">#crit = stats.chi2([2,4]).ppf(np.atleast_2d(quant).T)</span>
+        <span class="n">crit</span> <span class="o">=</span> <span class="n">distppf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">quant</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+        <span class="n">mml</span><span class="o">=</span><span class="p">[]</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">ix</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">idx</span><span class="p">):</span>  <span class="c1">#TODO: hardcoded 2 ?</span>
+            <span class="n">mml</span><span class="o">.</span><span class="n">extend</span><span class="p">([</span><span class="n">mcq</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="n">crit</span><span class="p">[:,</span><span class="n">i</span><span class="p">]])</span>
+        <span class="c1">#mmlar = np.column_stack(mml)</span>
+        <span class="n">mmlar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">quant</span><span class="p">]</span> <span class="o">+</span> <span class="n">mml</span><span class="p">)</span>
+        <span class="c1">#print(mmlar.shape</span>
+        <span class="k">if</span> <span class="n">title</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">title</span> <span class="o">+</span><span class="s1">&#39; Quantiles (critical values)&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Quantiles (critical values)&#39;</span>
+        <span class="c1">#TODO use stub instead</span>
+        <span class="k">if</span> <span class="n">varnames</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">varnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;var</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mmlar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">//</span><span class="mi">2</span><span class="p">)]</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">prob&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="se">\n</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">t</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">varnames</span> <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;mc&#39;</span><span class="p">,</span> <span class="s1">&#39;dist&#39;</span><span class="p">]]</span>
+        <span class="k">return</span> <span class="n">SimpleTable</span><span class="p">(</span><span class="n">mmlar</span><span class="p">,</span>
+                          <span class="n">txt_fmt</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;data_fmts&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%#6.3f</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%#10.4f</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">mmlar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)},</span>
+                          <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+                          <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="StatTestMC.summary_cdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.try_mctools.StatTestMC.summary_cdf.html#statsmodels.sandbox.tools.mctools.StatTestMC.summary_cdf">[docs]</a>    <span class="k">def</span> <span class="nf">summary_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">frac</span><span class="p">,</span> <span class="n">crit</span><span class="p">,</span> <span class="n">varnames</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;summary table for cumulative density function</span>
+
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        idx : None or list of integers</span>
+<span class="sd">            List of indices into the Monte Carlo results (columns) that should</span>
+<span class="sd">            be used in the calculation</span>
+<span class="sd">        frac : array_like, float</span>
+<span class="sd">            probabilities for which</span>
+<span class="sd">        crit : array_like</span>
+<span class="sd">            values for which cdf is calculated</span>
+<span class="sd">        varnames : None, or list of strings</span>
+<span class="sd">            optional list of variable names, same length as idx</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        table : instance of SimpleTable</span>
+<span class="sd">            use `print(table` to see results</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>  <span class="c1">#assure iterable, use list ?</span>
+
+
+        <span class="n">mml</span><span class="o">=</span><span class="p">[]</span>
+        <span class="c1">#TODO:need broadcasting in cdf</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">idx</span><span class="p">)):</span>
+            <span class="c1">#print(i, mc1.cdf(crit[:,i], [idx[i]])[1].ravel()</span>
+            <span class="n">mml</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">crit</span><span class="p">[:,</span><span class="n">i</span><span class="p">],</span> <span class="p">[</span><span class="n">idx</span><span class="p">[</span><span class="n">i</span><span class="p">]])[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">ravel</span><span class="p">())</span>
+        <span class="c1">#mml = self.cdf(crit, idx)[1]</span>
+        <span class="c1">#mmlar = np.column_stack(mml)</span>
+        <span class="c1">#print(mml[0].shape, np.shape(frac)</span>
+        <span class="n">mmlar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">frac</span><span class="p">]</span> <span class="o">+</span> <span class="n">mml</span><span class="p">)</span>
+        <span class="c1">#print(mmlar.shape</span>
+        <span class="k">if</span> <span class="n">title</span><span class="p">:</span>
+            <span class="n">title</span> <span class="o">=</span> <span class="n">title</span> <span class="o">+</span><span class="s1">&#39; Probabilites&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">title</span><span class="o">=</span><span class="s1">&#39;Probabilities&#39;</span>
+        <span class="c1">#TODO use stub instead</span>
+        <span class="c1">#headers = [&#39;\nprob&#39;] + [&#39;var%d\n%s&#39; % (i, t) for i in range(mmlar.shape[1]-1) for t in [&#39;mc&#39;]]</span>
+
+        <span class="k">if</span> <span class="n">varnames</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">varnames</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;var</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">mmlar</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;prob&#39;</span><span class="p">]</span> <span class="o">+</span> <span class="n">varnames</span>
+        <span class="k">return</span> <span class="n">SimpleTable</span><span class="p">(</span><span class="n">mmlar</span><span class="p">,</span>
+                          <span class="n">txt_fmt</span><span class="o">=</span><span class="p">{</span><span class="s1">&#39;data_fmts&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%#6.3f</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">+</span><span class="p">[</span><span class="s2">&quot;</span><span class="si">%#10.4f</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">mml</span><span class="p">)</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">)},</span>
+                          <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+                          <span class="n">headers</span><span class="o">=</span><span class="n">headers</span><span class="p">)</span></div></div>
+
+
+
+
+
+
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+    <span class="kn">from</span> <span class="nn">statsmodels.iolib.table</span> <span class="k">import</span> <span class="n">SimpleTable</span>
+
+    <span class="kn">from</span> <span class="nn">statsmodels.sandbox.stats.diagnostic</span> <span class="k">import</span> <span class="p">(</span>
+                    <span class="n">acorr_ljungbox</span><span class="p">,</span> <span class="n">unitroot_adf</span><span class="p">)</span>
+
+
+    <span class="k">def</span> <span class="nf">randwalksim</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">drift</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">drift</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span><span class="p">))</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+
+    <span class="k">def</span> <span class="nf">normalnoisesim</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">loc</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">adf20</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">unitroot_adf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span><span class="n">trendorder</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">autolag</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+
+<span class="c1">#    print(&#39;\nResults with MC class&#39;</span>
+<span class="c1">#    mc1 = StatTestMC(randwalksim, adf20)</span>
+<span class="c1">#    mc1.run(1000)</span>
+<span class="c1">#    print(mc1.histogram(critval=[-3.5, -3.17, -2.9 , -2.58,  0.26])</span>
+<span class="c1">#    print(mc1.quantiles()</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Ljung Box&#39;</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">statsmodels.sandbox.stats.diagnostic</span> <span class="k">import</span> <span class="n">acorr_ljungbox</span>
+
+    <span class="k">def</span> <span class="nf">lb4</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">s</span><span class="p">,</span><span class="n">p</span> <span class="o">=</span> <span class="n">acorr_ljungbox</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">lb1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">s</span><span class="p">,</span><span class="n">p</span> <span class="o">=</span> <span class="n">acorr_ljungbox</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">s</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">p</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">def</span> <span class="nf">lb</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+        <span class="n">s</span><span class="p">,</span><span class="n">p</span> <span class="o">=</span> <span class="n">acorr_ljungbox</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="n">p</span><span class="p">]</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Results with MC class&#39;</span><span class="p">)</span>
+    <span class="n">mc1</span> <span class="o">=</span> <span class="n">StatTestMC</span><span class="p">(</span><span class="n">normalnoisesim</span><span class="p">,</span> <span class="n">lb</span><span class="p">)</span>
+    <span class="n">mc1</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="mi">10000</span><span class="p">,</span> <span class="n">statindices</span><span class="o">=</span><span class="n">lrange</span><span class="p">(</span><span class="mi">8</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">critval</span><span class="o">=</span><span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.975</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">quantiles</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">quantiles</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="c1">#print(mc1.summary_quantiles([1], stats.chi2([2]).ppf, title=&#39;acorr_ljungbox&#39;)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">summary_quantiles</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span><span class="o">.</span><span class="n">ppf</span><span class="p">,</span>
+                                <span class="n">varnames</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lag 1&#39;</span><span class="p">,</span> <span class="s1">&#39;lag 2&#39;</span><span class="p">,</span> <span class="s1">&#39;lag 3&#39;</span><span class="p">],</span>
+                                <span class="n">title</span><span class="o">=</span><span class="s1">&#39;acorr_ljungbox&#39;</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mf">0.1026</span><span class="p">,</span> <span class="mi">1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mf">0.7278</span><span class="p">,</span> <span class="mi">3</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mf">0.7278</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">]))</span>
+    <span class="n">frac</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.01</span><span class="p">,</span> <span class="mf">0.025</span><span class="p">,</span> <span class="mf">0.05</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">,</span> <span class="mf">0.975</span><span class="p">]</span>
+    <span class="n">crit</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">summary_cdf</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">frac</span><span class="p">,</span> <span class="n">crit</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s1">&#39;acorr_ljungbox&#39;</span><span class="p">))</span>
+    <span class="n">crit</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">])</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">frac</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">summary_cdf</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span> <span class="n">frac</span><span class="p">,</span> <span class="n">crit</span><span class="p">,</span>
+                          <span class="n">varnames</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;lag 1&#39;</span><span class="p">,</span> <span class="s1">&#39;lag 2&#39;</span><span class="p">,</span> <span class="s1">&#39;lag 3&#39;</span><span class="p">],</span>
+                          <span class="n">title</span><span class="o">=</span><span class="s1">&#39;acorr_ljungbox&#39;</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="n">mc1</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">crit</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">])[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="c1">#fixed broadcasting in cdf  Done 2d only</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    &gt;&gt;&gt; mc1.cdf(crit[:,0], [1])[1].shape</span>
+<span class="sd">    (5, 1)</span>
+<span class="sd">    &gt;&gt;&gt; mc1.cdf(crit[:,0], [1,3])[1].shape</span>
+<span class="sd">    (5, 2)</span>
+<span class="sd">    &gt;&gt;&gt; mc1.cdf(crit[:,:], [1,3])[1].shape</span>
+<span class="sd">    (2, 5, 2)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">doplot</span><span class="o">=</span><span class="mi">0</span>
+    <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="n">mc1</span><span class="o">.</span><span class="n">plot_hist</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">pdf</span><span class="p">)</span>  <span class="c1">#which pdf</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

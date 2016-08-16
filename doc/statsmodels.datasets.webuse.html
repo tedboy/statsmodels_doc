@@ -1,0 +1,301 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7.19.1.1. statsmodels.datasets.webuse &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="7.19. The Datasets Package" href="datasets.html"/>
+        <link rel="next" title="7.19.3.1. statsmodels.datasets.get_rdataset" href="statsmodels.datasets.get_rdataset.html"/>
+        <link rel="prev" title="7.19. The Datasets Package" href="datasets.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">7. From official doc</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="regression.html">7.1. Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glm.html">7.2. Generalized Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gee.html">7.3. Generalized Estimating Equations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rlm.html">7.4. Robust Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixed_linear.html">7.5. Linear Mixed Effects Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discretemod.html">7.6. Regression with Discrete Dependent Variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="anova.html">7.7. ANOVA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html">7.8. Time Series analysis <code class="docutils literal"><span class="pre">tsa</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="duration.html">7.9. Models for Survival and Duration Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html">7.10. Statistics <code class="docutils literal"><span class="pre">stats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="nonparametric.html">7.11. Nonparametric Methods <code class="docutils literal"><span class="pre">nonparametric</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="gmm.html">7.12. Generalized Method of Moments <code class="docutils literal"><span class="pre">gmm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="emplike.html">7.13. Empirical Likelihood <code class="docutils literal"><span class="pre">emplike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscmodels.html">7.14. Other Models <code class="docutils literal"><span class="pre">miscmodels</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html">7.15. Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html">7.16. Graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iolib.html">7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">7.18. Tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="datasets.html">7.19. The Datasets Package</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="datasets.html#using-datasets-from-stata">7.19.1. Using Datasets from Stata</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">7.19.1.1. statsmodels.datasets.webuse</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#using-datasets-from-r">7.19.2. Using Datasets from R</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#r-datasets-function-reference">7.19.3. R Datasets Function Reference</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#available-datasets">7.19.4. Available Datasets</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#usage">7.19.5. Usage</a></li>
+<li class="toctree-l3"><a class="reference internal" href="datasets.html#additional-information">7.19.6. Additional information</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="sandbox.html">7.20. Sandbox</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">7. From official doc</a> &raquo;</li>
+        
+          <li><a href="datasets.html">7.19. The Datasets Package</a> &raquo;</li>
+        
+      <li>7.19.1.1. statsmodels.datasets.webuse</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/doc/statsmodels.datasets.webuse.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-datasets-webuse">
+<h1>7.19.1.1. statsmodels.datasets.webuse<a class="headerlink" href="#statsmodels-datasets-webuse" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.datasets.webuse">
+<code class="descclassname">statsmodels.datasets.</code><code class="descname">webuse</code><span class="sig-paren">(</span><em>data</em>, <em>baseurl='http://www.stata-press.com/data/r11/'</em>, <em>as_df=True</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/statsmodels/datasets/utils.html#webuse"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.datasets.webuse" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>data</strong> : str</p>
+<blockquote>
+<div><p>Name of dataset to fetch.</p>
+</div></blockquote>
+<p><strong>baseurl</strong> : str</p>
+<blockquote>
+<div><p>The base URL to the stata datasets.</p>
+</div></blockquote>
+<p><strong>as_df</strong> : bool</p>
+<blockquote>
+<div><p>If True, returns a <cite>pandas.DataFrame</cite></p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>dta</strong> : Record Array</p>
+<blockquote class="last">
+<div><p>A record array containing the Stata dataset.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Make sure baseurl has trailing forward slash. Doesn&#8217;t do any
+error checking in response URLs.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">dta</span> <span class="o">=</span> <span class="n">webuse</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.datasets.get_rdataset.html" class="btn btn-neutral float-right" title="7.19.3.1. statsmodels.datasets.get_rdataset" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="datasets.html" class="btn btn-neutral" title="7.19. The Datasets Package" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

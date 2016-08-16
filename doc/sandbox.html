@@ -1,0 +1,474 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7.20. Sandbox &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="7. From official doc" href="index.html"/>
+        <link rel="prev" title="7.19.4.28. statsmodels.stats.correlation_tools.cov_nearest" href="generated/statsmodels.stats.correlation_tools.cov_nearest.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">7. From official doc</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="regression.html">7.1. Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glm.html">7.2. Generalized Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gee.html">7.3. Generalized Estimating Equations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rlm.html">7.4. Robust Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixed_linear.html">7.5. Linear Mixed Effects Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discretemod.html">7.6. Regression with Discrete Dependent Variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="anova.html">7.7. ANOVA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html">7.8. Time Series analysis <code class="docutils literal"><span class="pre">tsa</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="duration.html">7.9. Models for Survival and Duration Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html">7.10. Statistics <code class="docutils literal"><span class="pre">stats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="nonparametric.html">7.11. Nonparametric Methods <code class="docutils literal"><span class="pre">nonparametric</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="gmm.html">7.12. Generalized Method of Moments <code class="docutils literal"><span class="pre">gmm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="emplike.html">7.13. Empirical Likelihood <code class="docutils literal"><span class="pre">emplike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscmodels.html">7.14. Other Models <code class="docutils literal"><span class="pre">miscmodels</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html">7.15. Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html">7.16. Graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iolib.html">7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">7.18. Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html">7.19. The Datasets Package</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7.20. Sandbox</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#examples">7.20.1. Examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#module-reference">7.20.2. Module Reference</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#time-series-analysis-tsa">7.20.2.1. Time Series analysis <code class="docutils literal"><span class="pre">tsa</span></code></a></li>
+<li class="toctree-l4"><a class="reference internal" href="#regression-and-anova">7.20.2.2. Regression and ANOVA</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#systems-of-regression-equations-and-simultaneous-equations">7.20.2.3. Systems of Regression Equations and Simultaneous Equations</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#miscellaneous">7.20.2.4. Miscellaneous</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#original-stats-models">7.20.2.5. Original stats.models</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">7. From official doc</a> &raquo;</li>
+        
+      <li>7.20. Sandbox</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/doc/sandbox.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="sandbox">
+<span id="id1"></span><h1>7.20. Sandbox<a class="headerlink" href="#sandbox" title="Permalink to this headline">¶</a></h1>
+<p>This sandbox contains code that is for various resons not ready to be
+included in statsmodels proper. It contains modules from the old stats.models
+code that have not been tested, verified and updated to the new statsmodels
+structure: cox survival model, mixed effects model with repeated measures,
+generalized additive model and the formula framework. The sandbox also
+contains code that is currently being worked on until it fits the pattern
+of statsmodels or is sufficiently tested.</p>
+<p>All sandbox modules have to be explicitly imported to indicate that they are
+not yet part of the core of statsmodels. The quality and testing of the
+sandbox code varies widely.</p>
+<div class="section" id="examples">
+<h2>7.20.1. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>There are some examples in the <cite>sandbox.examples</cite> folder. Additional
+examples are directly included in the modules and in subfolders of
+the sandbox.</p>
+</div>
+<div class="section" id="module-reference">
+<h2>7.20.2. Module Reference<a class="headerlink" href="#module-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="time-series-analysis-tsa">
+<h3>7.20.2.1. Time Series analysis <code class="xref py py-mod docutils literal"><span class="pre">tsa</span></code><a class="headerlink" href="#time-series-analysis-tsa" title="Permalink to this headline">¶</a></h3>
+<p>In this part we develop models and functions that will be useful for time
+series analysis. Most of the models and function have been moved to
+<code class="xref py py-mod docutils literal"><span class="pre">statsmodels.tsa</span></code>. Currently, GARCH models remain in development stage in
+<cite>sandbox.tsa</cite>.</p>
+<div class="section" id="moving-window-statistics">
+<h4>7.20.2.1.1. Moving Window Statistics<a class="headerlink" href="#moving-window-statistics" title="Permalink to this headline">¶</a></h4>
+<p>Most moving window statistics, like rolling mean, moments (up to 4th order), min,
+max, mean, and variance, are covered by the functions for <a class="reference external" href="http://pandas.pydata.org/pandas-docs/stable/computation.html#moving-rolling-statistics-moments">Moving (rolling)
+statistics/moments</a> in Pandas.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.tsa.movstat.movorder.html#statsmodels.sandbox.tsa.movstat.movorder" title="statsmodels.sandbox.tsa.movstat.movorder"><code class="xref py py-obj docutils literal"><span class="pre">movstat.movorder</span></code></a>(x[,&nbsp;order,&nbsp;windsize,&nbsp;lag])</td>
+<td>moving order statistics</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.tsa.movstat.movmean.html#statsmodels.sandbox.tsa.movstat.movmean" title="statsmodels.sandbox.tsa.movstat.movmean"><code class="xref py py-obj docutils literal"><span class="pre">movstat.movmean</span></code></a>(x[,&nbsp;windowsize,&nbsp;lag])</td>
+<td>moving window mean</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.tsa.movstat.movvar.html#statsmodels.sandbox.tsa.movstat.movvar" title="statsmodels.sandbox.tsa.movstat.movvar"><code class="xref py py-obj docutils literal"><span class="pre">movstat.movvar</span></code></a>(x[,&nbsp;windowsize,&nbsp;lag])</td>
+<td>moving window variance</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.tsa.movstat.movmoment.html#statsmodels.sandbox.tsa.movstat.movmoment" title="statsmodels.sandbox.tsa.movstat.movmoment"><code class="xref py py-obj docutils literal"><span class="pre">movstat.movmoment</span></code></a>(x,&nbsp;k[,&nbsp;windowsize,&nbsp;lag])</td>
+<td>non-central moment</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="regression-and-anova">
+<h3>7.20.2.2. Regression and ANOVA<a class="headerlink" href="#regression-and-anova" title="Permalink to this headline">¶</a></h3>
+<p>The following two ANOVA functions are fully tested against the NIST test data
+for balanced one-way ANOVA. <code class="docutils literal"><span class="pre">anova_oneway</span></code> follows the same pattern as the
+oneway anova function in scipy.stats but with higher precision for badly
+scaled problems. <code class="docutils literal"><span class="pre">anova_ols</span></code> produces the same results as the one way anova
+however using the OLS model class. It also verifies against the NIST tests,
+with some problems in the worst scaled cases. It shows how to do simple ANOVA
+using statsmodels in three lines and is also best taken as a recipe.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.anova_nistcertified.anova_oneway.html#statsmodels.sandbox.regression.anova_nistcertified.anova_oneway" title="statsmodels.sandbox.regression.anova_nistcertified.anova_oneway"><code class="xref py py-obj docutils literal"><span class="pre">anova_oneway</span></code></a>(y,&nbsp;x[,&nbsp;seq])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.anova_nistcertified.anova_ols.html#statsmodels.sandbox.regression.anova_nistcertified.anova_ols" title="statsmodels.sandbox.regression.anova_nistcertified.anova_ols"><code class="xref py py-obj docutils literal"><span class="pre">anova_ols</span></code></a>(y,&nbsp;x)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>The following are helper functions for working with dummy variables and
+generating ANOVA results with OLS. They are best considered as recipes since
+they were written with a specific use in mind. These function will eventually
+be rewritten or reorganized.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_ols_anova.data2dummy.html#statsmodels.sandbox.regression.try_ols_anova.data2dummy" title="statsmodels.sandbox.regression.try_ols_anova.data2dummy"><code class="xref py py-obj docutils literal"><span class="pre">try_ols_anova.data2dummy</span></code></a>(x[,&nbsp;returnall])</td>
+<td>convert array of categories to dummy variables</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_ols_anova.data2groupcont.html#statsmodels.sandbox.regression.try_ols_anova.data2groupcont" title="statsmodels.sandbox.regression.try_ols_anova.data2groupcont"><code class="xref py py-obj docutils literal"><span class="pre">try_ols_anova.data2groupcont</span></code></a>(x1,&nbsp;x2)</td>
+<td>create dummy continuous variable</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_ols_anova.data2proddummy.html#statsmodels.sandbox.regression.try_ols_anova.data2proddummy" title="statsmodels.sandbox.regression.try_ols_anova.data2proddummy"><code class="xref py py-obj docutils literal"><span class="pre">try_ols_anova.data2proddummy</span></code></a>(x)</td>
+<td>creates product dummy variables from 2 columns of 2d array</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_ols_anova.dropname.html#statsmodels.sandbox.regression.try_ols_anova.dropname" title="statsmodels.sandbox.regression.try_ols_anova.dropname"><code class="xref py py-obj docutils literal"><span class="pre">try_ols_anova.dropname</span></code></a>(ss,&nbsp;li)</td>
+<td>drop names from a list of strings,</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_ols_anova.form2design.html#statsmodels.sandbox.regression.try_ols_anova.form2design" title="statsmodels.sandbox.regression.try_ols_anova.form2design"><code class="xref py py-obj docutils literal"><span class="pre">try_ols_anova.form2design</span></code></a>(ss,&nbsp;data)</td>
+<td>convert string formula to data dictionary</td>
+</tr>
+</tbody>
+</table>
+<p>The following are helper functions for group statistics where groups are
+defined by a label array. The qualifying comments for the previous group
+apply also to this group of functions.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_catdata.cat2dummy.html#statsmodels.sandbox.regression.try_catdata.cat2dummy" title="statsmodels.sandbox.regression.try_catdata.cat2dummy"><code class="xref py py-obj docutils literal"><span class="pre">try_catdata.cat2dummy</span></code></a>(y[,&nbsp;nonseq])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_catdata.convertlabels.html#statsmodels.sandbox.regression.try_catdata.convertlabels" title="statsmodels.sandbox.regression.try_catdata.convertlabels"><code class="xref py py-obj docutils literal"><span class="pre">try_catdata.convertlabels</span></code></a>(ys[,&nbsp;indices])</td>
+<td>convert labels based on multiple variables or string labels to unique</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_catdata.groupsstats_1d.html#statsmodels.sandbox.regression.try_catdata.groupsstats_1d" title="statsmodels.sandbox.regression.try_catdata.groupsstats_1d"><code class="xref py py-obj docutils literal"><span class="pre">try_catdata.groupsstats_1d</span></code></a>(y,&nbsp;x,&nbsp;labelsunique)</td>
+<td>use ndimage to get fast mean and variance</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_catdata.groupsstats_dummy.html#statsmodels.sandbox.regression.try_catdata.groupsstats_dummy" title="statsmodels.sandbox.regression.try_catdata.groupsstats_dummy"><code class="xref py py-obj docutils literal"><span class="pre">try_catdata.groupsstats_dummy</span></code></a>(y,&nbsp;x[,&nbsp;nonseq])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_catdata.groupstatsbin.html#statsmodels.sandbox.regression.try_catdata.groupstatsbin" title="statsmodels.sandbox.regression.try_catdata.groupstatsbin"><code class="xref py py-obj docutils literal"><span class="pre">try_catdata.groupstatsbin</span></code></a>(factors,&nbsp;values)</td>
+<td>uses np.bincount, assumes factors/labels are integers</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_catdata.labelmeanfilter.html#statsmodels.sandbox.regression.try_catdata.labelmeanfilter" title="statsmodels.sandbox.regression.try_catdata.labelmeanfilter"><code class="xref py py-obj docutils literal"><span class="pre">try_catdata.labelmeanfilter</span></code></a>(y,&nbsp;x)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_catdata.labelmeanfilter_nd.html#statsmodels.sandbox.regression.try_catdata.labelmeanfilter_nd" title="statsmodels.sandbox.regression.try_catdata.labelmeanfilter_nd"><code class="xref py py-obj docutils literal"><span class="pre">try_catdata.labelmeanfilter_nd</span></code></a>(y,&nbsp;x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.regression.try_catdata.labelmeanfilter_str.html#statsmodels.sandbox.regression.try_catdata.labelmeanfilter_str" title="statsmodels.sandbox.regression.try_catdata.labelmeanfilter_str"><code class="xref py py-obj docutils literal"><span class="pre">try_catdata.labelmeanfilter_str</span></code></a>(ys,&nbsp;x)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<p>Additional to these functions, sandbox regression still contains several
+examples, that are illustrative of the use of the regression models of
+statsmodels.</p>
+</div>
+<div class="section" id="systems-of-regression-equations-and-simultaneous-equations">
+<h3>7.20.2.3. Systems of Regression Equations and Simultaneous Equations<a class="headerlink" href="#systems-of-regression-equations-and-simultaneous-equations" title="Permalink to this headline">¶</a></h3>
+<p>The following are for fitting systems of equations models.  Though the returned
+parameters have been verified as accurate, this code is still very
+experimental, and the usage of the models will very likely change significantly
+before they are added to the main codebase.</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.sandbox.sysreg.SUR.html#statsmodels.sandbox.sysreg.SUR" title="statsmodels.sandbox.sysreg.SUR"><code class="xref py py-obj docutils literal"><span class="pre">SUR</span></code></a>(sys[,&nbsp;sigma,&nbsp;dfk])</td>
+<td>Seemingly Unrelated Regression</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.sandbox.sysreg.Sem2SLS.html#statsmodels.sandbox.sysreg.Sem2SLS" title="statsmodels.sandbox.sysreg.Sem2SLS"><code class="xref py py-obj docutils literal"><span class="pre">Sem2SLS</span></code></a>(sys[,&nbsp;indep_endog,&nbsp;instruments])</td>
+<td>Two-Stage Least Squares for Simultaneous equations</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="miscellaneous">
+<h3>7.20.2.4. Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h3>
+<div class="section" id="tools-for-time-series-analysis">
+<h4>7.20.2.4.1. Tools for Time Series Analysis<a class="headerlink" href="#tools-for-time-series-analysis" title="Permalink to this headline">¶</a></h4>
+<p>nothing left in here</p>
+</div>
+<div class="section" id="tools-principal-component-analysis">
+<h4>7.20.2.4.2. Tools: Principal Component Analysis<a class="headerlink" href="#tools-principal-component-analysis" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.tools.tools_pca.pca.html#statsmodels.sandbox.tools.tools_pca.pca" title="statsmodels.sandbox.tools.tools_pca.pca"><code class="xref py py-obj docutils literal"><span class="pre">pca</span></code></a>(data[,&nbsp;keepdim,&nbsp;normalize,&nbsp;demean])</td>
+<td>principal components with eigenvector decomposition</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.tools.tools_pca.pcasvd.html#statsmodels.sandbox.tools.tools_pca.pcasvd" title="statsmodels.sandbox.tools.tools_pca.pcasvd"><code class="xref py py-obj docutils literal"><span class="pre">pcasvd</span></code></a>(data[,&nbsp;keepdim,&nbsp;demean])</td>
+<td>principal components with svd</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="descriptive-statistics-printing">
+<h4>7.20.2.4.3. Descriptive Statistics Printing<a class="headerlink" href="#descriptive-statistics-printing" title="Permalink to this headline">¶</a></h4>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/statsmodels.sandbox.descstats.sign_test.html#statsmodels.sandbox.descstats.sign_test" title="statsmodels.sandbox.descstats.sign_test"><code class="xref py py-obj docutils literal"><span class="pre">descstats.sign_test</span></code></a>(samp[,&nbsp;mu0])</td>
+<td>Signs test.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/statsmodels.sandbox.descstats.descstats.html#statsmodels.sandbox.descstats.descstats" title="statsmodels.sandbox.descstats.descstats"><code class="xref py py-obj docutils literal"><span class="pre">descstats.descstats</span></code></a>(data[,&nbsp;cols,&nbsp;axis])</td>
+<td>Prints descriptive statistics for one or multiple variables.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+<div class="section" id="original-stats-models">
+<h3>7.20.2.5. Original stats.models<a class="headerlink" href="#original-stats-models" title="Permalink to this headline">¶</a></h3>
+<p>None of these are fully working. The formula framework is used by cox and
+mixed.</p>
+<p><strong>Mixed Effects Model with Repeated Measures using an EM Algorithm</strong></p>
+<p><code class="xref py py-mod docutils literal"><span class="pre">statsmodels.sandbox.mixed</span></code></p>
+<p><strong>Cox Proportional Hazards Model</strong></p>
+<p><a class="reference internal" href="../generated/statsmodels.sandbox.cox.html#module-statsmodels.sandbox.cox" title="statsmodels.sandbox.cox"><code class="xref py py-mod docutils literal"><span class="pre">statsmodels.sandbox.cox</span></code></a></p>
+<p><strong>Generalized Additive Models</strong></p>
+<p><a class="reference internal" href="../generated/statsmodels.sandbox.gam.html#module-statsmodels.sandbox.gam" title="statsmodels.sandbox.gam"><code class="xref py py-mod docutils literal"><span class="pre">statsmodels.sandbox.gam</span></code></a></p>
+<p><strong>Formula</strong></p>
+<p><a class="reference internal" href="../generated/statsmodels.sandbox.formula.html#module-statsmodels.sandbox.formula" title="statsmodels.sandbox.formula"><code class="xref py py-mod docutils literal"><span class="pre">statsmodels.sandbox.formula</span></code></a></p>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="generated/statsmodels.stats.correlation_tools.cov_nearest.html" class="btn btn-neutral" title="7.19.4.28. statsmodels.stats.correlation_tools.cov_nearest" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

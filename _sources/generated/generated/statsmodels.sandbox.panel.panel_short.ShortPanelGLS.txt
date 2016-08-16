@@ -1,0 +1,45 @@
+statsmodels.sandbox.panel.panel_short.ShortPanelGLS
+===================================================
+
+.. currentmodule:: statsmodels.sandbox.panel.panel_short
+.. autoclass:: ShortPanelGLS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ShortPanelGLS.__init__
+   ~ShortPanelGLS.fit
+   ~ShortPanelGLS.fit_iterative
+   ~ShortPanelGLS.fit_regularized
+   ~ShortPanelGLS.from_formula
+   ~ShortPanelGLS.get_within_cov
+   ~ShortPanelGLS.hessian
+   ~ShortPanelGLS.information
+   ~ShortPanelGLS.initialize
+   ~ShortPanelGLS.loglike
+   ~ShortPanelGLS.predict
+   ~ShortPanelGLS.score
+   ~ShortPanelGLS.whiten
+   ~ShortPanelGLS.whiten_groups
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~ShortPanelGLS.df_model
+   ~ShortPanelGLS.df_resid
+   ~ShortPanelGLS.endog_names
+   ~ShortPanelGLS.exog_names
+

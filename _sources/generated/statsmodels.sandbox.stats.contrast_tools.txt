@@ -1,0 +1,55 @@
+statsmodels.sandbox.stats.contrast_tools
+========================================
+
+.. automodule:: statsmodels.sandbox.stats.contrast_tools
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      contrast_all_one
+      contrast_allpairs
+      contrast_diff_mean
+      contrast_labels
+      contrast_product
+      dummy_1d
+      dummy_limits
+      dummy_nested
+      dummy_product
+      groupmean_d
+      signstr
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      DummyTransform
+      TestContrastTools
+      TwoWay
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.stats.contrast_tools.DummyTransform
+       generated/statsmodels.sandbox.stats.contrast_tools.TestContrastTools
+       generated/statsmodels.sandbox.stats.contrast_tools.TwoWay
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,48 @@
+statsmodels.stats.outliers_influence
+====================================
+
+.. automodule:: statsmodels.stats.outliers_influence
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      maybe_unwrap_results
+      multipletests
+      outlier_test
+      reset_ramsey
+      summary_table
+      variance_inflation_factor
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      OLS
+      OLSInfluence
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.outliers_influence.OLS
+       generated/statsmodels.stats.outliers_influence.OLSInfluence
+
+   
+   
+
+   
+   
+   

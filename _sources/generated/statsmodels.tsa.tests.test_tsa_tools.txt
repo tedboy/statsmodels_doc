@@ -1,0 +1,49 @@
+statsmodels.tsa.tests.test_tsa_tools
+====================================
+
+.. automodule:: statsmodels.tsa.tests.test_tsa_tools
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      test_acf
+      test_add_lag1d
+      test_add_lag1d_drop
+      test_add_lag1d_struct
+      test_add_lag_1d_drop_struct
+      test_add_lag_drop_insert
+      test_add_lag_drop_noinsert
+      test_add_lag_insert
+      test_add_lag_ndarray
+      test_add_lag_noinsert
+      test_add_lag_noinsert_atend
+      test_add_lag_noinsert_ndarray
+      test_add_lag_noinsertatend_ndarray
+      test_ccf
+      test_commutation_matrix
+      test_duplication_matrix
+      test_elimination_matrix
+      test_freq_to_period
+      test_pacf_ols
+      test_pacf_yw
+      test_vec
+      test_vech
+      test_yule_walker_inter
+      test_ywcoef
+      vec
+      vech
+   
+   
+
+   
+   
+   
+
+   
+   
+   

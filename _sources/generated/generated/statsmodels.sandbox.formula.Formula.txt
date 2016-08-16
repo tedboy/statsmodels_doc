@@ -1,0 +1,34 @@
+statsmodels.sandbox.formula.Formula
+===================================
+
+.. currentmodule:: statsmodels.sandbox.formula
+.. autoclass:: Formula
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Formula.__init__
+   ~Formula.design
+   ~Formula.hasterm
+   ~Formula.names
+   ~Formula.termcolumns
+   ~Formula.termnames
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Formula.namespace
+

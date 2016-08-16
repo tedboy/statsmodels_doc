@@ -1,0 +1,540 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.multilinear &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.multilinear</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.multilinear</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Analyze a set of multiple variables with a linear models</span>
+
+<span class="sd">multiOLS:</span>
+<span class="sd">    take a model and test it on a series of variables defined over a</span>
+<span class="sd">    pandas dataset, returning a summary for each variable</span>
+
+<span class="sd">multigroup:</span>
+<span class="sd">    take a boolean vector and the definition of several groups of variables</span>
+<span class="sd">    and test if the group has a fraction of true values higher than the</span>
+<span class="sd">    rest. It allows to test if the variables in the group are significantly</span>
+<span class="sd">    more significant than outside the group.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">iteritems</span><span class="p">,</span> <span class="n">string_types</span>
+<span class="kn">from</span> <span class="nn">patsy</span> <span class="k">import</span> <span class="n">dmatrix</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">statsmodels.api</span> <span class="k">import</span> <span class="n">OLS</span>
+<span class="kn">from</span> <span class="nn">statsmodels.api</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">logging</span>
+
+<span class="k">def</span> <span class="nf">_model2dataframe</span><span class="p">(</span><span class="n">model_endog</span><span class="p">,</span> <span class="n">model_exog</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="n">OLS</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;return a series containing the summary of a linear model</span>
+
+<span class="sd">    All the exceding parameters will be redirected to the linear model</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># create the linear model and perform the fit</span>
+    <span class="n">model_result</span> <span class="o">=</span> <span class="n">model_type</span><span class="p">(</span><span class="n">model_endog</span><span class="p">,</span> <span class="n">model_exog</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="c1"># keeps track of some global statistics</span>
+    <span class="n">statistics</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">({</span><span class="s1">&#39;r2&#39;</span><span class="p">:</span> <span class="n">model_result</span><span class="o">.</span><span class="n">rsquared</span><span class="p">,</span>
+                  <span class="s1">&#39;adj_r2&#39;</span><span class="p">:</span> <span class="n">model_result</span><span class="o">.</span><span class="n">rsquared_adj</span><span class="p">})</span>
+    <span class="c1"># put them togher with the result for each term</span>
+    <span class="n">result_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="n">model_result</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+                              <span class="s1">&#39;pvals&#39;</span><span class="p">:</span> <span class="n">model_result</span><span class="o">.</span><span class="n">pvalues</span><span class="p">,</span>
+                              <span class="s1">&#39;std&#39;</span><span class="p">:</span> <span class="n">model_result</span><span class="o">.</span><span class="n">bse</span><span class="p">,</span>
+                              <span class="s1">&#39;statistics&#39;</span><span class="p">:</span> <span class="n">statistics</span><span class="p">})</span>
+    <span class="c1"># add the complexive results for f-value and the total p-value</span>
+    <span class="n">fisher_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">({</span><span class="s1">&#39;params&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;_f_test&#39;</span><span class="p">:</span> <span class="n">model_result</span><span class="o">.</span><span class="n">fvalue</span><span class="p">},</span>
+                              <span class="s1">&#39;pvals&#39;</span><span class="p">:</span> <span class="p">{</span><span class="s1">&#39;_f_test&#39;</span><span class="p">:</span> <span class="n">model_result</span><span class="o">.</span><span class="n">f_pvalue</span><span class="p">}})</span>
+    <span class="c1"># merge them and unstack to obtain a hierarchically indexed series</span>
+    <span class="n">res_series</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">concat</span><span class="p">([</span><span class="n">result_df</span><span class="p">,</span> <span class="n">fisher_df</span><span class="p">])</span><span class="o">.</span><span class="n">unstack</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">res_series</span><span class="o">.</span><span class="n">dropna</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="multiOLS"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.multilinear.multiOLS.html#statsmodels.sandbox.multilinear.multiOLS">[docs]</a><span class="k">def</span> <span class="nf">multiOLS</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">column_list</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;fdr_bh&#39;</span><span class="p">,</span>
+    <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">subset</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">model_type</span><span class="o">=</span><span class="n">OLS</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;apply a linear model to several endogenous variables on a dataframe</span>
+
+<span class="sd">    Take a linear model definition via formula and a dataframe that will be</span>
+<span class="sd">    the environment of the model, and apply the linear model to a subset</span>
+<span class="sd">    (or all) of the columns of the dataframe. It will return a dataframe</span>
+<span class="sd">    with part of the information from the linear model summary.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    model : string</span>
+<span class="sd">        formula description of the model</span>
+<span class="sd">    dataframe : pandas.dataframe</span>
+<span class="sd">        dataframe where the model will be evaluated</span>
+<span class="sd">    column_list : list of strings, optional</span>
+<span class="sd">        Names of the columns to analyze with the model.</span>
+<span class="sd">        If None (Default) it will perform the function on all the</span>
+<span class="sd">        eligible columns (numerical type and not in the model definition)</span>
+<span class="sd">    model_type : model class, optional</span>
+<span class="sd">        The type of model to be used. The default is the linear model.</span>
+<span class="sd">        Can be any linear model (OLS, WLS, GLS, etc..)</span>
+<span class="sd">    method: string, optional</span>
+<span class="sd">        the method used to perform the pvalue correction for multiple testing.</span>
+<span class="sd">        default is the Benjamini/Hochberg, other available methods are:</span>
+
+<span class="sd">            `bonferroni` : one-step correction</span>
+<span class="sd">            `sidak` : on-step correction</span>
+<span class="sd">            `holm-sidak` :</span>
+<span class="sd">            `holm` :</span>
+<span class="sd">            `simes-hochberg` :</span>
+<span class="sd">            `hommel` :</span>
+<span class="sd">            `fdr_bh` : Benjamini/Hochberg</span>
+<span class="sd">            `fdr_by` : Benjamini/Yekutieli</span>
+
+<span class="sd">    alpha: float, optional</span>
+<span class="sd">        the significance level used for the pvalue correction (default 0.05)</span>
+<span class="sd">    subset: boolean array</span>
+<span class="sd">        the selected rows to be used in the regression</span>
+
+<span class="sd">    all the other parameters will be directed to the model creation.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    summary : pandas.DataFrame</span>
+<span class="sd">        a dataframe containing an extract from the summary of the model</span>
+<span class="sd">        obtained for each columns. It will give the model complexive f test</span>
+<span class="sd">        result and p-value, and the regression value and standard deviarion</span>
+<span class="sd">        for each of the regressors. The Dataframe has a hierachical column</span>
+<span class="sd">        structure, divided as:</span>
+
+<span class="sd">            - params: contains the parameters resulting from the models. Has</span>
+<span class="sd">            an additional column named _f_test containing the result of the</span>
+<span class="sd">            F test.</span>
+<span class="sd">            - pval: the pvalue results of the models. Has the _f_test column</span>
+<span class="sd">            for the significativity of the whole test.</span>
+<span class="sd">            - adj_pval: the corrected pvalues via the multitest function.</span>
+<span class="sd">            - std: uncertainties of the model parameters</span>
+<span class="sd">            - statistics: contains the r squared statistics and the adjusted</span>
+<span class="sd">            r squared.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The main application of this function is on system biology to perform</span>
+<span class="sd">    a linear model testing of a lot of different parameters, like the</span>
+<span class="sd">    different genetic expression of several genes.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    statsmodels.stats.multitest</span>
+<span class="sd">        contains several functions to perform the multiple p-value correction</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Using the longley data as dataframe example</span>
+
+<span class="sd">    &gt;&gt;&gt; import statsmodels.api as sm</span>
+<span class="sd">    &gt;&gt;&gt; data = sm.datasets.longley.load_pandas()</span>
+<span class="sd">    &gt;&gt;&gt; df = data.exog</span>
+<span class="sd">    &gt;&gt;&gt; df[&#39;TOTEMP&#39;] = data.endog</span>
+
+<span class="sd">    This will perform the specified linear model on all the</span>
+<span class="sd">    other columns of the dataframe</span>
+<span class="sd">    &gt;&gt;&gt; multiOLS(&#39;GNP + 1&#39;, df)</span>
+
+<span class="sd">    This select only a certain subset of the columns</span>
+<span class="sd">    &gt;&gt;&gt; multiOLS(&#39;GNP + 0&#39;, df, [&#39;GNPDEFL&#39;, &#39;TOTEMP&#39;, &#39;POP&#39;])</span>
+
+<span class="sd">    It is possible to specify a trasformation also on the target column,</span>
+<span class="sd">    conforming to the patsy formula specification</span>
+<span class="sd">    &gt;&gt;&gt; multiOLS(&#39;GNP + 0&#39;, df, [&#39;I(GNPDEFL**2)&#39;, &#39;center(TOTEMP)&#39;])</span>
+
+<span class="sd">    It is possible to specify the subset of the dataframe</span>
+<span class="sd">    on which perform the analysis</span>
+<span class="sd">    &gt;&gt; multiOLS(&#39;GNP + 1&#39;, df, subset=df.GNPDEFL &gt; 90)</span>
+
+<span class="sd">    Even a single column name can be given without enclosing it in a list</span>
+<span class="sd">    &gt;&gt;&gt; multiOLS(&#39;GNP + 0&#39;, df, &#39;GNPDEFL&#39;)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># data normalization</span>
+    <span class="c1"># if None take all the numerical columns that aren&#39;t present in the model</span>
+    <span class="c1"># it&#39;s not waterproof but is a good enough criterion for everyday use</span>
+    <span class="k">if</span> <span class="n">column_list</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">column_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span> <span class="k">for</span> <span class="n">name</span> <span class="ow">in</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">columns</span>
+                      <span class="k">if</span> <span class="n">dataframe</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">dtype</span> <span class="o">!=</span> <span class="nb">object</span> <span class="ow">and</span> <span class="n">name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">model</span><span class="p">]</span>
+    <span class="c1"># if it&#39;s a single string transform it in a single element list</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">column_list</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="n">column_list</span> <span class="o">=</span> <span class="p">[</span><span class="n">column_list</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">subset</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">dataframe</span> <span class="o">=</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">ix</span><span class="p">[</span><span class="n">subset</span><span class="p">]</span>
+    <span class="c1"># perform each model and retrieve the statistics</span>
+    <span class="n">col_results</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="c1"># as the model will use always the same endogenous variables</span>
+    <span class="c1"># we can create them once and reuse</span>
+    <span class="n">model_exog</span> <span class="o">=</span> <span class="n">dmatrix</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="s2">&quot;dataframe&quot;</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">col_name</span> <span class="ow">in</span> <span class="n">column_list</span><span class="p">:</span>
+        <span class="c1"># it will try to interpret the column name as a valid dataframe</span>
+        <span class="c1"># index as it can be several times faster. If it fails it</span>
+        <span class="c1"># interpret it as a patsy formula (for example for centering)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">model_endog</span> <span class="o">=</span> <span class="n">dataframe</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span>
+        <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+            <span class="n">model_endog</span> <span class="o">=</span> <span class="n">dmatrix</span><span class="p">(</span><span class="n">col_name</span> <span class="o">+</span> <span class="s1">&#39; + 0&#39;</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="n">dataframe</span><span class="p">)</span>
+        <span class="c1"># retrieve the result and store them</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_model2dataframe</span><span class="p">(</span><span class="n">model_endog</span><span class="p">,</span> <span class="n">model_exog</span><span class="p">,</span> <span class="n">model_type</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="n">col_results</span><span class="p">[</span><span class="n">col_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
+    <span class="c1"># mangle them togheter and sort by complexive p-value</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">col_results</span><span class="p">)</span>
+    <span class="c1"># order by the p-value: the most useful model first!</span>
+    <span class="n">summary</span> <span class="o">=</span> <span class="n">summary</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">sort</span><span class="p">([(</span><span class="s1">&#39;pvals&#39;</span><span class="p">,</span> <span class="s1">&#39;_f_test&#39;</span><span class="p">)])</span>
+    <span class="n">summary</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="s1">&#39;endogenous vars&#39;</span>
+    <span class="c1"># implementing the pvalue correction method</span>
+    <span class="n">smt</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">multipletests</span>
+    <span class="k">for</span> <span class="p">(</span><span class="n">key1</span><span class="p">,</span> <span class="n">key2</span><span class="p">)</span> <span class="ow">in</span> <span class="n">summary</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">key1</span> <span class="o">!=</span> <span class="s1">&#39;pvals&#39;</span><span class="p">:</span>
+            <span class="k">continue</span>
+        <span class="n">p_values</span> <span class="o">=</span> <span class="n">summary</span><span class="p">[</span><span class="n">key1</span><span class="p">,</span> <span class="n">key2</span><span class="p">]</span>
+        <span class="n">corrected</span> <span class="o">=</span> <span class="n">smt</span><span class="p">(</span><span class="n">p_values</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="c1"># extend the dataframe of results with the column</span>
+        <span class="c1"># of the corrected p_values</span>
+        <span class="n">summary</span><span class="p">[</span><span class="s1">&#39;adj_&#39;</span> <span class="o">+</span> <span class="n">key1</span><span class="p">,</span> <span class="n">key2</span><span class="p">]</span> <span class="o">=</span> <span class="n">corrected</span>
+    <span class="k">return</span> <span class="n">summary</span></div>
+
+
+<span class="k">def</span> <span class="nf">_test_group</span><span class="p">(</span><span class="n">pvalues</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;test if the objects in the group are different from the general set.</span>
+
+<span class="sd">    The test is performed on the pvalues set (ad a pandas series) over</span>
+<span class="sd">    the group specified via a fisher exact test.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">fisher_exact</span><span class="p">,</span> <span class="n">chi2_contingency</span>
+
+    <span class="n">totals</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)</span>
+    <span class="n">total_significant</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pvalues</span><span class="p">)</span>
+    <span class="n">cross_index</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">group</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">pvalues</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+    <span class="n">missing</span> <span class="o">=</span> <span class="p">[</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">group</span> <span class="k">if</span> <span class="n">c</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">pvalues</span><span class="o">.</span><span class="n">index</span><span class="p">]</span>
+    <span class="k">if</span> <span class="n">missing</span><span class="p">:</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;the test is not well defined if the group &#39;</span>
+             <span class="s1">&#39;has elements not presents in the significativity &#39;</span>
+             <span class="s1">&#39;array. group name: </span><span class="si">{}</span><span class="s1">, missing elements: </span><span class="si">{}</span><span class="s1">&#39;</span><span class="p">)</span>
+        <span class="n">logging</span><span class="o">.</span><span class="n">warning</span><span class="p">(</span><span class="n">s</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">group_name</span><span class="p">,</span> <span class="n">missing</span><span class="p">))</span>
+    <span class="c1"># how many are significant and not in the group</span>
+    <span class="n">group_total</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="nb">len</span><span class="p">(</span><span class="n">cross_index</span><span class="p">)</span>
+    <span class="n">group_sign</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="nb">len</span><span class="p">([</span><span class="n">c</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">cross_index</span> <span class="k">if</span> <span class="n">pvalues</span><span class="p">[</span><span class="n">c</span><span class="p">]])</span>
+    <span class="n">group_nonsign</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">group_total</span> <span class="o">-</span> <span class="n">group_sign</span><span class="p">)</span>
+    <span class="c1"># how many are significant and not outside the group</span>
+    <span class="n">extern_sign</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">total_significant</span> <span class="o">-</span> <span class="n">group_sign</span><span class="p">)</span>
+    <span class="n">extern_nonsign</span> <span class="o">=</span> <span class="mf">1.0</span> <span class="o">*</span> <span class="p">(</span><span class="n">totals</span> <span class="o">-</span> <span class="n">total_significant</span> <span class="o">-</span> <span class="n">group_nonsign</span><span class="p">)</span>
+    <span class="c1"># make the fisher test or the chi squared</span>
+    <span class="n">test</span> <span class="o">=</span> <span class="n">fisher_exact</span> <span class="k">if</span> <span class="n">exact</span> <span class="k">else</span> <span class="n">chi2_contingency</span>
+    <span class="n">table</span> <span class="o">=</span> <span class="p">[[</span><span class="n">extern_nonsign</span><span class="p">,</span> <span class="n">extern_sign</span><span class="p">],</span> <span class="p">[</span><span class="n">group_nonsign</span><span class="p">,</span> <span class="n">group_sign</span><span class="p">]]</span>
+    <span class="n">pvalue</span> <span class="o">=</span> <span class="n">test</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">table</span><span class="p">))[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="c1"># is the group more represented or less?</span>
+    <span class="n">part</span> <span class="o">=</span> <span class="n">group_sign</span><span class="p">,</span> <span class="n">group_nonsign</span><span class="p">,</span> <span class="n">extern_sign</span><span class="p">,</span> <span class="n">extern_nonsign</span>
+    <span class="c1">#increase = (group_sign / group_total) &gt; (total_significant / totals)</span>
+    <span class="n">increase</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">((</span><span class="n">totals</span> <span class="o">*</span> <span class="n">group_sign</span><span class="p">)</span>
+                      <span class="o">/</span> <span class="p">(</span><span class="n">total_significant</span> <span class="o">*</span> <span class="n">group_total</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">pvalue</span><span class="p">,</span> <span class="n">increase</span><span class="p">,</span> <span class="n">part</span>
+
+
+<div class="viewcode-block" id="multigroup"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.multilinear.multigroup.html#statsmodels.sandbox.multilinear.multigroup">[docs]</a><span class="k">def</span> <span class="nf">multigroup</span><span class="p">(</span><span class="n">pvals</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">exact</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">keep_all</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Test if the given groups are different from the total partition.</span>
+
+<span class="sd">    Given a boolean array test if each group has a proportion of positives</span>
+<span class="sd">    different than the complexive proportion.</span>
+<span class="sd">    The test can be done as an exact Fisher test or approximated as a</span>
+<span class="sd">    Chi squared test for more speed.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    pvals: pandas series of boolean</span>
+<span class="sd">        the significativity of the variables under analysis</span>
+<span class="sd">    groups: dict of list</span>
+<span class="sd">        the name of each category of variables under exam.</span>
+<span class="sd">        each one is a list of the variables included</span>
+<span class="sd">    exact: boolean, optional</span>
+<span class="sd">        If True (default) use the fisher exact test, otherwise</span>
+<span class="sd">        use the chi squared test for contingencies tables.</span>
+<span class="sd">        For high number of elements in the array the fisher test can</span>
+<span class="sd">        be significantly slower than the chi squared.</span>
+<span class="sd">    keep_all: boolean, optional</span>
+<span class="sd">        if False it will drop those groups where the fraction</span>
+<span class="sd">        of positive is below the expected result. If True (default)</span>
+<span class="sd">         it will keep all the significant results.</span>
+<span class="sd">    alpha: float, optional</span>
+<span class="sd">        the significativity level for the pvalue correction</span>
+<span class="sd">        on the whole set of groups (not inside the groups themselves).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    result_df: pandas dataframe</span>
+<span class="sd">        for each group returns:</span>
+
+<span class="sd">            pvals - the fisher p value of the test</span>
+<span class="sd">            adj_pvals - the adjusted pvals</span>
+<span class="sd">            increase - the log of the odd ratio between the</span>
+<span class="sd">                internal significant ratio versus the external one</span>
+<span class="sd">            _in_sign - significative elements inside the group</span>
+<span class="sd">            _in_non - non significative elements inside the group</span>
+<span class="sd">            _out_sign - significative elements outside the group</span>
+<span class="sd">            _out_non - non significative elements outside the group</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This test allow to see if a category of variables is generally better</span>
+<span class="sd">    suited to be described for the model. For example to see if a predictor</span>
+<span class="sd">    gives more information on demographic or economical parameters,</span>
+<span class="sd">    by creating two groups containing the endogenous variables of each</span>
+<span class="sd">    category.</span>
+
+<span class="sd">    This function is conceived for medical dataset with a lot of variables</span>
+<span class="sd">    that can be easily grouped into functional groups. This is because</span>
+<span class="sd">    The significativity of a group require a rather large number of</span>
+<span class="sd">    composing elements.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    A toy example on a real dataset, the Guerry dataset from R</span>
+<span class="sd">    &gt;&gt;&gt; url = &quot;http://vincentarelbundock.github.com/&quot;</span>
+<span class="sd">    &gt;&gt;&gt; url = url + &quot;Rdatasets/csv/HistData/Guerry.csv&quot;</span>
+<span class="sd">    &gt;&gt;&gt; df = pd.read_csv(url, index_col=&#39;dept&#39;)</span>
+
+<span class="sd">    evaluate the relationship between the variuos paramenters whith the Wealth</span>
+<span class="sd">    &gt;&gt;&gt; pvals = multiOLS(&#39;Wealth&#39;, df)[&#39;adj_pvals&#39;, &#39;_f_test&#39;]</span>
+
+<span class="sd">    define the groups</span>
+<span class="sd">    &gt;&gt;&gt; groups = {}</span>
+<span class="sd">    &gt;&gt;&gt; groups[&#39;crime&#39;] = [&#39;Crime_prop&#39;, &#39;Infanticide&#39;,</span>
+<span class="sd">    ...     &#39;Crime_parents&#39;, &#39;Desertion&#39;, &#39;Crime_pers&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; groups[&#39;religion&#39;] = [&#39;Donation_clergy&#39;, &#39;Clergy&#39;, &#39;Donations&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; groups[&#39;wealth&#39;] = [&#39;Commerce&#39;, &#39;Lottery&#39;, &#39;Instruction&#39;, &#39;Literacy&#39;]</span>
+
+<span class="sd">    do the analysis of the significativity</span>
+<span class="sd">    &gt;&gt;&gt; multigroup(pvals &lt; 0.05, groups)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">pvals</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">pvals</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">pvals</span><span class="o">.</span><span class="n">unique</span><span class="p">())</span> <span class="o">&lt;=</span> <span class="nb">set</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;the series should be binary&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">pvals</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;is_unique&#39;</span><span class="p">)</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">pvals</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">is_unique</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;series with duplicated index is not accepted&quot;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;pvals&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s1">&#39;increase&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s1">&#39;_in_sign&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s1">&#39;_in_non&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s1">&#39;_out_sign&#39;</span><span class="p">:</span> <span class="p">{},</span>
+        <span class="s1">&#39;_out_non&#39;</span><span class="p">:</span> <span class="p">{}}</span>
+    <span class="k">for</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">group_list</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="n">groups</span><span class="p">):</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">_test_group</span><span class="p">(</span><span class="n">pvals</span><span class="p">,</span> <span class="n">group_name</span><span class="p">,</span> <span class="n">group_list</span><span class="p">,</span> <span class="n">exact</span><span class="p">)</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;pvals&#39;</span><span class="p">][</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;increase&#39;</span><span class="p">][</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;_in_sign&#39;</span><span class="p">][</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;_in_non&#39;</span><span class="p">][</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;_out_sign&#39;</span><span class="p">][</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">results</span><span class="p">[</span><span class="s1">&#39;_out_non&#39;</span><span class="p">][</span><span class="n">group_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span><span class="p">[</span><span class="mi">2</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span>
+    <span class="n">result_df</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">results</span><span class="p">)</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="s1">&#39;pvals&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">keep_all</span><span class="p">:</span>
+        <span class="n">result_df</span> <span class="o">=</span> <span class="n">result_df</span><span class="p">[</span><span class="n">result_df</span><span class="o">.</span><span class="n">increase</span><span class="p">]</span>
+    <span class="n">smt</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">multipletests</span>
+    <span class="n">corrected</span> <span class="o">=</span> <span class="n">smt</span><span class="p">(</span><span class="n">result_df</span><span class="p">[</span><span class="s1">&#39;pvals&#39;</span><span class="p">],</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;fdr_bh&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="n">alpha</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">result_df</span><span class="p">[</span><span class="s1">&#39;adj_pvals&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">corrected</span>
+    <span class="k">return</span> <span class="n">result_df</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

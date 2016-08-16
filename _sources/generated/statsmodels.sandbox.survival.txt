@@ -1,0 +1,37 @@
+statsmodels.sandbox.survival
+============================
+
+.. automodule:: statsmodels.sandbox.survival
+
+   
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      LeftCensored
+      RightCensored
+      SurvivalTime
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.survival.LeftCensored
+       generated/statsmodels.sandbox.survival.RightCensored
+       generated/statsmodels.sandbox.survival.SurvivalTime
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,470 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7.3. Generalized Estimating Equations &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="7. From official doc" href="index.html"/>
+        <link rel="next" title="7.3.2.1.1. statsmodels.genmod.generalized_estimating_equations.GEE" href="generated/statsmodels.genmod.generalized_estimating_equations.GEE.html"/>
+        <link rel="prev" title="7.2.3.4.16. statsmodels.genmod.families.links.probit" href="generated/statsmodels.genmod.families.links.probit.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="index.html">7. From official doc</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="regression.html">7.1. Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glm.html">7.2. Generalized Linear Models</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">7.3. Generalized Estimating Equations</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#examples">7.3.1. Examples</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#references">7.3.1.1. References</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#module-reference">7.3.2. Module Reference</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#model-class">7.3.2.1. Model Class</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#results-classes">7.3.2.2. Results Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#dependence-structures">7.3.2.3. Dependence Structures</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#families">7.3.2.4. Families</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#link-functions">7.3.2.5. Link Functions</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rlm.html">7.4. Robust Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixed_linear.html">7.5. Linear Mixed Effects Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discretemod.html">7.6. Regression with Discrete Dependent Variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="anova.html">7.7. ANOVA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html">7.8. Time Series analysis <code class="docutils literal"><span class="pre">tsa</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="duration.html">7.9. Models for Survival and Duration Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html">7.10. Statistics <code class="docutils literal"><span class="pre">stats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="nonparametric.html">7.11. Nonparametric Methods <code class="docutils literal"><span class="pre">nonparametric</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="gmm.html">7.12. Generalized Method of Moments <code class="docutils literal"><span class="pre">gmm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="emplike.html">7.13. Empirical Likelihood <code class="docutils literal"><span class="pre">emplike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscmodels.html">7.14. Other Models <code class="docutils literal"><span class="pre">miscmodels</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html">7.15. Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html">7.16. Graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iolib.html">7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">7.18. Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html">7.19. The Datasets Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sandbox.html">7.20. Sandbox</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="index.html">7. From official doc</a> &raquo;</li>
+        
+      <li>7.3. Generalized Estimating Equations</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/doc/gee.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="generalized-estimating-equations">
+<span id="gee"></span><h1>7.3. Generalized Estimating Equations<a class="headerlink" href="#generalized-estimating-equations" title="Permalink to this headline">¶</a></h1>
+<p>Generalized Estimating Equations estimate generalized linear models for
+panel, cluster or repeated measures data when the observations are possibly
+correlated withing a cluster but uncorrelated across clusters. It supports
+estimation of the same one-parameter exponential families as Generalized
+Linear models (<cite>GLM</cite>).</p>
+<p>See <a class="reference internal" href="#module-reference">Module Reference</a> for commands and arguments.</p>
+<div class="section" id="examples">
+<h2>7.3.1. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>The following illustrates a Poisson regression with exchangeable correlation
+within clusters using data on epilepsy seizures.</p>
+<div class="highlight-python"><div class="highlight"><pre><span></span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="kn">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">statsmodels.formula.api</span> <span class="kn">as</span> <span class="nn">smf</span>
+
+<span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">get_rdataset</span><span class="p">(</span><span class="s1">&#39;epil&#39;</span><span class="p">,</span> <span class="n">package</span><span class="o">=</span><span class="s1">&#39;MASS&#39;</span><span class="p">)</span><span class="o">.</span><span class="n">data</span>
+
+<span class="n">fam</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">families</span><span class="o">.</span><span class="n">Poisson</span><span class="p">()</span>
+<span class="n">ind</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">cov_struct</span><span class="o">.</span><span class="n">Exchangeable</span><span class="p">()</span>
+<span class="n">mod</span> <span class="o">=</span> <span class="n">smf</span><span class="o">.</span><span class="n">gee</span><span class="p">(</span><span class="s2">&quot;y ~ age + trt + base&quot;</span><span class="p">,</span> <span class="s2">&quot;subject&quot;</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span>
+              <span class="n">cov_struct</span><span class="o">=</span><span class="n">ind</span><span class="p">,</span> <span class="n">family</span><span class="o">=</span><span class="n">fam</span><span class="p">)</span>
+<span class="n">res</span> <span class="o">=</span> <span class="n">mod</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="k">print</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">summary</span><span class="p">())</span>
+</pre></div>
+</div>
+<p>Several notebook examples of the use of GEE can be found on the Wiki:
+<a class="reference external" href="https://github.com/statsmodels/statsmodels/wiki/Examples#generalized-estimating-equations-gee">Wiki notebooks for GEE</a></p>
+<div class="section" id="references">
+<h3>7.3.1.1. References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>KY Liang and S Zeger. &#8220;Longitudinal data analysis using generalized
+linear models&#8221;. Biometrika (1986) 73 (1): 13-22.</li>
+<li>S Zeger and KY Liang. &#8220;Longitudinal Data Analysis for Discrete and
+Continuous Outcomes&#8221;. Biometrics Vol. 42, No. 1 (Mar., 1986),
+pp. 121-130</li>
+<li>A Rotnitzky and NP Jewell (1990). &#8220;Hypothesis testing of regression
+parameters in semiparametric generalized linear models for cluster
+correlated data&#8221;, Biometrika, 77, 485-497.</li>
+<li>Xu Guo and Wei Pan (2002). &#8220;Small sample performance of the score test in
+GEE&#8221;.
+<a class="reference external" href="http://www.sph.umn.edu/faculty1/wp-content/uploads/2012/11/rr2002-013.pdf">http://www.sph.umn.edu/faculty1/wp-content/uploads/2012/11/rr2002-013.pdf</a></li>
+<li>LA Mancl LA, TA DeRouen (2001). A covariance estimator for GEE with improved
+small-sample properties.  Biometrics. 2001 Mar;57(1):126-34.</li>
+</ul>
+</div>
+</div>
+<div class="section" id="module-reference">
+<h2>7.3.2. Module Reference<a class="headerlink" href="#module-reference" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="model-class">
+<h3>7.3.2.1. Model Class<a class="headerlink" href="#model-class" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.generalized_estimating_equations.GEE.html#statsmodels.genmod.generalized_estimating_equations.GEE" title="statsmodels.genmod.generalized_estimating_equations.GEE"><code class="xref py py-obj docutils literal"><span class="pre">GEE</span></code></a>(endog,&nbsp;exog,&nbsp;groups[,&nbsp;time,&nbsp;family,&nbsp;...])</td>
+<td>Estimation of marginal regression models using Generalized Estimating Equations (GEE).</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="results-classes">
+<h3>7.3.2.2. Results Classes<a class="headerlink" href="#results-classes" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.generalized_estimating_equations.GEEResults.html#statsmodels.genmod.generalized_estimating_equations.GEEResults" title="statsmodels.genmod.generalized_estimating_equations.GEEResults"><code class="xref py py-obj docutils literal"><span class="pre">GEEResults</span></code></a>(model,&nbsp;params,&nbsp;cov_params,&nbsp;scale)</td>
+<td>This class summarizes the fit of a marginal regression model using GEE.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.generalized_estimating_equations.GEEMargins.html#statsmodels.genmod.generalized_estimating_equations.GEEMargins" title="statsmodels.genmod.generalized_estimating_equations.GEEMargins"><code class="xref py py-obj docutils literal"><span class="pre">GEEMargins</span></code></a>(results,&nbsp;args[,&nbsp;kwargs])</td>
+<td>Estimate the marginal effects of a model fit using generalized estimating equations.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="dependence-structures">
+<h3>7.3.2.3. Dependence Structures<a class="headerlink" href="#dependence-structures" title="Permalink to this headline">¶</a></h3>
+<p>The dependence structures currently implemented are</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.cov_struct.CovStruct.html#statsmodels.genmod.cov_struct.CovStruct" title="statsmodels.genmod.cov_struct.CovStruct"><code class="xref py py-obj docutils literal"><span class="pre">CovStruct</span></code></a>([cov_nearest_method])</td>
+<td>A base class for correlation and covariance structures of grouped data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.cov_struct.Autoregressive.html#statsmodels.genmod.cov_struct.Autoregressive" title="statsmodels.genmod.cov_struct.Autoregressive"><code class="xref py py-obj docutils literal"><span class="pre">Autoregressive</span></code></a>([dist_func])</td>
+<td>An autoregressive working dependence structure.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.cov_struct.Exchangeable.html#statsmodels.genmod.cov_struct.Exchangeable" title="statsmodels.genmod.cov_struct.Exchangeable"><code class="xref py py-obj docutils literal"><span class="pre">Exchangeable</span></code></a>()</td>
+<td>An exchangeable working dependence structure.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.cov_struct.GlobalOddsRatio.html#statsmodels.genmod.cov_struct.GlobalOddsRatio" title="statsmodels.genmod.cov_struct.GlobalOddsRatio"><code class="xref py py-obj docutils literal"><span class="pre">GlobalOddsRatio</span></code></a>(endog_type)</td>
+<td>Estimate the global odds ratio for a GEE with ordinal or nominal data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.cov_struct.Independence.html#statsmodels.genmod.cov_struct.Independence" title="statsmodels.genmod.cov_struct.Independence"><code class="xref py py-obj docutils literal"><span class="pre">Independence</span></code></a>([cov_nearest_method])</td>
+<td>An independence working dependence structure.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.cov_struct.Nested.html#statsmodels.genmod.cov_struct.Nested" title="statsmodels.genmod.cov_struct.Nested"><code class="xref py py-obj docutils literal"><span class="pre">Nested</span></code></a>([cov_nearest_method])</td>
+<td>A nested working dependence structure.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="families">
+<h3>7.3.2.4. Families<a class="headerlink" href="#families" title="Permalink to this headline">¶</a></h3>
+<p>The distribution families are the same as for GLM, currently implemented are</p>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.family.Family.html#statsmodels.genmod.families.family.Family" title="statsmodels.genmod.families.family.Family"><code class="xref py py-obj docutils literal"><span class="pre">Family</span></code></a>(link,&nbsp;variance)</td>
+<td>The parent class for one-parameter exponential families.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.family.Binomial.html#statsmodels.genmod.families.family.Binomial" title="statsmodels.genmod.families.family.Binomial"><code class="xref py py-obj docutils literal"><span class="pre">Binomial</span></code></a>([link])</td>
+<td>Binomial exponential family distribution.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.family.Gamma.html#statsmodels.genmod.families.family.Gamma" title="statsmodels.genmod.families.family.Gamma"><code class="xref py py-obj docutils literal"><span class="pre">Gamma</span></code></a>([link])</td>
+<td>Gamma exponential family distribution.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.family.Gaussian.html#statsmodels.genmod.families.family.Gaussian" title="statsmodels.genmod.families.family.Gaussian"><code class="xref py py-obj docutils literal"><span class="pre">Gaussian</span></code></a>([link])</td>
+<td>Gaussian exponential family distribution.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.family.InverseGaussian.html#statsmodels.genmod.families.family.InverseGaussian" title="statsmodels.genmod.families.family.InverseGaussian"><code class="xref py py-obj docutils literal"><span class="pre">InverseGaussian</span></code></a>([link])</td>
+<td>InverseGaussian exponential family.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.family.NegativeBinomial.html#statsmodels.genmod.families.family.NegativeBinomial" title="statsmodels.genmod.families.family.NegativeBinomial"><code class="xref py py-obj docutils literal"><span class="pre">NegativeBinomial</span></code></a>([link,&nbsp;alpha])</td>
+<td>Negative Binomial exponential family.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.family.Poisson.html#statsmodels.genmod.families.family.Poisson" title="statsmodels.genmod.families.family.Poisson"><code class="xref py py-obj docutils literal"><span class="pre">Poisson</span></code></a>([link])</td>
+<td>Poisson exponential family.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="link-functions">
+<h3>7.3.2.5. Link Functions<a class="headerlink" href="#link-functions" title="Permalink to this headline">¶</a></h3>
+<p>The link functions are the same as for GLM, currently implemented are the
+following. Not all link functions are available for each distribution family.
+The list of available link functions can be obtained by</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">sm</span><span class="o">.</span><span class="n">families</span><span class="o">.</span><span class="n">family</span><span class="o">.&lt;</span><span class="n">familyname</span><span class="o">&gt;.</span><span class="n">links</span>
+</pre></div>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.Link.html#statsmodels.genmod.families.links.Link" title="statsmodels.genmod.families.links.Link"><code class="xref py py-obj docutils literal"><span class="pre">Link</span></code></a></td>
+<td>A generic link function for one-parameter exponential family.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.CDFLink.html#statsmodels.genmod.families.links.CDFLink" title="statsmodels.genmod.families.links.CDFLink"><code class="xref py py-obj docutils literal"><span class="pre">CDFLink</span></code></a>([dbn])</td>
+<td>The use the CDF of a scipy.stats distribution</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.CLogLog.html#statsmodels.genmod.families.links.CLogLog" title="statsmodels.genmod.families.links.CLogLog"><code class="xref py py-obj docutils literal"><span class="pre">CLogLog</span></code></a></td>
+<td>The complementary log-log transform</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.Log.html#statsmodels.genmod.families.links.Log" title="statsmodels.genmod.families.links.Log"><code class="xref py py-obj docutils literal"><span class="pre">Log</span></code></a></td>
+<td>The log transform</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.Logit.html#statsmodels.genmod.families.links.Logit" title="statsmodels.genmod.families.links.Logit"><code class="xref py py-obj docutils literal"><span class="pre">Logit</span></code></a></td>
+<td>The logit transform</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.NegativeBinomial.html#statsmodels.genmod.families.links.NegativeBinomial" title="statsmodels.genmod.families.links.NegativeBinomial"><code class="xref py py-obj docutils literal"><span class="pre">NegativeBinomial</span></code></a>([alpha])</td>
+<td>The negative binomial link function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.Power.html#statsmodels.genmod.families.links.Power" title="statsmodels.genmod.families.links.Power"><code class="xref py py-obj docutils literal"><span class="pre">Power</span></code></a>([power])</td>
+<td>The power transform</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.cauchy.html#statsmodels.genmod.families.links.cauchy" title="statsmodels.genmod.families.links.cauchy"><code class="xref py py-obj docutils literal"><span class="pre">cauchy</span></code></a>()</td>
+<td>The Cauchy (standard Cauchy CDF) transform</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.cloglog.html#statsmodels.genmod.families.links.cloglog" title="statsmodels.genmod.families.links.cloglog"><code class="xref py py-obj docutils literal"><span class="pre">cloglog</span></code></a></td>
+<td>The CLogLog transform link function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.identity.html#statsmodels.genmod.families.links.identity" title="statsmodels.genmod.families.links.identity"><code class="xref py py-obj docutils literal"><span class="pre">identity</span></code></a>()</td>
+<td>The identity transform</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.inverse_power.html#statsmodels.genmod.families.links.inverse_power" title="statsmodels.genmod.families.links.inverse_power"><code class="xref py py-obj docutils literal"><span class="pre">inverse_power</span></code></a>()</td>
+<td>The inverse transform</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.inverse_squared.html#statsmodels.genmod.families.links.inverse_squared" title="statsmodels.genmod.families.links.inverse_squared"><code class="xref py py-obj docutils literal"><span class="pre">inverse_squared</span></code></a>()</td>
+<td>The inverse squared transform</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.log.html#statsmodels.genmod.families.links.log" title="statsmodels.genmod.families.links.log"><code class="xref py py-obj docutils literal"><span class="pre">log</span></code></a></td>
+<td>The log transform</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.logit.html#statsmodels.genmod.families.links.logit" title="statsmodels.genmod.families.links.logit"><code class="xref py py-obj docutils literal"><span class="pre">logit</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.nbinom.html#statsmodels.genmod.families.links.nbinom" title="statsmodels.genmod.families.links.nbinom"><code class="xref py py-obj docutils literal"><span class="pre">nbinom</span></code></a>([alpha])</td>
+<td>The negative binomial link function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="../generated/generated/statsmodels.genmod.families.links.probit.html#statsmodels.genmod.families.links.probit" title="statsmodels.genmod.families.links.probit"><code class="xref py py-obj docutils literal"><span class="pre">probit</span></code></a>([dbn])</td>
+<td>The probit (standard normal CDF) transform</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/statsmodels.genmod.generalized_estimating_equations.GEE.html" class="btn btn-neutral float-right" title="7.3.2.1.1. statsmodels.genmod.generalized_estimating_equations.GEE" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.genmod.families.links.probit.html" class="btn btn-neutral" title="7.2.3.4.16. statsmodels.genmod.families.links.probit" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

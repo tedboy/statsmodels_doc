@@ -1,0 +1,24 @@
+statsmodels.stats.power.Power
+=============================
+
+.. currentmodule:: statsmodels.stats.power
+.. autoclass:: Power
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Power.__init__
+   ~Power.plot_power
+   ~Power.power
+   ~Power.solve_power
+
+
+
+
+

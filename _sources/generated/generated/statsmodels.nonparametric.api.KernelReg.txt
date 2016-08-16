@@ -1,0 +1,27 @@
+statsmodels.nonparametric.api.KernelReg
+=======================================
+
+.. currentmodule:: statsmodels.nonparametric.api
+.. autoclass:: KernelReg
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KernelReg.__init__
+   ~KernelReg.aic_hurvich
+   ~KernelReg.cv_loo
+   ~KernelReg.fit
+   ~KernelReg.loo_likelihood
+   ~KernelReg.r_squared
+   ~KernelReg.sig_test
+
+
+
+
+

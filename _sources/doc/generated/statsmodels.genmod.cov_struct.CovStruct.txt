@@ -1,0 +1,27 @@
+statsmodels.genmod.cov_struct.CovStruct
+=======================================
+
+.. currentmodule:: statsmodels.genmod.cov_struct
+
+.. autoclass:: CovStruct
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~CovStruct.__init__
+      ~CovStruct.covariance_matrix
+      ~CovStruct.covariance_matrix_solve
+      ~CovStruct.initialize
+      ~CovStruct.summary
+      ~CovStruct.update
+   
+   
+
+   
+   
+   

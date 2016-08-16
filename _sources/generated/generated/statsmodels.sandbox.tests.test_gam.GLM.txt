@@ -1,0 +1,44 @@
+statsmodels.sandbox.tests.test_gam.GLM
+======================================
+
+.. currentmodule:: statsmodels.sandbox.tests.test_gam
+.. autoclass:: GLM
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GLM.__init__
+   ~GLM.estimate_scale
+   ~GLM.fit
+   ~GLM.fit_constrained
+   ~GLM.from_formula
+   ~GLM.hessian
+   ~GLM.hessian_factor
+   ~GLM.information
+   ~GLM.initialize
+   ~GLM.loglike
+   ~GLM.predict
+   ~GLM.score
+   ~GLM.score_factor
+   ~GLM.score_obs
+   ~GLM.score_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~GLM.endog_names
+   ~GLM.exog_names
+

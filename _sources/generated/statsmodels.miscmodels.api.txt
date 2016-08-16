@@ -1,0 +1,39 @@
+statsmodels.miscmodels.api
+==========================
+
+.. automodule:: statsmodels.miscmodels.api
+
+   
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      PoissonGMLE
+      PoissonOffsetGMLE
+      PoissonZiGMLE
+      TLinearModel
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.miscmodels.api.PoissonGMLE
+       generated/statsmodels.miscmodels.api.PoissonOffsetGMLE
+       generated/statsmodels.miscmodels.api.PoissonZiGMLE
+       generated/statsmodels.miscmodels.api.TLinearModel
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,43 @@
+statsmodels.sandbox.regression.penalized.TheilGLS
+=================================================
+
+.. currentmodule:: statsmodels.sandbox.regression.penalized
+.. autoclass:: TheilGLS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TheilGLS.__init__
+   ~TheilGLS.fit
+   ~TheilGLS.fit_minic
+   ~TheilGLS.fit_regularized
+   ~TheilGLS.from_formula
+   ~TheilGLS.hessian
+   ~TheilGLS.information
+   ~TheilGLS.initialize
+   ~TheilGLS.loglike
+   ~TheilGLS.predict
+   ~TheilGLS.score
+   ~TheilGLS.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TheilGLS.df_model
+   ~TheilGLS.df_resid
+   ~TheilGLS.endog_names
+   ~TheilGLS.exog_names
+

@@ -1,0 +1,56 @@
+statsmodels.sandbox.distributions.gof_new
+=========================================
+
+.. automodule:: statsmodels.sandbox.distributions.gof_new
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      a_st70_upp
+      asquare
+      bootstrap
+      bootstrap2
+      d_st70_upp
+      dminus_st70_upp
+      dplus_st70_upp
+      gof_mc
+      ks_2samp
+      kstest
+      pval_kstest_approx
+      usqu_st70_upp
+      v_st70_upp
+      wsqu_st70_upp
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      GOF
+      NewNorm
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.distributions.gof_new.GOF
+       generated/statsmodels.sandbox.distributions.gof_new.NewNorm
+
+   
+   
+
+   
+   
+   

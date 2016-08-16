@@ -1,0 +1,51 @@
+statsmodels.graphics.gofplots
+=============================
+
+.. automodule:: statsmodels.graphics.gofplots
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      add_constant
+      plotting_pos
+      qqline
+      qqplot
+      qqplot_2samples
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      OLS
+      ProbPlot
+      cache_writable
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.graphics.gofplots.OLS
+       generated/statsmodels.graphics.gofplots.ProbPlot
+       generated/statsmodels.graphics.gofplots.cache_writable
+       generated/statsmodels.graphics.gofplots.resettable_cache
+
+   
+   
+
+   
+   
+   

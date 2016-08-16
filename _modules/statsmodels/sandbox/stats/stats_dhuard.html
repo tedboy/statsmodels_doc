@@ -1,0 +1,556 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.stats.stats_dhuard &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.stats.stats_dhuard</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.stats.stats_dhuard</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">from David Huard&#39;s scipy sandbox, also attached to a ticket and</span>
+<span class="sd">in the matplotlib-user mailinglist  (links ???)</span>
+
+
+<span class="sd">Notes</span>
+<span class="sd">=====</span>
+
+<span class="sd">out of bounds interpolation raises exception and wouldn&#39;t be completely</span>
+<span class="sd">defined ::</span>
+
+<span class="sd">&gt;&gt;&gt; scoreatpercentile(x, [0,25,50,100])</span>
+<span class="sd">Traceback (most recent call last):</span>
+<span class="sd">...</span>
+<span class="sd">    raise ValueError(&quot;A value in x_new is below the interpolation &quot;</span>
+<span class="sd">ValueError: A value in x_new is below the interpolation range.</span>
+<span class="sd">&gt;&gt;&gt; percentileofscore(x, [-50, 50])</span>
+<span class="sd">Traceback (most recent call last):</span>
+<span class="sd">...</span>
+<span class="sd">    raise ValueError(&quot;A value in x_new is below the interpolation &quot;</span>
+<span class="sd">ValueError: A value in x_new is below the interpolation range.</span>
+
+
+<span class="sd">idea</span>
+<span class="sd">====</span>
+
+<span class="sd">histogram and empirical interpolated distribution</span>
+<span class="sd">-------------------------------------------------</span>
+
+<span class="sd">dual constructor</span>
+<span class="sd">* empirical cdf : cdf on all observations through linear interpolation</span>
+<span class="sd">* binned cdf : based on histogram</span>
+<span class="sd">both should work essentially the same, although pdf of empirical has</span>
+<span class="sd">many spikes, fluctuates a lot</span>
+<span class="sd">- alternative: binning based on interpolated cdf : example in script</span>
+<span class="sd">* ppf: quantileatscore based on interpolated cdf</span>
+<span class="sd">* rvs : generic from ppf</span>
+<span class="sd">* stats, expectation ? how does integration wrt cdf work - theory?</span>
+
+<span class="sd">Problems</span>
+<span class="sd">* limits, lower and upper bound of support</span>
+<span class="sd">  does not work or is undefined with empirical cdf and interpolation</span>
+<span class="sd">* extending bounds ?</span>
+<span class="sd">  matlab has pareto tails for empirical distribution, breaks linearity</span>
+
+<span class="sd">empirical distribution with higher order interpolation</span>
+<span class="sd">------------------------------------------------------</span>
+
+<span class="sd">* should work easily enough with interpolating splines</span>
+<span class="sd">* not piecewise linear</span>
+<span class="sd">* can use pareto (or other) tails</span>
+<span class="sd">* ppf how do I get the inverse function of a higher order spline?</span>
+<span class="sd">  Chuck: resample and fit spline to inverse function</span>
+<span class="sd">  this will have an approximation error in the inverse function</span>
+<span class="sd">* -&gt; doesn&#39;t work: higher order spline doesn&#39;t preserve monotonicity</span>
+<span class="sd">  see mailing list for response to my question</span>
+<span class="sd">* pmf from derivative available in spline</span>
+
+<span class="sd">-&gt; forget this and use kernel density estimator instead</span>
+
+
+<span class="sd">bootstrap/empirical distribution:</span>
+<span class="sd">---------------------------------</span>
+
+<span class="sd">discrete distribution on real line given observations</span>
+<span class="sd">what&#39;s defined?</span>
+<span class="sd">* cdf : step function</span>
+<span class="sd">* pmf : points with equal weight 1/nobs</span>
+<span class="sd">* rvs : resampling</span>
+<span class="sd">* ppf : quantileatscore on sample?</span>
+<span class="sd">* moments : from data ?</span>
+<span class="sd">* expectation ? sum_{all observations x} [func(x) * pmf(x)]</span>
+<span class="sd">* similar for discrete distribution on real line</span>
+<span class="sd">* References : ?</span>
+<span class="sd">* what&#39;s the point? most of it is trivial, just for the record ?</span>
+
+
+<span class="sd">Created on Monday, May 03, 2010, 11:47:03 AM</span>
+<span class="sd">Author: josef-pktd, parts based on David Huard</span>
+<span class="sd">License: BSD</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">scipy.interpolate</span> <span class="k">as</span> <span class="nn">interpolate</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="scoreatpercentile"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.stats_dhuard.scoreatpercentile.html#statsmodels.sandbox.stats.stats_dhuard.scoreatpercentile">[docs]</a><span class="k">def</span> <span class="nf">scoreatpercentile</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">percentile</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the score at the given percentile of the data.</span>
+
+<span class="sd">    Example:</span>
+<span class="sd">        &gt;&gt;&gt; data = randn(100)</span>
+<span class="sd">            &gt;&gt;&gt; scoreatpercentile(data, 50)</span>
+
+<span class="sd">        will return the median of sample `data`.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">per</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">percentile</span><span class="p">)</span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="n">empiricalcdf</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">interpolator</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">cdf</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">interpolator</span><span class="p">(</span><span class="n">per</span><span class="o">/</span><span class="mf">100.</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="percentileofscore"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.stats_dhuard.percentileofscore.html#statsmodels.sandbox.stats.stats_dhuard.percentileofscore">[docs]</a><span class="k">def</span> <span class="nf">percentileofscore</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">score</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the percentile-position of score relative to data.</span>
+
+<span class="sd">    score: Array of scores at which the percentile is computed.</span>
+
+<span class="sd">    Return percentiles (0-100).</span>
+
+<span class="sd">    Example</span>
+<span class="sd">            r = randn(50)</span>
+<span class="sd">        x = linspace(-2,2,100)</span>
+<span class="sd">        percentileofscore(r,x)</span>
+
+<span class="sd">    Raise an error if the score is outside the range of data.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">cdf</span> <span class="o">=</span> <span class="n">empiricalcdf</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">interpolator</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">cdf</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">interpolator</span><span class="p">(</span><span class="n">score</span><span class="p">)</span><span class="o">*</span><span class="mf">100.</span></div>
+
+<div class="viewcode-block" id="empiricalcdf"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.stats_dhuard.empiricalcdf.html#statsmodels.sandbox.stats.stats_dhuard.empiricalcdf">[docs]</a><span class="k">def</span> <span class="nf">empiricalcdf</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Hazen&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Return the empirical cdf.</span>
+
+<span class="sd">    Methods available:</span>
+<span class="sd">        Hazen:       (i-0.5)/N</span>
+<span class="sd">            Weibull:     i/(N+1)</span>
+<span class="sd">        Chegodayev:  (i-.3)/(N+.4)</span>
+<span class="sd">        Cunnane:     (i-.4)/(N+.2)</span>
+<span class="sd">        Gringorten:  (i-.44)/(N+.12)</span>
+<span class="sd">        California:  (i-1)/N</span>
+
+<span class="sd">    Where i goes from 1 to N.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">+</span> <span class="mf">1.</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hazen&#39;</span><span class="p">:</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;weibull&#39;</span><span class="p">:</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="n">i</span><span class="o">/</span><span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mf">1.</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;california&#39;</span><span class="p">:</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;chegodayev&#39;</span><span class="p">:</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-.</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N</span><span class="o">+.</span><span class="mi">4</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;cunnane&#39;</span><span class="p">:</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-.</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N</span><span class="o">+.</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;gringorten&#39;</span><span class="p">:</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-.</span><span class="mi">44</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N</span><span class="o">+.</span><span class="mi">12</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown method. Choose among Weibull, Hazen,&#39;</span>
+                         <span class="s1">&#39;Chegodayev, Cunnane, Gringorten and California.&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">cdf</span></div>
+
+
+<div class="viewcode-block" id="HistDist"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.stats_dhuard.HistDist.html#statsmodels.sandbox.stats.stats_dhuard.HistDist">[docs]</a><span class="k">class</span> <span class="nc">HistDist</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Distribution with piecewise linear cdf, pdf is step function</span>
+
+<span class="sd">    can be created from empiricial distribution or from a histogram (not done yet)</span>
+
+<span class="sd">    work in progress, not finished</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="HistDist.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.stats_dhuard.HistDist.__init__.html#statsmodels.sandbox.stats.stats_dhuard.HistDist.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">atleast_1d</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">binlimit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">max</span><span class="p">()])</span>
+        <span class="n">sortind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_datasorted</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">sortind</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ranking</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">sortind</span><span class="p">)</span>
+
+        <span class="n">cdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">empiricalcdf</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_empcdfsorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">cdf</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cdfintp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_datasorted</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_empcdfsorted</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ppfintp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_empcdfsorted</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_datasorted</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="HistDist.empiricalcdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.stats_dhuard.HistDist.empiricalcdf.html#statsmodels.sandbox.stats.stats_dhuard.HistDist.empiricalcdf">[docs]</a>    <span class="k">def</span> <span class="nf">empiricalcdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Hazen&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return the empirical cdf.</span>
+
+<span class="sd">        Methods available:</span>
+<span class="sd">            Hazen:       (i-0.5)/N</span>
+<span class="sd">                Weibull:     i/(N+1)</span>
+<span class="sd">            Chegodayev:  (i-.3)/(N+.4)</span>
+<span class="sd">            Cunnane:     (i-.4)/(N+.2)</span>
+<span class="sd">            Gringorten:  (i-.44)/(N+.12)</span>
+<span class="sd">            California:  (i-1)/N</span>
+
+<span class="sd">        Where i goes from 1 to N.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ranking</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">i</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">data</span><span class="p">))</span> <span class="o">+</span> <span class="mf">1.</span>
+
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;hazen&#39;</span><span class="p">:</span>
+            <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;weibull&#39;</span><span class="p">:</span>
+            <span class="n">cdf</span> <span class="o">=</span> <span class="n">i</span><span class="o">/</span><span class="p">(</span><span class="n">N</span><span class="o">+</span><span class="mf">1.</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;california&#39;</span><span class="p">:</span>
+            <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span><span class="o">/</span><span class="n">N</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;chegodayev&#39;</span><span class="p">:</span>
+            <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-.</span><span class="mi">3</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N</span><span class="o">+.</span><span class="mi">4</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;cunnane&#39;</span><span class="p">:</span>
+            <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-.</span><span class="mi">4</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N</span><span class="o">+.</span><span class="mi">2</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;gringorten&#39;</span><span class="p">:</span>
+            <span class="n">cdf</span> <span class="o">=</span> <span class="p">(</span><span class="n">i</span><span class="o">-.</span><span class="mi">44</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">N</span><span class="o">+.</span><span class="mi">12</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;Unknown method. Choose among Weibull, Hazen,&#39;</span>
+                             <span class="s1">&#39;Chegodayev, Cunnane, Gringorten and California.&#39;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">cdf</span></div>
+
+
+<div class="viewcode-block" id="HistDist.cdf_emp"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.stats_dhuard.HistDist.cdf_emp.html#statsmodels.sandbox.stats.stats_dhuard.HistDist.cdf_emp">[docs]</a>    <span class="k">def</span> <span class="nf">cdf_emp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">score</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        this is score in dh</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdfintp</span><span class="p">(</span><span class="n">score</span><span class="p">)</span></div>
+        <span class="c1">#return percentileofscore(self.data, score)</span>
+
+<div class="viewcode-block" id="HistDist.ppf_emp"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.stats_dhuard.HistDist.ppf_emp.html#statsmodels.sandbox.stats.stats_dhuard.HistDist.ppf_emp">[docs]</a>    <span class="k">def</span> <span class="nf">ppf_emp</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">quantile</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        this is score in dh</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppfintp</span><span class="p">(</span><span class="n">quantile</span><span class="p">)</span></div>
+        <span class="c1">#return scoreatpercentile(self.data, quantile*100)</span>
+
+
+    <span class="c1">#from DHuard http://old.nabble.com/matplotlib-f2903.html</span>
+<div class="viewcode-block" id="HistDist.optimize_binning"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.stats_dhuard.HistDist.optimize_binning.html#statsmodels.sandbox.stats.stats_dhuard.HistDist.optimize_binning">[docs]</a>    <span class="k">def</span> <span class="nf">optimize_binning</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Freedman&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Find the optimal number of bins and update the bin countaccordingly.</span>
+<span class="sd">        Available methods : Freedman</span>
+<span class="sd">                            Scott</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">method</span><span class="o">==</span><span class="s1">&#39;Freedman&#39;</span><span class="p">:</span>
+            <span class="n">IQR</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_emp</span><span class="p">(</span><span class="mf">0.75</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf_emp</span><span class="p">(</span><span class="mf">0.25</span><span class="p">)</span> <span class="c1"># Interquantile range(75% -25%)</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span> <span class="n">IQR</span><span class="o">*</span> <span class="n">nobs</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">method</span><span class="o">==</span><span class="s1">&#39;Scott&#39;</span><span class="p">:</span>
+            <span class="n">width</span> <span class="o">=</span> <span class="mf">3.49</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)</span> <span class="o">*</span> <span class="n">nobs</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mf">1.</span><span class="o">/</span><span class="mi">3</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbin</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">binlimit</span><span class="o">.</span><span class="n">ptp</span><span class="p">()</span><span class="o">/</span><span class="n">width</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">nbin</span></div></div>
+
+
+<span class="c1">#changes: josef-pktd</span>
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+
+    <span class="n">examples</span> <span class="o">=</span> <span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+        <span class="n">empiricalcdf</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">percentileofscore</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">scoreatpercentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">50</span><span class="p">))</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="n">xsupp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">percentileofscore</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">xsupp</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xsupp</span><span class="p">,</span> <span class="n">pos</span><span class="p">)</span>
+        <span class="c1">#perc = np.linspace(2.5, 97.5)</span>
+        <span class="c1">#plt.plot(scoreatpercentile(x, perc), perc)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">scoreatpercentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">pos</span><span class="p">),</span> <span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+
+        <span class="c1">#emp = interpolate.PiecewisePolynomial(np.sort(empiricalcdf(x)), np.sort(x))</span>
+        <span class="n">emp</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">empiricalcdf</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">pdfemp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">emp</span><span class="o">.</span><span class="n">derivatives</span><span class="p">(</span><span class="n">xi</span><span class="p">)[</span><span class="mi">1</span><span class="p">]</span> <span class="k">for</span> <span class="n">xi</span> <span class="ow">in</span> <span class="n">xsupp</span><span class="p">])</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xsupp</span><span class="p">,</span><span class="n">pdfemp</span><span class="p">)</span>
+        <span class="n">cdf_ongrid</span> <span class="o">=</span> <span class="n">emp</span><span class="p">(</span><span class="n">xsupp</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xsupp</span><span class="p">,</span> <span class="n">cdf_ongrid</span><span class="p">)</span>
+
+        <span class="c1">#get pdf from interpolated cdf on a regular grid</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">xsupp</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">cdf_ongrid</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">xsupp</span><span class="p">))</span>
+
+        <span class="c1">#reduce number of bins/steps</span>
+        <span class="n">xsupp2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">25</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">xsupp2</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">emp</span><span class="p">(</span><span class="n">xsupp2</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">xsupp2</span><span class="p">))</span>
+
+        <span class="c1">#pdf using 25 original observations, every (nobs/25)th</span>
+        <span class="n">xso</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">xso</span><span class="p">[::</span><span class="n">nobs</span><span class="o">/</span><span class="mi">25</span><span class="p">]</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">step</span><span class="p">(</span><span class="n">xs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">emp</span><span class="p">(</span><span class="n">xs</span><span class="p">))</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">xs</span><span class="p">))</span>
+        <span class="c1">#lower end looks strange</span>
+
+
+    <span class="n">histd</span> <span class="o">=</span> <span class="n">HistDist</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">histd</span><span class="o">.</span><span class="n">optimize_binning</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">histd</span><span class="o">.</span><span class="n">cdf_emp</span><span class="p">(</span><span class="n">histd</span><span class="o">.</span><span class="n">binlimit</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">histd</span><span class="o">.</span><span class="n">ppf_emp</span><span class="p">([</span><span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">histd</span><span class="o">.</span><span class="n">cdf_emp</span><span class="p">([</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.25</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">]))</span>
+
+
+    <span class="n">xsupp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">500</span><span class="p">)</span>
+    <span class="n">emp</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">empiricalcdf</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span><span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+    <span class="c1">#pdfemp = np.array([emp.derivatives(xi)[1] for xi in xsupp])</span>
+    <span class="c1">#plt.figure()</span>
+    <span class="c1">#plt.plot(xsupp,pdfemp)</span>
+    <span class="n">cdf_ongrid</span> <span class="o">=</span> <span class="n">emp</span><span class="p">(</span><span class="n">xsupp</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xsupp</span><span class="p">,</span> <span class="n">cdf_ongrid</span><span class="p">)</span>
+    <span class="n">ppfintp</span> <span class="o">=</span> <span class="n">interpolate</span><span class="o">.</span><span class="n">InterpolatedUnivariateSpline</span><span class="p">(</span><span class="n">cdf_ongrid</span><span class="p">,</span><span class="n">xsupp</span><span class="p">,</span><span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">ppfs</span> <span class="o">=</span> <span class="n">ppfintp</span><span class="p">(</span><span class="n">cdf_ongrid</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ppfs</span><span class="p">,</span> <span class="n">cdf_ongrid</span><span class="p">)</span>
+    <span class="c1">#ppfemp=interpolate.InterpolatedUnivariateSpline(np.sort(empiricalcdf(x)),np.sort(x),k=3)</span>
+    <span class="c1">#Don&#39;t use interpolating splines for function approximation</span>
+    <span class="c1">#with s=0.03 the spline is monotonic at the evaluated values</span>
+    <span class="n">ppfemp</span><span class="o">=</span><span class="n">interpolate</span><span class="o">.</span><span class="n">UnivariateSpline</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">empiricalcdf</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span><span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">k</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">s</span><span class="o">=</span><span class="mf">0.03</span><span class="p">)</span>
+    <span class="n">ppfe</span> <span class="o">=</span> <span class="n">ppfemp</span><span class="p">(</span><span class="n">cdf_ongrid</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ppfe</span><span class="p">,</span> <span class="n">cdf_ongrid</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;negative density&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;(np.diff(ppfs)).min()&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">ppfs</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;(np.diff(cdf_ongrid)).min()&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">cdf_ongrid</span><span class="p">))</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+    <span class="c1">#plt.show()</span>
+
+
+
+
+
+
+
+
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

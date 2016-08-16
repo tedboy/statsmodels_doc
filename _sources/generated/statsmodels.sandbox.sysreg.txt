@@ -1,0 +1,49 @@
+statsmodels.sandbox.sysreg
+==========================
+
+.. automodule:: statsmodels.sandbox.sysreg
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      iterkeys
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      GLS
+      LikelihoodModelResults
+      SUR
+      Sem2SLS
+      SysResults
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.sysreg.GLS
+       generated/statsmodels.sandbox.sysreg.LikelihoodModelResults
+       generated/statsmodels.sandbox.sysreg.SUR
+       generated/statsmodels.sandbox.sysreg.Sem2SLS
+       generated/statsmodels.sandbox.sysreg.SysResults
+
+   
+   
+
+   
+   
+   

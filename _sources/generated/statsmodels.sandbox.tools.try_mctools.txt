@@ -1,0 +1,46 @@
+statsmodels.sandbox.tools.try_mctools
+=====================================
+
+.. automodule:: statsmodels.sandbox.tools.try_mctools
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      acorr_ljungbox
+      adf20
+      lb
+      normalnoisesim
+      randwalksim
+      unitroot_adf
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      StatTestMC
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.tools.try_mctools.StatTestMC
+
+   
+   
+
+   
+   
+   

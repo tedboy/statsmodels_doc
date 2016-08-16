@@ -1,0 +1,44 @@
+statsmodels.sandbox.nonparametric.kernels.Triweight
+===================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernels
+.. autoclass:: Triweight
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Triweight.__init__
+   ~Triweight.density
+   ~Triweight.density_confint
+   ~Triweight.density_var
+   ~Triweight.geth
+   ~Triweight.in_domain
+   ~Triweight.moments
+   ~Triweight.seth
+   ~Triweight.smooth
+   ~Triweight.smoothconf
+   ~Triweight.smoothvar
+   ~Triweight.weight
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Triweight.L2Norm
+   ~Triweight.h
+   ~Triweight.kernel_var
+   ~Triweight.norm_const
+   ~Triweight.normal_reference_constant
+

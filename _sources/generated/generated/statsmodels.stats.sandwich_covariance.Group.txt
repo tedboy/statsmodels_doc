@@ -1,0 +1,27 @@
+statsmodels.stats.sandwich_covariance.Group
+===========================================
+
+.. currentmodule:: statsmodels.stats.sandwich_covariance
+.. autoclass:: Group
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Group.__init__
+   ~Group.counts
+   ~Group.dummy
+   ~Group.group_demean
+   ~Group.group_sums
+   ~Group.interaction
+   ~Group.labels
+
+
+
+
+

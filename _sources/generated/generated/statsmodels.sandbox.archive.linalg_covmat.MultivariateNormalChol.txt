@@ -1,0 +1,25 @@
+statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol
+================================================================
+
+.. currentmodule:: statsmodels.sandbox.archive.linalg_covmat
+.. autoclass:: MultivariateNormalChol
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MultivariateNormalChol.__init__
+   ~MultivariateNormalChol.logpdf
+   ~MultivariateNormalChol.logpdf_obs
+   ~MultivariateNormalChol.pdf
+   ~MultivariateNormalChol.whiten
+
+
+
+
+

@@ -1,0 +1,531 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tsa.base.datetools &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tsa.base.datetools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tsa.base.datetools</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="p">(</span><span class="n">lrange</span><span class="p">,</span> <span class="n">lzip</span><span class="p">,</span> <span class="n">lmap</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">callable</span><span class="p">,</span>
+                                <span class="n">asstr</span><span class="p">,</span> <span class="n">reduce</span><span class="p">,</span> <span class="nb">zip</span><span class="p">,</span> <span class="nb">map</span><span class="p">)</span>
+<span class="kn">import</span> <span class="nn">re</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">Period</span>
+<span class="kn">from</span> <span class="nn">pandas.tseries.frequencies</span> <span class="k">import</span> <span class="n">to_offset</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">datetools</span> <span class="k">as</span> <span class="n">pandas_datetools</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1">#NOTE: All of these frequencies assume end of period (except wrt time)</span>
+<span class="k">class</span> <span class="nc">_freq_to_pandas_class</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="c1"># being lazy, don&#39;t want to replace dictionary below</span>
+    <span class="k">def</span> <span class="nf">__getitem__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">key</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">to_offset</span><span class="p">(</span><span class="n">key</span><span class="p">)</span>
+<span class="n">_freq_to_pandas</span> <span class="o">=</span> <span class="n">_freq_to_pandas_class</span><span class="p">()</span>
+
+
+<span class="k">def</span> <span class="nf">_is_datetime_index</span><span class="p">(</span><span class="n">dates</span><span class="p">):</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">(</span><span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">,</span> <span class="n">Period</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">True</span>  <span class="c1"># TimeStamp is a datetime subclass</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+<span class="k">def</span> <span class="nf">_index_date</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">dates</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gets the index number of a date in a date index.</span>
+
+<span class="sd">    Works in-sample and will return one past the end of the dates since</span>
+<span class="sd">    prediction can start one out.</span>
+
+<span class="sd">    Currently used to validate prediction start dates.</span>
+
+<span class="sd">    If there dates are not of a fixed-frequency and date is not on the</span>
+<span class="sd">    existing dates, then a ValueError is raised.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">date</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="n">date</span> <span class="o">=</span> <span class="n">date_parser</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="s1">&#39;indexMap&#39;</span><span class="p">):</span> <span class="c1"># 0.7.x</span>
+            <span class="k">return</span> <span class="n">dates</span><span class="o">.</span><span class="n">indexMap</span><span class="p">[</span><span class="n">date</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">dates</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span> <span class="c1"># pandas 0.8.0 returns a boolean array</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">date</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span> <span class="c1"># expected behavior</span>
+                <span class="k">return</span> <span class="n">date</span>
+    <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">_infer_freq</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">freq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1">#TODO: try to intelligently roll forward onto a date in the</span>
+            <span class="c1"># index. Waiting to drop pandas 0.7.x support so this is</span>
+            <span class="c1"># cleaner to do.</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There is no frequency for these dates and &quot;</span>
+                             <span class="s2">&quot;date </span><span class="si">%s</span><span class="s2"> is not in dates index. Try giving a &quot;</span>
+                             <span class="s2">&quot;date that is in the dates index or use &quot;</span>
+                             <span class="s2">&quot;an integer&quot;</span> <span class="o">%</span> <span class="n">date</span><span class="p">)</span>
+
+        <span class="c1"># we can start prediction at the end of endog</span>
+        <span class="k">if</span> <span class="n">_idx_from_dates</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">date</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;date </span><span class="si">%s</span><span class="s2"> not in date index. Try giving a &quot;</span>
+                         <span class="s2">&quot;date that is in the dates index or use an integer&quot;</span>
+                         <span class="o">%</span> <span class="n">date</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_date_from_idx</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the date from an index beyond the end of a date series.</span>
+<span class="sd">    d1 is the datetime of the last date in the series. idx is the</span>
+<span class="sd">    index distance of how far the next date should be from d1. Ie., 1 gives</span>
+<span class="sd">    the next date from d1 at freq.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This does not do any rounding to make sure that d1 is actually on the</span>
+<span class="sd">    offset. For now, this needs to be taken care of before you get here.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">d1</span> <span class="o">+</span> <span class="n">idx</span> <span class="o">*</span> <span class="n">_freq_to_pandas</span><span class="p">[</span><span class="n">freq</span><span class="p">]</span>
+
+<span class="k">def</span> <span class="nf">_idx_from_dates</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns an index offset from datetimes d1 and d2. d1 is expected to be the</span>
+<span class="sd">    last date in a date series and d2 is the out of sample date.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Rounds down the index if the end date is before the next date at freq.</span>
+<span class="sd">    Does not check the start date to see whether it is on the offest but</span>
+<span class="sd">    assumes that it is.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DatetimeIndex</span>
+    <span class="k">return</span> <span class="nb">len</span><span class="p">(</span><span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">d1</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">d2</span><span class="p">,</span>
+                             <span class="n">freq</span> <span class="o">=</span> <span class="n">_freq_to_pandas</span><span class="p">[</span><span class="n">freq</span><span class="p">]))</span> <span class="o">-</span> <span class="mi">1</span>
+
+<span class="n">_quarter_to_day</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;1&quot;</span> <span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">31</span><span class="p">),</span>
+        <span class="s2">&quot;2&quot;</span> <span class="p">:</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+        <span class="s2">&quot;3&quot;</span> <span class="p">:</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+        <span class="s2">&quot;4&quot;</span> <span class="p">:</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">),</span>
+        <span class="s2">&quot;I&quot;</span> <span class="p">:</span> <span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">31</span><span class="p">),</span>
+        <span class="s2">&quot;II&quot;</span> <span class="p">:</span> <span class="p">(</span><span class="mi">6</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+        <span class="s2">&quot;III&quot;</span> <span class="p">:</span> <span class="p">(</span><span class="mi">9</span><span class="p">,</span> <span class="mi">30</span><span class="p">),</span>
+        <span class="s2">&quot;IV&quot;</span> <span class="p">:</span> <span class="p">(</span><span class="mi">12</span><span class="p">,</span> <span class="mi">31</span><span class="p">)</span>
+        <span class="p">}</span>
+
+<span class="n">_mdays</span> <span class="o">=</span> <span class="p">[</span><span class="mi">31</span><span class="p">,</span> <span class="mi">28</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">,</span> <span class="mi">30</span><span class="p">,</span> <span class="mi">31</span><span class="p">]</span>
+<span class="n">_months_with_days</span> <span class="o">=</span> <span class="n">lzip</span><span class="p">(</span><span class="n">lrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">13</span><span class="p">),</span> <span class="n">_mdays</span><span class="p">)</span>
+<span class="n">_month_to_day</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="nb">map</span><span class="p">(</span><span class="nb">str</span><span class="p">,</span><span class="n">lrange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">13</span><span class="p">)),</span> <span class="n">_months_with_days</span><span class="p">))</span>
+<span class="n">_month_to_day</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s2">&quot;I&quot;</span><span class="p">,</span> <span class="s2">&quot;II&quot;</span><span class="p">,</span> <span class="s2">&quot;III&quot;</span><span class="p">,</span> <span class="s2">&quot;IV&quot;</span><span class="p">,</span> <span class="s2">&quot;V&quot;</span><span class="p">,</span> <span class="s2">&quot;VI&quot;</span><span class="p">,</span>
+                               <span class="s2">&quot;VII&quot;</span><span class="p">,</span> <span class="s2">&quot;VIII&quot;</span><span class="p">,</span> <span class="s2">&quot;IX&quot;</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">,</span> <span class="s2">&quot;XI&quot;</span><span class="p">,</span> <span class="s2">&quot;XII&quot;</span><span class="p">],</span>
+                               <span class="n">_months_with_days</span><span class="p">)))</span>
+
+<span class="c1"># regex patterns</span>
+<span class="n">_y_pattern</span> <span class="o">=</span> <span class="s1">&#39;^\d?\d?\d?\d$&#39;</span>
+
+<span class="n">_q_pattern</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">^               # beginning of string</span>
+<span class="s1">\d?\d?\d?\d     # match any number 1-9999, includes leading zeros</span>
+
+<span class="s1">(:?q)           # use q or a : as a separator</span>
+
+<span class="s1">([1-4]|(I{1,3}V?)) # match 1-4 or I-IV roman numerals</span>
+
+<span class="s1">$               # end of string</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+<span class="n">_m_pattern</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span>
+<span class="s1">^               # beginning of string</span>
+<span class="s1">\d?\d?\d?\d     # match any number 1-9999, includes leading zeros</span>
+
+<span class="s1">(:?m)           # use m or a : as a separator</span>
+
+<span class="s1">(([1-9][0-2]?)|(I?XI{0,2}|I?VI{0,3}|I{1,3}))  # match 1-12 or</span>
+<span class="s1">                                              # I-XII roman numerals</span>
+
+<span class="s1">$               # end of string</span>
+<span class="s1">&#39;&#39;&#39;</span>
+
+<span class="c1">#NOTE: see also ts.extras.isleapyear, which accepts a sequence</span>
+<span class="k">def</span> <span class="nf">_is_leap</span><span class="p">(</span><span class="n">year</span><span class="p">):</span>
+    <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">year</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">year</span> <span class="o">%</span> <span class="mi">4</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="p">(</span><span class="n">year</span> <span class="o">%</span> <span class="mi">100</span> <span class="o">!=</span> <span class="mi">0</span> <span class="ow">or</span> <span class="n">year</span> <span class="o">%</span> <span class="mi">400</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span>
+
+<div class="viewcode-block" id="date_parser"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.base.datetools.date_parser.html#statsmodels.tsa.base.datetools.date_parser">[docs]</a><span class="k">def</span> <span class="nf">date_parser</span><span class="p">(</span><span class="n">timestr</span><span class="p">,</span> <span class="n">parserinfo</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Uses dateutil.parser.parse, but also handles monthly dates of the form</span>
+<span class="sd">    1999m4, 1999:m4, 1999:mIV, 1999mIV and the same for quarterly data</span>
+<span class="sd">    with q instead of m. It is not case sensitive. The default for annual</span>
+<span class="sd">    data is the end of the year, which also differs from dateutil.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">_q_pattern</span><span class="p">,</span> <span class="n">timestr</span><span class="p">,</span> <span class="n">flags</span><span class="p">):</span>
+        <span class="n">y</span><span class="p">,</span><span class="n">q</span> <span class="o">=</span> <span class="n">timestr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;q&#39;</span><span class="p">)</span>
+        <span class="n">month</span><span class="p">,</span> <span class="n">day</span> <span class="o">=</span> <span class="n">_quarter_to_day</span><span class="p">[</span><span class="n">q</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">_m_pattern</span><span class="p">,</span> <span class="n">timestr</span><span class="p">,</span> <span class="n">flags</span><span class="p">):</span>
+        <span class="n">y</span><span class="p">,</span><span class="n">m</span> <span class="o">=</span> <span class="n">timestr</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="s1">&#39;m&#39;</span><span class="p">)</span>
+        <span class="n">month</span><span class="p">,</span> <span class="n">day</span> <span class="o">=</span> <span class="n">_month_to_day</span><span class="p">[</span><span class="n">m</span><span class="o">.</span><span class="n">upper</span><span class="p">()]</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">_is_leap</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="ow">and</span> <span class="n">month</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">day</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">_y_pattern</span><span class="p">,</span> <span class="n">timestr</span><span class="p">,</span> <span class="n">flags</span><span class="p">):</span>
+        <span class="n">month</span><span class="p">,</span> <span class="n">day</span> <span class="o">=</span> <span class="mi">12</span><span class="p">,</span> <span class="mi">31</span>
+        <span class="n">year</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">timestr</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="p">(</span><span class="nb">hasattr</span><span class="p">(</span><span class="n">pandas_datetools</span><span class="p">,</span> <span class="s1">&#39;parser&#39;</span><span class="p">)</span> <span class="ow">and</span>
+            <span class="ow">not</span> <span class="n">callable</span><span class="p">(</span><span class="n">pandas_datetools</span><span class="o">.</span><span class="n">parser</span><span class="p">)):</span>
+            <span class="c1"># exists in 0.8.0 pandas, but it&#39;s the class not the module</span>
+            <span class="k">return</span> <span class="n">pandas_datetools</span><span class="o">.</span><span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">timestr</span><span class="p">,</span> <span class="n">parserinfo</span><span class="p">,</span>
+                                                 <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># 0.8.1 pandas version didn&#39;t import this into namespace</span>
+            <span class="kn">from</span> <span class="nn">dateutil</span> <span class="k">import</span> <span class="n">parser</span>
+            <span class="k">return</span> <span class="n">parser</span><span class="o">.</span><span class="n">parse</span><span class="p">(</span><span class="n">timestr</span><span class="p">,</span> <span class="n">parserinfo</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="n">datetime</span><span class="o">.</span><span class="n">datetime</span><span class="p">(</span><span class="n">year</span><span class="p">,</span> <span class="n">month</span><span class="p">,</span> <span class="n">day</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="date_range_str"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.base.datetools.date_range_str.html#statsmodels.tsa.base.datetools.date_range_str">[docs]</a><span class="k">def</span> <span class="nf">date_range_str</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns a list of abbreviated date strings.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    start : str</span>
+<span class="sd">        The first abbreviated date, for instance, &#39;1965q1&#39; or &#39;1965m1&#39;</span>
+<span class="sd">    end : str, optional</span>
+<span class="sd">        The last abbreviated date if length is None.</span>
+<span class="sd">    length : int, optional</span>
+<span class="sd">        The length of the returned array of end is None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    date_range : list</span>
+<span class="sd">        List of strings</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">flags</span> <span class="o">=</span> <span class="n">re</span><span class="o">.</span><span class="n">IGNORECASE</span> <span class="o">|</span> <span class="n">re</span><span class="o">.</span><span class="n">VERBOSE</span>
+    <span class="c1">#_check_range_inputs(end, length, freq)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="n">start</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">_m_pattern</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">flags</span><span class="p">):</span>
+        <span class="n">annual_freq</span> <span class="o">=</span> <span class="mi">12</span>
+        <span class="n">split</span> <span class="o">=</span> <span class="s1">&#39;m&#39;</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">_q_pattern</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">flags</span><span class="p">):</span>
+        <span class="n">annual_freq</span> <span class="o">=</span> <span class="mi">4</span>
+        <span class="n">split</span> <span class="o">=</span> <span class="s1">&#39;q&#39;</span>
+    <span class="k">elif</span> <span class="n">re</span><span class="o">.</span><span class="n">search</span><span class="p">(</span><span class="n">_y_pattern</span><span class="p">,</span> <span class="n">start</span><span class="p">,</span> <span class="n">flags</span><span class="p">):</span>
+        <span class="n">annual_freq</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">start</span> <span class="o">+=</span> <span class="s1">&#39;a1&#39;</span> <span class="c1"># hack</span>
+        <span class="k">if</span> <span class="n">end</span><span class="p">:</span>
+            <span class="n">end</span> <span class="o">+=</span> <span class="s1">&#39;a1&#39;</span>
+        <span class="n">split</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Date </span><span class="si">%s</span><span class="s2"> not understood&quot;</span> <span class="o">%</span> <span class="n">start</span><span class="p">)</span>
+    <span class="n">yr1</span><span class="p">,</span> <span class="n">offset1</span> <span class="o">=</span> <span class="n">lmap</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">start</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">end</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">end</span> <span class="o">=</span> <span class="n">end</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="n">yr2</span><span class="p">,</span> <span class="n">offset2</span> <span class="o">=</span> <span class="n">lmap</span><span class="p">(</span><span class="nb">int</span><span class="p">,</span> <span class="n">end</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s2">&quot;:&quot;</span><span class="p">,</span><span class="s2">&quot;&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">split</span><span class="p">(</span><span class="n">split</span><span class="p">))</span>
+        <span class="n">length</span> <span class="o">=</span> <span class="p">(</span><span class="n">yr2</span> <span class="o">-</span> <span class="n">yr1</span><span class="p">)</span> <span class="o">*</span> <span class="n">annual_freq</span> <span class="o">+</span> <span class="n">offset2</span>
+    <span class="k">elif</span> <span class="n">length</span><span class="p">:</span>
+        <span class="n">yr2</span> <span class="o">=</span> <span class="n">yr1</span> <span class="o">+</span> <span class="n">length</span> <span class="o">//</span> <span class="n">annual_freq</span>
+        <span class="n">offset2</span> <span class="o">=</span> <span class="n">length</span> <span class="o">%</span> <span class="n">annual_freq</span> <span class="o">+</span> <span class="p">(</span><span class="n">offset1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">lrange</span><span class="p">(</span><span class="n">yr1</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">yr2</span><span class="p">),</span> <span class="n">annual_freq</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[[</span><span class="nb">str</span><span class="p">(</span><span class="n">yr1</span><span class="p">)]</span><span class="o">*</span><span class="p">(</span><span class="n">annual_freq</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="n">offset1</span><span class="p">),</span> <span class="n">years</span><span class="p">]</span> <span class="c1"># tack on first year</span>
+    <span class="n">years</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">years</span><span class="p">,</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">yr2</span><span class="p">)]</span><span class="o">*</span><span class="n">offset2</span><span class="p">]</span> <span class="c1"># tack on last year</span>
+    <span class="k">if</span> <span class="n">split</span> <span class="o">!=</span> <span class="s1">&#39;a&#39;</span><span class="p">:</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">annual_freq</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span> <span class="n">yr2</span><span class="o">-</span><span class="n">yr1</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">offset1</span><span class="p">,</span> <span class="n">annual_freq</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;a2&#39;</span><span class="p">),</span> <span class="n">offset</span><span class="p">]</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">offset</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">offset2</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;a2&#39;</span><span class="p">)]</span>
+        <span class="n">date_arr_range</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="n">i</span><span class="p">,</span> <span class="n">split</span><span class="p">,</span> <span class="n">asstr</span><span class="p">(</span><span class="n">j</span><span class="p">)])</span> <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">j</span> <span class="ow">in</span>
+                                                        <span class="nb">zip</span><span class="p">(</span><span class="n">years</span><span class="p">,</span> <span class="n">offset</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">date_arr_range</span> <span class="o">=</span> <span class="n">years</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">date_arr_range</span></div>
+
+<div class="viewcode-block" id="dates_from_str"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.base.datetools.dates_from_str.html#statsmodels.tsa.base.datetools.dates_from_str">[docs]</a><span class="k">def</span> <span class="nf">dates_from_str</span><span class="p">(</span><span class="n">dates</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Turns a sequence of date strings and returns a list of datetime.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    dates : array-like</span>
+<span class="sd">        A sequence of abbreviated dates as string. For instance,</span>
+<span class="sd">        &#39;1996m1&#39; or &#39;1996Q1&#39;. The datetime dates are at the end of the</span>
+<span class="sd">        period.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    date_list : array</span>
+<span class="sd">        A list of datetime types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">lmap</span><span class="p">(</span><span class="n">date_parser</span><span class="p">,</span> <span class="n">dates</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="dates_from_range"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_x13.dates_from_range.html#statsmodels.tsa.base.datetools.dates_from_range">[docs]</a><span class="k">def</span> <span class="nf">dates_from_range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">length</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Turns a sequence of date strings and returns a list of datetime.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    start : str</span>
+<span class="sd">        The first abbreviated date, for instance, &#39;1965q1&#39; or &#39;1965m1&#39;</span>
+<span class="sd">    end : str, optional</span>
+<span class="sd">        The last abbreviated date if length is None.</span>
+<span class="sd">    length : int, optional</span>
+<span class="sd">        The length of the returned array of end is None.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; import statsmodels.api as sm</span>
+<span class="sd">    &gt;&gt;&gt; dates = sm.tsa.datetools.date_range(&#39;1960m1&#39;, length=nobs)</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    date_list : array</span>
+<span class="sd">        A list of datetime types.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="n">date_range_str</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">,</span> <span class="n">length</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">dates_from_str</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_add_datetimes</span><span class="p">(</span><span class="n">dates</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">reduce</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">:</span> <span class="n">y</span><span class="o">+</span><span class="n">x</span><span class="p">,</span> <span class="n">dates</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_infer_freq</span><span class="p">(</span><span class="n">dates</span><span class="p">):</span>
+    <span class="n">maybe_freqstr</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="s1">&#39;freqstr&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">maybe_freqstr</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">maybe_freqstr</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="kn">from</span> <span class="nn">pandas.tseries.api</span> <span class="k">import</span> <span class="n">infer_freq</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">infer_freq</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">freq</span>
+    <span class="k">except</span> <span class="ne">ImportError</span><span class="p">:</span>
+        <span class="k">pass</span>
+
+    <span class="n">timedelta</span> <span class="o">=</span> <span class="n">datetime</span><span class="o">.</span><span class="n">timedelta</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nobs</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Cannot infer frequency from one date&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="s1">&#39;values&#39;</span><span class="p">):</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="n">dates</span><span class="o">.</span><span class="n">values</span> <span class="c1"># can&#39;t do a diff on a DateIndex</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">dates</span><span class="p">[:</span><span class="n">nobs</span><span class="p">])</span>
+    <span class="n">delta</span> <span class="o">=</span> <span class="n">_add_datetimes</span><span class="p">(</span><span class="n">diff</span><span class="p">)</span>
+    <span class="n">nobs</span> <span class="o">-=</span> <span class="mi">1</span> <span class="c1"># after diff</span>
+    <span class="k">if</span> <span class="n">delta</span> <span class="o">==</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">nobs</span><span class="p">):</span> <span class="c1">#greedily assume &#39;D&#39;</span>
+        <span class="k">return</span> <span class="s1">&#39;D&#39;</span>
+    <span class="k">elif</span> <span class="n">delta</span> <span class="o">==</span> <span class="n">timedelta</span><span class="p">(</span><span class="n">nobs</span> <span class="o">+</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;B&#39;</span>
+    <span class="k">elif</span> <span class="n">delta</span> <span class="o">==</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">7</span><span class="o">*</span><span class="n">nobs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;W&#39;</span>
+    <span class="k">elif</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">28</span><span class="o">*</span><span class="n">nobs</span><span class="p">)</span> <span class="ow">and</span> <span class="n">delta</span> <span class="o">&lt;=</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">31</span><span class="o">*</span><span class="n">nobs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;M&#39;</span>
+    <span class="k">elif</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">90</span><span class="o">*</span><span class="n">nobs</span><span class="p">)</span> <span class="ow">and</span> <span class="n">delta</span> <span class="o">&lt;=</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">92</span><span class="o">*</span><span class="n">nobs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;Q&#39;</span>
+    <span class="k">elif</span> <span class="n">delta</span> <span class="o">&gt;=</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">365</span> <span class="o">*</span> <span class="n">nobs</span><span class="p">)</span> <span class="ow">and</span> <span class="n">delta</span> <span class="o">&lt;=</span> <span class="n">timedelta</span><span class="p">(</span><span class="mi">366</span> <span class="o">*</span> <span class="n">nobs</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;A&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

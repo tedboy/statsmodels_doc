@@ -1,0 +1,26 @@
+statsmodels.robust.norms.Hampel
+===============================
+
+.. currentmodule:: statsmodels.robust.norms
+
+.. autoclass:: Hampel
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~Hampel.__init__
+      ~Hampel.psi
+      ~Hampel.psi_deriv
+      ~Hampel.rho
+      ~Hampel.weights
+   
+   
+
+   
+   
+   

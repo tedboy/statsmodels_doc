@@ -1,0 +1,57 @@
+statsmodels.emplike.aft_el
+==========================
+
+.. automodule:: statsmodels.emplike.aft_el
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      add_constant
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      AFTResults
+      OLS
+      OptAFT
+      WLS
+      emplikeAFT
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.emplike.aft_el.AFTResults
+       generated/statsmodels.emplike.aft_el.OLS
+       generated/statsmodels.emplike.aft_el.OptAFT
+       generated/statsmodels.emplike.aft_el.WLS
+       generated/statsmodels.emplike.aft_el.emplikeAFT
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      IterationLimitWarning
+   
+   

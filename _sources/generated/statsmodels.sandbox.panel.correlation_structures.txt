@@ -1,0 +1,46 @@
+statsmodels.sandbox.panel.correlation_structures
+================================================
+
+.. automodule:: statsmodels.sandbox.panel.correlation_structures
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      corr2cov
+      corr_ar
+      corr_arma
+      corr_equi
+      whiten_ar
+      yule_walker_acov
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ARCovariance
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.panel.correlation_structures.ARCovariance
+
+   
+   
+
+   
+   
+   

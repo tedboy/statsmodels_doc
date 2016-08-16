@@ -1,0 +1,25 @@
+statsmodels.sandbox.tests.test_gam.TestGAMGamma
+===============================================
+
+.. currentmodule:: statsmodels.sandbox.tests.test_gam
+.. autoclass:: TestGAMGamma
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestGAMGamma.__init__
+   ~TestGAMGamma.init
+   ~TestGAMGamma.test_mu
+   ~TestGAMGamma.test_params
+   ~TestGAMGamma.test_predict
+
+
+
+
+

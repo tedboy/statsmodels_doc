@@ -1,0 +1,27 @@
+statsmodels.sandbox.distributions.otherdist.ClippedContinuous
+=============================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.otherdist
+.. autoclass:: ClippedContinuous
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ClippedContinuous.__init__
+   ~ClippedContinuous.cdf
+   ~ClippedContinuous.pdf
+   ~ClippedContinuous.plot
+   ~ClippedContinuous.ppf
+   ~ClippedContinuous.rvs
+   ~ClippedContinuous.sf
+
+
+
+
+

@@ -1,0 +1,315 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.7.4.4.8.1.3. statsmodels.sandbox.regression.gmm.LikelihoodModel.from_formula &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.7.4.4.8. statsmodels.sandbox.regression.gmm.LikelihoodModel" href="statsmodels.sandbox.regression.gmm.LikelihoodModel.html"/>
+        <link rel="next" title="6.7.4.4.8.1.4. statsmodels.sandbox.regression.gmm.LikelihoodModel.hessian" href="statsmodels.sandbox.regression.gmm.LikelihoodModel.hessian.html"/>
+        <link rel="prev" title="6.7.4.4.8.1.2. statsmodels.sandbox.regression.gmm.LikelihoodModel.fit" href="statsmodels.sandbox.regression.gmm.LikelihoodModel.fit.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.anova_nistcertified.html">6.7.1. statsmodels.sandbox.regression.anova_nistcertified</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.ar_panel.html">6.7.2. statsmodels.sandbox.regression.ar_panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.example_kernridge.html">6.7.3. statsmodels.sandbox.regression.example_kernridge</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#issues">6.7.4.1. Issues</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#unclear">6.7.4.2. Unclear</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#functions">6.7.4.3. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#classes">6.7.4.4. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.kernridgeregress_class.html">6.7.5. statsmodels.sandbox.regression.kernridgeregress_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.onewaygls.html">6.7.6. statsmodels.sandbox.regression.onewaygls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.penalized.html">6.7.7. statsmodels.sandbox.regression.penalized</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.predstd.html">6.7.8. statsmodels.sandbox.regression.predstd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.sympy_diff.html">6.7.9. statsmodels.sandbox.regression.sympy_diff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.tools.html">6.7.10. statsmodels.sandbox.regression.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.treewalkerclass.html">6.7.11. statsmodels.sandbox.regression.treewalkerclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_catdata.html">6.7.12. statsmodels.sandbox.regression.try_catdata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_ols_anova.html">6.7.13. statsmodels.sandbox.regression.try_ols_anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_treewalker.html">6.7.14. statsmodels.sandbox.regression.try_treewalker</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a> &raquo;</li>
+        
+          <li><a href="statsmodels.sandbox.regression.gmm.LikelihoodModel.html">6.7.4.4.8. statsmodels.sandbox.regression.gmm.LikelihoodModel</a> &raquo;</li>
+        
+      <li>6.7.4.4.8.1.3. statsmodels.sandbox.regression.gmm.LikelihoodModel.from_formula</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.regression.gmm.LikelihoodModel.from_formula.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-regression-gmm-likelihoodmodel-from-formula">
+<h1>6.7.4.4.8.1.3. statsmodels.sandbox.regression.gmm.LikelihoodModel.from_formula<a class="headerlink" href="#statsmodels-sandbox-regression-gmm-likelihoodmodel-from-formula" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="statsmodels.sandbox.regression.gmm.LikelihoodModel.from_formula">
+<code class="descclassname">LikelihoodModel.</code><code class="descname">from_formula</code><span class="sig-paren">(</span><em>formula</em>, <em>data</em>, <em>subset=None</em>, <em>*args</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="headerlink" href="#statsmodels.sandbox.regression.gmm.LikelihoodModel.from_formula" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create a Model from a formula and dataframe.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>formula</strong> : str or generic Formula object</p>
+<blockquote>
+<div><p>The formula specifying the model</p>
+</div></blockquote>
+<p><strong>data</strong> : array-like</p>
+<blockquote>
+<div><p>The data for the model. See Notes.</p>
+</div></blockquote>
+<p><strong>subset</strong> : array-like</p>
+<blockquote>
+<div><p>An array-like object of booleans, integers, or index values that
+indicate the subset of df to use in the model. Assumes df is a
+<cite>pandas.DataFrame</cite></p>
+</div></blockquote>
+<p><strong>args</strong> : extra arguments</p>
+<blockquote>
+<div><p>These are passed to the model</p>
+</div></blockquote>
+<p><strong>kwargs</strong> : extra keyword arguments</p>
+<blockquote>
+<div><p>These are passed to the model with one exception. The
+<code class="docutils literal"><span class="pre">eval_env</span></code> keyword is passed to patsy. It can be either a
+<code class="xref py py-class docutils literal"><span class="pre">patsy:patsy.EvalEnvironment</span></code> object or an integer
+indicating the depth of the namespace to use. For example, the
+default <code class="docutils literal"><span class="pre">eval_env=0</span></code> uses the calling namespace. If you wish
+to use a &#8220;clean&#8221; environment set <code class="docutils literal"><span class="pre">eval_env=-1</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>model</strong> : Model instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>data must define __getitem__ with the keys in the formula terms
+args and kwargs are passed on to the model instantiation. E.g.,
+a numpy structured or rec array, a dictionary, or a pandas DataFrame.</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.regression.gmm.LikelihoodModel.hessian.html" class="btn btn-neutral float-right" title="6.7.4.4.8.1.4. statsmodels.sandbox.regression.gmm.LikelihoodModel.hessian" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.regression.gmm.LikelihoodModel.fit.html" class="btn btn-neutral" title="6.7.4.4.8.1.2. statsmodels.sandbox.regression.gmm.LikelihoodModel.fit" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,26 @@
+statsmodels.genmod.generalized_estimating_equations.ParameterConstraint
+=======================================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: ParameterConstraint
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ParameterConstraint.__init__
+   ~ParameterConstraint.offset_increment
+   ~ParameterConstraint.reduced_exog
+   ~ParameterConstraint.restore_exog
+   ~ParameterConstraint.unpack_cov
+   ~ParameterConstraint.unpack_param
+
+
+
+
+

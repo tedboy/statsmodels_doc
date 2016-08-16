@@ -1,0 +1,79 @@
+statsmodels.sandbox.rls.RegressionResults
+=========================================
+
+.. currentmodule:: statsmodels.sandbox.rls
+.. autoclass:: RegressionResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~RegressionResults.HC0_se
+   ~RegressionResults.HC1_se
+   ~RegressionResults.HC2_se
+   ~RegressionResults.HC3_se
+   ~RegressionResults.__init__
+   ~RegressionResults.aic
+   ~RegressionResults.bic
+   ~RegressionResults.bse
+   ~RegressionResults.centered_tss
+   ~RegressionResults.compare_f_test
+   ~RegressionResults.compare_lm_test
+   ~RegressionResults.compare_lr_test
+   ~RegressionResults.condition_number
+   ~RegressionResults.conf_int
+   ~RegressionResults.cov_HC0
+   ~RegressionResults.cov_HC1
+   ~RegressionResults.cov_HC2
+   ~RegressionResults.cov_HC3
+   ~RegressionResults.cov_params
+   ~RegressionResults.eigenvals
+   ~RegressionResults.ess
+   ~RegressionResults.f_pvalue
+   ~RegressionResults.f_test
+   ~RegressionResults.fittedvalues
+   ~RegressionResults.fvalue
+   ~RegressionResults.get_robustcov_results
+   ~RegressionResults.initialize
+   ~RegressionResults.llf
+   ~RegressionResults.load
+   ~RegressionResults.mse_model
+   ~RegressionResults.mse_resid
+   ~RegressionResults.mse_total
+   ~RegressionResults.nobs
+   ~RegressionResults.normalized_cov_params
+   ~RegressionResults.predict
+   ~RegressionResults.pvalues
+   ~RegressionResults.remove_data
+   ~RegressionResults.resid
+   ~RegressionResults.resid_pearson
+   ~RegressionResults.rsquared
+   ~RegressionResults.rsquared_adj
+   ~RegressionResults.save
+   ~RegressionResults.scale
+   ~RegressionResults.ssr
+   ~RegressionResults.summary
+   ~RegressionResults.summary2
+   ~RegressionResults.t_test
+   ~RegressionResults.tvalues
+   ~RegressionResults.uncentered_tss
+   ~RegressionResults.wald_test
+   ~RegressionResults.wresid
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~RegressionResults.use_t
+

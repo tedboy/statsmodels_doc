@@ -1,0 +1,549 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.archive.linalg_decomp_1 &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.archive.linalg_decomp_1</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.archive.linalg_decomp_1</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Recipes for more efficient work with linalg using classes</span>
+
+
+<span class="sd">intended for use for multivariate normal and linear regression</span>
+<span class="sd">calculations</span>
+
+<span class="sd">x  is the data (nobs, nvars)</span>
+<span class="sd">m  is the moment matrix (x&#39;x) or a covariance matrix Sigma</span>
+
+<span class="sd">examples:</span>
+<span class="sd">x&#39;sigma^{-1}x</span>
+<span class="sd">z = Px  where P=Sigma^{-1/2}  or P=Sigma^{1/2}</span>
+
+<span class="sd">Initially assume positive definite, then add spectral cutoff and</span>
+<span class="sd">regularization of moment matrix, and extend to PCA</span>
+
+<span class="sd">maybe extend to sparse if some examples work out</span>
+<span class="sd">(transformation matrix P for random effect and for toeplitz)</span>
+
+
+<span class="sd">Author: josef-pktd</span>
+<span class="sd">Created on 2010-10-20</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">get_function_name</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">linalg</span>
+
+
+<span class="c1">#this has been copied from nitime a long time ago</span>
+<span class="c1">#TODO: ceck whether class has changed in nitime</span>
+<div class="viewcode-block" id="OneTimeProperty"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.fftarma.OneTimeProperty.html#statsmodels.sandbox.archive.linalg_covmat.OneTimeProperty">[docs]</a><span class="k">class</span> <span class="nc">OneTimeProperty</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+
+    <span class="sd">&quot;&quot;&quot;A descriptor to make special properties that become normal attributes.</span>
+
+<span class="sd">    This is meant to be used mostly by the auto_attr decorator in this module.</span>
+<span class="sd">    Author: Fernando Perez, copied from nitime</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="OneTimeProperty.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.fftarma.OneTimeProperty.__init__.html#statsmodels.sandbox.archive.linalg_covmat.OneTimeProperty.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">func</span><span class="p">):</span>
+
+        <span class="sd">&quot;&quot;&quot;Create a OneTimeProperty instance.</span>
+
+<span class="sd">         Parameters</span>
+<span class="sd">         ----------</span>
+<span class="sd">           func : method</span>
+
+<span class="sd">             The method that will be called the first time to compute a value.</span>
+<span class="sd">             Afterwards, the method&#39;s name will be a standard attribute holding</span>
+<span class="sd">             the value of this computation.</span>
+<span class="sd">             &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">getter</span> <span class="o">=</span> <span class="n">func</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">get_function_name</span><span class="p">(</span><span class="n">func</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__get__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">obj</span><span class="p">,</span><span class="nb">type</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This will be called on attribute access on the class or instance. &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># Being called on the class, return the original function. This way,</span>
+            <span class="c1"># introspection works on the class.</span>
+            <span class="c1">#return func</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;class access&#39;</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getter</span>
+
+        <span class="n">val</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">getter</span><span class="p">(</span><span class="n">obj</span><span class="p">)</span>
+        <span class="c1">#print(&quot;** auto_attr - loading &#39;%s&#39;&quot; % self.name  # dbg)</span>
+        <span class="nb">setattr</span><span class="p">(</span><span class="n">obj</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span><span class="p">,</span> <span class="n">val</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">val</span></div>
+
+
+<div class="viewcode-block" id="PlainMatrixArray"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray">[docs]</a><span class="k">class</span> <span class="nc">PlainMatrixArray</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Class that defines linalg operation on an array</span>
+
+<span class="sd">    simplest version as benchmark</span>
+
+<span class="sd">    linear algebra recipes for multivariate normal and linear</span>
+<span class="sd">    regression calculations</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="PlainMatrixArray.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.__init__.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">data</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">sym</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;data and sym cannot be both given&#39;</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="ow">not</span> <span class="n">sym</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">sym</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1">#default</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;either data or sym need to be given&#39;</span><span class="p">)</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="PlainMatrixArray.minv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.minv.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.minv">[docs]</a>    <span class="k">def</span> <span class="nf">minv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">)</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="PlainMatrixArray.m_y"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.m_y.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.m_y">[docs]</a>    <span class="k">def</span> <span class="nf">m_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlainMatrixArray.minv_y"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.minv_y.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.minv_y">[docs]</a>    <span class="k">def</span> <span class="nf">minv_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minv</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="PlainMatrixArray.mpinv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.mpinv.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.mpinv">[docs]</a>    <span class="k">def</span> <span class="nf">mpinv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">)</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="PlainMatrixArray.xpinv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.xpinv.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.xpinv">[docs]</a>    <span class="k">def</span> <span class="nf">xpinv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PlainMatrixArray.yt_m_y"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.yt_m_y.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.yt_m_y">[docs]</a>    <span class="k">def</span> <span class="nf">yt_m_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PlainMatrixArray.yt_minv_y"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.yt_minv_y.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.yt_minv_y">[docs]</a>    <span class="k">def</span> <span class="nf">yt_minv_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minv</span><span class="p">,</span> <span class="n">y</span><span class="p">))</span></div>
+
+    <span class="c1">#next two are redundant</span>
+<div class="viewcode-block" id="PlainMatrixArray.y_m_yt"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.y_m_yt.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.y_m_yt">[docs]</a>    <span class="k">def</span> <span class="nf">y_m_yt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="PlainMatrixArray.y_minv_yt"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.y_minv_yt.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.y_minv_yt">[docs]</a>    <span class="k">def</span> <span class="nf">y_minv_yt</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">minv</span><span class="p">,</span> <span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">))</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="PlainMatrixArray.mdet"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.mdet.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.mdet">[docs]</a>    <span class="k">def</span> <span class="nf">mdet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">)</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="PlainMatrixArray.mlogdet"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.mlogdet.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.mlogdet">[docs]</a>    <span class="k">def</span> <span class="nf">mlogdet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">))</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="PlainMatrixArray.meigh"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.meigh.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.meigh">[docs]</a>    <span class="k">def</span> <span class="nf">meigh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">evals</span><span class="p">,</span> <span class="n">evecs</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">eigh</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">)</span>
+        <span class="n">sortind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">evals</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">evals</span><span class="p">[</span><span class="n">sortind</span><span class="p">],</span> <span class="n">evecs</span><span class="p">[:,</span><span class="n">sortind</span><span class="p">]</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="PlainMatrixArray.mhalf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.mhalf.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.mhalf">[docs]</a>    <span class="k">def</span> <span class="nf">mhalf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">evals</span><span class="p">,</span> <span class="n">evecs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meigh</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">evals</span><span class="o">**</span><span class="mf">0.5</span><span class="p">),</span> <span class="n">evecs</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+        <span class="c1">#return np.dot(evecs, np.dot(np.diag(evals**0.5), evecs.T))</span>
+        <span class="c1">#return np.dot(evecs, 1./np.sqrt(evals) * evecs.T))</span>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="PlainMatrixArray.minvhalf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray.minvhalf.html#statsmodels.sandbox.archive.linalg_covmat.PlainMatrixArray.minvhalf">[docs]</a>    <span class="k">def</span> <span class="nf">minvhalf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">evals</span><span class="p">,</span> <span class="n">evecs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">meigh</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">evecs</span><span class="p">,</span> <span class="mf">1.</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">evals</span><span class="p">)</span> <span class="o">*</span> <span class="n">evecs</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div></div>
+
+
+
+<div class="viewcode-block" id="SvdArray"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.SvdArray.html#statsmodels.sandbox.archive.linalg_covmat.SvdArray">[docs]</a><span class="k">class</span> <span class="nc">SvdArray</span><span class="p">(</span><span class="n">PlainMatrixArray</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Class that defines linalg operation on an array</span>
+
+<span class="sd">    svd version, where svd is taken on original data array, if</span>
+<span class="sd">    or when it matters</span>
+
+<span class="sd">    no spectral cutoff in first version</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="SvdArray.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.SvdArray.__init__.html#statsmodels.sandbox.archive.linalg_covmat.SvdArray.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SvdArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="n">sym</span><span class="p">)</span>
+
+        <span class="n">u</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">svd</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">full_matrices</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span> <span class="o">=</span> <span class="n">u</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="n">v</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sdiag</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">diagsvd</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sinvdiag</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">diagsvd</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="n">s</span><span class="p">,</span> <span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_sdiagpow</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">linalg</span><span class="o">.</span><span class="n">diagsvd</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">,</span> <span class="n">p</span><span class="p">),</span> <span class="o">*</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="SvdArray.minv"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.SvdArray.minv.html#statsmodels.sandbox.archive.linalg_covmat.SvdArray.minv">[docs]</a>    <span class="k">def</span> <span class="nf">minv</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">sinvv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sinvdiag</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sinvv</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">sinvv</span><span class="p">)</span></div>
+
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="SvdArray.meigh"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.SvdArray.meigh.html#statsmodels.sandbox.archive.linalg_covmat.SvdArray.meigh">[docs]</a>    <span class="k">def</span> <span class="nf">meigh</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">evecs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">evals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="n">evals</span><span class="p">,</span> <span class="n">evecs</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="SvdArray.mdet"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.SvdArray.mdet.html#statsmodels.sandbox.archive.linalg_covmat.SvdArray.mdet">[docs]</a>    <span class="k">def</span> <span class="nf">mdet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">meigh</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="SvdArray.mlogdet"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.SvdArray.mlogdet.html#statsmodels.sandbox.archive.linalg_covmat.SvdArray.mlogdet">[docs]</a>    <span class="k">def</span> <span class="nf">mlogdet</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">meigh</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="SvdArray.mhalf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.SvdArray.mhalf.html#statsmodels.sandbox.archive.linalg_covmat.SvdArray.mhalf">[docs]</a>    <span class="k">def</span> <span class="nf">mhalf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">s</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">v</span><span class="p">)</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="SvdArray.xxthalf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.SvdArray.xxthalf.html#statsmodels.sandbox.archive.linalg_covmat.SvdArray.xxthalf">[docs]</a>    <span class="k">def</span> <span class="nf">xxthalf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sdiag</span><span class="p">)</span></div>
+
+    <span class="nd">@OneTimeProperty</span>
+<div class="viewcode-block" id="SvdArray.xxtinvhalf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.SvdArray.xxtinvhalf.html#statsmodels.sandbox.archive.linalg_covmat.SvdArray.xxtinvhalf">[docs]</a>    <span class="k">def</span> <span class="nf">xxtinvhalf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">u</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">sinvdiag</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="CholArray"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.CholArray.html#statsmodels.sandbox.archive.linalg_covmat.CholArray">[docs]</a><span class="k">class</span> <span class="nc">CholArray</span><span class="p">(</span><span class="n">PlainMatrixArray</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Class that defines linalg operation on an array</span>
+
+<span class="sd">    cholesky version, where svd is taken on original data array, if</span>
+<span class="sd">    or when it matters</span>
+
+<span class="sd">    plan: use cholesky factor and cholesky solve</span>
+<span class="sd">    nothing implemented yet</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="CholArray.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.CholArray.__init__.html#statsmodels.sandbox.archive.linalg_covmat.CholArray.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">SvdArray</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">data</span><span class="p">,</span> <span class="n">sym</span><span class="o">=</span><span class="n">sym</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CholArray.yt_minv_y"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_decomp_1.CholArray.yt_minv_y.html#statsmodels.sandbox.archive.linalg_covmat.CholArray.yt_minv_y">[docs]</a>    <span class="k">def</span> <span class="nf">yt_minv_y</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;xSigmainvx</span>
+<span class="sd">        doesn&#39;t use stored cholesky yet</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_solve</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_factor</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">m</span><span class="p">),</span><span class="n">x</span><span class="p">))</span></div></div>
+        <span class="c1">#same as</span>
+        <span class="c1">#lower = False   #if cholesky(sigma) is used, default is upper</span>
+        <span class="c1">#np.dot(x,linalg.cho_solve((self.cholsigma, lower),x))</span>
+
+
+
+<div class="viewcode-block" id="testcompare"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.archive.linalg_decomp_1.testcompare.html#statsmodels.sandbox.archive.linalg_covmat.testcompare">[docs]</a><span class="k">def</span> <span class="nf">testcompare</span><span class="p">(</span><span class="n">m1</span><span class="p">,</span> <span class="n">m2</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_almost_equal</span><span class="p">,</span> <span class="n">assert_approx_equal</span>
+    <span class="n">decimal</span> <span class="o">=</span> <span class="mi">12</span>
+
+    <span class="c1">#inv</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">minv</span><span class="p">,</span> <span class="n">m2</span><span class="o">.</span><span class="n">minv</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="n">decimal</span><span class="p">)</span>
+
+    <span class="c1">#matrix half and invhalf</span>
+    <span class="c1">#fix sign in test, should this be standardized</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">mhalf</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">))[:,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">s2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">m2</span><span class="o">.</span><span class="n">mhalf</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">))[:,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">scorr</span> <span class="o">=</span> <span class="n">s1</span><span class="o">/</span><span class="n">s2</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">mhalf</span><span class="p">,</span> <span class="n">m2</span><span class="o">.</span><span class="n">mhalf</span> <span class="o">*</span> <span class="n">scorr</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="n">decimal</span><span class="p">)</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">minvhalf</span><span class="p">,</span> <span class="n">m2</span><span class="o">.</span><span class="n">minvhalf</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="n">decimal</span><span class="p">)</span>
+
+    <span class="c1">#eigenvalues, eigenvectors</span>
+    <span class="n">evals1</span><span class="p">,</span> <span class="n">evecs1</span> <span class="o">=</span> <span class="n">m1</span><span class="o">.</span><span class="n">meigh</span>
+    <span class="n">evals2</span><span class="p">,</span> <span class="n">evecs2</span> <span class="o">=</span> <span class="n">m2</span><span class="o">.</span><span class="n">meigh</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">evals1</span><span class="p">,</span> <span class="n">evals2</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="n">decimal</span><span class="p">)</span>
+    <span class="c1">#normalization can be different: evecs in columns</span>
+    <span class="n">s1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">evecs1</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">s2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">evecs2</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="n">scorr</span> <span class="o">=</span> <span class="n">s1</span><span class="o">/</span><span class="n">s2</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">evecs1</span><span class="p">,</span> <span class="n">evecs2</span> <span class="o">*</span> <span class="n">scorr</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="n">decimal</span><span class="p">)</span>
+
+    <span class="c1">#determinant</span>
+    <span class="n">assert_approx_equal</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">mdet</span><span class="p">,</span> <span class="n">m2</span><span class="o">.</span><span class="n">mdet</span><span class="p">,</span> <span class="n">significant</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span>
+    <span class="n">assert_approx_equal</span><span class="p">(</span><span class="n">m1</span><span class="o">.</span><span class="n">mlogdet</span><span class="p">,</span> <span class="n">m2</span><span class="o">.</span><span class="n">mlogdet</span><span class="p">,</span> <span class="n">significant</span><span class="o">=</span><span class="mi">13</span><span class="p">)</span></div>
+
+<span class="c1">####### helper function for interactive work</span>
+<div class="viewcode-block" id="tiny2zero"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.archive.linalg_decomp_1.tiny2zero.html#statsmodels.sandbox.archive.linalg_covmat.tiny2zero">[docs]</a><span class="k">def</span> <span class="nf">tiny2zero</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">eps</span> <span class="o">=</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">15</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;replace abs values smaller than eps by zero, makes copy</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">copy</span><span class="p">())</span> <span class="o">&lt;</span>  <span class="n">eps</span>
+    <span class="n">x</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">return</span> <span class="n">x</span></div>
+
+<div class="viewcode-block" id="maxabs"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.archive.linalg_decomp_1.maxabs.html#statsmodels.sandbox.archive.linalg_covmat.maxabs">[docs]</a><span class="k">def</span> <span class="nf">maxabs</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">5</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">autocov</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="mf">0.8</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="o">+</span><span class="mf">0.01</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">toeplitz</span><span class="p">(</span><span class="n">autocov</span><span class="p">)</span>
+
+    <span class="n">mat</span> <span class="o">=</span> <span class="n">PlainMatrixArray</span><span class="p">(</span><span class="n">sym</span><span class="o">=</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tiny2zero</span><span class="p">(</span><span class="n">mat</span><span class="o">.</span><span class="n">mhalf</span><span class="p">))</span>
+    <span class="n">mih</span> <span class="o">=</span> <span class="n">mat</span><span class="o">.</span><span class="n">minvhalf</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tiny2zero</span><span class="p">(</span><span class="n">mih</span><span class="p">))</span> <span class="c1">#for nicer printing</span>
+
+    <span class="n">mat2</span> <span class="o">=</span> <span class="n">PlainMatrixArray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">maxabs</span><span class="p">(</span><span class="n">mat2</span><span class="o">.</span><span class="n">yt_minv_y</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span> <span class="o">-</span> <span class="n">mat2</span><span class="o">.</span><span class="n">m</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tiny2zero</span><span class="p">(</span><span class="n">mat2</span><span class="o">.</span><span class="n">minv_y</span><span class="p">(</span><span class="n">mat2</span><span class="o">.</span><span class="n">m</span><span class="p">)))</span>
+
+    <span class="n">mat3</span> <span class="o">=</span> <span class="n">SvdArray</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mat3</span><span class="o">.</span><span class="n">meigh</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mat2</span><span class="o">.</span><span class="n">meigh</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+
+    <span class="n">testcompare</span><span class="p">(</span><span class="n">mat2</span><span class="p">,</span> <span class="n">mat3</span><span class="p">)</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    m = np.dot(x.T, x)</span>
+
+<span class="sd">    u,s,v = np.linalg.svd(x, full_matrices=1)</span>
+<span class="sd">    Sig = linalg.diagsvd(s,*x.shape)</span>
+
+<span class="sd">    &gt;&gt;&gt; np.max(np.abs(np.dot(u, np.dot(Sig, v)) - x))</span>
+<span class="sd">    3.1086244689504383e-015</span>
+<span class="sd">    &gt;&gt;&gt; np.max(np.abs(np.dot(u.T, u) - np.eye(100)))</span>
+<span class="sd">    3.3306690738754696e-016</span>
+<span class="sd">    &gt;&gt;&gt; np.max(np.abs(np.dot(v.T, v) - np.eye(5)))</span>
+<span class="sd">    6.6613381477509392e-016</span>
+<span class="sd">    &gt;&gt;&gt; np.max(np.abs(np.dot(Sig.T, Sig) - np.diag(s**2)))</span>
+<span class="sd">    5.6843418860808015e-014</span>
+
+<span class="sd">    &gt;&gt;&gt; evals,evecs = linalg.eigh(np.dot(x.T, x))</span>
+<span class="sd">    &gt;&gt;&gt; evals[::-1]</span>
+<span class="sd">    array([ 123.36404464,  112.17036442,  102.04198468,   76.60832278,</span>
+<span class="sd">             74.70484487])</span>
+
+<span class="sd">    &gt;&gt;&gt; s**2</span>
+<span class="sd">    array([ 123.36404464,  112.17036442,  102.04198468,   76.60832278,</span>
+<span class="sd">             74.70484487])</span>
+
+<span class="sd">    &gt;&gt;&gt; np.max(np.abs(np.dot(v.T, np.dot(np.diag(s**2), v)) - m))</span>
+<span class="sd">    1.1368683772161603e-013</span>
+
+<span class="sd">    &gt;&gt;&gt; us = np.dot(u, Sig)</span>
+<span class="sd">    &gt;&gt;&gt; np.max(np.abs(np.dot(us, us.T) - np.dot(x, x.T)))</span>
+<span class="sd">    1.0658141036401503e-014</span>
+
+<span class="sd">    &gt;&gt;&gt; sv = np.dot(Sig, v)</span>
+<span class="sd">    &gt;&gt;&gt; np.max(np.abs(np.dot(sv.T, sv) - np.dot(x.T, x)))</span>
+<span class="sd">    1.1368683772161603e-013</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

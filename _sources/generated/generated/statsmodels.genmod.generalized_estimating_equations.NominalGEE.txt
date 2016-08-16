@@ -1,0 +1,38 @@
+statsmodels.genmod.generalized_estimating_equations.NominalGEE
+==============================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: NominalGEE
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NominalGEE.__init__
+   ~NominalGEE.cluster_list
+   ~NominalGEE.estimate_scale
+   ~NominalGEE.fit
+   ~NominalGEE.from_formula
+   ~NominalGEE.predict
+   ~NominalGEE.setup_nominal
+   ~NominalGEE.update_cached_means
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~NominalGEE.cached_means
+   ~NominalGEE.endog_names
+   ~NominalGEE.exog_names
+

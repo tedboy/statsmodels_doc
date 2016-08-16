@@ -1,0 +1,318 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5. statsmodel.sandbox &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="index.html"/>
+        <link rel="next" title="5.1. statsmodels.sandbox.contrast_old" href="generated/statsmodels.sandbox.contrast_old.html"/>
+        <link rel="prev" title="4.8.19.1.1. statsmodels.tsa.filters.hp_filter.hpfilter" href="generated/statsmodels.tsa.filters.hp_filter.hpfilter.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">5. statsmodel.sandbox</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.contrast_old.html">5.1. statsmodels.sandbox.contrast_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.cox.html">5.2. statsmodels.sandbox.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.descstats.html">5.3. statsmodels.sandbox.descstats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.formula.html">5.4. statsmodels.sandbox.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.gam.html">5.5. statsmodels.sandbox.gam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.infotheo.html">5.6. statsmodels.sandbox.infotheo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.km_class.html">5.7. statsmodels.sandbox.km_class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.mle.html">5.8. statsmodels.sandbox.mle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.multilinear.html">5.9. statsmodels.sandbox.multilinear</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.pca.html">5.10. statsmodels.sandbox.pca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.rls.html">5.11. statsmodels.sandbox.rls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.survival.html">5.12. statsmodels.sandbox.survival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.survival2.html">5.13. statsmodels.sandbox.survival2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.sysreg.html">5.14. statsmodels.sandbox.sysreg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="generated/statsmodels.sandbox.utils_old.html">5.15. statsmodels.sandbox.utils_old</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>5. statsmodel.sandbox</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/sandbox.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodel-sandbox">
+<h1>5. statsmodel.sandbox<a class="headerlink" href="#statsmodel-sandbox" title="Permalink to this headline">¶</a></h1>
+<p>This is sandbox code</p>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.contrast_old.html">5.1. statsmodels.sandbox.contrast_old</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.cox.html">5.2. statsmodels.sandbox.cox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.descstats.html">5.3. statsmodels.sandbox.descstats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.formula.html">5.4. statsmodels.sandbox.formula</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.gam.html">5.5. statsmodels.sandbox.gam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.infotheo.html">5.6. statsmodels.sandbox.infotheo</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.km_class.html">5.7. statsmodels.sandbox.km_class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.mle.html">5.8. statsmodels.sandbox.mle</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.multilinear.html">5.9. statsmodels.sandbox.multilinear</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.pca.html">5.10. statsmodels.sandbox.pca</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.rls.html">5.11. statsmodels.sandbox.rls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.survival.html">5.12. statsmodels.sandbox.survival</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.survival2.html">5.13. statsmodels.sandbox.survival2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.sysreg.html">5.14. statsmodels.sandbox.sysreg</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.utils_old.html">5.15. statsmodels.sandbox.utils_old</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.bspline</span></code></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.contrast_old.html#module-statsmodels.sandbox.contrast_old" title="statsmodels.sandbox.contrast_old"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.contrast_old</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.cox.html#module-statsmodels.sandbox.cox" title="statsmodels.sandbox.cox"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.cox</span></code></a></td>
+<td>Cox proportional hazards regression model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.descstats.html#module-statsmodels.sandbox.descstats" title="statsmodels.sandbox.descstats"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.descstats</span></code></a></td>
+<td>Glue for returning descriptive statistics.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.formula.html#module-statsmodels.sandbox.formula" title="statsmodels.sandbox.formula"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.formula</span></code></a></td>
+<td>Provides the basic classes needed to specify statistical models.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.gam.html#module-statsmodels.sandbox.gam" title="statsmodels.sandbox.gam"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.gam</span></code></a></td>
+<td>Generalized additive models</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.infotheo.html#module-statsmodels.sandbox.infotheo" title="statsmodels.sandbox.infotheo"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.infotheo</span></code></a></td>
+<td>Information Theoretic and Entropy Measures</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.km_class.html#module-statsmodels.sandbox.km_class" title="statsmodels.sandbox.km_class"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.km_class</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.mle.html#module-statsmodels.sandbox.mle" title="statsmodels.sandbox.mle"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.mle</span></code></a></td>
+<td>What&#8217;s the origin of this file? It is not ours.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.multilinear.html#module-statsmodels.sandbox.multilinear" title="statsmodels.sandbox.multilinear"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.multilinear</span></code></a></td>
+<td>Analyze a set of multiple variables with a linear models</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.pca.html#module-statsmodels.sandbox.pca" title="statsmodels.sandbox.pca"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.pca</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.rls.html#module-statsmodels.sandbox.rls" title="statsmodels.sandbox.rls"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.rls</span></code></a></td>
+<td>Restricted least squares</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.survival.html#module-statsmodels.sandbox.survival" title="statsmodels.sandbox.survival"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.survival</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.survival2.html#module-statsmodels.sandbox.survival2" title="statsmodels.sandbox.survival2"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.survival2</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.sysreg.html#module-statsmodels.sandbox.sysreg" title="statsmodels.sandbox.sysreg"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.sysreg</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.utils_old.html#module-statsmodels.sandbox.utils_old" title="statsmodels.sandbox.utils_old"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.utils_old</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/statsmodels.sandbox.contrast_old.html" class="btn btn-neutral float-right" title="5.1. statsmodels.sandbox.contrast_old" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.tsa.filters.hp_filter.hpfilter.html" class="btn btn-neutral" title="4.8.19.1.1. statsmodels.tsa.filters.hp_filter.hpfilter" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

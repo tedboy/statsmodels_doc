@@ -1,0 +1,24 @@
+statsmodels.sandbox.regression.ar_panel.PanelAR1
+================================================
+
+.. currentmodule:: statsmodels.sandbox.regression.ar_panel
+.. autoclass:: PanelAR1
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PanelAR1.__init__
+   ~PanelAR1.ar1filter
+   ~PanelAR1.fit
+   ~PanelAR1.fit_conditional
+
+
+
+
+

@@ -1,0 +1,57 @@
+statsmodels.stats.correlation_tools
+===================================
+
+.. automodule:: statsmodels.stats.correlation_tools
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      clip_evals
+      corr_clipped
+      corr_nearest
+      corr_nearest_factor
+      corr_thresholded
+      cov_nearest
+      cov_nearest_factor_homog
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Bunch
+      FactoredPSDMatrix
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.correlation_tools.Bunch
+       generated/statsmodels.stats.correlation_tools.FactoredPSDMatrix
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      IterationLimitWarning
+   
+   

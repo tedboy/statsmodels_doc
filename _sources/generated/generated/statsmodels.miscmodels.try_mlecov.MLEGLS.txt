@@ -1,0 +1,45 @@
+statsmodels.miscmodels.try_mlecov.MLEGLS
+========================================
+
+.. currentmodule:: statsmodels.miscmodels.try_mlecov
+.. autoclass:: MLEGLS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MLEGLS.__init__
+   ~MLEGLS.expandparams
+   ~MLEGLS.fit
+   ~MLEGLS.fit_invertible
+   ~MLEGLS.from_formula
+   ~MLEGLS.hessian
+   ~MLEGLS.information
+   ~MLEGLS.initialize
+   ~MLEGLS.jac
+   ~MLEGLS.loglike
+   ~MLEGLS.loglikeobs
+   ~MLEGLS.nloglike
+   ~MLEGLS.predict
+   ~MLEGLS.reduceparams
+   ~MLEGLS.score
+   ~MLEGLS.score_obs
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~MLEGLS.endog_names
+   ~MLEGLS.exog_names
+

@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.11.3. statsmodels.sandbox.tsa.diffusion2 &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.11.3.2.1. statsmodels.sandbox.tsa.diffusion2.schout2contank" href="statsmodels.sandbox.tsa.diffusion2.schout2contank.html"/>
+        <link rel="prev" title="6.11.2.3.9.1.8. statsmodels.sandbox.tsa.diffusion.SchwartzOne.simulateW" href="generated/statsmodels.sandbox.tsa.diffusion.SchwartzOne.simulateW.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.tsa.html">6.11.1. statsmodels.sandbox.tsa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.tsa.diffusion.html">6.11.2. statsmodels.sandbox.tsa.diffusion</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.11.3. statsmodels.sandbox.tsa.diffusion2</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#references">6.11.3.1. References</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">6.11.3.2. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">6.11.3.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.tsa.fftarma.html">6.11.4. statsmodels.sandbox.tsa.fftarma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.tsa.movstat.html">6.11.5. statsmodels.sandbox.tsa.movstat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.tsa.try_arma_more.html">6.11.6. statsmodels.sandbox.tsa.try_arma_more</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.tsa.try_fi.html">6.11.7. statsmodels.sandbox.tsa.try_fi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.tsa.varma.html">6.11.8. statsmodels.sandbox.tsa.varma</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.11.3. statsmodels.sandbox.tsa.diffusion2</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.tsa.diffusion2.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.tsa.diffusion2">
+<span id="statsmodels-sandbox-tsa-diffusion2"></span><h1>6.11.3. statsmodels.sandbox.tsa.diffusion2<a class="headerlink" href="#module-statsmodels.sandbox.tsa.diffusion2" title="Permalink to this headline">¶</a></h1>
+<p>Diffusion 2: jump diffusion, stochastic volatility, stochastic time</p>
+<p>Created on Tue Dec 08 15:03:49 2009</p>
+<p>Author: josef-pktd   following Meucci
+License: BSD</p>
+<p>contains:</p>
+<p>CIRSubordinatedBrownian
+Heston
+IG
+JumpDiffusionKou
+JumpDiffusionMerton
+NIG
+VG</p>
+<div class="section" id="references">
+<h2>6.11.3.1. References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>Attilio Meucci, Review of Discrete and Continuous Processes in Finance: Theory and Applications
+Bloomberg Portfolio Research Paper No. 2009-02-CLASSROOM July 1, 2009
+<a class="reference external" href="http://papers.ssrn.com/sol3/papers.cfm?abstract_id=1373102">http://papers.ssrn.com/sol3/papers.cfm?abstract_id=1373102</a></p>
+<p>this is currently mostly a translation from matlab of
+<a class="reference external" href="http://www.mathworks.com/matlabcentral/fileexchange/23554-review-of-discrete-and-continuous-processes-in-finance">http://www.mathworks.com/matlabcentral/fileexchange/23554-review-of-discrete-and-continuous-processes-in-finance</a>
+license BSD:</p>
+<p>Copyright (c) 2008, Attilio Meucci
+All rights reserved.</p>
+<p>Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.</li>
+<li>Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in
+the documentation and/or other materials provided with the distribution</li>
+</ul>
+</div></blockquote>
+<p>THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS &#8220;AS IS&#8221;
+AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF
+SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS
+INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF LIABILITY, WHETHER IN
+CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+POSSIBILITY OF SUCH DAMAGE.</p>
+<p>TODO:</p>
+<ul class="simple">
+<li>vectorize where possible</li>
+<li>which processes are exactly simulated by finite differences ?</li>
+<li>include or exclude (now) the initial observation ?</li>
+<li>convert to and merge with diffusion.py (part 1 of diffusions)</li>
+<li>which processes can be easily estimated ?
+loglike or characteristic function ?</li>
+<li>tests ? check for possible index errors (random indices), graphs look ok</li>
+<li>adjust notation, variable names, more consistent, more pythonic</li>
+<li>delete a few unused lines, cleanup</li>
+<li>docstrings</li>
+</ul>
+<dl class="docutils">
+<dt>random bug (showed up only once, need fuzz-testing to replicate)</dt>
+<dd><dl class="first last docutils">
+<dt>File &#8221;...diffusion2.py&#8221;, line 375, in &lt;module&gt;</dt>
+<dd>x = jd.simulate(mu,sigma,lambd,a,D,ts,nrepl)</dd>
+<dt>File &#8221;...diffusion2.py&#8221;, line 129, in simulate</dt>
+<dd>jumps_ts[n] = CumS[Events]</dd>
+</dl>
+</dd>
+</dl>
+<p>IndexError: index out of bounds</p>
+<p>CumS is empty array, Events == -1</p>
+</div>
+<div class="section" id="functions">
+<h2>6.11.3.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tsa.diffusion2.schout2contank.html#statsmodels.sandbox.tsa.diffusion2.schout2contank" title="statsmodels.sandbox.tsa.diffusion2.schout2contank"><code class="xref py py-obj docutils literal"><span class="pre">schout2contank</span></code></a>(a,&nbsp;b,&nbsp;d)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>6.11.3.3. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion2.CIRSubordinatedBrownian.html#statsmodels.sandbox.tsa.diffusion2.CIRSubordinatedBrownian" title="statsmodels.sandbox.tsa.diffusion2.CIRSubordinatedBrownian"><code class="xref py py-obj docutils literal"><span class="pre">CIRSubordinatedBrownian</span></code></a>()</td>
+<td>CIR subordinated Brownian Motion</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion2.Heston.html#statsmodels.sandbox.tsa.diffusion2.Heston" title="statsmodels.sandbox.tsa.diffusion2.Heston"><code class="xref py py-obj docutils literal"><span class="pre">Heston</span></code></a>()</td>
+<td>Heston Stochastic Volatility</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion2.IG.html#statsmodels.sandbox.tsa.diffusion2.IG" title="statsmodels.sandbox.tsa.diffusion2.IG"><code class="xref py py-obj docutils literal"><span class="pre">IG</span></code></a>()</td>
+<td>inverse-Gaussian ??? used by NIG</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion2.JumpDiffusionKou.html#statsmodels.sandbox.tsa.diffusion2.JumpDiffusionKou" title="statsmodels.sandbox.tsa.diffusion2.JumpDiffusionKou"><code class="xref py py-obj docutils literal"><span class="pre">JumpDiffusionKou</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion2.JumpDiffusionMerton.html#statsmodels.sandbox.tsa.diffusion2.JumpDiffusionMerton" title="statsmodels.sandbox.tsa.diffusion2.JumpDiffusionMerton"><code class="xref py py-obj docutils literal"><span class="pre">JumpDiffusionMerton</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion2.NIG.html#statsmodels.sandbox.tsa.diffusion2.NIG" title="statsmodels.sandbox.tsa.diffusion2.NIG"><code class="xref py py-obj docutils literal"><span class="pre">NIG</span></code></a>()</td>
+<td>normal-inverse-Gaussian</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion2.VG.html#statsmodels.sandbox.tsa.diffusion2.VG" title="statsmodels.sandbox.tsa.diffusion2.VG"><code class="xref py py-obj docutils literal"><span class="pre">VG</span></code></a>()</td>
+<td>variance gamma process</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.tsa.diffusion2.schout2contank.html" class="btn btn-neutral float-right" title="6.11.3.2.1. statsmodels.sandbox.tsa.diffusion2.schout2contank" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.sandbox.tsa.diffusion.SchwartzOne.simulateW.html" class="btn btn-neutral" title="6.11.2.3.9.1.8. statsmodels.sandbox.tsa.diffusion.SchwartzOne.simulateW" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,921 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.distributions.gof_new &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.distributions.gof_new</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.distributions.gof_new</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;More Goodness of fit tests</span>
+
+<span class="sd">contains</span>
+
+<span class="sd">GOF : 1 sample gof tests based on Stephens 1970, plus AD A^2</span>
+<span class="sd">bootstrap : vectorized bootstrap p-values for gof test with fitted parameters</span>
+
+
+<span class="sd">Created : 2011-05-21</span>
+<span class="sd">Author : Josef Perktold</span>
+
+<span class="sd">parts based on ks_2samp and kstest from scipy.stats.stats</span>
+<span class="sd">(license: Scipy BSD, but were completely rewritten by Josef Perktold)</span>
+
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span><span class="p">,</span> <span class="n">lmap</span><span class="p">,</span> <span class="n">string_types</span><span class="p">,</span> <span class="n">callable</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">distributions</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.tools.decorators</span> <span class="k">import</span> <span class="n">cache_readonly</span>
+
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">kolmogorov</span> <span class="k">as</span> <span class="n">ksprob</span>
+
+<span class="c1">#from scipy.stats unchanged</span>
+<div class="viewcode-block" id="ks_2samp"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.ks_2samp.html#statsmodels.sandbox.distributions.gof_new.ks_2samp">[docs]</a><span class="k">def</span> <span class="nf">ks_2samp</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Computes the Kolmogorov-Smirnof statistic on 2 samples.</span>
+
+<span class="sd">    This is a two-sided test for the null hypothesis that 2 independent samples</span>
+<span class="sd">    are drawn from the same continuous distribution.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a, b : sequence of 1-D ndarrays</span>
+<span class="sd">        two arrays of sample observations assumed to be drawn from a continuous</span>
+<span class="sd">        distribution, sample sizes can be different</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    D : float</span>
+<span class="sd">        KS statistic</span>
+<span class="sd">    p-value : float</span>
+<span class="sd">        two-tailed p-value</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    This tests whether 2 samples are drawn from the same distribution. Note</span>
+<span class="sd">    that, like in the case of the one-sample K-S test, the distribution is</span>
+<span class="sd">    assumed to be continuous.</span>
+
+<span class="sd">    This is the two-sided test, one-sided tests are not implemented.</span>
+<span class="sd">    The test uses the two-sided asymptotic Kolmogorov-Smirnov distribution.</span>
+
+<span class="sd">    If the K-S statistic is small or the p-value is high, then we cannot</span>
+<span class="sd">    reject the hypothesis that the distributions of the two samples</span>
+<span class="sd">    are the same.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; from scipy import stats</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from scipy.stats import ks_2samp</span>
+
+<span class="sd">    &gt;&gt;&gt; #fix random seed to get the same result</span>
+<span class="sd">    &gt;&gt;&gt; np.random.seed(12345678);</span>
+
+<span class="sd">    &gt;&gt;&gt; n1 = 200  # size of first sample</span>
+<span class="sd">    &gt;&gt;&gt; n2 = 300  # size of second sample</span>
+
+<span class="sd">    different distribution</span>
+<span class="sd">    we can reject the null hypothesis since the pvalue is below 1%</span>
+
+<span class="sd">    &gt;&gt;&gt; rvs1 = stats.norm.rvs(size=n1,loc=0.,scale=1);</span>
+<span class="sd">    &gt;&gt;&gt; rvs2 = stats.norm.rvs(size=n2,loc=0.5,scale=1.5)</span>
+<span class="sd">    &gt;&gt;&gt; ks_2samp(rvs1,rvs2)</span>
+<span class="sd">    (0.20833333333333337, 4.6674975515806989e-005)</span>
+
+<span class="sd">    slightly different distribution</span>
+<span class="sd">    we cannot reject the null hypothesis at a 10% or lower alpha since</span>
+<span class="sd">    the pvalue at 0.144 is higher than 10%</span>
+
+<span class="sd">    &gt;&gt;&gt; rvs3 = stats.norm.rvs(size=n2,loc=0.01,scale=1.0)</span>
+<span class="sd">    &gt;&gt;&gt; ks_2samp(rvs1,rvs3)</span>
+<span class="sd">    (0.10333333333333333, 0.14498781825751686)</span>
+
+<span class="sd">    identical distribution</span>
+<span class="sd">    we cannot reject the null hypothesis since the pvalue is high, 41%</span>
+
+<span class="sd">    &gt;&gt;&gt; rvs4 = stats.norm.rvs(size=n2,loc=0.0,scale=1.0)</span>
+<span class="sd">    &gt;&gt;&gt; ks_2samp(rvs1,rvs4)</span>
+<span class="sd">    (0.07999999999999996, 0.41126949729859719)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data1</span><span class="p">,</span> <span class="n">data2</span> <span class="o">=</span> <span class="n">lmap</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">,</span> <span class="p">(</span><span class="n">data1</span><span class="p">,</span> <span class="n">data2</span><span class="p">))</span>
+    <span class="n">n1</span> <span class="o">=</span> <span class="n">data1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="n">data2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">n1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data1</span><span class="p">)</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data2</span><span class="p">)</span>
+    <span class="n">data1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data1</span><span class="p">)</span>
+    <span class="n">data2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">data2</span><span class="p">)</span>
+    <span class="n">data_all</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">([</span><span class="n">data1</span><span class="p">,</span><span class="n">data2</span><span class="p">])</span>
+    <span class="c1">#reminder: searchsorted inserts 2nd into 1st array</span>
+    <span class="n">cdf1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">data1</span><span class="p">,</span><span class="n">data_all</span><span class="p">,</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">n1</span><span class="p">)</span>
+    <span class="n">cdf2</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">data2</span><span class="p">,</span><span class="n">data_all</span><span class="p">,</span><span class="n">side</span><span class="o">=</span><span class="s1">&#39;right&#39;</span><span class="p">))</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">n2</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">cdf1</span><span class="o">-</span><span class="n">cdf2</span><span class="p">))</span>
+    <span class="c1">#Note: d absolute not signed distance</span>
+    <span class="n">en</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">n1</span><span class="o">*</span><span class="n">n2</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">n1</span><span class="o">+</span><span class="n">n2</span><span class="p">))</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">ksprob</span><span class="p">((</span><span class="n">en</span><span class="o">+</span><span class="mf">0.12</span><span class="o">+</span><span class="mf">0.11</span><span class="o">/</span><span class="n">en</span><span class="p">)</span><span class="o">*</span><span class="n">d</span><span class="p">)</span>
+    <span class="k">except</span><span class="p">:</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">d</span><span class="p">,</span> <span class="n">prob</span></div>
+
+
+
+<span class="c1">#from scipy.stats unchanged</span>
+<div class="viewcode-block" id="kstest"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.kstest.html#statsmodels.sandbox.distributions.gof_new.kstest">[docs]</a><span class="k">def</span> <span class="nf">kstest</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">N</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">alternative</span> <span class="o">=</span> <span class="s1">&#39;two_sided&#39;</span><span class="p">,</span> <span class="n">mode</span><span class="o">=</span><span class="s1">&#39;approx&#39;</span><span class="p">,</span><span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Perform the Kolmogorov-Smirnov test for goodness of fit</span>
+
+<span class="sd">    This performs a test of the distribution G(x) of an observed</span>
+<span class="sd">    random variable against a given distribution F(x). Under the null</span>
+<span class="sd">    hypothesis the two distributions are identical, G(x)=F(x). The</span>
+<span class="sd">    alternative hypothesis can be either &#39;two_sided&#39; (default), &#39;less&#39;</span>
+<span class="sd">    or &#39;greater&#39;. The KS test is only valid for continuous distributions.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    rvs : string or array or callable</span>
+<span class="sd">        string: name of a distribution in scipy.stats</span>
+
+<span class="sd">        array: 1-D observations of random variables</span>
+
+<span class="sd">        callable: function to generate random variables, requires keyword</span>
+<span class="sd">        argument `size`</span>
+
+<span class="sd">    cdf : string or callable</span>
+<span class="sd">        string: name of a distribution in scipy.stats, if rvs is a string then</span>
+<span class="sd">        cdf can evaluate to `False` or be the same as rvs</span>
+<span class="sd">        callable: function to evaluate cdf</span>
+
+<span class="sd">    args : tuple, sequence</span>
+<span class="sd">        distribution parameters, used if rvs or cdf are strings</span>
+<span class="sd">    N : int</span>
+<span class="sd">        sample size if rvs is string or callable</span>
+<span class="sd">    alternative : &#39;two_sided&#39; (default), &#39;less&#39; or &#39;greater&#39;</span>
+<span class="sd">        defines the alternative hypothesis (see explanation)</span>
+
+<span class="sd">    mode : &#39;approx&#39; (default) or &#39;asymp&#39;</span>
+<span class="sd">        defines the distribution used for calculating p-value</span>
+
+<span class="sd">        &#39;approx&#39; : use approximation to exact distribution of test statistic</span>
+
+<span class="sd">        &#39;asymp&#39; : use asymptotic distribution of test statistic</span>
+
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    D : float</span>
+<span class="sd">        KS test statistic, either D, D+ or D-</span>
+<span class="sd">    p-value :  float</span>
+<span class="sd">        one-tailed or two-tailed p-value</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    In the one-sided test, the alternative is that the empirical</span>
+<span class="sd">    cumulative distribution function of the random variable is &quot;less&quot;</span>
+<span class="sd">    or &quot;greater&quot; than the cumulative distribution function F(x) of the</span>
+<span class="sd">    hypothesis, G(x)&lt;=F(x), resp. G(x)&gt;=F(x).</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; from scipy import stats</span>
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; from scipy.stats import kstest</span>
+
+<span class="sd">    &gt;&gt;&gt; x = np.linspace(-15,15,9)</span>
+<span class="sd">    &gt;&gt;&gt; kstest(x,&#39;norm&#39;)</span>
+<span class="sd">    (0.44435602715924361, 0.038850142705171065)</span>
+
+<span class="sd">    &gt;&gt;&gt; np.random.seed(987654321) # set random seed to get the same result</span>
+<span class="sd">    &gt;&gt;&gt; kstest(&#39;norm&#39;,&#39;&#39;,N=100)</span>
+<span class="sd">    (0.058352892479417884, 0.88531190944151261)</span>
+
+<span class="sd">    is equivalent to this</span>
+
+<span class="sd">    &gt;&gt;&gt; np.random.seed(987654321)</span>
+<span class="sd">    &gt;&gt;&gt; kstest(stats.norm.rvs(size=100),&#39;norm&#39;)</span>
+<span class="sd">    (0.058352892479417884, 0.88531190944151261)</span>
+
+<span class="sd">    Test against one-sided alternative hypothesis:</span>
+
+<span class="sd">    &gt;&gt;&gt; np.random.seed(987654321)</span>
+
+<span class="sd">    Shift distribution to larger values, so that cdf_dgp(x)&lt; norm.cdf(x):</span>
+
+<span class="sd">    &gt;&gt;&gt; x = stats.norm.rvs(loc=0.2, size=100)</span>
+<span class="sd">    &gt;&gt;&gt; kstest(x,&#39;norm&#39;, alternative = &#39;less&#39;)</span>
+<span class="sd">    (0.12464329735846891, 0.040989164077641749)</span>
+
+<span class="sd">    Reject equal distribution against alternative hypothesis: less</span>
+
+<span class="sd">    &gt;&gt;&gt; kstest(x,&#39;norm&#39;, alternative = &#39;greater&#39;)</span>
+<span class="sd">    (0.0072115233216311081, 0.98531158590396395)</span>
+
+<span class="sd">    Don&#39;t reject equal distribution against alternative hypothesis: greater</span>
+
+<span class="sd">    &gt;&gt;&gt; kstest(x,&#39;norm&#39;, mode=&#39;asymp&#39;)</span>
+<span class="sd">    (0.12464329735846891, 0.08944488871182088)</span>
+
+
+<span class="sd">    Testing t distributed random variables against normal distribution:</span>
+
+<span class="sd">    With 100 degrees of freedom the t distribution looks close to the normal</span>
+<span class="sd">    distribution, and the kstest does not reject the hypothesis that the sample</span>
+<span class="sd">    came from the normal distribution</span>
+
+<span class="sd">    &gt;&gt;&gt; np.random.seed(987654321)</span>
+<span class="sd">    &gt;&gt;&gt; stats.kstest(stats.t.rvs(100,size=100),&#39;norm&#39;)</span>
+<span class="sd">    (0.072018929165471257, 0.67630062862479168)</span>
+
+<span class="sd">    With 3 degrees of freedom the t distribution looks sufficiently different</span>
+<span class="sd">    from the normal distribution, that we can reject the hypothesis that the</span>
+<span class="sd">    sample came from the normal distribution at a alpha=10% level</span>
+
+<span class="sd">    &gt;&gt;&gt; np.random.seed(987654321)</span>
+<span class="sd">    &gt;&gt;&gt; stats.kstest(stats.t.rvs(3,size=100),&#39;norm&#39;)</span>
+<span class="sd">    (0.131016895759829, 0.058826222555312224)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="c1">#cdf = getattr(stats, rvs).cdf</span>
+        <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">cdf</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cdf</span> <span class="o">==</span> <span class="n">rvs</span><span class="p">):</span>
+            <span class="n">cdf</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">distributions</span><span class="p">,</span> <span class="n">rvs</span><span class="p">)</span><span class="o">.</span><span class="n">cdf</span>
+            <span class="n">rvs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">distributions</span><span class="p">,</span> <span class="n">rvs</span><span class="p">)</span><span class="o">.</span><span class="n">rvs</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;if rvs is string, cdf has to be the same distribution&#39;</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+        <span class="n">cdf</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">distributions</span><span class="p">,</span> <span class="n">cdf</span><span class="p">)</span><span class="o">.</span><span class="n">cdf</span>
+    <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">rvs</span><span class="p">):</span>
+        <span class="n">kwds</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="n">N</span><span class="p">}</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">rvs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwds</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">rvs</span><span class="p">)</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+    <span class="n">cdfvals</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">alternative</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;two_sided&#39;</span><span class="p">,</span> <span class="s1">&#39;greater&#39;</span><span class="p">]:</span>
+        <span class="n">Dplus</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">N</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">N</span> <span class="o">-</span> <span class="n">cdfvals</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s1">&#39;greater&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Dplus</span><span class="p">,</span> <span class="n">distributions</span><span class="o">.</span><span class="n">ksone</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">Dplus</span><span class="p">,</span><span class="n">N</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">alternative</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;two_sided&#39;</span><span class="p">,</span> <span class="s1">&#39;less&#39;</span><span class="p">]:</span>
+        <span class="n">Dmin</span> <span class="o">=</span> <span class="p">(</span><span class="n">cdfvals</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">N</span><span class="p">)</span><span class="o">/</span><span class="n">N</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s1">&#39;less&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">Dmin</span><span class="p">,</span> <span class="n">distributions</span><span class="o">.</span><span class="n">ksone</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">Dmin</span><span class="p">,</span><span class="n">N</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">alternative</span> <span class="o">==</span> <span class="s1">&#39;two_sided&#39;</span><span class="p">:</span>
+        <span class="n">D</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="n">Dplus</span><span class="p">,</span><span class="n">Dmin</span><span class="p">])</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;asymp&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">D</span><span class="p">,</span> <span class="n">distributions</span><span class="o">.</span><span class="n">kstwobign</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">D</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">mode</span> <span class="o">==</span> <span class="s1">&#39;approx&#39;</span><span class="p">:</span>
+            <span class="n">pval_two</span> <span class="o">=</span> <span class="n">distributions</span><span class="o">.</span><span class="n">kstwobign</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">D</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+            <span class="k">if</span> <span class="n">N</span> <span class="o">&gt;</span> <span class="mi">2666</span> <span class="ow">or</span> <span class="n">pval_two</span> <span class="o">&gt;</span> <span class="mf">0.80</span> <span class="o">-</span> <span class="n">N</span><span class="o">*</span><span class="mf">0.3</span><span class="o">/</span><span class="mf">1000.0</span> <span class="p">:</span>
+                <span class="k">return</span> <span class="n">D</span><span class="p">,</span> <span class="n">distributions</span><span class="o">.</span><span class="n">kstwobign</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">D</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">D</span><span class="p">,</span> <span class="n">distributions</span><span class="o">.</span><span class="n">ksone</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">D</span><span class="p">,</span><span class="n">N</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span></div>
+
+<span class="c1">#TODO: split into modification and pvalue functions separately ?</span>
+<span class="c1">#      for separate testing and combining different pieces</span>
+
+<div class="viewcode-block" id="dplus_st70_upp"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.dplus_st70_upp.html#statsmodels.sandbox.distributions.gof_new.dplus_st70_upp">[docs]</a><span class="k">def</span> <span class="nf">dplus_st70_upp</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">nobs</span><span class="p">):</span>
+    <span class="n">mod_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.12</span> <span class="o">+</span> <span class="mf">0.11</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+    <span class="n">stat_modified</span> <span class="o">=</span> <span class="n">stat</span> <span class="o">*</span> <span class="n">mod_factor</span>
+    <span class="n">pval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">stat_modified</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stat</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.82</span><span class="p">,</span> <span class="mf">0.82</span><span class="p">,</span> <span class="mf">1.00</span><span class="p">]))</span>
+    <span class="c1">#repeat low to get {0,2,3}</span>
+    <span class="k">return</span> <span class="n">stat_modified</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">digits</span></div>
+
+<span class="n">dminus_st70_upp</span> <span class="o">=</span> <span class="n">dplus_st70_upp</span>
+
+
+<div class="viewcode-block" id="d_st70_upp"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.d_st70_upp.html#statsmodels.sandbox.distributions.gof_new.d_st70_upp">[docs]</a><span class="k">def</span> <span class="nf">d_st70_upp</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">nobs</span><span class="p">):</span>
+    <span class="n">mod_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.12</span> <span class="o">+</span> <span class="mf">0.11</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+    <span class="n">stat_modified</span> <span class="o">=</span> <span class="n">stat</span> <span class="o">*</span> <span class="n">mod_factor</span>
+    <span class="n">pval</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">stat_modified</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stat</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.91</span><span class="p">,</span> <span class="mf">0.91</span><span class="p">,</span> <span class="mf">1.08</span><span class="p">]))</span>
+    <span class="c1">#repeat low to get {0,2,3}</span>
+    <span class="k">return</span> <span class="n">stat_modified</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">digits</span></div>
+
+<div class="viewcode-block" id="v_st70_upp"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.v_st70_upp.html#statsmodels.sandbox.distributions.gof_new.v_st70_upp">[docs]</a><span class="k">def</span> <span class="nf">v_st70_upp</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">nobs</span><span class="p">):</span>
+    <span class="n">mod_factor</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span> <span class="o">+</span> <span class="mf">0.155</span> <span class="o">+</span> <span class="mf">0.24</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+    <span class="c1">#repeat low to get {0,2,3}</span>
+    <span class="n">stat_modified</span> <span class="o">=</span> <span class="n">stat</span> <span class="o">*</span> <span class="n">mod_factor</span>
+    <span class="n">zsqu</span> <span class="o">=</span> <span class="n">stat_modified</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">pval</span> <span class="o">=</span> <span class="p">(</span><span class="mi">8</span> <span class="o">*</span> <span class="n">zsqu</span> <span class="o">-</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">zsqu</span><span class="p">)</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stat</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.06</span><span class="p">,</span> <span class="mf">1.06</span><span class="p">,</span> <span class="mf">1.26</span><span class="p">]))</span>
+    <span class="k">return</span> <span class="n">stat_modified</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">digits</span></div>
+
+<div class="viewcode-block" id="wsqu_st70_upp"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.wsqu_st70_upp.html#statsmodels.sandbox.distributions.gof_new.wsqu_st70_upp">[docs]</a><span class="k">def</span> <span class="nf">wsqu_st70_upp</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">nobs</span><span class="p">):</span>
+    <span class="n">nobsinv</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">nobs</span>
+    <span class="n">stat_modified</span> <span class="o">=</span> <span class="p">(</span><span class="n">stat</span> <span class="o">-</span> <span class="mf">0.4</span> <span class="o">*</span> <span class="n">nobsinv</span> <span class="o">+</span> <span class="mf">0.6</span> <span class="o">*</span> <span class="n">nobsinv</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">nobsinv</span><span class="p">)</span>
+    <span class="n">pval</span> <span class="o">=</span> <span class="mf">0.05</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mf">2.79</span> <span class="o">-</span> <span class="mi">6</span> <span class="o">*</span> <span class="n">stat_modified</span><span class="p">)</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>  <span class="c1"># some explanation in txt</span>
+    <span class="c1">#repeat low to get {0,2,3}</span>
+    <span class="k">return</span> <span class="n">stat_modified</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">digits</span></div>
+
+<div class="viewcode-block" id="usqu_st70_upp"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.usqu_st70_upp.html#statsmodels.sandbox.distributions.gof_new.usqu_st70_upp">[docs]</a><span class="k">def</span> <span class="nf">usqu_st70_upp</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">nobs</span><span class="p">):</span>
+    <span class="n">nobsinv</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">nobs</span>
+    <span class="n">stat_modified</span> <span class="o">=</span> <span class="p">(</span><span class="n">stat</span> <span class="o">-</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">nobsinv</span> <span class="o">+</span> <span class="mf">0.1</span> <span class="o">*</span> <span class="n">nobsinv</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">stat_modified</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">0.8</span> <span class="o">*</span> <span class="n">nobsinv</span><span class="p">)</span>
+    <span class="n">pval</span> <span class="o">=</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">stat_modified</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stat</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.29</span><span class="p">,</span> <span class="mf">0.29</span><span class="p">,</span> <span class="mf">0.34</span><span class="p">]))</span>
+    <span class="c1">#repeat low to get {0,2,3}</span>
+    <span class="k">return</span> <span class="n">stat_modified</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">digits</span></div>
+
+<div class="viewcode-block" id="a_st70_upp"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.a_st70_upp.html#statsmodels.sandbox.distributions.gof_new.a_st70_upp">[docs]</a><span class="k">def</span> <span class="nf">a_st70_upp</span><span class="p">(</span><span class="n">stat</span><span class="p">,</span> <span class="n">nobs</span><span class="p">):</span>
+    <span class="n">nobsinv</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">nobs</span>
+    <span class="n">stat_modified</span> <span class="o">=</span> <span class="p">(</span><span class="n">stat</span> <span class="o">-</span> <span class="mf">0.7</span> <span class="o">*</span> <span class="n">nobsinv</span> <span class="o">+</span> <span class="mf">0.9</span> <span class="o">*</span> <span class="n">nobsinv</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">stat_modified</span> <span class="o">*=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">1.23</span> <span class="o">*</span> <span class="n">nobsinv</span><span class="p">)</span>
+    <span class="n">pval</span> <span class="o">=</span> <span class="mf">1.273</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">stat_modified</span> <span class="o">/</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">digits</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">stat</span> <span class="o">&gt;</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.11</span><span class="p">,</span> <span class="mf">0.452</span><span class="p">]))</span>
+    <span class="c1">#repeat low to get {0,2,3}</span>
+    <span class="k">return</span> <span class="n">stat_modified</span><span class="p">,</span> <span class="n">pval</span><span class="p">,</span> <span class="n">digits</span></div>
+
+
+
+<span class="n">gof_pvals</span> <span class="o">=</span> <span class="p">{}</span>
+
+<span class="n">gof_pvals</span><span class="p">[</span><span class="s1">&#39;stephens70upp&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;d_plus&#39;</span> <span class="p">:</span> <span class="n">dplus_st70_upp</span><span class="p">,</span>
+    <span class="s1">&#39;d_minus&#39;</span> <span class="p">:</span> <span class="n">dplus_st70_upp</span><span class="p">,</span>
+    <span class="s1">&#39;d&#39;</span> <span class="p">:</span> <span class="n">d_st70_upp</span><span class="p">,</span>
+    <span class="s1">&#39;v&#39;</span> <span class="p">:</span> <span class="n">v_st70_upp</span><span class="p">,</span>
+    <span class="s1">&#39;wsqu&#39;</span> <span class="p">:</span> <span class="n">wsqu_st70_upp</span><span class="p">,</span>
+    <span class="s1">&#39;usqu&#39;</span> <span class="p">:</span> <span class="n">usqu_st70_upp</span><span class="p">,</span>
+    <span class="s1">&#39;a&#39;</span> <span class="p">:</span> <span class="n">a_st70_upp</span> <span class="p">}</span>
+
+<div class="viewcode-block" id="pval_kstest_approx"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.pval_kstest_approx.html#statsmodels.sandbox.distributions.gof_new.pval_kstest_approx">[docs]</a><span class="k">def</span> <span class="nf">pval_kstest_approx</span><span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">N</span><span class="p">):</span>
+    <span class="n">pval_two</span> <span class="o">=</span> <span class="n">distributions</span><span class="o">.</span><span class="n">kstwobign</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">D</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">N</span> <span class="o">&gt;</span> <span class="mi">2666</span> <span class="ow">or</span> <span class="n">pval_two</span> <span class="o">&gt;</span> <span class="mf">0.80</span> <span class="o">-</span> <span class="n">N</span><span class="o">*</span><span class="mf">0.3</span><span class="o">/</span><span class="mf">1000.0</span> <span class="p">:</span>
+        <span class="k">return</span> <span class="n">D</span><span class="p">,</span> <span class="n">distributions</span><span class="o">.</span><span class="n">kstwobign</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">D</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">D</span><span class="p">,</span> <span class="n">distributions</span><span class="o">.</span><span class="n">ksone</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">D</span><span class="p">,</span><span class="n">N</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+<span class="n">gof_pvals</span><span class="p">[</span><span class="s1">&#39;scipy&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;d_plus&#39;</span> <span class="p">:</span> <span class="k">lambda</span> <span class="n">Dplus</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="p">(</span><span class="n">Dplus</span><span class="p">,</span> <span class="n">distributions</span><span class="o">.</span><span class="n">ksone</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">Dplus</span><span class="p">,</span> <span class="n">N</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
+    <span class="s1">&#39;d_minus&#39;</span> <span class="p">:</span> <span class="k">lambda</span> <span class="n">Dmin</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="p">(</span><span class="n">Dmin</span><span class="p">,</span> <span class="n">distributions</span><span class="o">.</span><span class="n">ksone</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">Dmin</span><span class="p">,</span><span class="n">N</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">),</span>
+    <span class="s1">&#39;d&#39;</span> <span class="p">:</span> <span class="k">lambda</span> <span class="n">D</span><span class="p">,</span> <span class="n">N</span><span class="p">:</span> <span class="p">(</span><span class="n">D</span><span class="p">,</span> <span class="n">distributions</span><span class="o">.</span><span class="n">kstwobign</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">D</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">N</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="p">}</span>
+
+<span class="n">gof_pvals</span><span class="p">[</span><span class="s1">&#39;scipy_approx&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">{</span>
+    <span class="s1">&#39;d&#39;</span> <span class="p">:</span> <span class="n">pval_kstest_approx</span> <span class="p">}</span>
+
+<div class="viewcode-block" id="GOF"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.html#statsmodels.sandbox.distributions.gof_new.GOF">[docs]</a><span class="k">class</span> <span class="nc">GOF</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;One Sample Goodness of Fit tests</span>
+
+<span class="sd">    includes Kolmogorov-Smirnov D, D+, D-, Kuiper V, Cramer-von Mises W^2, U^2 and</span>
+<span class="sd">    Anderson-Darling A, A^2. The p-values for all tests except for A^2 are based on</span>
+<span class="sd">    the approximatiom given in Stephens 1970. A^2 has currently no p-values. For</span>
+<span class="sd">    the Kolmogorov-Smirnov test the tests as given in scipy.stats are also available</span>
+<span class="sd">    as options.</span>
+
+
+
+
+<span class="sd">    design: I might want to retest with different distributions, to calculate</span>
+<span class="sd">    data summary statistics only once, or add separate class that holds</span>
+<span class="sd">    summary statistics and data (sounds good).</span>
+
+
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+
+
+<div class="viewcode-block" id="GOF.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.__init__.html#statsmodels.sandbox.distributions.gof_new.GOF.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">rvs</span><span class="p">,</span> <span class="n">cdf</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">N</span><span class="o">=</span><span class="mi">20</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="c1">#cdf = getattr(stats, rvs).cdf</span>
+            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">cdf</span><span class="p">)</span> <span class="ow">or</span> <span class="p">(</span><span class="n">cdf</span> <span class="o">==</span> <span class="n">rvs</span><span class="p">):</span>
+                <span class="n">cdf</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">distributions</span><span class="p">,</span> <span class="n">rvs</span><span class="p">)</span><span class="o">.</span><span class="n">cdf</span>
+                <span class="n">rvs</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">distributions</span><span class="p">,</span> <span class="n">rvs</span><span class="p">)</span><span class="o">.</span><span class="n">rvs</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">AttributeError</span><span class="p">(</span><span class="s1">&#39;if rvs is string, cdf has to be the same distribution&#39;</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">cdf</span><span class="p">,</span> <span class="n">string_types</span><span class="p">):</span>
+            <span class="n">cdf</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">distributions</span><span class="p">,</span> <span class="n">cdf</span><span class="p">)</span><span class="o">.</span><span class="n">cdf</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">rvs</span><span class="p">):</span>
+            <span class="n">kwds</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="n">N</span><span class="p">}</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">rvs</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span><span class="o">**</span><span class="n">kwds</span><span class="p">))</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">rvs</span><span class="p">)</span>
+            <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">vals</span><span class="p">)</span>
+        <span class="n">cdfvals</span> <span class="o">=</span> <span class="n">cdf</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">=</span> <span class="n">N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">vals_sorted</span> <span class="o">=</span> <span class="n">vals</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cdfvals</span> <span class="o">=</span> <span class="n">cdfvals</span></div>
+
+
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="GOF.d_plus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.d_plus.html#statsmodels.sandbox.distributions.gof_new.GOF.d_plus">[docs]</a>    <span class="k">def</span> <span class="nf">d_plus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span>
+        <span class="n">cdfvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdfvals</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">nobs</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">cdfvals</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="GOF.d_minus"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.d_minus.html#statsmodels.sandbox.distributions.gof_new.GOF.d_minus">[docs]</a>    <span class="k">def</span> <span class="nf">d_minus</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span>
+        <span class="n">cdfvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdfvals</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">cdfvals</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">0.0</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span><span class="o">/</span><span class="n">nobs</span><span class="p">)</span><span class="o">.</span><span class="n">max</span><span class="p">()</span></div>
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="GOF.d"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.d.html#statsmodels.sandbox.distributions.gof_new.GOF.d">[docs]</a>    <span class="k">def</span> <span class="nf">d</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">d_plus</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_minus</span><span class="p">])</span></div>
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="GOF.v"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.v.html#statsmodels.sandbox.distributions.gof_new.GOF.v">[docs]</a>    <span class="k">def</span> <span class="nf">v</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Kuiper&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_plus</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">d_minus</span></div>
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="GOF.wsqu"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.wsqu.html#statsmodels.sandbox.distributions.gof_new.GOF.wsqu">[docs]</a>    <span class="k">def</span> <span class="nf">wsqu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Cramer von Mises&#39;&#39;&#39;</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span>
+        <span class="n">cdfvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdfvals</span>
+        <span class="c1">#use literal formula, TODO: simplify with arange(,,2)</span>
+        <span class="n">wsqu</span> <span class="o">=</span> <span class="p">((</span><span class="n">cdfvals</span> <span class="o">-</span> <span class="p">(</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">nobs</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">nobs</span><span class="o">/</span><span class="mf">2.</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> \
+               <span class="o">+</span> <span class="mf">1.</span><span class="o">/</span><span class="n">nobs</span><span class="o">/</span><span class="mf">12.</span>
+        <span class="k">return</span> <span class="n">wsqu</span></div>
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="GOF.usqu"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.usqu.html#statsmodels.sandbox.distributions.gof_new.GOF.usqu">[docs]</a>    <span class="k">def</span> <span class="nf">usqu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span>
+        <span class="n">cdfvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdfvals</span>
+        <span class="c1">#use literal formula, TODO: simplify with arange(,,2)</span>
+        <span class="n">usqu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">wsqu</span> <span class="o">-</span> <span class="n">nobs</span> <span class="o">*</span> <span class="p">(</span><span class="n">cdfvals</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+        <span class="k">return</span> <span class="n">usqu</span></div>
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="GOF.a"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.a.html#statsmodels.sandbox.distributions.gof_new.GOF.a">[docs]</a>    <span class="k">def</span> <span class="nf">a</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span>
+        <span class="n">cdfvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdfvals</span>
+
+        <span class="c1">#one loop instead of large array</span>
+        <span class="n">msum</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nobs</span><span class="p">):</span>
+            <span class="n">mj</span> <span class="o">=</span> <span class="n">cdfvals</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">-</span> <span class="n">cdfvals</span><span class="p">[:</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="p">(</span><span class="n">mj</span> <span class="o">&gt;</span> <span class="mf">0.5</span><span class="p">)</span>
+            <span class="n">mj</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">mj</span><span class="p">[</span><span class="n">mask</span><span class="p">]</span>
+            <span class="n">msum</span> <span class="o">+=</span> <span class="n">mj</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+        <span class="n">a</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">/</span> <span class="mf">4.</span> <span class="o">-</span> <span class="mf">2.</span> <span class="o">/</span> <span class="n">nobs</span> <span class="o">*</span> <span class="n">msum</span>
+        <span class="k">return</span> <span class="n">a</span></div>
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="GOF.asqu"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.asqu.html#statsmodels.sandbox.distributions.gof_new.GOF.asqu">[docs]</a>    <span class="k">def</span> <span class="nf">asqu</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Stephens 1974, doesn&#39;t have p-value formula for A^2&#39;&#39;&#39;</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span>
+        <span class="n">cdfvals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">cdfvals</span>
+
+        <span class="n">asqu</span> <span class="o">=</span> <span class="o">-</span><span class="p">((</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">nobs</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span>
+                <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cdfvals</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">cdfvals</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span> <span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span><span class="o">/</span><span class="n">nobs</span> <span class="o">-</span> <span class="n">nobs</span>
+
+        <span class="k">return</span> <span class="n">asqu</span></div>
+
+
+<div class="viewcode-block" id="GOF.get_test"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.GOF.get_test.html#statsmodels.sandbox.distributions.gof_new.GOF.get_test">[docs]</a>    <span class="k">def</span> <span class="nf">get_test</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testid</span><span class="o">=</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="n">pvals</span><span class="o">=</span><span class="s1">&#39;stephens70upp&#39;</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#print gof_pvals[pvals][testid]</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">testid</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">pvals</span> <span class="o">==</span> <span class="s1">&#39;stephens70upp&#39;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">gof_pvals</span><span class="p">[</span><span class="n">pvals</span><span class="p">][</span><span class="n">testid</span><span class="p">](</span><span class="n">stat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">),</span> <span class="n">stat</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">gof_pvals</span><span class="p">[</span><span class="n">pvals</span><span class="p">][</span><span class="n">testid</span><span class="p">](</span><span class="n">stat</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">)</span></div></div>
+
+
+
+
+
+
+
+
+<div class="viewcode-block" id="gof_mc"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.gof_mc.html#statsmodels.sandbox.distributions.gof_new.gof_mc">[docs]</a><span class="k">def</span> <span class="nf">gof_mc</span><span class="p">(</span><span class="n">randfn</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="c1">#print &#39;\nIs it correctly sized?&#39;</span>
+    <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1000</span><span class="p">):</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="n">randfn</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="n">goft</span> <span class="o">=</span> <span class="n">GOF</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">distr</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ti</span> <span class="ow">in</span> <span class="n">all_gofs</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">ti</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">goft</span><span class="o">.</span><span class="n">get_test</span><span class="p">(</span><span class="n">ti</span><span class="p">,</span> <span class="s1">&#39;stephens70upp&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">resarr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">results</span><span class="p">[</span><span class="n">ti</span><span class="p">]</span> <span class="k">for</span> <span class="n">ti</span> <span class="ow">in</span> <span class="n">all_gofs</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;         &#39;</span><span class="p">,</span> <span class="s1">&#39;      &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_gofs</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;at 0.01:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">resarr</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;at 0.05:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">resarr</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;at 0.10:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">resarr</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="asquare"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.asquare.html#statsmodels.sandbox.distributions.gof_new.asquare">[docs]</a><span class="k">def</span> <span class="nf">asquare</span><span class="p">(</span><span class="n">cdfvals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;vectorized Anderson Darling A^2, Stephens 1974&#39;&#39;&#39;</span>
+    <span class="n">ndim</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">cdfvals</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="n">cdfvals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span>
+    <span class="n">slice_reverse</span> <span class="o">=</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span> <span class="o">*</span> <span class="n">ndim</span>  <span class="c1">#might make copy if not specific axis???</span>
+    <span class="n">islice</span> <span class="o">=</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">ndim</span>
+    <span class="n">islice</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">slice_reverse</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">asqu</span> <span class="o">=</span> <span class="o">-</span><span class="p">((</span><span class="mf">2.</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mf">1.</span><span class="p">,</span> <span class="n">nobs</span><span class="o">+</span><span class="mi">1</span><span class="p">)[</span><span class="n">islice</span><span class="p">]</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span>
+            <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">cdfvals</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">cdfvals</span><span class="p">[</span><span class="n">slice_reverse</span><span class="p">]))</span><span class="o">/</span><span class="n">nobs</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span> \
+            <span class="o">-</span> <span class="n">nobs</span>
+
+    <span class="k">return</span> <span class="n">asqu</span></div>
+
+
+<span class="c1">#class OneSGOFFittedVec(object):</span>
+<span class="c1">#    &#39;&#39;&#39;for vectorized fitting&#39;&#39;&#39;</span>
+    <span class="c1"># currently I use the bootstrap as function instead of full class</span>
+
+    <span class="c1">#note: kwds loc and scale are a pain</span>
+    <span class="c1"># I would need to overwrite rvs, fit and cdf depending on fixed parameters</span>
+
+    <span class="c1">#def bootstrap(self, distr, args=(), kwds={}, nobs=200, nrep=1000,</span>
+<div class="viewcode-block" id="bootstrap"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.bootstrap.html#statsmodels.sandbox.distributions.gof_new.bootstrap">[docs]</a><span class="k">def</span> <span class="nf">bootstrap</span><span class="p">(</span><span class="n">distr</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">nrep</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">batch_size</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Monte Carlo (or parametric bootstrap) p-values for gof</span>
+
+<span class="sd">    currently hardcoded for A^2 only</span>
+
+<span class="sd">    assumes vectorized fit_vec method,</span>
+<span class="sd">    builds and analyses (nobs, nrep) sample in one step</span>
+
+<span class="sd">    rename function to less generic</span>
+
+<span class="sd">    this works also with nrep=1</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#signature similar to kstest ?</span>
+    <span class="c1">#delegate to fn ?</span>
+
+    <span class="c1">#rvs_kwds = {&#39;size&#39;:(nobs, nrep)}</span>
+    <span class="c1">#rvs_kwds.update(kwds)</span>
+
+
+    <span class="c1">#it will be better to build a separate batch function that calls bootstrap</span>
+    <span class="c1">#keep batch if value is true, but batch iterate from outside if stat is returned</span>
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">batch_size</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;using batching requires a value&#39;</span><span class="p">)</span>
+        <span class="n">n_batch</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">nrep</span><span class="o">/</span><span class="nb">float</span><span class="p">(</span><span class="n">batch_size</span><span class="p">)))</span>
+        <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">for</span> <span class="n">irep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_batch</span><span class="p">):</span>
+            <span class="n">rvs</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:(</span><span class="n">batch_size</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)})</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">fit_vec</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="n">lmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span>
+            <span class="n">cdfvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">distr</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">params</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">stat</span> <span class="o">=</span> <span class="n">asquare</span><span class="p">(</span><span class="n">cdfvals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="p">(</span><span class="n">stat</span> <span class="o">&gt;=</span> <span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">count</span> <span class="o">/</span> <span class="nb">float</span><span class="p">(</span><span class="n">n_batch</span> <span class="o">*</span> <span class="n">batch_size</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1">#rvs = distr.rvs(args, **kwds)  #extension to distribution kwds ?</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:(</span><span class="n">nrep</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)})</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">fit_vec</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">lmap</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">expand_dims</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="n">params</span><span class="p">)</span>
+        <span class="n">cdfvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">distr</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">params</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="n">asquare</span><span class="p">(</span><span class="n">cdfvals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">value</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>           <span class="c1">#return all bootstrap results</span>
+            <span class="n">stat_sorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">stat</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">stat_sorted</span>
+        <span class="k">else</span><span class="p">:</span>                       <span class="c1">#calculate and return specific p-value</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">stat</span> <span class="o">&gt;=</span> <span class="n">value</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span></div>
+
+
+
+<div class="viewcode-block" id="bootstrap2"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.gof_new.bootstrap2.html#statsmodels.sandbox.distributions.gof_new.bootstrap2">[docs]</a><span class="k">def</span> <span class="nf">bootstrap2</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">nrep</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Monte Carlo (or parametric bootstrap) p-values for gof</span>
+
+<span class="sd">    currently hardcoded for A^2 only</span>
+
+<span class="sd">    non vectorized, loops over all parametric bootstrap replications and calculates</span>
+<span class="sd">    and returns specific p-value,</span>
+
+<span class="sd">    rename function to less generic</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#signature similar to kstest ?</span>
+    <span class="c1">#delegate to fn ?</span>
+
+    <span class="c1">#rvs_kwds = {&#39;size&#39;:(nobs, nrep)}</span>
+    <span class="c1">#rvs_kwds.update(kwds)</span>
+
+
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="k">for</span> <span class="n">irep</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrep</span><span class="p">):</span>
+        <span class="c1">#rvs = distr.rvs(args, **kwds)  #extension to distribution kwds ?</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="p">{</span><span class="s1">&#39;size&#39;</span><span class="p">:</span><span class="n">nobs</span><span class="p">})</span>
+        <span class="n">params</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">fit_vec</span><span class="p">(</span><span class="n">rvs</span><span class="p">)</span>
+        <span class="n">cdfvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">distr</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="n">params</span><span class="p">))</span>
+        <span class="n">stat</span> <span class="o">=</span> <span class="n">asquare</span><span class="p">(</span><span class="n">cdfvals</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="p">(</span><span class="n">stat</span> <span class="o">&gt;=</span> <span class="n">value</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">count</span> <span class="o">*</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">nrep</span></div>
+
+
+<div class="viewcode-block" id="NewNorm"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.NewNorm.html#statsmodels.sandbox.distributions.gof_new.NewNorm">[docs]</a><span class="k">class</span> <span class="nc">NewNorm</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;just a holder for modified distributions</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="NewNorm.fit_vec"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.NewNorm.fit_vec.html#statsmodels.sandbox.distributions.gof_new.NewNorm.fit_vec">[docs]</a>    <span class="k">def</span> <span class="nf">fit_vec</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">axis</span><span class="p">),</span> <span class="n">x</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">axis</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="NewNorm.cdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.NewNorm.cdf.html#statsmodels.sandbox.distributions.gof_new.NewNorm.cdf">[docs]</a>    <span class="k">def</span> <span class="nf">cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">args</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">distributions</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">scale</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="NewNorm.rvs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.distributions.gof_new.NewNorm.rvs.html#statsmodels.sandbox.distributions.gof_new.NewNorm.rvs">[docs]</a>    <span class="k">def</span> <span class="nf">rvs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">args</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="n">loc</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">scale</span><span class="o">=</span><span class="n">args</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">loc</span> <span class="o">+</span> <span class="n">scale</span> <span class="o">*</span> <span class="n">distributions</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">size</span><span class="p">)</span></div></div>
+
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+    <span class="c1">#rvs = np.random.randn(1000)</span>
+    <span class="n">rvs</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;scipy kstest&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">kstest</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="s1">&#39;norm&#39;</span><span class="p">))</span>
+    <span class="n">goft</span> <span class="o">=</span> <span class="n">GOF</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="s1">&#39;norm&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">goft</span><span class="o">.</span><span class="n">get_test</span><span class="p">())</span>
+
+    <span class="n">all_gofs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;d&#39;</span><span class="p">,</span> <span class="s1">&#39;d_plus&#39;</span><span class="p">,</span> <span class="s1">&#39;d_minus&#39;</span><span class="p">,</span> <span class="s1">&#39;v&#39;</span><span class="p">,</span> <span class="s1">&#39;wsqu&#39;</span><span class="p">,</span> <span class="s1">&#39;usqu&#39;</span><span class="p">,</span> <span class="s1">&#39;a&#39;</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">ti</span> <span class="ow">in</span> <span class="n">all_gofs</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ti</span><span class="p">,</span> <span class="n">goft</span><span class="o">.</span><span class="n">get_test</span><span class="p">(</span><span class="n">ti</span><span class="p">,</span> <span class="s1">&#39;stephens70upp&#39;</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Is it correctly sized?&#39;</span><span class="p">)</span>
+    <span class="kn">from</span> <span class="nn">collections</span> <span class="k">import</span> <span class="n">defaultdict</span>
+
+    <span class="n">results</span> <span class="o">=</span> <span class="n">defaultdict</span><span class="p">(</span><span class="nb">list</span><span class="p">)</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">):</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="n">goft</span> <span class="o">=</span> <span class="n">GOF</span><span class="p">(</span><span class="n">rvs</span><span class="p">,</span> <span class="s1">&#39;norm&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ti</span> <span class="ow">in</span> <span class="n">all_gofs</span><span class="p">:</span>
+            <span class="n">results</span><span class="p">[</span><span class="n">ti</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">goft</span><span class="o">.</span><span class="n">get_test</span><span class="p">(</span><span class="n">ti</span><span class="p">,</span> <span class="s1">&#39;stephens70upp&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">resarr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">results</span><span class="p">[</span><span class="n">ti</span><span class="p">]</span> <span class="k">for</span> <span class="n">ti</span> <span class="ow">in</span> <span class="n">all_gofs</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;         &#39;</span><span class="p">,</span> <span class="s1">&#39;      &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">all_gofs</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;at 0.01:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">resarr</span> <span class="o">&lt;</span> <span class="mf">0.01</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;at 0.05:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">resarr</span> <span class="o">&lt;</span> <span class="mf">0.05</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;at 0.10:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">resarr</span> <span class="o">&lt;</span> <span class="mf">0.1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">1</span><span class="p">))</span>
+
+    <span class="n">gof_mc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">nobs</span><span class="p">:</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">),</span> <span class="s1">&#39;norm&#39;</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">200</span><span class="p">)</span>
+
+    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="n">nrep</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">bt</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="p">(</span><span class="n">NewNorm</span><span class="p">(),</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">nrep</span><span class="o">=</span><span class="n">nrep</span><span class="p">,</span> <span class="n">value</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">quantindex</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">nrep</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.99</span><span class="p">,</span> <span class="mf">0.95</span><span class="p">,</span> <span class="mf">0.9</span><span class="p">]))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">bt</span><span class="p">[</span><span class="n">quantindex</span><span class="p">])</span>
+
+    <span class="c1">#the bootstrap results match Stephens pretty well for nobs=100, but not so well for</span>
+    <span class="c1">#large (1000) or small (20) nobs</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    &gt;&gt;&gt; np.array([15.0, 10.0, 5.0, 2.5, 1.0])/100.  #Stephens</span>
+<span class="sd">    array([ 0.15 ,  0.1  ,  0.05 ,  0.025,  0.01 ])</span>
+<span class="sd">    &gt;&gt;&gt; nobs = 100</span>
+<span class="sd">    &gt;&gt;&gt; [bootstrap(NewNorm(), args=(0,1), nobs=nobs, nrep=10000, value=c/ (1 + 4./nobs - 25./nobs**2)) for c in [0.576, 0.656, 0.787, 0.918, 1.092]]</span>
+<span class="sd">    [0.1545, 0.10009999999999999, 0.049000000000000002, 0.023, 0.0104]</span>
+<span class="sd">    &gt;&gt;&gt;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1">#test equality of loop, vectorized, batch-vectorized</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">8765679</span><span class="p">)</span>
+    <span class="n">resu1</span> <span class="o">=</span> <span class="n">bootstrap</span><span class="p">(</span><span class="n">NewNorm</span><span class="p">(),</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">nrep</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span>
+                      <span class="n">value</span><span class="o">=</span><span class="mf">0.576</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">4.</span><span class="o">/</span><span class="n">nobs</span> <span class="o">-</span> <span class="mf">25.</span><span class="o">/</span><span class="n">nobs</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">8765679</span><span class="p">)</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">bootstrap</span><span class="p">(</span><span class="n">NewNorm</span><span class="p">(),</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">nrep</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">100</span><span class="p">)]</span>
+    <span class="n">resu2</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mf">0.576</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">4.</span><span class="o">/</span><span class="n">nobs</span> <span class="o">-</span> <span class="mf">25.</span><span class="o">/</span><span class="n">nobs</span><span class="o">**</span><span class="mi">2</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">8765679</span><span class="p">)</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">[</span><span class="n">bootstrap</span><span class="p">(</span><span class="n">NewNorm</span><span class="p">(),</span> <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">nrep</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span>
+                     <span class="n">value</span><span class="o">=</span><span class="mf">0.576</span><span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mf">4.</span><span class="o">/</span><span class="n">nobs</span> <span class="o">-</span> <span class="mf">25.</span><span class="o">/</span><span class="n">nobs</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span>
+                     <span class="n">batch_size</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">10</span><span class="p">)]</span>
+    <span class="n">resu3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">resu</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_almost_equal</span><span class="p">,</span> <span class="n">assert_array_almost_equal</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">resu1</span><span class="p">,</span> <span class="n">resu2</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">resu2</span><span class="p">,</span> <span class="n">resu3</span><span class="p">,</span> <span class="mi">15</span><span class="p">)</span>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

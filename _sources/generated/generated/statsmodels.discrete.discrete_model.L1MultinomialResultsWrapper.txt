@@ -1,0 +1,25 @@
+statsmodels.discrete.discrete_model.L1MultinomialResultsWrapper
+===============================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: L1MultinomialResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~L1MultinomialResultsWrapper.__init__
+   ~L1MultinomialResultsWrapper.conf_int
+   ~L1MultinomialResultsWrapper.cov_params
+   ~L1MultinomialResultsWrapper.load
+   ~L1MultinomialResultsWrapper.save
+
+
+
+
+

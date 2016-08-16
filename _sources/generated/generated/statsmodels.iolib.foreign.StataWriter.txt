@@ -1,0 +1,33 @@
+statsmodels.iolib.foreign.StataWriter
+=====================================
+
+.. currentmodule:: statsmodels.iolib.foreign
+.. autoclass:: StataWriter
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~StataWriter.__init__
+   ~StataWriter.write_file
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~StataWriter.DTYPE_MAP
+   ~StataWriter.MISSING_VALUES
+   ~StataWriter.TYPE_MAP
+   ~StataWriter.i
+

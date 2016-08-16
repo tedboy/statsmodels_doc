@@ -1,0 +1,28 @@
+statsmodels.tsa.descriptivestats.TsaDescriptive
+===============================================
+
+.. currentmodule:: statsmodels.tsa.descriptivestats
+.. autoclass:: TsaDescriptive
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TsaDescriptive.__init__
+   ~TsaDescriptive.acf
+   ~TsaDescriptive.detrend
+   ~TsaDescriptive.filter
+   ~TsaDescriptive.fit
+   ~TsaDescriptive.pacf
+   ~TsaDescriptive.periodogram
+   ~TsaDescriptive.plot4
+
+
+
+
+

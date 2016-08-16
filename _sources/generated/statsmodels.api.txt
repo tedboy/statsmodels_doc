@@ -1,0 +1,82 @@
+statsmodels.api
+===============
+
+.. automodule:: statsmodels.api
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      add_constant
+      categorical
+      load
+      qqline
+      qqplot
+      qqplot_2samples
+      show_versions
+      webdoc
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      GEE
+      GLM
+      GLS
+      GLSAR
+      Logit
+      MNLogit
+      MixedLM
+      NegativeBinomial
+      NominalGEE
+      OLS
+      OrdinalGEE
+      PHReg
+      Poisson
+      ProbPlot
+      Probit
+      QuantReg
+      RLM
+      WLS
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.api.GEE
+       generated/statsmodels.api.GLM
+       generated/statsmodels.api.GLS
+       generated/statsmodels.api.GLSAR
+       generated/statsmodels.api.Logit
+       generated/statsmodels.api.MNLogit
+       generated/statsmodels.api.MixedLM
+       generated/statsmodels.api.NegativeBinomial
+       generated/statsmodels.api.NominalGEE
+       generated/statsmodels.api.OLS
+       generated/statsmodels.api.OrdinalGEE
+       generated/statsmodels.api.PHReg
+       generated/statsmodels.api.Poisson
+       generated/statsmodels.api.ProbPlot
+       generated/statsmodels.api.Probit
+       generated/statsmodels.api.QuantReg
+       generated/statsmodels.api.RLM
+       generated/statsmodels.api.WLS
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,150 @@
+statsmodels.tsa.tests.test_arima
+================================
+
+.. automodule:: statsmodels.tsa.tests.test_arima
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      arma_generate_sample
+      assert_equal
+      dates_from_range
+      load_macrodata
+      load_macrodata_pandas
+      test_1dexog
+      test_arima_1123
+      test_arima_dataframe_integer_name
+      test_arima_dates_startatend
+      test_arima_diff2
+      test_arima_exog_predict_1d
+      test_arima_no_diff
+      test_arima_predict_bug
+      test_arima_predict_css
+      test_arima_predict_css_dates
+      test_arima_predict_css_diffs
+      test_arima_predict_exog
+      test_arima_predict_indices
+      test_arima_predict_indices_css
+      test_arima_predict_mle
+      test_arima_predict_mle_dates
+      test_arima_predict_mle_diffs
+      test_arima_predict_noma
+      test_arima_predict_pandas_nofreq
+      test_arima_predict_q2
+      test_arima_small_data_bug
+      test_arima_wrapper
+      test_arimax
+      test_arma_missing
+      test_arma_predict_css_dates
+      test_arma_predict_indices
+      test_arma_predict_mle_dates
+      test_bad_start_params
+      test_compare_arma
+      test_plot_predict
+      test_reset_trend
+      test_small_data
+      test_start_params_bug
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ARIMA
+      ARMA
+      Arma
+      CheckArimaResultsMixin
+      CheckArmaResultsMixin
+      CheckDynamicForecastMixin
+      CheckForecastMixin
+      OLS
+      TestARMA00
+      Test_ARIMA101
+      Test_ARIMA111
+      Test_ARIMA111CSS
+      Test_ARIMA112CSS
+      Test_Y_ARMA02_Const
+      Test_Y_ARMA02_Const_CSS
+      Test_Y_ARMA02_NoConst
+      Test_Y_ARMA02_NoConst_CSS
+      Test_Y_ARMA11_Const
+      Test_Y_ARMA11_Const_CSS
+      Test_Y_ARMA11_NoConst
+      Test_Y_ARMA11_NoConst_CSS
+      Test_Y_ARMA14_Const
+      Test_Y_ARMA14_Const_CSS
+      Test_Y_ARMA14_NoConst
+      Test_Y_ARMA14_NoConst_CSS
+      Test_Y_ARMA22_Const
+      Test_Y_ARMA22_Const_CSS
+      Test_Y_ARMA22_NoConst
+      Test_Y_ARMA22_NoConst_CSS
+      Test_Y_ARMA41_Const
+      Test_Y_ARMA41_Const_CSS
+      Test_Y_ARMA41_NoConst
+      Test_Y_ARMA41_NoConst_CSS
+      Test_Y_ARMA50_Const
+      Test_Y_ARMA50_Const_CSS
+      Test_Y_ARMA50_NoConst
+      Test_Y_ARMA50_NoConst_CSS
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tsa.tests.test_arima.ARIMA
+       generated/statsmodels.tsa.tests.test_arima.ARMA
+       generated/statsmodels.tsa.tests.test_arima.Arma
+       generated/statsmodels.tsa.tests.test_arima.CheckArimaResultsMixin
+       generated/statsmodels.tsa.tests.test_arima.CheckArmaResultsMixin
+       generated/statsmodels.tsa.tests.test_arima.CheckDynamicForecastMixin
+       generated/statsmodels.tsa.tests.test_arima.CheckForecastMixin
+       generated/statsmodels.tsa.tests.test_arima.OLS
+       generated/statsmodels.tsa.tests.test_arima.TestARMA00
+       generated/statsmodels.tsa.tests.test_arima.Test_ARIMA101
+       generated/statsmodels.tsa.tests.test_arima.Test_ARIMA111
+       generated/statsmodels.tsa.tests.test_arima.Test_ARIMA111CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_ARIMA112CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_Const
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_Const_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_NoConst
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_NoConst_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_Const
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_Const_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_NoConst
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA11_NoConst_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_Const
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_Const_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_NoConst
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_NoConst_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_Const
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_Const_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_NoConst
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA22_NoConst_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_Const
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_Const_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_NoConst
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_NoConst_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_Const
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_Const_CSS
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_NoConst
+       generated/statsmodels.tsa.tests.test_arima.Test_Y_ARMA50_NoConst_CSS
+
+   
+   
+
+   
+   
+   

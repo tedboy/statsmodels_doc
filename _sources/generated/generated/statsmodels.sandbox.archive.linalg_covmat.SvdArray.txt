@@ -1,0 +1,37 @@
+statsmodels.sandbox.archive.linalg_covmat.SvdArray
+==================================================
+
+.. currentmodule:: statsmodels.sandbox.archive.linalg_covmat
+.. autoclass:: SvdArray
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~SvdArray.__init__
+   ~SvdArray.m_y
+   ~SvdArray.mdet
+   ~SvdArray.meigh
+   ~SvdArray.mhalf
+   ~SvdArray.minv
+   ~SvdArray.minv_y
+   ~SvdArray.minvhalf
+   ~SvdArray.mlogdet
+   ~SvdArray.mpinv
+   ~SvdArray.xpinv
+   ~SvdArray.xxthalf
+   ~SvdArray.xxtinvhalf
+   ~SvdArray.y_m_yt
+   ~SvdArray.y_minv_yt
+   ~SvdArray.yt_m_y
+   ~SvdArray.yt_minv_y
+
+
+
+
+

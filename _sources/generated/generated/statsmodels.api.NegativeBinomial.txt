@@ -1,0 +1,44 @@
+statsmodels.api.NegativeBinomial
+================================
+
+.. currentmodule:: statsmodels.api
+.. autoclass:: NegativeBinomial
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NegativeBinomial.__init__
+   ~NegativeBinomial.cdf
+   ~NegativeBinomial.cov_params_func_l1
+   ~NegativeBinomial.fit
+   ~NegativeBinomial.fit_regularized
+   ~NegativeBinomial.from_formula
+   ~NegativeBinomial.hessian
+   ~NegativeBinomial.information
+   ~NegativeBinomial.initialize
+   ~NegativeBinomial.jac
+   ~NegativeBinomial.loglike
+   ~NegativeBinomial.pdf
+   ~NegativeBinomial.predict
+   ~NegativeBinomial.score
+   ~NegativeBinomial.score_obs
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~NegativeBinomial.endog_names
+   ~NegativeBinomial.exog_names
+

@@ -1,0 +1,28 @@
+statsmodels.sandbox.survival2.KaplanMeier
+=========================================
+
+.. currentmodule:: statsmodels.sandbox.survival2
+.. autoclass:: KaplanMeier
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KaplanMeier.__init__
+   ~KaplanMeier.fit
+   ~KaplanMeier.fitting_proc
+   ~KaplanMeier.plot
+   ~KaplanMeier.plotting_proc
+   ~KaplanMeier.summary
+   ~KaplanMeier.summary_proc
+   ~KaplanMeier.test_diff
+
+
+
+
+

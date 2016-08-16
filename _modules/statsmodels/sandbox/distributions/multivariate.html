@@ -1,0 +1,390 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.distributions.multivariate &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.distributions.multivariate</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.distributions.multivariate</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Multivariate Distribution</span>
+
+<span class="sd">Probability of a multivariate t distribution</span>
+
+<span class="sd">Now also mvstnormcdf has tests against R mvtnorm</span>
+
+<span class="sd">Still need non-central t, extra options, and convenience function for</span>
+<span class="sd">location, scale version.</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License: BSD (3-clause)</span>
+
+<span class="sd">Reference:</span>
+<span class="sd">Genz and Bretz for formula</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">integrate</span><span class="p">,</span> <span class="n">stats</span><span class="p">,</span> <span class="n">special</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">chi</span><span class="p">,</span><span class="n">chi2</span>
+
+<span class="kn">from</span> <span class="nn">.extras</span> <span class="k">import</span> <span class="n">mvnormcdf</span><span class="p">,</span> <span class="n">mvstdnormcdf</span><span class="p">,</span> <span class="n">mvnormcdf</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">exp</span> <span class="k">as</span> <span class="n">np_exp</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">log</span> <span class="k">as</span> <span class="n">np_log</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">gamma</span> <span class="k">as</span> <span class="n">sps_gamma</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">gammaln</span> <span class="k">as</span> <span class="n">sps_gammaln</span>
+
+<div class="viewcode-block" id="chi2_pdf"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.multivariate.chi2_pdf.html#statsmodels.sandbox.distributions.multivariate.chi2_pdf">[docs]</a><span class="k">def</span> <span class="nf">chi2_pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;pdf of chi-square distribution&#39;&#39;&#39;</span>
+    <span class="c1">#from scipy.stats.distributions</span>
+    <span class="n">Px</span> <span class="o">=</span> <span class="n">x</span><span class="o">**</span><span class="p">(</span><span class="n">df</span><span class="o">/</span><span class="mf">2.0</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="n">Px</span> <span class="o">/=</span> <span class="n">special</span><span class="o">.</span><span class="n">gamma</span><span class="p">(</span><span class="n">df</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span><span class="o">*</span> <span class="mi">2</span><span class="o">**</span><span class="p">(</span><span class="n">df</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">Px</span></div>
+
+<div class="viewcode-block" id="chi_pdf"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.multivariate.chi_pdf.html#statsmodels.sandbox.distributions.multivariate.chi_pdf">[docs]</a><span class="k">def</span> <span class="nf">chi_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span><span class="o">*</span><span class="n">np_log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">df</span><span class="o">*</span><span class="mf">0.5</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np_log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> \
+          <span class="o">-</span> <span class="n">sps_gammaln</span><span class="p">(</span><span class="n">df</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np_exp</span><span class="p">(</span><span class="n">tmp</span><span class="p">)</span></div>
+    <span class="c1">#return x**(df-1.)*np_exp(-x*x*0.5)/(2.0)**(df*0.5-1)/sps_gamma(df*0.5)</span>
+
+<div class="viewcode-block" id="chi_logpdf"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.multivariate.chi_logpdf.html#statsmodels.sandbox.distributions.multivariate.chi_logpdf">[docs]</a><span class="k">def</span> <span class="nf">chi_logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">df</span><span class="o">-</span><span class="mf">1.</span><span class="p">)</span><span class="o">*</span><span class="n">np_log</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">-</span> <span class="p">(</span><span class="n">df</span><span class="o">*</span><span class="mf">0.5</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np_log</span><span class="p">(</span><span class="mf">2.0</span><span class="p">)</span> \
+          <span class="o">-</span> <span class="n">sps_gammaln</span><span class="p">(</span><span class="n">df</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tmp</span></div>
+
+<div class="viewcode-block" id="funbgh"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.multivariate.funbgh.html#statsmodels.sandbox.distributions.multivariate.funbgh">[docs]</a><span class="k">def</span> <span class="nf">funbgh</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="n">sqrt_df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">df</span><span class="o">+</span><span class="mf">0.5</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">chi_logpdf</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">df</span><span class="p">)</span>
+    <span class="n">ret</span> <span class="o">+=</span> <span class="n">np_log</span><span class="p">(</span><span class="n">mvstdnormcdf</span><span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">a</span><span class="o">/</span><span class="n">sqrt_df</span><span class="p">,</span> <span class="n">s</span><span class="o">*</span><span class="n">b</span><span class="o">/</span><span class="n">sqrt_df</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span>
+                                         <span class="n">maxpts</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span> <span class="n">abseps</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="n">np_exp</span><span class="p">(</span><span class="n">ret</span><span class="p">)</span>
+    <span class="k">return</span>  <span class="n">ret</span></div>
+
+<div class="viewcode-block" id="funbgh2"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.multivariate.funbgh2.html#statsmodels.sandbox.distributions.multivariate.funbgh2">[docs]</a><span class="k">def</span> <span class="nf">funbgh2</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">df</span><span class="p">):</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">sqrt_df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="c1">#np.power(s, df-1) * np_exp(-s*s*0.5)</span>
+    <span class="k">return</span>  <span class="n">np_exp</span><span class="p">((</span><span class="n">df</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np_log</span><span class="p">(</span><span class="n">s</span><span class="p">)</span><span class="o">-</span><span class="n">s</span><span class="o">*</span><span class="n">s</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span> \
+           <span class="o">*</span> <span class="n">mvstdnormcdf</span><span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">a</span><span class="o">/</span><span class="n">sqrt_df</span><span class="p">,</span> <span class="n">s</span><span class="o">*</span><span class="n">b</span><span class="o">/</span><span class="n">sqrt_df</span><span class="p">,</span> <span class="n">R</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">tril_indices</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)],</span>
+                          <span class="n">maxpts</span><span class="o">=</span><span class="mi">1000000</span><span class="p">,</span> <span class="n">abseps</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="bghfactor"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.multivariate.bghfactor.html#statsmodels.sandbox.distributions.multivariate.bghfactor">[docs]</a><span class="k">def</span> <span class="nf">bghfactor</span><span class="p">(</span><span class="n">df</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="mf">2.0</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">df</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">sps_gamma</span><span class="p">(</span><span class="n">df</span><span class="o">*</span><span class="mf">0.5</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="mvstdtprob"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.mv_normal.mvstdtprob.html#statsmodels.sandbox.distributions.multivariate.mvstdtprob">[docs]</a><span class="k">def</span> <span class="nf">mvstdtprob</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">df</span><span class="p">,</span> <span class="n">ieps</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span> <span class="n">quadkwds</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">mvstkwds</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;probability of rectangular area of standard t distribution</span>
+
+<span class="sd">    assumes mean is zero and R is correlation matrix</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function does not calculate the estimate of the combined error</span>
+<span class="sd">    between the underlying multivariate normal probability calculations</span>
+<span class="sd">    and the integration.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">kwds</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">,</span><span class="n">R</span><span class="p">,</span><span class="n">df</span><span class="p">),</span> <span class="n">epsabs</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span> <span class="n">epsrel</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">150</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">quadkwds</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">kwds</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">quadkwds</span><span class="p">)</span>
+    <span class="c1">#print kwds</span>
+    <span class="n">res</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">funbgh2</span><span class="p">,</span> <span class="o">*</span><span class="n">chi</span><span class="o">.</span><span class="n">ppf</span><span class="p">([</span><span class="n">ieps</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">ieps</span><span class="p">],</span> <span class="n">df</span><span class="p">),</span>
+                          <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+    <span class="n">prob</span> <span class="o">=</span> <span class="n">res</span> <span class="o">*</span> <span class="n">bghfactor</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">prob</span></div>
+
+<span class="c1">#written by Enzo Michelangeli, style changes by josef-pktd</span>
+<span class="c1"># Student&#39;s T random variable</span>
+<div class="viewcode-block" id="multivariate_t_rvs"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.multivariate.multivariate_t_rvs.html#statsmodels.sandbox.distributions.multivariate.multivariate_t_rvs">[docs]</a><span class="k">def</span> <span class="nf">multivariate_t_rvs</span><span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">S</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;generate random variables of multivariate t distribution</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    m : array_like</span>
+<span class="sd">        mean of random variable, length determines dimension of random variable</span>
+<span class="sd">    S : array_like</span>
+<span class="sd">        square array of covariance  matrix</span>
+<span class="sd">    df : int or float</span>
+<span class="sd">        degrees of freedom</span>
+<span class="sd">    n : int</span>
+<span class="sd">        number of observations, return random array will be (n, len(m))</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rvs : ndarray, (n, len(m))</span>
+<span class="sd">        each row is an independent draw of a multivariate t distributed</span>
+<span class="sd">        random variable</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="n">d</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">df</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="mf">1.</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">chisquare</span><span class="p">(</span><span class="n">df</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span><span class="o">/</span><span class="n">df</span>
+    <span class="n">z</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">multivariate_normal</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">d</span><span class="p">),</span><span class="n">S</span><span class="p">,(</span><span class="n">n</span><span class="p">,))</span>
+    <span class="k">return</span> <span class="n">m</span> <span class="o">+</span> <span class="n">z</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">x</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>   <span class="c1"># same output format as random.multivariate_normal</span></div>
+
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">corr_indep</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">corr_equal</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],[</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mf">0.5</span><span class="p">],[</span><span class="mf">0.5</span><span class="p">,</span><span class="mf">0.5</span><span class="p">,</span><span class="mi">1</span><span class="p">]])</span>
+    <span class="n">R</span> <span class="o">=</span> <span class="n">corr_equal</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">,</span><span class="o">-</span><span class="mf">100.0</span><span class="p">])</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mf">0.96</span><span class="p">,</span><span class="o">-</span><span class="mf">0.96</span><span class="p">,</span><span class="o">-</span><span class="mf">0.96</span><span class="p">])</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">,</span><span class="mf">0.0</span><span class="p">])</span>
+    <span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">0.96</span><span class="p">,</span><span class="mf">0.96</span><span class="p">,</span> <span class="mf">0.96</span><span class="p">])</span>
+    <span class="n">a</span><span class="p">[:]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+    <span class="n">b</span><span class="p">[:]</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">df</span> <span class="o">=</span> <span class="mf">10.</span>
+    <span class="n">sqrt_df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mvstdnormcdf</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">corr</span><span class="p">,</span> <span class="n">abseps</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">))</span>
+
+    <span class="c1">#print integrate.quad(funbgh, 0, np.inf, args=(a,b,R,df))</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">df</span><span class="p">)</span> <span class="o">-</span> <span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">a</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">df</span><span class="p">))</span><span class="o">**</span><span class="mi">3</span><span class="p">)</span>
+
+    <span class="n">s</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mvstdnormcdf</span><span class="p">(</span><span class="n">s</span><span class="o">*</span><span class="n">a</span><span class="o">/</span><span class="n">sqrt_df</span><span class="p">,</span> <span class="n">s</span><span class="o">*</span><span class="n">b</span><span class="o">/</span><span class="n">sqrt_df</span><span class="p">,</span> <span class="n">R</span><span class="p">))</span>
+
+
+    <span class="n">df</span><span class="o">=</span><span class="mi">4</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mvstdtprob</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">b</span><span class="p">,</span> <span class="n">R</span><span class="p">,</span> <span class="n">df</span><span class="p">))</span>
+
+    <span class="n">S</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">1.</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">],[</span><span class="o">.</span><span class="mi">5</span><span class="p">,</span><span class="mf">1.</span><span class="p">]])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">multivariate_t_rvs</span><span class="p">([</span><span class="mf">10.</span><span class="p">,</span><span class="mf">20.</span><span class="p">],</span> <span class="n">S</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">5</span><span class="p">))</span>
+
+    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">10000</span>
+    <span class="n">rvst</span> <span class="o">=</span> <span class="n">multivariate_t_rvs</span><span class="p">([</span><span class="mf">10.</span><span class="p">,</span><span class="mf">20.</span><span class="p">],</span> <span class="n">S</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">rvst</span><span class="o">&lt;</span><span class="p">[</span><span class="mf">10.</span><span class="p">,</span><span class="mf">20.</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="mi">0</span><span class="p">)</span> <span class="o">*</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">nobs</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mvstdtprob</span><span class="p">(</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">R</span><span class="p">[:</span><span class="mi">2</span><span class="p">,:</span><span class="mi">2</span><span class="p">],</span> <span class="mi">2</span><span class="p">))</span>
+
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        &gt; lower &lt;- -1</span>
+<span class="sd">        &gt; upper &lt;- 3</span>
+<span class="sd">        &gt; df &lt;- 4</span>
+<span class="sd">        &gt; corr &lt;- diag(3)</span>
+<span class="sd">        &gt; delta &lt;- rep(0, 3)</span>
+<span class="sd">        &gt; pmvt(lower=lower, upper=upper, delta=delta, df=df, corr=corr)</span>
+<span class="sd">        [1] 0.5300413</span>
+<span class="sd">        attr(,&quot;error&quot;)</span>
+<span class="sd">        [1] 4.321136e-05</span>
+<span class="sd">        attr(,&quot;msg&quot;)</span>
+<span class="sd">        [1] &quot;Normal Completion&quot;</span>
+<span class="sd">        &gt; (pt(upper, df) - pt(lower, df))**3</span>
+<span class="sd">        [1] 0.4988254</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

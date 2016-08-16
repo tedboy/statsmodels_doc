@@ -1,0 +1,55 @@
+statsmodels.sandbox.panel.panel_short
+=====================================
+
+.. automodule:: statsmodels.sandbox.panel.panel_short
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      sum_outer_product_balanced
+      sum_outer_product_loop
+      whiten_individuals_loop
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      GLS
+      Group
+      GroupSorted
+      OLS
+      ShortPanelGLS
+      ShortPanelGLS2
+      Unit
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.panel.panel_short.GLS
+       generated/statsmodels.sandbox.panel.panel_short.Group
+       generated/statsmodels.sandbox.panel.panel_short.GroupSorted
+       generated/statsmodels.sandbox.panel.panel_short.OLS
+       generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS
+       generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS2
+       generated/statsmodels.sandbox.panel.panel_short.Unit
+
+   
+   
+
+   
+   
+   

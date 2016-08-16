@@ -1,0 +1,937 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.distributions.sppatch &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.distributions.sppatch</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.distributions.sppatch</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;patching scipy to fit distributions and expect method</span>
+
+<span class="sd">This adds new methods to estimate continuous distribution parameters with some</span>
+<span class="sd">fixed/frozen parameters. It also contains functions that calculate the expected</span>
+<span class="sd">value of a function for any continuous or discrete distribution</span>
+
+<span class="sd">It temporarily also contains Bootstrap and Monte Carlo function for testing the</span>
+<span class="sd">distribution fit, but these are neither general nor verified.</span>
+
+<span class="sd">Author: josef-pktd</span>
+<span class="sd">License: Simplified BSD</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span><span class="p">,</span> <span class="n">lmap</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span><span class="p">,</span> <span class="n">optimize</span><span class="p">,</span> <span class="n">integrate</span>
+
+
+<span class="c1">########## patching scipy</span>
+
+<span class="c1">#vonmises doesn&#39;t define finite bounds, because it is intended for circular</span>
+<span class="c1">#support which does not define a proper pdf on the real line</span>
+
+<span class="n">stats</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">vonmises</span><span class="o">.</span><span class="n">a</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+<span class="n">stats</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">vonmises</span><span class="o">.</span><span class="n">b</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span>
+
+<span class="c1">#the next 3 functions are for fit with some fixed parameters</span>
+<span class="c1">#As they are written, they do not work as functions, only as methods</span>
+
+<span class="k">def</span> <span class="nf">_fitstart</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;example method, method of moment estimator as starting values</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array</span>
+<span class="sd">        data for which the parameters are estimated</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    est : tuple</span>
+<span class="sd">        preliminary estimates used as starting value for fitting, not</span>
+<span class="sd">        necessarily a consistent estimator</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This needs to be written and attached to each individual distribution</span>
+
+<span class="sd">    This example was written for the gamma distribution, but not verified</span>
+<span class="sd">    with literature</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">loc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">([</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="mi">4</span><span class="o">/</span><span class="n">stats</span><span class="o">.</span><span class="n">skew</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_fitstart_beta</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;method of moment estimator as starting values for beta distribution</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array</span>
+<span class="sd">        data for which the parameters are estimated</span>
+<span class="sd">    fixed : None or array_like</span>
+<span class="sd">        sequence of numbers and np.nan to indicate fixed parameters and parameters</span>
+<span class="sd">        to estimate</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    est : tuple</span>
+<span class="sd">        preliminary estimates used as starting value for fitting, not</span>
+<span class="sd">        necessarily a consistent estimator</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This needs to be written and attached to each individual distribution</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    for method of moment estimator for known loc and scale</span>
+<span class="sd">    http://en.wikipedia.org/wiki/Beta_distribution#Parameter_estimation</span>
+<span class="sd">    http://www.itl.nist.gov/div898/handbook/eda/section3/eda366h.htm</span>
+<span class="sd">    NIST reference also includes reference to MLE in</span>
+<span class="sd">    Johnson, Kotz, and Balakrishan, Volume II, pages 221-235</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#todo: separate out this part to be used for other compact support distributions</span>
+    <span class="c1">#      e.g. rdist, vonmises, and truncnorm</span>
+    <span class="c1">#      but this might not work because it might still be distribution specific</span>
+    <span class="n">a</span><span class="p">,</span> <span class="n">b</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span><span class="o">-</span><span class="n">b</span><span class="p">)</span><span class="o">*</span><span class="mf">0.01</span>
+    <span class="k">if</span> <span class="n">fixed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1">#this part not checked with books</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">eps</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">b</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">eps</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fixed</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]):</span>
+            <span class="c1">#estimate loc</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">eps</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="n">fixed</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fixed</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="c1">#estimate scale</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="p">(</span><span class="n">b</span> <span class="o">+</span> <span class="n">eps</span><span class="p">)</span> <span class="o">-</span> <span class="n">loc</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">scale</span> <span class="o">=</span> <span class="n">fixed</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1">#method of moment for known loc scale:</span>
+    <span class="n">scale</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span>
+    <span class="n">xtrans</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">loc</span><span class="p">)</span><span class="o">/</span><span class="n">scale</span>
+    <span class="n">xm</span> <span class="o">=</span> <span class="n">xtrans</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="n">xv</span> <span class="o">=</span> <span class="n">xtrans</span><span class="o">.</span><span class="n">var</span><span class="p">()</span>
+    <span class="n">tmp</span> <span class="o">=</span> <span class="p">(</span><span class="n">xm</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">xm</span><span class="p">)</span><span class="o">/</span><span class="n">xv</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">xm</span> <span class="o">*</span> <span class="n">tmp</span>
+    <span class="n">q</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">xm</span><span class="p">)</span> <span class="o">*</span> <span class="n">tmp</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">p</span><span class="p">,</span> <span class="n">q</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span>  <span class="c1">#check return type and should fixed be returned ?</span>
+
+<span class="k">def</span> <span class="nf">_fitstart_poisson</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">fixed</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;maximum likelihood estimator as starting values for Poisson distribution</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array</span>
+<span class="sd">        data for which the parameters are estimated</span>
+<span class="sd">    fixed : None or array_like</span>
+<span class="sd">        sequence of numbers and np.nan to indicate fixed parameters and parameters</span>
+<span class="sd">        to estimate</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    est : tuple</span>
+<span class="sd">        preliminary estimates used as starting value for fitting, not</span>
+<span class="sd">        necessarily a consistent estimator</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This needs to be written and attached to each individual distribution</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    MLE :</span>
+<span class="sd">    http://en.wikipedia.org/wiki/Poisson_distribution#Maximum_likelihood</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#todo: separate out this part to be used for other compact support distributions</span>
+    <span class="c1">#      e.g. rdist, vonmises, and truncnorm</span>
+    <span class="c1">#      but this might not work because it might still be distribution specific</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">()</span>
+    <span class="n">eps</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># is this robust ?</span>
+    <span class="k">if</span> <span class="n">fixed</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1">#this part not checked with books</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">eps</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">fixed</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+            <span class="c1">#estimate loc</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="n">a</span> <span class="o">-</span> <span class="n">eps</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">loc</span> <span class="o">=</span> <span class="n">fixed</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="c1">#MLE for standard (unshifted, if loc=0) Poisson distribution</span>
+
+    <span class="n">xtrans</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">loc</span><span class="p">)</span>
+    <span class="n">lambd</span> <span class="o">=</span> <span class="n">xtrans</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="c1">#second derivative d loglike/ dlambd Not used</span>
+    <span class="c1">#dlldlambd = 1/lambd # check</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">lambd</span><span class="p">,</span> <span class="n">loc</span><span class="p">)</span>  <span class="c1">#check return type and should fixed be returned ?</span>
+
+
+<div class="viewcode-block" id="nnlf_fr"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.sppatch.nnlf_fr.html#statsmodels.distributions.nnlf_fr">[docs]</a><span class="k">def</span> <span class="nf">nnlf_fr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">thetash</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">frmask</span><span class="p">):</span>
+    <span class="c1"># new frozen version</span>
+    <span class="c1"># - sum (log pdf(x, theta),axis=0)</span>
+    <span class="c1">#   where theta are the parameters (including loc and scale)</span>
+    <span class="c1">#</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">frmask</span> <span class="o">!=</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">frmask</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+            <span class="n">theta</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">frmask</span><span class="p">)]</span> <span class="o">=</span> <span class="n">thetash</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">theta</span> <span class="o">=</span> <span class="n">thetash</span>
+        <span class="n">loc</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+        <span class="n">scale</span> <span class="o">=</span> <span class="n">theta</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">args</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">theta</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">])</span>
+    <span class="k">except</span> <span class="ne">IndexError</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Not enough input arguments.&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">_argcheck</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="ow">or</span> <span class="n">scale</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">((</span><span class="n">x</span><span class="o">-</span><span class="n">loc</span><span class="p">)</span> <span class="o">/</span> <span class="n">scale</span><span class="p">)</span>
+    <span class="n">cond0</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span> <span class="o">|</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">if</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">cond0</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1">#raise ValueError</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nnlf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">+</span> <span class="n">N</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">scale</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="fit_fr"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.sppatch.fit_fr.html#statsmodels.distributions.fit_fr">[docs]</a><span class="k">def</span> <span class="nf">fit_fr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;estimate distribution parameters by MLE taking some parameters as fixed</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    data : array, 1d</span>
+<span class="sd">        data for which the distribution parameters are estimated,</span>
+<span class="sd">    args : list ? check</span>
+<span class="sd">        starting values for optimization</span>
+<span class="sd">    kwds :</span>
+
+<span class="sd">      - &#39;frozen&#39; : array_like</span>
+<span class="sd">           values for frozen distribution parameters and, for elements with</span>
+<span class="sd">           np.nan, the corresponding parameter will be estimated</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    argest : array</span>
+<span class="sd">        estimated parameters</span>
+
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    generate random sample</span>
+<span class="sd">    &gt;&gt;&gt; np.random.seed(12345)</span>
+<span class="sd">    &gt;&gt;&gt; x = stats.gamma.rvs(2.5, loc=0, scale=1.2, size=200)</span>
+
+<span class="sd">    estimate all parameters</span>
+<span class="sd">    &gt;&gt;&gt; stats.gamma.fit(x)</span>
+<span class="sd">    array([ 2.0243194 ,  0.20395655,  1.44411371])</span>
+<span class="sd">    &gt;&gt;&gt; stats.gamma.fit_fr(x, frozen=[np.nan, np.nan, np.nan])</span>
+<span class="sd">    array([ 2.0243194 ,  0.20395655,  1.44411371])</span>
+
+<span class="sd">    keep loc fixed, estimate shape and scale parameters</span>
+<span class="sd">    &gt;&gt;&gt; stats.gamma.fit_fr(x, frozen=[np.nan, 0.0, np.nan])</span>
+<span class="sd">    array([ 2.45603985,  1.27333105])</span>
+
+<span class="sd">    keep loc and scale fixed, estimate shape parameter</span>
+<span class="sd">    &gt;&gt;&gt; stats.gamma.fit_fr(x, frozen=[np.nan, 0.0, 1.0])</span>
+<span class="sd">    array([ 3.00048828])</span>
+<span class="sd">    &gt;&gt;&gt; stats.gamma.fit_fr(x, frozen=[np.nan, 0.0, 1.2])</span>
+<span class="sd">    array([ 2.57792969])</span>
+
+<span class="sd">    estimate only scale parameter for fixed shape and loc</span>
+<span class="sd">    &gt;&gt;&gt; stats.gamma.fit_fr(x, frozen=[2.5, 0.0, np.nan])</span>
+<span class="sd">    array([ 1.25087891])</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    self is an instance of a distribution class. This can be attached to</span>
+<span class="sd">    scipy.stats.distributions.rv_continuous</span>
+
+<span class="sd">    *Todo*</span>
+
+<span class="sd">    * check if docstring is correct</span>
+<span class="sd">    * more input checking, args is list ? might also apply to current fit method</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">loc0</span><span class="p">,</span> <span class="n">scale0</span> <span class="o">=</span> <span class="n">lmap</span><span class="p">(</span><span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;loc&#39;</span><span class="p">,</span> <span class="s1">&#39;scale&#39;</span><span class="p">],[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="n">Narg</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">Narg</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;_fitstart&#39;</span><span class="p">):</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_fitstart</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">Narg</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">numargs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Too many input arguments.&quot;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">args</span> <span class="o">+=</span> <span class="p">(</span><span class="mf">1.0</span><span class="p">,)</span><span class="o">*</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">numargs</span><span class="o">-</span><span class="n">Narg</span><span class="p">)</span>
+        <span class="c1"># location and scale are at the end</span>
+        <span class="n">x0</span> <span class="o">=</span> <span class="n">args</span> <span class="o">+</span> <span class="p">(</span><span class="n">loc0</span><span class="p">,</span> <span class="n">scale0</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;frozen&#39;</span> <span class="ow">in</span> <span class="n">kwds</span><span class="p">:</span>
+        <span class="n">frmask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;frozen&#39;</span><span class="p">])</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">frmask</span><span class="p">)</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">numargs</span><span class="o">+</span><span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Incorrect number of frozen arguments.&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1"># keep starting values for not frozen parameters</span>
+            <span class="n">x0</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x0</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">frmask</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">frmask</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="c1">#print(x0</span>
+    <span class="c1">#print(frmask</span>
+    <span class="k">return</span> <span class="n">optimize</span><span class="o">.</span><span class="n">fmin</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nnlf_fr</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span>
+                <span class="n">args</span><span class="o">=</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">data</span><span class="p">),</span> <span class="n">frmask</span><span class="p">),</span> <span class="n">disp</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+<span class="c1">#The next two functions/methods calculate expected value of an arbitrary</span>
+<span class="c1">#function, however for the continuous functions intquad is use, which might</span>
+<span class="c1">#require continuouity or smoothness in the function.</span>
+
+
+<span class="c1">#TODO: add option for Monte Carlo integration</span>
+
+<div class="viewcode-block" id="expect"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.sppatch.expect.html#statsmodels.distributions.expect">[docs]</a><span class="k">def</span> <span class="nf">expect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">conditional</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;calculate expected value of a function with respect to the distribution</span>
+
+<span class="sd">    location and scale only tested on a few examples</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        all parameters are keyword parameters</span>
+<span class="sd">        fn : function (default: identity mapping)</span>
+<span class="sd">           Function for which integral is calculated. Takes only one argument.</span>
+<span class="sd">        args : tuple</span>
+<span class="sd">           argument (parameters) of the distribution</span>
+<span class="sd">        lb, ub : numbers</span>
+<span class="sd">           lower and upper bound for integration, default is set to the support</span>
+<span class="sd">           of the distribution</span>
+<span class="sd">        conditional : boolean (False)</span>
+<span class="sd">           If true then the integral is corrected by the conditional probability</span>
+<span class="sd">           of the integration interval. The return value is the expectation</span>
+<span class="sd">           of the function, conditional on being in the given interval.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        expected value : float</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function has not been checked for it&#39;s behavior when the integral is</span>
+<span class="sd">    not finite. The integration behavior is inherited from scipy.integrate.quad.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">x</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lb</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lb</span> <span class="o">=</span> <span class="n">loc</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">*</span> <span class="n">scale</span> <span class="c1">#(self.a - loc)/(1.0*scale)</span>
+    <span class="k">if</span> <span class="n">ub</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ub</span> <span class="o">=</span> <span class="n">loc</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span> <span class="o">*</span> <span class="n">scale</span> <span class="c1">#(self.b - loc)/(1.0*scale)</span>
+    <span class="k">if</span> <span class="n">conditional</span><span class="p">:</span>
+        <span class="n">invfac</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+                  <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">invfac</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span>
+                                <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">invfac</span></div>
+
+
+<div class="viewcode-block" id="expect_v2"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.sppatch.expect_v2.html#statsmodels.distributions.expect_v2">[docs]</a><span class="k">def</span> <span class="nf">expect_v2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">conditional</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;calculate expected value of a function with respect to the distribution</span>
+
+<span class="sd">    location and scale only tested on a few examples</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        all parameters are keyword parameters</span>
+<span class="sd">        fn : function (default: identity mapping)</span>
+<span class="sd">           Function for which integral is calculated. Takes only one argument.</span>
+<span class="sd">        args : tuple</span>
+<span class="sd">           argument (parameters) of the distribution</span>
+<span class="sd">        lb, ub : numbers</span>
+<span class="sd">           lower and upper bound for integration, default is set using</span>
+<span class="sd">           quantiles of the distribution, see Notes</span>
+<span class="sd">        conditional : boolean (False)</span>
+<span class="sd">           If true then the integral is corrected by the conditional probability</span>
+<span class="sd">           of the integration interval. The return value is the expectation</span>
+<span class="sd">           of the function, conditional on being in the given interval.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        expected value : float</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function has not been checked for it&#39;s behavior when the integral is</span>
+<span class="sd">    not finite. The integration behavior is inherited from scipy.integrate.quad.</span>
+
+<span class="sd">    The default limits are lb = self.ppf(1e-9, *args), ub = self.ppf(1-1e-9, *args)</span>
+
+<span class="sd">    For some heavy tailed distributions, &#39;alpha&#39;, &#39;cauchy&#39;, &#39;halfcauchy&#39;,</span>
+<span class="sd">    &#39;levy&#39;, &#39;levy_l&#39;, and for &#39;ncf&#39;, the default limits are not set correctly</span>
+<span class="sd">    even  when the expectation of the function is finite. In this case, the</span>
+<span class="sd">    integration limits, lb and ub, should be chosen by the user. For example,</span>
+<span class="sd">    for the ncf distribution, ub=1000 works in the examples.</span>
+
+<span class="sd">    There are also problems with numerical integration in some other cases,</span>
+<span class="sd">    for example if the distribution is very concentrated and the default limits</span>
+<span class="sd">    are too large.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#changes: 20100809</span>
+    <span class="c1">#correction and refactoring how loc and scale are handled</span>
+    <span class="c1">#uses now _pdf</span>
+    <span class="c1">#needs more testing for distribution with bound support, e.g. genpareto</span>
+
+    <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">loc</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="n">scale</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+            <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">loc</span> <span class="o">+</span> <span class="n">x</span><span class="o">*</span><span class="n">scale</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">lb</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1">#lb = self.a</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">lb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>  <span class="c1">#1e-14 quad fails for pareto</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">lb</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lb</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">,</span> <span class="p">(</span><span class="n">lb</span> <span class="o">-</span> <span class="n">loc</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">scale</span><span class="p">))</span> <span class="c1">#transform to standardized</span>
+    <span class="k">if</span> <span class="n">ub</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1">#ub = self.b</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">ub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">9</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">ValueError</span><span class="p">:</span>
+            <span class="n">ub</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">b</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ub</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">,</span> <span class="p">(</span><span class="n">ub</span> <span class="o">-</span> <span class="n">loc</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">*</span><span class="n">scale</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">conditional</span><span class="p">:</span>
+        <span class="n">invfac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sf</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sf</span><span class="p">(</span><span class="n">ub</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">invfac</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="k">return</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">fun</span><span class="p">,</span> <span class="n">lb</span><span class="p">,</span> <span class="n">ub</span><span class="p">,</span>
+                                <span class="n">args</span><span class="o">=</span><span class="n">args</span><span class="p">,</span> <span class="n">limit</span><span class="o">=</span><span class="mi">500</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="n">invfac</span></div>
+
+<span class="c1">### for discrete distributions</span>
+
+<span class="c1">#TODO: check that for a distribution with finite support the calculations are</span>
+<span class="c1">#      done with one array summation (np.dot)</span>
+
+<span class="c1">#based on _drv2_moment(self, n, *args), but streamlined</span>
+<div class="viewcode-block" id="expect_discrete"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.sppatch.expect_discrete.html#statsmodels.distributions.expect_discrete">[docs]</a><span class="k">def</span> <span class="nf">expect_discrete</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">fn</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">args</span><span class="o">=</span><span class="p">(),</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">lb</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ub</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                    <span class="n">conditional</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;calculate expected value of a function with respect to the distribution</span>
+<span class="sd">    for discrete distribution</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">        (self : distribution instance as defined in scipy stats)</span>
+<span class="sd">        fn : function (default: identity mapping)</span>
+<span class="sd">           Function for which integral is calculated. Takes only one argument.</span>
+<span class="sd">        args : tuple</span>
+<span class="sd">           argument (parameters) of the distribution</span>
+<span class="sd">        optional keyword parameters</span>
+<span class="sd">        lb, ub : numbers</span>
+<span class="sd">           lower and upper bound for integration, default is set to the support</span>
+<span class="sd">           of the distribution, lb and ub are inclusive (ul&lt;=k&lt;=ub)</span>
+<span class="sd">        conditional : boolean (False)</span>
+<span class="sd">           If true then the expectation is corrected by the conditional</span>
+<span class="sd">           probability of the integration interval. The return value is the</span>
+<span class="sd">           expectation of the function, conditional on being in the given</span>
+<span class="sd">           interval (k such that ul&lt;=k&lt;=ub).</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">        expected value : float</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    * function is not vectorized</span>
+<span class="sd">    * accuracy: uses self.moment_tol as stopping criterium</span>
+<span class="sd">        for heavy tailed distribution e.g. zipf(4), accuracy for</span>
+<span class="sd">        mean, variance in example is only 1e-5,</span>
+<span class="sd">        increasing precision (moment_tol) makes zipf very slow</span>
+<span class="sd">    * suppnmin=100 internal parameter for minimum number of points to evaluate</span>
+<span class="sd">        could be added as keyword parameter, to evaluate functions with</span>
+<span class="sd">        non-monotonic shapes, points include integers in (-suppnmin, suppnmin)</span>
+<span class="sd">    * uses maxcount=1000 limits the number of points that are evaluated</span>
+<span class="sd">        to break loop for infinite sums</span>
+<span class="sd">        (a maximum of suppnmin+1000 positive plus suppnmin+1000 negative integers</span>
+<span class="sd">        are evaluated)</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1">#moment_tol = 1e-12 # increase compared to self.moment_tol,</span>
+    <span class="c1"># too slow for only small gain in precision for zipf</span>
+
+    <span class="c1">#avoid endless loop with unbound integral, eg. var of zipf(2)</span>
+    <span class="n">maxcount</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">suppnmin</span> <span class="o">=</span> <span class="mi">100</span>  <span class="c1">#minimum number of points to evaluate (+ and -)</span>
+
+    <span class="k">if</span> <span class="n">fn</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="c1">#loc and args from outer scope</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">loc</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_pmf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">def</span> <span class="nf">fun</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+            <span class="c1">#loc and args from outer scope</span>
+            <span class="k">return</span> <span class="n">fn</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">loc</span><span class="p">)</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_pmf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="c1"># used pmf because _pmf does not check support in randint</span>
+    <span class="c1"># and there might be problems(?) with correct self.a, self.b at this stage</span>
+    <span class="c1"># maybe not anymore, seems to work now with _pmf</span>
+
+    <span class="bp">self</span><span class="o">.</span><span class="n">_argcheck</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="c1"># (re)generate scalar self.a and self.b</span>
+    <span class="k">if</span> <span class="n">lb</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">lb</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">a</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">lb</span> <span class="o">=</span> <span class="n">lb</span> <span class="o">-</span> <span class="n">loc</span>
+
+    <span class="k">if</span> <span class="n">ub</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">ub</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">b</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">ub</span> <span class="o">=</span> <span class="n">ub</span> <span class="o">-</span> <span class="n">loc</span>
+    <span class="k">if</span> <span class="n">conditional</span><span class="p">:</span>
+        <span class="n">invfac</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">lb</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">)</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">ub</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">invfac</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="n">tot</span> <span class="o">=</span> <span class="mf">0.0</span>
+    <span class="n">low</span><span class="p">,</span> <span class="n">upp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ppf</span><span class="p">(</span><span class="mf">0.001</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_ppf</span><span class="p">(</span><span class="mf">0.999</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">)</span>
+    <span class="n">low</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="o">-</span><span class="n">suppnmin</span><span class="p">,</span> <span class="n">low</span><span class="p">),</span> <span class="n">lb</span><span class="p">)</span>
+    <span class="n">upp</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="nb">max</span><span class="p">(</span><span class="n">suppnmin</span><span class="p">,</span> <span class="n">upp</span><span class="p">),</span> <span class="n">ub</span><span class="p">)</span>
+    <span class="n">supp</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">upp</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">inc</span><span class="p">)</span> <span class="c1">#check limits</span>
+    <span class="c1">#print(&#39;low, upp&#39;, low, upp</span>
+    <span class="n">tot</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">fun</span><span class="p">(</span><span class="n">supp</span><span class="p">))</span>
+    <span class="n">diff</span> <span class="o">=</span> <span class="mi">1</span><span class="n">e100</span>
+    <span class="n">pos</span> <span class="o">=</span> <span class="n">upp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">inc</span>
+    <span class="n">count</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1">#handle cases with infinite support</span>
+
+    <span class="k">while</span> <span class="p">(</span><span class="n">pos</span> <span class="o">&lt;=</span> <span class="n">ub</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">moment_tol</span><span class="p">)</span> <span class="ow">and</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">maxcount</span><span class="p">:</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+        <span class="n">tot</span> <span class="o">+=</span> <span class="n">diff</span>
+        <span class="n">pos</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inc</span>
+        <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+
+    <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">a</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#handle case when self.a = -inf</span>
+        <span class="n">diff</span> <span class="o">=</span> <span class="mi">1</span><span class="n">e100</span>
+        <span class="n">pos</span> <span class="o">=</span> <span class="n">low</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">inc</span>
+        <span class="k">while</span> <span class="p">(</span><span class="n">pos</span> <span class="o">&gt;=</span> <span class="n">lb</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">diff</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">moment_tol</span><span class="p">)</span> <span class="ow">and</span> <span class="n">count</span> <span class="o">&lt;=</span> <span class="n">maxcount</span><span class="p">:</span>
+            <span class="n">diff</span> <span class="o">=</span> <span class="n">fun</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span>
+            <span class="n">tot</span> <span class="o">+=</span> <span class="n">diff</span>
+            <span class="n">pos</span> <span class="o">-=</span> <span class="bp">self</span><span class="o">.</span><span class="n">inc</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="n">maxcount</span><span class="p">:</span>
+        <span class="c1"># replace with proper warning</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sum did not converge&#39;</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">tot</span><span class="o">/</span><span class="n">invfac</span></div>
+
+<span class="n">stats</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">rv_continuous</span><span class="o">.</span><span class="n">fit_fr</span> <span class="o">=</span> <span class="n">fit_fr</span>
+<span class="n">stats</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">rv_continuous</span><span class="o">.</span><span class="n">nnlf_fr</span> <span class="o">=</span> <span class="n">nnlf_fr</span>
+<span class="n">stats</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">rv_continuous</span><span class="o">.</span><span class="n">expect</span> <span class="o">=</span> <span class="n">expect</span>
+<span class="n">stats</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">rv_discrete</span><span class="o">.</span><span class="n">expect</span> <span class="o">=</span> <span class="n">expect_discrete</span>
+<span class="n">stats</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">beta_gen</span><span class="o">.</span><span class="n">_fitstart</span> <span class="o">=</span> <span class="n">_fitstart_beta</span>  <span class="c1">#not tried out yet</span>
+<span class="n">stats</span><span class="o">.</span><span class="n">distributions</span><span class="o">.</span><span class="n">poisson_gen</span><span class="o">.</span><span class="n">_fitstart</span> <span class="o">=</span> <span class="n">_fitstart_poisson</span>  <span class="c1">#not tried out yet</span>
+
+<span class="c1">########## end patching scipy</span>
+
+
+<div class="viewcode-block" id="distfitbootstrap"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.sppatch.distfitbootstrap.html#statsmodels.distributions.distfitbootstrap">[docs]</a><span class="k">def</span> <span class="nf">distfitbootstrap</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">100</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;run bootstrap for estimation of distribution parameters</span>
+
+<span class="sd">    hard coded: only one shape parameter is allowed and estimated,</span>
+<span class="sd">        loc=0 and scale=1 are fixed in the estimation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample : array</span>
+<span class="sd">        original sample data for bootstrap</span>
+<span class="sd">    distr : distribution instance with fit_fr method</span>
+<span class="sd">    nrepl : integer</span>
+<span class="sd">        number of bootstrap replications</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : array (nrepl,)</span>
+<span class="sd">        parameter estimates for all bootstrap replications</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nrepl</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrepl</span><span class="p">):</span>
+        <span class="n">rvsind</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="n">nobs</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">sample</span><span class="p">[</span><span class="n">rvsind</span><span class="p">]</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">fit_fr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="distfitmc"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.sppatch.distfitmc.html#statsmodels.distributions.distfitmc">[docs]</a><span class="k">def</span> <span class="nf">distfitmc</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">distkwds</span><span class="o">=</span><span class="p">{}):</span>
+    <span class="sd">&#39;&#39;&#39;run Monte Carlo for estimation of distribution parameters</span>
+
+<span class="sd">    hard coded: only one shape parameter is allowed and estimated,</span>
+<span class="sd">        loc=0 and scale=1 are fixed in the estimation</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample : array</span>
+<span class="sd">        original sample data, in Monte Carlo only used to get nobs,</span>
+<span class="sd">    distr : distribution instance with fit_fr method</span>
+<span class="sd">    nrepl : integer</span>
+<span class="sd">        number of Monte Carlo replications</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : array (nrepl,)</span>
+<span class="sd">        parameter estimates for all Monte Carlo replications</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">arg</span> <span class="o">=</span> <span class="n">distkwds</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;arg&#39;</span><span class="p">)</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">sample</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nrepl</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nrepl</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="o">**</span><span class="n">distkwds</span><span class="p">)</span>
+        <span class="n">res</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">fit_fr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+<div class="viewcode-block" id="printresults"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.sppatch.printresults.html#statsmodels.distributions.printresults">[docs]</a><span class="k">def</span> <span class="nf">printresults</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">bres</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;bootstrap&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;calculate and print(Bootstrap or Monte Carlo result</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    sample : array</span>
+<span class="sd">        original sample data</span>
+<span class="sd">    arg : float   (for general case will be array)</span>
+<span class="sd">    bres : array</span>
+<span class="sd">        parameter estimates from Bootstrap or Monte Carlo run</span>
+<span class="sd">    kind : {&#39;bootstrap&#39;, &#39;montecarlo&#39;}</span>
+<span class="sd">        output is printed for Mootstrap (default) or Monte Carlo</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    None, currently only printing</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    still a bit a mess because it is used for both Bootstrap and Monte Carlo</span>
+
+<span class="sd">    made correction:</span>
+<span class="sd">        reference point for bootstrap is estimated parameter</span>
+
+<span class="sd">    not clear:</span>
+<span class="sd">        I&#39;m not doing any ddof adjustment in estimation of variance, do we</span>
+<span class="sd">        need ddof&gt;0 ?</span>
+
+<span class="sd">    todo: return results and string instead of printing</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;true parameter value&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;MLE estimate of parameters using sample (nobs=</span><span class="si">%d</span><span class="s1">)&#39;</span><span class="o">%</span> <span class="p">(</span><span class="n">nobs</span><span class="p">))</span>
+    <span class="n">argest</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">fit_fr</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">argest</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">kind</span> <span class="o">==</span> <span class="s1">&#39;bootstrap&#39;</span><span class="p">:</span>
+        <span class="c1">#bootstrap compares to estimate from sample</span>
+        <span class="n">argorig</span> <span class="o">=</span> <span class="n">arg</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="n">argest</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> distribution of parameter estimate (nrepl=</span><span class="si">%d</span><span class="s1">)&#39;</span><span class="o">%</span> <span class="p">(</span><span class="n">kind</span><span class="p">,</span> <span class="n">nrepl</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mean = </span><span class="si">%f</span><span class="s1">, bias=</span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">bres</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">bres</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">-</span><span class="n">arg</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;median&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">bres</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;var and std&#39;</span><span class="p">,</span> <span class="n">bres</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">bres</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+    <span class="n">bmse</span> <span class="o">=</span> <span class="p">((</span><span class="n">bres</span> <span class="o">-</span> <span class="n">arg</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mse, rmse&#39;</span><span class="p">,</span> <span class="n">bmse</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">bmse</span><span class="p">))</span>
+    <span class="n">bressorted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">bres</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> confidence interval (90</span><span class="si">%%</span><span class="s1"> coverage)&#39;</span> <span class="o">%</span> <span class="n">kind</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">bressorted</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">nrepl</span><span class="o">*</span><span class="mf">0.05</span><span class="p">)],</span> <span class="n">bressorted</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">nrepl</span><span class="o">*</span><span class="mf">0.95</span><span class="p">)])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1"> confidence interval (90</span><span class="si">%%</span><span class="s1"> coverage) normal approximation&#39;</span> <span class="o">%</span> <span class="n">kind</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">ppf</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">bres</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">scale</span><span class="o">=</span><span class="n">bres</span><span class="o">.</span><span class="n">std</span><span class="p">()),)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">isf</span><span class="p">(</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">bres</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">scale</span><span class="o">=</span><span class="n">bres</span><span class="o">.</span><span class="n">std</span><span class="p">()))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Kolmogorov-Smirnov test for normality of </span><span class="si">%s</span><span class="s1"> distribution&#39;</span> <span class="o">%</span> <span class="n">kind</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39; - estimated parameters, p-values not really correct&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">kstest</span><span class="p">(</span><span class="n">bres</span><span class="p">,</span> <span class="s1">&#39;norm&#39;</span><span class="p">,</span> <span class="p">(</span><span class="n">bres</span><span class="o">.</span><span class="n">mean</span><span class="p">(),</span> <span class="n">bres</span><span class="o">.</span><span class="n">std</span><span class="p">())))</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">examplecases</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;largenumber&#39;</span><span class="p">,</span> <span class="s1">&#39;bootstrap&#39;</span><span class="p">,</span> <span class="s1">&#39;montecarlo&#39;</span><span class="p">][:]</span>
+
+    <span class="k">if</span> <span class="s1">&#39;largenumber&#39;</span> <span class="ow">in</span> <span class="n">examplecases</span><span class="p">:</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Distribution: vonmises&#39;</span><span class="p">)</span>
+
+        <span class="k">for</span> <span class="n">nobs</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">200</span><span class="p">]:</span><span class="c1">#[20000, 1000, 100]:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">vonmises</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="mf">1.23</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">nobs:&#39;</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;true parameter&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;1.23, loc=0, scale=1&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;unconstraint&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">vonmises</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">vonmises</span><span class="o">.</span><span class="n">fit_fr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;with fixed loc and scale&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">vonmises</span><span class="o">.</span><span class="n">fit_fr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]))</span>
+
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Distribution: gamma&#39;</span><span class="p">)</span>
+        <span class="n">distr</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gamma</span>
+        <span class="n">arg</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mf">20.</span>
+
+        <span class="k">for</span> <span class="n">nobs</span> <span class="ow">in</span> <span class="p">[</span><span class="mi">200</span><span class="p">]:</span><span class="c1">#[20000, 1000, 100]:</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">nobs:&#39;</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;true parameter&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="si">%f</span><span class="s1">, loc=</span><span class="si">%f</span><span class="s1">, scale=</span><span class="si">%f</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;unconstraint&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">distr</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">distr</span><span class="o">.</span><span class="n">fit_fr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;with fixed loc and scale&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">distr</span><span class="o">.</span><span class="n">fit_fr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">]))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;with fixed loc&#39;</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">distr</span><span class="o">.</span><span class="n">fit_fr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">frozen</span><span class="o">=</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]))</span>
+
+
+    <span class="n">ex</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;gamma&#39;</span><span class="p">,</span> <span class="s1">&#39;vonmises&#39;</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="n">ex</span> <span class="o">==</span> <span class="s1">&#39;gamma&#39;</span><span class="p">:</span>
+        <span class="n">distr</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">gamma</span>
+        <span class="n">arg</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">2.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">elif</span> <span class="n">ex</span> <span class="o">==</span> <span class="s1">&#39;vonmises&#39;</span><span class="p">:</span>
+        <span class="n">distr</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">vonmises</span>
+        <span class="n">arg</span><span class="p">,</span> <span class="n">loc</span><span class="p">,</span> <span class="n">scale</span> <span class="o">=</span> <span class="mf">1.5</span><span class="p">,</span> <span class="mf">0.</span><span class="p">,</span> <span class="mi">1</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;wrong example&#39;</span><span class="p">)</span>
+
+    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">nrepl</span> <span class="o">=</span> <span class="mi">1000</span>
+
+    <span class="n">sample</span> <span class="o">=</span> <span class="n">distr</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">arg</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Distribution:&#39;</span><span class="p">,</span> <span class="n">distr</span><span class="p">)</span>
+    <span class="k">if</span> <span class="s1">&#39;bootstrap&#39;</span> <span class="ow">in</span> <span class="n">examplecases</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">Bootstrap&#39;</span><span class="p">)</span>
+        <span class="n">bres</span> <span class="o">=</span> <span class="n">distfitbootstrap</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="n">nrepl</span> <span class="p">)</span>
+        <span class="n">printresults</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">bres</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="s1">&#39;montecarlo&#39;</span> <span class="ow">in</span> <span class="n">examplecases</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">MonteCarlo&#39;</span><span class="p">)</span>
+        <span class="n">mcres</span> <span class="o">=</span> <span class="n">distfitmc</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">distr</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="n">nrepl</span><span class="p">,</span>
+                          <span class="n">distkwds</span><span class="o">=</span><span class="nb">dict</span><span class="p">(</span><span class="n">arg</span><span class="o">=</span><span class="n">arg</span><span class="p">,</span> <span class="n">loc</span><span class="o">=</span><span class="n">loc</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">))</span>
+        <span class="n">printresults</span><span class="p">(</span><span class="n">sample</span><span class="p">,</span> <span class="n">arg</span><span class="p">,</span> <span class="n">mcres</span><span class="p">,</span> <span class="n">kind</span><span class="o">=</span><span class="s1">&#39;montecarlo&#39;</span><span class="p">)</span>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

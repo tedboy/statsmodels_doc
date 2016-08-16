@@ -1,0 +1,23 @@
+statsmodels.sandbox.distributions.transform_functions.ExpFunc
+=============================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.transform_functions
+.. autoclass:: ExpFunc
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ExpFunc.deriv
+   ~ExpFunc.func
+   ~ExpFunc.inverse
+
+
+
+
+

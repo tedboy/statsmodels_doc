@@ -1,0 +1,25 @@
+statsmodels.sandbox.tests.test_gam.TestGAMBinomial
+==================================================
+
+.. currentmodule:: statsmodels.sandbox.tests.test_gam
+.. autoclass:: TestGAMBinomial
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestGAMBinomial.__init__
+   ~TestGAMBinomial.init
+   ~TestGAMBinomial.test_mu
+   ~TestGAMBinomial.test_params
+   ~TestGAMBinomial.test_predict
+
+
+
+
+

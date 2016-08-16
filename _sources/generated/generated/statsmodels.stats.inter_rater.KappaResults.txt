@@ -1,0 +1,47 @@
+statsmodels.stats.inter_rater.KappaResults
+==========================================
+
+.. currentmodule:: statsmodels.stats.inter_rater
+.. autoclass:: KappaResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KappaResults.__init__
+   ~KappaResults.clear
+   ~KappaResults.copy
+   ~KappaResults.fromkeys
+   ~KappaResults.get
+   ~KappaResults.has_key
+   ~KappaResults.items
+   ~KappaResults.iteritems
+   ~KappaResults.iterkeys
+   ~KappaResults.itervalues
+   ~KappaResults.keys
+   ~KappaResults.pop
+   ~KappaResults.popitem
+   ~KappaResults.setdefault
+   ~KappaResults.update
+   ~KappaResults.values
+   ~KappaResults.viewitems
+   ~KappaResults.viewkeys
+   ~KappaResults.viewvalues
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~KappaResults.template
+

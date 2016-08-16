@@ -1,0 +1,23 @@
+statsmodels.base.model.Results
+==============================
+
+.. currentmodule:: statsmodels.base.model
+.. autoclass:: Results
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Results.__init__
+   ~Results.initialize
+   ~Results.predict
+
+
+
+
+

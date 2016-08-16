@@ -1,0 +1,781 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.nonparametric.kernels &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.nonparametric.kernels</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.nonparametric.kernels</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This models contains the Kernels for Kernel smoothing.</span>
+
+<span class="sd">Hopefully in the future they may be reused/extended for other kernel based</span>
+<span class="sd">method</span>
+
+<span class="sd">References:</span>
+<span class="sd">----------</span>
+
+<span class="sd">Pointwise Kernel Confidence Bounds</span>
+<span class="sd">(smoothconf)</span>
+<span class="sd">http://fedc.wiwi.hu-berlin.de/xplore/ebooks/html/anr/anrhtmlframe62.html</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># pylint: disable-msg=C0103</span>
+<span class="c1"># pylint: disable-msg=W0142</span>
+<span class="c1"># pylint: disable-msg=E1101</span>
+<span class="c1"># pylint: disable-msg=E0611</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">lzip</span><span class="p">,</span> <span class="n">lfilter</span><span class="p">,</span> <span class="n">callable</span><span class="p">,</span> <span class="nb">zip</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">scipy.integrate</span>
+<span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="k">import</span> <span class="n">factorial</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">exp</span><span class="p">,</span> <span class="n">multiply</span><span class="p">,</span> <span class="n">square</span><span class="p">,</span> <span class="n">divide</span><span class="p">,</span> <span class="n">subtract</span><span class="p">,</span> <span class="n">inf</span>
+
+
+<div class="viewcode-block" id="NdKernel"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.NdKernel.html#statsmodels.sandbox.nonparametric.kernels.NdKernel">[docs]</a><span class="k">class</span> <span class="nc">NdKernel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Generic N-dimensial kernel</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n : int</span>
+<span class="sd">        The number of series for kernel estimates</span>
+<span class="sd">    kernels : list</span>
+<span class="sd">        kernels</span>
+
+<span class="sd">    Can be constructed from either</span>
+<span class="sd">    a) a list of n kernels which will be treated as</span>
+<span class="sd">    indepent marginals on a gaussian copula (specified by H)</span>
+<span class="sd">    or b) a single univariate kernel which will be applied radially to the</span>
+<span class="sd">    mahalanobis distance defined by H.</span>
+
+<span class="sd">    In the case of the Gaussian these are both equivalent, and the second constructiong</span>
+<span class="sd">    is prefered.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="NdKernel.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.NdKernel.__init__.html#statsmodels.sandbox.nonparametric.kernels.NdKernel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">kernels</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">H</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">kernels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">kernels</span> <span class="o">=</span> <span class="n">Gaussian</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span> <span class="o">=</span> <span class="n">kernels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
+
+        <span class="k">if</span> <span class="n">H</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">H</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">identity</span><span class="p">(</span><span class="n">n</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_H</span> <span class="o">=</span> <span class="n">H</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_Hrootinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span> <span class="n">H</span><span class="o">.</span><span class="n">I</span> <span class="p">)</span></div>
+
+<div class="viewcode-block" id="NdKernel.getH"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.NdKernel.getH.html#statsmodels.sandbox.nonparametric.kernels.NdKernel.getH">[docs]</a>    <span class="k">def</span> <span class="nf">getH</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getter for kernel bandwidth, H&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_H</span></div>
+
+<div class="viewcode-block" id="NdKernel.setH"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.NdKernel.setH.html#statsmodels.sandbox.nonparametric.kernels.NdKernel.setH">[docs]</a>    <span class="k">def</span> <span class="nf">setH</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setter for kernel bandwidth, H&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_H</span> <span class="o">=</span> <span class="n">value</span></div>
+
+    <span class="n">H</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">getH</span><span class="p">,</span> <span class="n">setH</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Kernel bandwidth matrix&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="NdKernel.density"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.NdKernel.density.html#statsmodels.sandbox.nonparametric.kernels.NdKernel.density">[docs]</a>    <span class="k">def</span> <span class="nf">density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+        <span class="c1">#xs = self.in_domain( xs, xs, x )[0]</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>  <span class="c1">## Need to do product of marginal distributions</span>
+            <span class="c1">#w = np.sum([self(self._Hrootinv * (xx-x).T ) for xx in xs])/n</span>
+            <span class="c1">#vectorized doesn&#39;t work:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">((</span><span class="n">xs</span><span class="o">-</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Hrootinv</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span><span class="o">/</span><span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="p">((</span><span class="n">xs</span><span class="o">-</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_Hrootinv</span> <span class="p">))</span> <span class="c1">#transposed</span>
+            <span class="c1">#w = np.mean([self(xd) for xd in ((xs-x) * self._Hrootinv)] ) #transposed</span>
+            <span class="k">return</span> <span class="n">w</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+    <span class="k">def</span> <span class="nf">_kernweight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span> <span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;returns the kernel weight for the independent multivariate kernel&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span><span class="p">,</span> <span class="n">CustomKernel</span> <span class="p">):</span>
+            <span class="c1">## Radial case</span>
+            <span class="c1">#d = x.T * x</span>
+            <span class="c1">#x is matrix, 2d, element wise sqrt looks wrong</span>
+            <span class="c1">#d = np.sqrt( x.T * x )</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="c1">#d = np.sqrt( (x * x).sum(-1) )</span>
+            <span class="n">d</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernels</span><span class="p">(</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">d</span><span class="p">)</span> <span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This simply returns the value of the kernel function at x</span>
+
+<span class="sd">        Does the same as weight if the function is normalised</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernweight</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="CustomKernel"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel">[docs]</a><span class="k">class</span> <span class="nc">CustomKernel</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generic 1D Kernel object.</span>
+<span class="sd">    Can be constructed by selecting a standard named Kernel,</span>
+<span class="sd">    or providing a lambda expression and domain.</span>
+<span class="sd">    The domain allows some algorithms to run faster for finite domain kernels.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># MC: Not sure how this will look in the end - or even still exist.</span>
+    <span class="c1"># Main purpose of this is to allow custom kernels and to allow speed up</span>
+    <span class="c1"># from finite support.</span>
+
+<div class="viewcode-block" id="CustomKernel.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.__init__.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="p">,</span> <span class="n">h</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        shape should be a function taking and returning numeric type.</span>
+
+<span class="sd">        For sanity it should always return positive or zero but this isn&#39;t</span>
+<span class="sd">        enforced in case you want to do weird things. Bear in mind that the</span>
+<span class="sd">        statistical tests etc. may not be valid for non-positive kernels.</span>
+
+<span class="sd">        The bandwidth of the kernel is supplied as h.</span>
+
+<span class="sd">        You may specify a domain as a list of 2 values [min, max], in which case</span>
+<span class="sd">        kernel will be treated as zero outside these values. This will speed up</span>
+<span class="sd">        calculation.</span>
+
+<span class="sd">        You may also specify the normalisation constant for the supplied Kernel.</span>
+<span class="sd">        If you do this number will be stored and used as the normalisation</span>
+<span class="sd">        without calculation.  It is recommended you do this if you know the</span>
+<span class="sd">        constant, to speed up calculation.  In particular if the shape function</span>
+<span class="sd">        provided is already normalised you should provide norm = 1.0.</span>
+
+<span class="sd">        Warning: I think several calculations assume that the kernel is</span>
+<span class="sd">        normalized. No tests for non-normalized kernel.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_normconst</span> <span class="o">=</span> <span class="n">norm</span>   <span class="c1"># a value or None, if None, then calculate</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="n">domain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">callable</span><span class="p">(</span><span class="n">shape</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span> <span class="o">=</span> <span class="n">shape</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="s2">&quot;shape must be a callable object/function&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_h</span> <span class="o">=</span> <span class="n">h</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_normal_reference_constant</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+<div class="viewcode-block" id="CustomKernel.geth"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.geth.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.geth">[docs]</a>    <span class="k">def</span> <span class="nf">geth</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Getter for kernel bandwidth, h&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_h</span></div>
+<div class="viewcode-block" id="CustomKernel.seth"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.seth.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.seth">[docs]</a>    <span class="k">def</span> <span class="nf">seth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">value</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Setter for kernel bandwidth, h&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_h</span> <span class="o">=</span> <span class="n">value</span></div>
+    <span class="n">h</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">geth</span><span class="p">,</span> <span class="n">seth</span><span class="p">,</span> <span class="n">doc</span><span class="o">=</span><span class="s2">&quot;Kernel Bandwidth&quot;</span><span class="p">)</span>
+
+<div class="viewcode-block" id="CustomKernel.in_domain"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.in_domain.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.in_domain">[docs]</a>    <span class="k">def</span> <span class="nf">in_domain</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the filtered (xs, ys) based on the Kernel domain centred on x</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># Disable black-list functions: filter used for speed instead of</span>
+        <span class="c1"># list-comprehension</span>
+        <span class="c1"># pylint: disable-msg=W0141</span>
+        <span class="k">def</span> <span class="nf">isInDomain</span><span class="p">(</span><span class="n">xy</span><span class="p">):</span>
+            <span class="sd">&quot;&quot;&quot;Used for filter to check if point is in the domain&quot;&quot;&quot;</span>
+            <span class="n">u</span> <span class="o">=</span> <span class="p">(</span><span class="n">xy</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+            <span class="k">return</span> <span class="n">u</span> <span class="o">&gt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="ow">and</span> <span class="n">u</span> <span class="o">&lt;=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">filtered</span> <span class="o">=</span> <span class="n">lfilter</span><span class="p">(</span><span class="n">isInDomain</span><span class="p">,</span> <span class="n">lzip</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">))</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">filtered</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="n">lzip</span><span class="p">(</span><span class="o">*</span><span class="n">filtered</span><span class="p">)</span>
+                <span class="k">return</span> <span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="p">([],</span> <span class="p">[])</span></div>
+
+<div class="viewcode-block" id="CustomKernel.density"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.density.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.density">[docs]</a>    <span class="k">def</span> <span class="nf">density</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the kernel density estimate for point x based on x-values</span>
+<span class="sd">        xs</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="c1"># before in_domain?</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xs</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_domain</span><span class="p">(</span> <span class="n">xs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span><span class="p">,</span> <span class="n">x</span> <span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">xs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_domain</span><span class="p">(</span> <span class="n">xs</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">x</span> <span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span>
+        <span class="c1">#print &#39;len(xs)&#39;, len(xs), x</span>
+        <span class="k">if</span> <span class="n">xs</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">xs</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="n">h</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="p">((</span><span class="n">xs</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">h</span><span class="p">)</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">weights</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">w</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="p">((</span><span class="n">xs</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="n">h</span><span class="p">),</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="n">w</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+<div class="viewcode-block" id="CustomKernel.density_var"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.density_var.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.density_var">[docs]</a>    <span class="k">def</span> <span class="nf">density_var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="p">,</span> <span class="n">nobs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;approximate pointwise variance for kernel density</span>
+
+<span class="sd">        not verified</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        density : array_lie</span>
+<span class="sd">            pdf of the kernel density</span>
+<span class="sd">        nobs : int</span>
+<span class="sd">            number of observations used in the KDE estimation</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        kde_var : ndarray</span>
+<span class="sd">            estimated variance of the density estimate</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This uses the asymptotic normal approximation to the distribution of</span>
+<span class="sd">        the density estimate.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">density</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">L2Norm</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">/</span> <span class="n">nobs</span></div>
+
+<div class="viewcode-block" id="CustomKernel.density_confint"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.density_confint.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.density_confint">[docs]</a>    <span class="k">def</span> <span class="nf">density_confint</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">density</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;approximate pointwise confidence interval for kernel density</span>
+
+<span class="sd">        The confidence interval is centered at the estimated density and</span>
+<span class="sd">        ignores the bias of the density estimate.</span>
+
+<span class="sd">        not verified</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        density : array_lie</span>
+<span class="sd">            pdf of the kernel density</span>
+<span class="sd">        nobs : int</span>
+<span class="sd">            number of observations used in the KDE estimation</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        conf_int : ndarray</span>
+<span class="sd">            estimated confidence interval of the density estimate, lower bound</span>
+<span class="sd">            in first column and upper bound in second column</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This uses the asymptotic normal approximation to the distribution of</span>
+<span class="sd">        the density estimate. The lower bound can be negative for density</span>
+<span class="sd">        values close to zero.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+        <span class="n">crit</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">isf</span><span class="p">(</span><span class="n">alpha</span> <span class="o">/</span> <span class="mf">2.</span><span class="p">)</span>
+        <span class="n">density</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">density</span><span class="p">)</span>
+        <span class="n">half_width</span> <span class="o">=</span> <span class="n">crit</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">density_var</span><span class="p">(</span><span class="n">density</span><span class="p">,</span> <span class="n">nobs</span><span class="p">))</span>
+        <span class="n">conf_int</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">density</span> <span class="o">-</span> <span class="n">half_width</span><span class="p">,</span> <span class="n">density</span> <span class="o">+</span> <span class="n">half_width</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">conf_int</span></div>
+
+<div class="viewcode-block" id="CustomKernel.smooth"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.smooth.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.smooth">[docs]</a>    <span class="k">def</span> <span class="nf">smooth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the kernel smoothing estimate for point x based on x-values</span>
+<span class="sd">        xs and y-values ys.</span>
+<span class="sd">        Not expected to be called by the user.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_domain</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="p">((</span><span class="n">xs</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))</span>
+            <span class="c1">#TODO: change the below to broadcasting when shape is sorted</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">yy</span><span class="o">*</span><span class="bp">self</span><span class="p">((</span><span class="n">xx</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span><span class="p">,</span> <span class="n">yy</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">)])</span>
+            <span class="k">return</span> <span class="n">v</span> <span class="o">/</span> <span class="n">w</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+<div class="viewcode-block" id="CustomKernel.smoothvar"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.smoothvar.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.smoothvar">[docs]</a>    <span class="k">def</span> <span class="nf">smoothvar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the kernel smoothing estimate of the variance at point x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_domain</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fittedvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">])</span>
+            <span class="n">sqresid</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span> <span class="n">subtract</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">fittedvals</span><span class="p">)</span> <span class="p">)</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="p">((</span><span class="n">xs</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">rr</span><span class="o">*</span><span class="bp">self</span><span class="p">((</span><span class="n">xx</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span><span class="p">,</span> <span class="n">rr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">sqresid</span><span class="p">)])</span>
+            <span class="k">return</span> <span class="n">v</span> <span class="o">/</span> <span class="n">w</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+<div class="viewcode-block" id="CustomKernel.smoothconf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.smoothconf.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.smoothconf">[docs]</a>    <span class="k">def</span> <span class="nf">smoothconf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.05</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the kernel smoothing estimate with confidence 1sigma bounds</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_domain</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fittedvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">])</span>
+            <span class="c1">#fittedvals = self.smooth(xs, ys, x) # x or xs in Haerdle</span>
+            <span class="n">sqresid</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span>
+                <span class="n">subtract</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">fittedvals</span><span class="p">)</span>
+            <span class="p">)</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="p">((</span><span class="n">xs</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))</span>
+            <span class="c1">#var = sqresid.sum() / (len(sqresid) - 0)  # nonlocal var ? JP just trying</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">([</span><span class="n">rr</span><span class="o">*</span><span class="bp">self</span><span class="p">((</span><span class="n">xx</span><span class="o">-</span><span class="n">x</span><span class="p">)</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span><span class="p">,</span> <span class="n">rr</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">sqresid</span><span class="p">)])</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="n">v</span> <span class="o">/</span> <span class="n">w</span>
+            <span class="n">sd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">L2Norm</span>
+            <span class="n">yhat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+            <span class="n">crit</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">isf</span><span class="p">(</span><span class="n">alpha</span> <span class="o">/</span> <span class="mi">2</span><span class="p">)</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">crit</span> <span class="o">*</span> <span class="n">sd</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">K</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">w</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_const</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">yhat</span> <span class="o">-</span> <span class="n">err</span><span class="p">,</span> <span class="n">yhat</span><span class="p">,</span> <span class="n">yhat</span> <span class="o">+</span> <span class="n">err</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">L2Norm</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the integral of the square of the kernal from -inf to inf&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">L2Func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">norm_const</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">**</span><span class="mi">2</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">L2Func</span><span class="p">,</span> <span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">L2Func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">norm_const</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Normalising constant for kernel (integral from -inf to inf)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normconst</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">quadres</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">,</span> <span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">quadres</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_normconst</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="n">quadres</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normconst</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">kernel_var</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the second moment of the kernel&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_const</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="o">-</span><span class="n">inf</span><span class="p">,</span> <span class="n">inf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="n">scipy</span><span class="o">.</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span>
+                                               <span class="bp">self</span><span class="o">.</span><span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">])[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span>
+
+<div class="viewcode-block" id="CustomKernel.moments"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.moments.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.moments">[docs]</a>    <span class="k">def</span> <span class="nf">moments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Only first and second moment currently implemented&quot;</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="mi">0</span>
+
+        <span class="k">if</span> <span class="n">n</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel_var</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">normal_reference_constant</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Constant used for silverman normal reference asymtotic bandwidth</span>
+<span class="sd">        calculation.</span>
+
+<span class="sd">        C  = 2((pi^(1/2)*(nu!)^3 R(k))/(2nu(2nu)!kap_nu(k)^2))^(1/(2nu+1))</span>
+<span class="sd">        nu = kernel order</span>
+<span class="sd">        kap_nu = nu&#39;th moment of kernel</span>
+<span class="sd">        R = kernel roughness (square of L^2 norm)</span>
+
+<span class="sd">        Note: L2Norm property returns square of norm.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nu</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_order</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">nu</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s2">&quot;Only implemented for second order kernels&quot;</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normal_reference_constant</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="p">(</span><span class="o">.</span><span class="mi">5</span><span class="p">)</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">L2Norm</span>
+            <span class="n">C</span> <span class="o">/=</span> <span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nu</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">nu</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">moments</span><span class="p">(</span><span class="n">nu</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">C</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="n">C</span><span class="o">**</span><span class="p">(</span><span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">nu</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_normal_reference_constant</span> <span class="o">=</span> <span class="n">C</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_normal_reference_constant</span>
+
+
+<div class="viewcode-block" id="CustomKernel.weight"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.CustomKernel.weight.html#statsmodels.sandbox.nonparametric.kernels.CustomKernel.weight">[docs]</a>    <span class="k">def</span> <span class="nf">weight</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;This returns the normalised weight at distance x&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">norm_const</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        This simply returns the value of the kernel function at x</span>
+
+<span class="sd">        Does the same as weight if the function is normalised</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_shape</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="Uniform"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Uniform.html#statsmodels.sandbox.nonparametric.kernels.Uniform">[docs]</a><span class="k">class</span> <span class="nc">Uniform</span><span class="p">(</span><span class="n">CustomKernel</span><span class="p">):</span>
+<div class="viewcode-block" id="Uniform.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Uniform.__init__.html#statsmodels.sandbox.nonparametric.kernels.Uniform.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">CustomKernel</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">),</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                              <span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">norm</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="mi">3</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="mi">2</span></div></div>
+
+
+<div class="viewcode-block" id="Triangular"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Triangular.html#statsmodels.sandbox.nonparametric.kernels.Triangular">[docs]</a><span class="k">class</span> <span class="nc">Triangular</span><span class="p">(</span><span class="n">CustomKernel</span><span class="p">):</span>
+<div class="viewcode-block" id="Triangular.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Triangular.__init__.html#statsmodels.sandbox.nonparametric.kernels.Triangular.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">CustomKernel</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">-</span> <span class="nb">abs</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                              <span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">norm</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="mf">2.0</span><span class="o">/</span><span class="mf">3.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="mi">6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="mi">2</span></div></div>
+
+
+<div class="viewcode-block" id="Epanechnikov"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Epanechnikov.html#statsmodels.sandbox.nonparametric.kernels.Epanechnikov">[docs]</a><span class="k">class</span> <span class="nc">Epanechnikov</span><span class="p">(</span><span class="n">CustomKernel</span><span class="p">):</span>
+<div class="viewcode-block" id="Epanechnikov.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Epanechnikov.__init__.html#statsmodels.sandbox.nonparametric.kernels.Epanechnikov.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">CustomKernel</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.75</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">),</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                              <span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">norm</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="mf">0.6</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="mf">0.2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="mi">2</span></div></div>
+
+
+<div class="viewcode-block" id="Biweight"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Biweight.html#statsmodels.sandbox.nonparametric.kernels.Biweight">[docs]</a><span class="k">class</span> <span class="nc">Biweight</span><span class="p">(</span><span class="n">CustomKernel</span><span class="p">):</span>
+<div class="viewcode-block" id="Biweight.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Biweight.__init__.html#statsmodels.sandbox.nonparametric.kernels.Biweight.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">CustomKernel</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.9375</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                              <span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">norm</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="mf">5.0</span><span class="o">/</span><span class="mf">7.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="mi">7</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+<div class="viewcode-block" id="Biweight.smooth"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Biweight.smooth.html#statsmodels.sandbox.nonparametric.kernels.Biweight.smooth">[docs]</a>    <span class="k">def</span> <span class="nf">smooth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the kernel smoothing estimate for point x based on x-values</span>
+<span class="sd">        xs and y-values ys.</span>
+<span class="sd">        Not expected to be called by the user.</span>
+
+<span class="sd">        Special implementation optimised for Biweight.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_domain</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">divide</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)))))</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">multiply</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">divide</span><span class="p">(</span>
+                                                <span class="n">subtract</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))))))</span>
+            <span class="k">return</span> <span class="n">v</span> <span class="o">/</span> <span class="n">w</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+<div class="viewcode-block" id="Biweight.smoothvar"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Biweight.smoothvar.html#statsmodels.sandbox.nonparametric.kernels.Biweight.smoothvar">[docs]</a>    <span class="k">def</span> <span class="nf">smoothvar</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the kernel smoothing estimate of the variance at point x.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_domain</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fittedvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">])</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">fittedvals</span><span class="p">))</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">divide</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)))))</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">multiply</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">divide</span><span class="p">(</span>
+                                                <span class="n">subtract</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))))))</span>
+            <span class="k">return</span> <span class="n">v</span> <span class="o">/</span> <span class="n">w</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span></div>
+
+<div class="viewcode-block" id="Biweight.smoothconf_"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Biweight.smoothconf_.html#statsmodels.sandbox.nonparametric.kernels.Biweight.smoothconf_">[docs]</a>    <span class="k">def</span> <span class="nf">smoothconf_</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the kernel smoothing estimate with confidence 1sigma bounds</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">in_domain</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">xs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">fittedvals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">xs</span><span class="p">])</span>
+            <span class="n">rs</span> <span class="o">=</span> <span class="n">square</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">fittedvals</span><span class="p">))</span>
+            <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">divide</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span>
+                                                        <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)))))</span>
+            <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">multiply</span><span class="p">(</span><span class="n">rs</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="n">square</span><span class="p">(</span><span class="n">divide</span><span class="p">(</span>
+                                                <span class="n">subtract</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">))))))</span>
+            <span class="n">var</span> <span class="o">=</span> <span class="n">v</span> <span class="o">/</span> <span class="n">w</span>
+            <span class="n">sd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">var</span><span class="p">)</span>
+            <span class="n">K</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">L2Norm</span>
+            <span class="n">yhat</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+            <span class="n">err</span> <span class="o">=</span> <span class="n">sd</span> <span class="o">*</span> <span class="n">K</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">0.9375</span> <span class="o">*</span> <span class="n">w</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">yhat</span> <span class="o">-</span> <span class="n">err</span><span class="p">,</span> <span class="n">yhat</span><span class="p">,</span> <span class="n">yhat</span> <span class="o">+</span> <span class="n">err</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="Triweight"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Triweight.html#statsmodels.sandbox.nonparametric.kernels.Triweight">[docs]</a><span class="k">class</span> <span class="nc">Triweight</span><span class="p">(</span><span class="n">CustomKernel</span><span class="p">):</span>
+<div class="viewcode-block" id="Triweight.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Triweight.__init__.html#statsmodels.sandbox.nonparametric.kernels.Triweight.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">CustomKernel</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">1.09375</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">3</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span>
+                              <span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">norm</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="mf">350.0</span><span class="o">/</span><span class="mf">429.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="mi">9</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="mi">2</span></div></div>
+
+
+<div class="viewcode-block" id="Gaussian"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Gaussian.html#statsmodels.sandbox.nonparametric.kernels.Gaussian">[docs]</a><span class="k">class</span> <span class="nc">Gaussian</span><span class="p">(</span><span class="n">CustomKernel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gaussian (Normal) Kernel</span>
+
+<span class="sd">    K(u) = 1 / (sqrt(2*pi)) exp(-0.5 u**2)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Gaussian.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Gaussian.__init__.html#statsmodels.sandbox.nonparametric.kernels.Gaussian.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">CustomKernel</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.3989422804014327</span> <span class="o">*</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">2.0</span><span class="p">),</span> <span class="n">h</span> <span class="o">=</span> <span class="n">h</span><span class="p">,</span> <span class="n">domain</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">norm</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="mf">1.0</span><span class="o">/</span><span class="p">(</span><span class="mf">2.0</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="mf">1.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="mi">2</span></div>
+
+<div class="viewcode-block" id="Gaussian.smooth"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Gaussian.smooth.html#statsmodels.sandbox.nonparametric.kernels.Gaussian.smooth">[docs]</a>    <span class="k">def</span> <span class="nf">smooth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xs</span><span class="p">,</span> <span class="n">ys</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns the kernel smoothing estimate for point x based on x-values</span>
+<span class="sd">        xs and y-values ys.</span>
+<span class="sd">        Not expected to be called by the user.</span>
+
+<span class="sd">        Special implementation optimised for Gaussian.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">exp</span><span class="p">(</span><span class="n">multiply</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">divide</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span>
+                                              <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)),</span><span class="o">-</span><span class="mf">0.5</span><span class="p">)))</span>
+        <span class="n">v</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">multiply</span><span class="p">(</span><span class="n">ys</span><span class="p">,</span> <span class="n">exp</span><span class="p">(</span><span class="n">multiply</span><span class="p">(</span><span class="n">square</span><span class="p">(</span><span class="n">divide</span><span class="p">(</span><span class="n">subtract</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span> <span class="n">x</span><span class="p">),</span>
+                                                          <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="p">)),</span> <span class="o">-</span><span class="mf">0.5</span><span class="p">))))</span>
+        <span class="k">return</span> <span class="n">v</span><span class="o">/</span><span class="n">w</span></div></div>
+
+<div class="viewcode-block" id="Cosine"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Cosine.html#statsmodels.sandbox.nonparametric.kernels.Cosine">[docs]</a><span class="k">class</span> <span class="nc">Cosine</span><span class="p">(</span><span class="n">CustomKernel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cosine Kernel</span>
+
+<span class="sd">    K(u) = pi/4 cos(0.5 * pi * u) between -1.0 and 1.0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Cosine.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Cosine.__init__.html#statsmodels.sandbox.nonparametric.kernels.Cosine.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">CustomKernel</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.78539816339744828</span> <span class="o">*</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">/</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">x</span><span class="p">),</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">],</span> <span class="n">norm</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">16.0</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="mf">0.1894305308612978</span> <span class="c1"># = 1 - 8 / np.pi**2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="mi">2</span></div></div>
+
+
+<div class="viewcode-block" id="Cosine2"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Cosine2.html#statsmodels.sandbox.nonparametric.kernels.Cosine2">[docs]</a><span class="k">class</span> <span class="nc">Cosine2</span><span class="p">(</span><span class="n">CustomKernel</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Cosine2 Kernel</span>
+
+<span class="sd">    K(u) = 1 + cos(2 * pi * u) between -0.5 and 0.5</span>
+
+<span class="sd">    Note: this  is the same Cosine kernel that Stata uses</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="Cosine2.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.kernels.Cosine2.__init__.html#statsmodels.sandbox.nonparametric.kernels.Cosine2.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="mf">1.0</span><span class="p">):</span>
+        <span class="n">CustomKernel</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">shape</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mi">1</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="mf">2.0</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span>
+                <span class="p">,</span> <span class="n">h</span><span class="o">=</span><span class="n">h</span><span class="p">,</span> <span class="n">domain</span><span class="o">=</span><span class="p">[</span><span class="o">-</span><span class="mf">0.5</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">],</span> <span class="n">norm</span> <span class="o">=</span> <span class="mf">1.0</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_L2Norm</span> <span class="o">=</span> <span class="mf">1.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_kernel_var</span> <span class="o">=</span> <span class="mf">0.03267274151216444</span>  <span class="c1"># = 1/12. - 0.5 / np.pi**2</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_order</span> <span class="o">=</span> <span class="mi">2</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

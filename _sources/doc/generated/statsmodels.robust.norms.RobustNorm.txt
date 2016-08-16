@@ -1,0 +1,25 @@
+statsmodels.robust.norms.RobustNorm
+===================================
+
+.. currentmodule:: statsmodels.robust.norms
+
+.. autoclass:: RobustNorm
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~RobustNorm.psi
+      ~RobustNorm.psi_deriv
+      ~RobustNorm.rho
+      ~RobustNorm.weights
+   
+   
+
+   
+   
+   

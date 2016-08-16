@@ -1,0 +1,23 @@
+statsmodels.sandbox.distributions.gof_new.NewNorm
+=================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.gof_new
+.. autoclass:: NewNorm
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NewNorm.cdf
+   ~NewNorm.fit_vec
+   ~NewNorm.rvs
+
+
+
+
+

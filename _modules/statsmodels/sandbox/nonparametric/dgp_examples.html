@@ -1,0 +1,428 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.nonparametric.dgp_examples &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.nonparametric.dgp_examples</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.nonparametric.dgp_examples</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Examples of non-linear functions for non-parametric regression</span>
+
+<span class="sd">Created on Sat Jan 05 20:21:22 2013</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1">## Functions</span>
+
+<div class="viewcode-block" id="fg1"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.nonparametric.dgp_examples.fg1.html#statsmodels.sandbox.nonparametric.dgp_examples.fg1">[docs]</a><span class="k">def</span> <span class="nf">fg1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Fan and Gijbels example function 1</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">16</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="fg1eu"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.nonparametric.dgp_examples.fg1eu.html#statsmodels.sandbox.nonparametric.dgp_examples.fg1eu">[docs]</a><span class="k">def</span> <span class="nf">fg1eu</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Eubank similar to Fan and Gijbels example function 1</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">x</span> <span class="o">+</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">50</span> <span class="o">*</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="mf">0.5</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="fg2"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.nonparametric.dgp_examples.fg2.html#statsmodels.sandbox.nonparametric.dgp_examples.fg2">[docs]</a><span class="k">def</span> <span class="nf">fg2</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Fan and Gijbels example function 2</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">16</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="func1"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.nonparametric.dgp_examples.func1.html#statsmodels.sandbox.nonparametric.dgp_examples.func1">[docs]</a><span class="k">def</span> <span class="nf">func1</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;made up example with sin, square</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">x</span> <span class="o">*</span> <span class="mi">5</span><span class="p">)</span> <span class="o">/</span> <span class="n">x</span> <span class="o">+</span> <span class="mf">2.</span> <span class="o">*</span> <span class="n">x</span> <span class="o">-</span> <span class="mf">1.</span> <span class="o">*</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span></div>
+
+<span class="c1">## Classes with Data Generating Processes</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;description&#39;</span><span class="p">:</span>
+<span class="sd">&#39;&#39;&#39;Base Class for Univariate non-linear example</span>
+
+<span class="sd">    Does not work on it&#39;s own.</span>
+<span class="sd">    needs additional at least self.func</span>
+<span class="sd">&#39;&#39;&#39;</span><span class="p">,</span>
+<span class="s1">&#39;ref&#39;</span><span class="p">:</span> <span class="s1">&#39;&#39;</span><span class="p">}</span>
+
+<span class="k">class</span> <span class="nc">_UnivariateFunction</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="c1">#Base Class for Univariate non-linear example.</span>
+    <span class="c1">#Does not work on it&#39;s own. needs additionally at least self.func</span>
+    <span class="n">__doc__</span> <span class="o">=</span> <span class="s1">&#39;&#39;&#39;</span><span class="si">%(description)s</span><span class="s1"></span>
+
+<span class="s1">    Parameters</span>
+<span class="s1">    ----------</span>
+<span class="s1">    nobs : int</span>
+<span class="s1">        number of observations to simulate</span>
+<span class="s1">    x : None or 1d array</span>
+<span class="s1">        If x is given then it is used for the exogenous variable instead of</span>
+<span class="s1">        creating a random sample</span>
+<span class="s1">    distr_x : None or distribution instance</span>
+<span class="s1">        Only used if x is None. The rvs method is used to create a random</span>
+<span class="s1">        sample of the exogenous (explanatory) variable.</span>
+<span class="s1">    distr_noise : None or distribution instance</span>
+<span class="s1">        The rvs method is used to create a random sample of the errors.</span>
+
+<span class="s1">    Attributes</span>
+<span class="s1">    ----------</span>
+<span class="s1">    x : ndarray, 1-D</span>
+<span class="s1">        exogenous or explanatory variable. x is sorted.</span>
+<span class="s1">    y : ndarray, 1-D</span>
+<span class="s1">        endogenous or response variable</span>
+<span class="s1">    y_true : ndarray, 1-D</span>
+<span class="s1">        expected values of endogenous or response variable, i.e. values of y</span>
+<span class="s1">        without noise</span>
+<span class="s1">    func : callable</span>
+<span class="s1">        underlying function (defined by subclass)</span>
+
+<span class="s1">    </span><span class="si">%(ref)s</span><span class="s1"></span>
+<span class="s1">    &#39;&#39;&#39;</span> <span class="c1">#% doc</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distr_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distr_noise</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">distr_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">s_x</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">x</span> <span class="o">=</span> <span class="n">distr_x</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+
+        <span class="k">if</span> <span class="n">distr_noise</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">noise</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">s_noise</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">noise</span> <span class="o">=</span> <span class="n">distr_noise</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;het_scale&#39;</span><span class="p">):</span>
+            <span class="n">noise</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">het_scale</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1">#self.func = fg1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y_true</span> <span class="o">=</span> <span class="n">y_true</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y_true</span> <span class="o">+</span> <span class="n">noise</span>
+
+
+    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">scatter</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">ax</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;plot the mean function and optionally the scatter of the sample</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        scatter: bool</span>
+<span class="sd">            If true, then add scatterpoints of sample to plot.</span>
+<span class="sd">        ax : None or matplotlib axis instance</span>
+<span class="sd">            If None, then a matplotlib.pyplot figure is created, otherwise</span>
+<span class="sd">            the given axis, ax, is used.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fig : matplotlib figure</span>
+<span class="sd">            This is either the created figure instance or the one associated</span>
+<span class="sd">            with ax if ax is given.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">ax</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+            <span class="n">fig</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">ax</span> <span class="o">=</span> <span class="n">fig</span><span class="o">.</span><span class="n">add_subplot</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">scatter</span><span class="p">:</span>
+            <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">,</span> <span class="n">alpha</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+
+        <span class="n">xx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span> <span class="mi">100</span><span class="p">)</span>
+        <span class="n">ax</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">xx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">func</span><span class="p">(</span><span class="n">xx</span><span class="p">),</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;b&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;dgp mean&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ax</span><span class="o">.</span><span class="n">figure</span>
+
+<span class="n">doc</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;description&#39;</span><span class="p">:</span>
+<span class="sd">&#39;&#39;&#39;Fan and Gijbels example function 1</span>
+
+<span class="sd">linear trend plus a hump</span>
+<span class="sd">&#39;&#39;&#39;</span><span class="p">,</span>
+<span class="s1">&#39;ref&#39;</span><span class="p">:</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">Fan, Jianqing, and Irene Gijbels. 1992. &quot;Variable Bandwidth and Local</span>
+<span class="sd">Linear Regression Smoothers.&quot;</span>
+<span class="sd">The Annals of Statistics 20 (4) (December): 2008-2036. doi:10.2307/2242378.</span>
+
+<span class="sd">&#39;&#39;&#39;</span><span class="p">}</span>
+
+<div class="viewcode-block" id="UnivariateFanGijbels1"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels1.html#statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels1">[docs]</a><span class="k">class</span> <span class="nc">UnivariateFanGijbels1</span><span class="p">(</span><span class="n">_UnivariateFunction</span><span class="p">):</span>
+    <span class="n">__doc__</span> <span class="o">=</span> <span class="n">_UnivariateFunction</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">%</span> <span class="n">doc</span>
+
+
+<div class="viewcode-block" id="UnivariateFanGijbels1.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels1.__init__.html#statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels1.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distr_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distr_noise</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s_x</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s_noise</span> <span class="o">=</span> <span class="mf">0.7</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">fg1</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                                             <span class="n">distr_x</span><span class="o">=</span><span class="n">distr_x</span><span class="p">,</span>
+                                             <span class="n">distr_noise</span><span class="o">=</span><span class="n">distr_noise</span><span class="p">)</span></div></div>
+
+<span class="n">doc</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span>\
+<span class="sd">&#39;&#39;&#39;Fan and Gijbels example function 2</span>
+
+<span class="sd">sin plus a hump</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="UnivariateFanGijbels2"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels2.html#statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels2">[docs]</a><span class="k">class</span> <span class="nc">UnivariateFanGijbels2</span><span class="p">(</span><span class="n">_UnivariateFunction</span><span class="p">):</span>
+    <span class="n">__doc__</span> <span class="o">=</span> <span class="n">_UnivariateFunction</span><span class="o">.</span><span class="n">__doc__</span> <span class="o">%</span> <span class="n">doc</span>
+
+<div class="viewcode-block" id="UnivariateFanGijbels2.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels2.__init__.html#statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels2.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distr_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distr_noise</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s_x</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s_noise</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">fg2</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                                             <span class="n">distr_x</span><span class="o">=</span><span class="n">distr_x</span><span class="p">,</span>
+                                             <span class="n">distr_noise</span><span class="o">=</span><span class="n">distr_noise</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="UnivariateFanGijbels1EU"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels1EU.html#statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels1EU">[docs]</a><span class="k">class</span> <span class="nc">UnivariateFanGijbels1EU</span><span class="p">(</span><span class="n">_UnivariateFunction</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">    Eubank p.179f</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="UnivariateFanGijbels1EU.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels1EU.__init__.html#statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFanGijbels1EU.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distr_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distr_noise</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">distr_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+            <span class="n">distr_x</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">uniform</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s_noise</span> <span class="o">=</span> <span class="mf">0.15</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">fg1eu</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                                             <span class="n">distr_x</span><span class="o">=</span><span class="n">distr_x</span><span class="p">,</span>
+                                             <span class="n">distr_noise</span><span class="o">=</span><span class="n">distr_noise</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="UnivariateFunc1"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFunc1.html#statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFunc1">[docs]</a><span class="k">class</span> <span class="nc">UnivariateFunc1</span><span class="p">(</span><span class="n">_UnivariateFunction</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">    made up, with sin and quadratic trend</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="UnivariateFunc1.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFunc1.__init__.html#statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFunc1.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">200</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distr_x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">distr_noise</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="n">distr_x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+            <span class="n">distr_x</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">uniform</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">nobs</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">s_noise</span> <span class="o">=</span> <span class="mf">2.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">func</span> <span class="o">=</span> <span class="n">func1</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">UnivariateFunc1</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">,</span>
+                                             <span class="n">distr_x</span><span class="o">=</span><span class="n">distr_x</span><span class="p">,</span>
+                                             <span class="n">distr_noise</span><span class="o">=</span><span class="n">distr_noise</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="UnivariateFunc1.het_scale"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFunc1.het_scale.html#statsmodels.sandbox.nonparametric.dgp_examples.UnivariateFunc1.het_scale">[docs]</a>    <span class="k">def</span> <span class="nf">het_scale</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="mi">3</span><span class="o">+</span><span class="n">x</span><span class="p">))</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

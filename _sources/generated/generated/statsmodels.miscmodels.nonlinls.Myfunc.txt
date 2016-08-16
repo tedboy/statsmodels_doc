@@ -1,0 +1,39 @@
+statsmodels.miscmodels.nonlinls.Myfunc
+======================================
+
+.. currentmodule:: statsmodels.miscmodels.nonlinls
+.. autoclass:: Myfunc
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Myfunc.__init__
+   ~Myfunc.errorsumsquares
+   ~Myfunc.fit
+   ~Myfunc.fit_minimal
+   ~Myfunc.fit_random
+   ~Myfunc.from_formula
+   ~Myfunc.geterrors
+   ~Myfunc.jac_predict
+   ~Myfunc.predict
+   ~Myfunc.start_value
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Myfunc.endog_names
+   ~Myfunc.exog_names
+

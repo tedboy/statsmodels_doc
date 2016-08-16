@@ -1,0 +1,44 @@
+statsmodels.sandbox.nonparametric.kernels.Epanechnikov
+======================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernels
+.. autoclass:: Epanechnikov
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Epanechnikov.__init__
+   ~Epanechnikov.density
+   ~Epanechnikov.density_confint
+   ~Epanechnikov.density_var
+   ~Epanechnikov.geth
+   ~Epanechnikov.in_domain
+   ~Epanechnikov.moments
+   ~Epanechnikov.seth
+   ~Epanechnikov.smooth
+   ~Epanechnikov.smoothconf
+   ~Epanechnikov.smoothvar
+   ~Epanechnikov.weight
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Epanechnikov.L2Norm
+   ~Epanechnikov.h
+   ~Epanechnikov.kernel_var
+   ~Epanechnikov.norm_const
+   ~Epanechnikov.normal_reference_constant
+

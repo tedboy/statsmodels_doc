@@ -1,0 +1,427 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.3.4. statsmodels.sandbox.distributions.extras &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.3.4.2.1. statsmodels.sandbox.distributions.extras.absfunc" href="statsmodels.sandbox.distributions.extras.absfunc.html"/>
+        <link rel="prev" title="6.3.3.2.2.12. statsmodels.sandbox.distributions.estimators.momentcondunboundls" href="statsmodels.sandbox.distributions.estimators.momentcondunboundls.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.html">6.3.1. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.copula.html">6.3.2. statsmodels.sandbox.distributions.copula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.html">6.3.3. statsmodels.sandbox.distributions.estimators</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.3.4. statsmodels.sandbox.distributions.extras</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#example">6.3.4.1. Example</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">6.3.4.2. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">6.3.4.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.genpareto.html">6.3.5. statsmodels.sandbox.distributions.genpareto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.gof_new.html">6.3.6. statsmodels.sandbox.distributions.gof_new</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.multivariate.html">6.3.7. statsmodels.sandbox.distributions.multivariate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.mv_measures.html">6.3.8. statsmodels.sandbox.distributions.mv_measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.html">6.3.9. statsmodels.sandbox.distributions.mv_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.otherdist.html">6.3.10. statsmodels.sandbox.distributions.otherdist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.quantize.html">6.3.11. statsmodels.sandbox.distributions.quantize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.sppatch.html">6.3.12. statsmodels.sandbox.distributions.sppatch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.transform_functions.html">6.3.13. statsmodels.sandbox.distributions.transform_functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.transformed.html">6.3.14. statsmodels.sandbox.distributions.transformed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.try_max.html">6.3.15. statsmodels.sandbox.distributions.try_max</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.try_pot.html">6.3.16. statsmodels.sandbox.distributions.try_pot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.3.4. statsmodels.sandbox.distributions.extras</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.distributions.extras.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.distributions.extras">
+<span id="statsmodels-sandbox-distributions-extras"></span><h1>6.3.4. statsmodels.sandbox.distributions.extras<a class="headerlink" href="#module-statsmodels.sandbox.distributions.extras" title="Permalink to this headline">¶</a></h1>
+<p>Various extensions to distributions</p>
+<ul>
+<li><p class="first">skew normal and skew t distribution by Azzalini, A. &amp; Capitanio, A.</p>
+</li>
+<li><p class="first">Gram-Charlier expansion distribution (using 4 moments),</p>
+</li>
+<li><p class="first">distributions based on non-linear transformation
+- Transf_gen
+- ExpTransf_gen, LogTransf_gen
+- TransfTwo_gen</p>
+<blockquote>
+<div><p>(defines as examples: square, negative square and abs transformations)</p>
+</div></blockquote>
+<ul class="simple">
+<li>this versions are without __new__</li>
+</ul>
+</li>
+<li><p class="first">mnvormcdf, mvstdnormcdf : cdf, rectangular integral for multivariate normal
+distribution</p>
+</li>
+</ul>
+<p>TODO:
+* Where is Transf_gen for general monotonic transformation ? found and added it
+* write some docstrings, some parts I don&#8217;t remember
+* add Box-Cox transformation, parameterized ?</p>
+<p>this is only partially cleaned, still includes test examples as functions</p>
+<p>main changes
+* add transf_gen (2010-05-09)
+* added separate example and tests (2010-05-09)
+* collect transformation function into classes</p>
+<div class="section" id="example">
+<h2>6.3.4.1. Example<a class="headerlink" href="#example" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">logtg</span> <span class="o">=</span> <span class="n">Transf_gen</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">,</span>
+<span class="go">                numargs = 1, a=0, name = &#39;lnnorm&#39;,</span>
+<span class="go">                longname = &#39;Exp transformed normal&#39;,</span>
+<span class="go">                extradoc = &#39;</span>
+<span class="go">distribution of y = exp(x), with x standard normal&#39;</span>
+<span class="go">                &#39;precision for moment andstats is not very high, 2-3 decimals&#39;)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">logtg</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">0.92067704211191848</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">0.92067704211191848</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">logtg</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">0.021798547904239293</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span>
+<span class="go">0.10899273954837908</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">stats</span><span class="o">.</span><span class="n">t</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">5</span><span class="p">),</span> <span class="mi">6</span><span class="p">)</span><span class="o">/</span><span class="mf">5.</span>  <span class="c1">#derivative</span>
+<span class="go">0.021798547909675815</span>
+</pre></div>
+</div>
+<p>Author: josef-pktd
+License: BSD</p>
+</div>
+<div class="section" id="functions">
+<h2>6.3.4.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.absfunc.html#statsmodels.sandbox.distributions.extras.absfunc" title="statsmodels.sandbox.distributions.extras.absfunc"><code class="xref py py-obj docutils literal"><span class="pre">absfunc</span></code></a>(x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.derivminus.html#statsmodels.sandbox.distributions.extras.derivminus" title="statsmodels.sandbox.distributions.extras.derivminus"><code class="xref py py-obj docutils literal"><span class="pre">derivminus</span></code></a>(x)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.derivplus.html#statsmodels.sandbox.distributions.extras.derivplus" title="statsmodels.sandbox.distributions.extras.derivplus"><code class="xref py py-obj docutils literal"><span class="pre">derivplus</span></code></a>(x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.get_u_argskwargs.html#statsmodels.sandbox.distributions.extras.get_u_argskwargs" title="statsmodels.sandbox.distributions.extras.get_u_argskwargs"><code class="xref py py-obj docutils literal"><span class="pre">get_u_argskwargs</span></code></a>(**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.identit.html#statsmodels.sandbox.distributions.extras.identit" title="statsmodels.sandbox.distributions.extras.identit"><code class="xref py py-obj docutils literal"><span class="pre">identit</span></code></a>(x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.inverse.html#statsmodels.sandbox.distributions.extras.inverse" title="statsmodels.sandbox.distributions.extras.inverse"><code class="xref py py-obj docutils literal"><span class="pre">inverse</span></code></a>(x)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.inverseminus.html#statsmodels.sandbox.distributions.extras.inverseminus" title="statsmodels.sandbox.distributions.extras.inverseminus"><code class="xref py py-obj docutils literal"><span class="pre">inverseminus</span></code></a>(x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.inverseplus.html#statsmodels.sandbox.distributions.extras.inverseplus" title="statsmodels.sandbox.distributions.extras.inverseplus"><code class="xref py py-obj docutils literal"><span class="pre">inverseplus</span></code></a>(x)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.inversew.html#statsmodels.sandbox.distributions.extras.inversew" title="statsmodels.sandbox.distributions.extras.inversew"><code class="xref py py-obj docutils literal"><span class="pre">inversew</span></code></a>(x)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.inversew_inv.html#statsmodels.sandbox.distributions.extras.inversew_inv" title="statsmodels.sandbox.distributions.extras.inversew_inv"><code class="xref py py-obj docutils literal"><span class="pre">inversew_inv</span></code></a>(x)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.iteritems.html#statsmodels.sandbox.distributions.extras.iteritems" title="statsmodels.sandbox.distributions.extras.iteritems"><code class="xref py py-obj docutils literal"><span class="pre">iteritems</span></code></a>(obj,&nbsp;**kwargs)</td>
+<td>replacement for six&#8217;s iteritems for Python2/3 compat</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.mc2mvsk.html#statsmodels.sandbox.distributions.extras.mc2mvsk" title="statsmodels.sandbox.distributions.extras.mc2mvsk"><code class="xref py py-obj docutils literal"><span class="pre">mc2mvsk</span></code></a>(args)</td>
+<td>convert central moments to mean, variance, skew, kurtosis</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.mvnormcdf.html#statsmodels.sandbox.distributions.extras.mvnormcdf" title="statsmodels.sandbox.distributions.extras.mvnormcdf"><code class="xref py py-obj docutils literal"><span class="pre">mvnormcdf</span></code></a>(upper,&nbsp;mu,&nbsp;cov[,&nbsp;lower])</td>
+<td>multivariate normal cumulative distribution function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.mvsk2mc.html#statsmodels.sandbox.distributions.extras.mvsk2mc" title="statsmodels.sandbox.distributions.extras.mvsk2mc"><code class="xref py py-obj docutils literal"><span class="pre">mvsk2mc</span></code></a>(args)</td>
+<td>convert mean, variance, skew, kurtosis to central moments</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.mvstdnormcdf.html#statsmodels.sandbox.distributions.extras.mvstdnormcdf" title="statsmodels.sandbox.distributions.extras.mvstdnormcdf"><code class="xref py py-obj docutils literal"><span class="pre">mvstdnormcdf</span></code></a>(lower,&nbsp;upper,&nbsp;corrcoef,&nbsp;**kwds)</td>
+<td>standardized multivariate normal cumulative distribution function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.negsquarefunc.html#statsmodels.sandbox.distributions.extras.negsquarefunc" title="statsmodels.sandbox.distributions.extras.negsquarefunc"><code class="xref py py-obj docutils literal"><span class="pre">negsquarefunc</span></code></a>(x)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.pdf_moments.html#statsmodels.sandbox.distributions.extras.pdf_moments" title="statsmodels.sandbox.distributions.extras.pdf_moments"><code class="xref py py-obj docutils literal"><span class="pre">pdf_moments</span></code></a>(cnt)</td>
+<td>Return the Gaussian expanded pdf function given the list of central moments (first one is mean).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.pdf_moments_st.html#statsmodels.sandbox.distributions.extras.pdf_moments_st" title="statsmodels.sandbox.distributions.extras.pdf_moments_st"><code class="xref py py-obj docutils literal"><span class="pre">pdf_moments_st</span></code></a>(cnt)</td>
+<td>Return the Gaussian expanded pdf function given the list of central moments (first one is mean).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.extras.pdf_mvsk.html#statsmodels.sandbox.distributions.extras.pdf_mvsk" title="statsmodels.sandbox.distributions.extras.pdf_mvsk"><code class="xref py py-obj docutils literal"><span class="pre">pdf_mvsk</span></code></a>(mvsk)</td>
+<td>Return the Gaussian expanded pdf function given the list of 1st, 2nd moment and skew and Fisher (excess) kurtosis.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>6.3.4.3. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.ACSkewT_gen.html#statsmodels.sandbox.distributions.extras.ACSkewT_gen" title="statsmodels.sandbox.distributions.extras.ACSkewT_gen"><code class="xref py py-obj docutils literal"><span class="pre">ACSkewT_gen</span></code></a>()</td>
+<td>univariate Skew-T distribution of Azzalini</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.ExpTransf_gen.html#statsmodels.sandbox.distributions.extras.ExpTransf_gen" title="statsmodels.sandbox.distributions.extras.ExpTransf_gen"><code class="xref py py-obj docutils literal"><span class="pre">ExpTransf_gen</span></code></a>(kls,&nbsp;*args,&nbsp;**kwargs)</td>
+<td>Distribution based on log/exp transformation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.LogTransf_gen.html#statsmodels.sandbox.distributions.extras.LogTransf_gen" title="statsmodels.sandbox.distributions.extras.LogTransf_gen"><code class="xref py py-obj docutils literal"><span class="pre">LogTransf_gen</span></code></a>(kls,&nbsp;*args,&nbsp;**kwargs)</td>
+<td>Distribution based on log/exp transformation</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.NormExpan_gen.html#statsmodels.sandbox.distributions.extras.NormExpan_gen" title="statsmodels.sandbox.distributions.extras.NormExpan_gen"><code class="xref py py-obj docutils literal"><span class="pre">NormExpan_gen</span></code></a>(args,&nbsp;**kwds)</td>
+<td>Gram-Charlier Expansion of Normal distribution</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.SkewNorm2_gen.html#statsmodels.sandbox.distributions.extras.SkewNorm2_gen" title="statsmodels.sandbox.distributions.extras.SkewNorm2_gen"><code class="xref py py-obj docutils literal"><span class="pre">SkewNorm2_gen</span></code></a>([momtype,&nbsp;a,&nbsp;b,&nbsp;xtol,&nbsp;...])</td>
+<td>univariate Skew-Normal distribution of Azzalini</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.SkewNorm_gen.html#statsmodels.sandbox.distributions.extras.SkewNorm_gen" title="statsmodels.sandbox.distributions.extras.SkewNorm_gen"><code class="xref py py-obj docutils literal"><span class="pre">SkewNorm_gen</span></code></a>()</td>
+<td>univariate Skew-Normal distribution of Azzalini</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.SquareFunc.html#statsmodels.sandbox.distributions.extras.SquareFunc" title="statsmodels.sandbox.distributions.extras.SquareFunc"><code class="xref py py-obj docutils literal"><span class="pre">SquareFunc</span></code></a></td>
+<td>class to hold quadratic function with inverse function and derivative</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.TransfTwo_gen.html#statsmodels.sandbox.distributions.extras.TransfTwo_gen" title="statsmodels.sandbox.distributions.extras.TransfTwo_gen"><code class="xref py py-obj docutils literal"><span class="pre">TransfTwo_gen</span></code></a>(kls,&nbsp;func,&nbsp;funcinvplus,&nbsp;...)</td>
+<td>Distribution based on a non-monotonic (u- or hump-shaped transformation)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.Transf_gen.html#statsmodels.sandbox.distributions.extras.Transf_gen" title="statsmodels.sandbox.distributions.extras.Transf_gen"><code class="xref py py-obj docutils literal"><span class="pre">Transf_gen</span></code></a>(kls,&nbsp;func,&nbsp;funcinv,&nbsp;*args,&nbsp;**kwargs)</td>
+<td>a class for non-linear monotonic transformation of a continuous random variable</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.distributions.extras.absfunc.html" class="btn btn-neutral float-right" title="6.3.4.2.1. statsmodels.sandbox.distributions.extras.absfunc" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.distributions.estimators.momentcondunboundls.html" class="btn btn-neutral" title="6.3.3.2.2.12. statsmodels.sandbox.distributions.estimators.momentcondunboundls" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

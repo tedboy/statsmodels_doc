@@ -1,0 +1,375 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.6.2.2.2. statsmodels.sandbox.panel.mixed.OneWayMixed &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.6.2. statsmodels.sandbox.panel.mixed" href="../statsmodels.sandbox.panel.mixed.html"/>
+        <link rel="next" title="6.6.2.2.2.1.1. statsmodels.sandbox.panel.mixed.OneWayMixed.__init__" href="statsmodels.sandbox.panel.mixed.OneWayMixed.__init__.html"/>
+        <link rel="prev" title="6.6.2.2.1.2.1. statsmodels.sandbox.panel.mixed.LikelihoodModelResults.use_t" href="statsmodels.sandbox.panel.mixed.LikelihoodModelResults.use_t.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.panel.correlation_structures.html">6.6.1. statsmodels.sandbox.panel.correlation_structures</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.panel.mixed.html">6.6.2. statsmodels.sandbox.panel.mixed</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.panel.mixed.html#notes">6.6.2.1. Notes</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.panel.mixed.html#classes">6.6.2.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.panel.panel_short.html">6.6.3. statsmodels.sandbox.panel.panel_short</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.panel.random_panel.html">6.6.4. statsmodels.sandbox.panel.random_panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.panel.sandwich_covariance_generic.html">6.6.5. statsmodels.sandbox.panel.sandwich_covariance_generic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.panel.sandwich_covariance.html">6.6.6. statsmodels.sandbox.panel.sandwich_covariance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.panel.mixed.html">6.6.2. statsmodels.sandbox.panel.mixed</a> &raquo;</li>
+        
+      <li>6.6.2.2.2. statsmodels.sandbox.panel.mixed.OneWayMixed</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.panel.mixed.OneWayMixed.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-panel-mixed-onewaymixed">
+<h1>6.6.2.2.2. statsmodels.sandbox.panel.mixed.OneWayMixed<a class="headerlink" href="#statsmodels-sandbox-panel-mixed-onewaymixed" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.sandbox.panel.mixed.OneWayMixed">
+<em class="property">class </em><code class="descclassname">statsmodels.sandbox.panel.mixed.</code><code class="descname">OneWayMixed</code><span class="sig-paren">(</span><em>units</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/panel/mixed.html#OneWayMixed"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.panel.mixed.OneWayMixed" title="Permalink to this definition">¶</a></dt>
+<dd><p>Model for
+EM implementation of (repeated measures)
+mixed effects model.</p>
+<p>&#8216;Maximum Likelihood Computations with Repeated Measures:
+Application of the EM Algorithm&#8217;</p>
+<p>Nan Laird; Nicholas Lange; Daniel Stram</p>
+<p>Journal of the American Statistical Association,
+Vol. 82, No. 397. (Mar., 1987), pp. 97-105.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>units</strong> : list of units</p>
+<blockquote>
+<div><p>the data for the individual units should be attached to the units</p>
+</div></blockquote>
+<p><strong>response, fixed and random</strong> : formula expression, called as argument to Formula</p>
+<p><strong>*available results and alias*</strong></p>
+<p><strong>(subject to renaming, and coversion to cached attributes)</strong></p>
+<p><strong>params() -&gt; self.a</strong> : coefficient for fixed effects or exog</p>
+<p><strong>cov_params() -&gt; self.Sinv</strong> : covariance estimate of fixed effects/exog</p>
+<p><strong>bse()</strong> : standard deviation of params</p>
+<p><strong>cov_random -&gt; self.D</strong> : estimate of random effects covariance</p>
+<p><strong>params_random_units -&gt; [self.units[...].b]</strong> : random coefficient for each unit</p>
+<p><strong>*attributes*</strong></p>
+<p><strong>(others)</strong></p>
+<p><strong>self.m</strong> : number of units</p>
+<p><strong>self.p</strong> : k_vars_fixed</p>
+<p><strong>self.q</strong> : k_vars_random</p>
+<p class="last"><strong>self.N</strong> : nobs (total)</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Fit returns a result instance, but not all results that use the inherited
+methods have been checked.</p>
+<p>Parameters need to change: drop formula and we require a naming convention for
+the units (currently Y,X,Z). - endog, exog_fe, endog_re ?</p>
+<p>logL does not include constant, e.g. sqrt(pi)
+llf is for MLE not for REML</p>
+<p>convergence criteria for iteration
+Currently convergence in the iterative solver is reached if either the loglikelihood
+<em>or</em> the fixed effects parameter don&#8217;t change above tolerance.</p>
+<p>In some examples, the fixed effects parameters converged to 1e-5 within 150 iterations
+while the log likelihood did not converge within 2000 iterations. This might be
+the case if the fixed effects parameters are well estimated, but there are still
+changes in the random effects. If params_rtol and params_atol are set at a higher
+level, then the random effects might not be estimated to a very high precision.</p>
+<p>The above was with a misspecified model, without a constant. With a
+correctly specified model convergence is fast, within a few iterations
+(6 in example).</p>
+<dl class="method">
+<dt id="statsmodels.sandbox.panel.mixed.OneWayMixed.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>units</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/panel/mixed.html#OneWayMixed.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.panel.mixed.OneWayMixed.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>6.6.2.2.2.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.__init__.html#statsmodels.sandbox.panel.mixed.OneWayMixed.__init__" title="statsmodels.sandbox.panel.mixed.OneWayMixed.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(units)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.cont.html#statsmodels.sandbox.panel.mixed.OneWayMixed.cont" title="statsmodels.sandbox.panel.mixed.OneWayMixed.cont"><code class="xref py py-obj docutils literal"><span class="pre">cont</span></code></a>([ML,&nbsp;rtol,&nbsp;params_rtol,&nbsp;params_atol])</td>
+<td>convergence check for iterative estimation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.cov_fixed.html#statsmodels.sandbox.panel.mixed.OneWayMixed.cov_fixed" title="statsmodels.sandbox.panel.mixed.OneWayMixed.cov_fixed"><code class="xref py py-obj docutils literal"><span class="pre">cov_fixed</span></code></a>()</td>
+<td>Approximate covariance of estimates of fixed effects.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.cov_params.html#statsmodels.sandbox.panel.mixed.OneWayMixed.cov_params" title="statsmodels.sandbox.panel.mixed.OneWayMixed.cov_params"><code class="xref py py-obj docutils literal"><span class="pre">cov_params</span></code></a>()</td>
+<td>estimated covariance for coefficients for exogeneous variables or fixed effects</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.cov_random.html#statsmodels.sandbox.panel.mixed.OneWayMixed.cov_random" title="statsmodels.sandbox.panel.mixed.OneWayMixed.cov_random"><code class="xref py py-obj docutils literal"><span class="pre">cov_random</span></code></a>()</td>
+<td>Estimate random effects covariance D.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.deviance.html#statsmodels.sandbox.panel.mixed.OneWayMixed.deviance" title="statsmodels.sandbox.panel.mixed.OneWayMixed.deviance"><code class="xref py py-obj docutils literal"><span class="pre">deviance</span></code></a>([ML])</td>
+<td>deviance defined as 2 times the negative loglikelihood</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.fit.html#statsmodels.sandbox.panel.mixed.OneWayMixed.fit" title="statsmodels.sandbox.panel.mixed.OneWayMixed.fit"><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code></a>([maxiter,&nbsp;ML,&nbsp;rtol,&nbsp;params_rtol,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.initialize.html#statsmodels.sandbox.panel.mixed.OneWayMixed.initialize" title="statsmodels.sandbox.panel.mixed.OneWayMixed.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.logL.html#statsmodels.sandbox.panel.mixed.OneWayMixed.logL" title="statsmodels.sandbox.panel.mixed.OneWayMixed.logL"><code class="xref py py-obj docutils literal"><span class="pre">logL</span></code></a>([ML])</td>
+<td>Return log-likelihood, REML by default.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>6.6.2.2.2.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.bse.html#statsmodels.sandbox.panel.mixed.OneWayMixed.bse" title="statsmodels.sandbox.panel.mixed.OneWayMixed.bse"><code class="xref py py-obj docutils literal"><span class="pre">bse</span></code></a></td>
+<td>standard errors of estimated coefficients for exogeneous variables (fixed)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.params.html#statsmodels.sandbox.panel.mixed.OneWayMixed.params" title="statsmodels.sandbox.panel.mixed.OneWayMixed.params"><code class="xref py py-obj docutils literal"><span class="pre">params</span></code></a></td>
+<td>estimated coefficients for exogeneous variables or fixed effects</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.panel.mixed.OneWayMixed.params_random_units.html#statsmodels.sandbox.panel.mixed.OneWayMixed.params_random_units" title="statsmodels.sandbox.panel.mixed.OneWayMixed.params_random_units"><code class="xref py py-obj docutils literal"><span class="pre">params_random_units</span></code></a></td>
+<td>random coefficients for each unit</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.panel.mixed.OneWayMixed.__init__.html" class="btn btn-neutral float-right" title="6.6.2.2.2.1.1. statsmodels.sandbox.panel.mixed.OneWayMixed.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.panel.mixed.LikelihoodModelResults.use_t.html" class="btn btn-neutral" title="6.6.2.2.1.2.1. statsmodels.sandbox.panel.mixed.LikelihoodModelResults.use_t" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

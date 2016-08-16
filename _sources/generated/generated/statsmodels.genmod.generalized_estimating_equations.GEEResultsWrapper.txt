@@ -1,0 +1,25 @@
+statsmodels.genmod.generalized_estimating_equations.GEEResultsWrapper
+=====================================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: GEEResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GEEResultsWrapper.__init__
+   ~GEEResultsWrapper.conf_int
+   ~GEEResultsWrapper.cov_params
+   ~GEEResultsWrapper.load
+   ~GEEResultsWrapper.save
+
+
+
+
+

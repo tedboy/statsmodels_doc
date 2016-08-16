@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.9.3. statsmodels.regression.mixed_linear_model &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="3. Main modules of interest" href="../main.html"/>
+        <link rel="next" title="3.9.3.1.1. statsmodels.regression.mixed_linear_model.MixedLM" href="generated/statsmodels.regression.mixed_linear_model.MixedLM.html"/>
+        <link rel="prev" title="3.9.2.3.1. statsmodels.regression.linear_model.InvalidTestWarning" href="statsmodels.regression.linear_model.InvalidTestWarning.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main.html#statsmodels-regression">3.9. statsmodels.regression</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.regression.feasible_gls.html">3.9.1. statsmodels.regression.feasible_gls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.regression.linear_model.html">3.9.2. statsmodels.regression.linear_model</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">3.9.3. statsmodels.regression.mixed_linear_model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#classes">3.9.3.1. Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exceptions">3.9.3.2. Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.regression.quantile_regression.html">3.9.4. statsmodels.regression.quantile_regression</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-stats">3.11. statsmodel.stats</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+      <li>3.9.3. statsmodels.regression.mixed_linear_model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.regression.mixed_linear_model.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.regression.mixed_linear_model">
+<span id="statsmodels-regression-mixed-linear-model"></span><h1>3.9.3. statsmodels.regression.mixed_linear_model<a class="headerlink" href="#module-statsmodels.regression.mixed_linear_model" title="Permalink to this headline">¶</a></h1>
+<p>Linear mixed effects models for Statsmodels</p>
+<p>The data are partitioned into disjoint groups.  The probability model
+for group i is:</p>
+<p>Y = X*beta + Z*gamma + epsilon</p>
+<p>where</p>
+<ul class="simple">
+<li>n_i is the number of observations in group i</li>
+<li>Y is a n_i dimensional response vector</li>
+<li>X is a n_i x k_fe design matrix for the fixed effects</li>
+<li>beta is a k_fe-dimensional vector of fixed effects slopes</li>
+<li>Z is a n_i x k_re design matrix for the random effects</li>
+<li>gamma is a k_re-dimensional random vector with mean 0
+and covariance matrix Psi; note that each group
+gets its own independent realization of gamma.</li>
+<li>epsilon is a n_i dimensional vector of iid normal
+errors with mean 0 and variance sigma^2; the epsilon
+values are independent both within and between groups</li>
+</ul>
+<p>Y, X and Z must be entirely observed.  beta, Psi, and sigma^2 are
+estimated using ML or REML estimation, and gamma and epsilon are
+random so define the probability model.</p>
+<p>The mean structure is E[Y|X,Z] = X*beta.  If only the mean structure
+is of interest, GEE is a good alternative to mixed models.</p>
+<p>The primary reference for the implementation details is:</p>
+<p>MJ Lindstrom, DM Bates (1988).  &#8220;Newton Raphson and EM algorithms for
+linear mixed effects models for repeated measures data&#8221;.  Journal of
+the American Statistical Association. Volume 83, Issue 404, pages
+1014-1022.</p>
+<p>See also this more recent document:</p>
+<p><a class="reference external" href="http://econ.ucsb.edu/~doug/245a/Papers/Mixed%20Effects%20Implement.pdf">http://econ.ucsb.edu/~doug/245a/Papers/Mixed%20Effects%20Implement.pdf</a></p>
+<p>All the likelihood, gradient, and Hessian calculations closely follow
+Lindstrom and Bates.</p>
+<p>The following two documents are written more from the perspective of
+users:</p>
+<p><a class="reference external" href="http://lme4.r-forge.r-project.org/lMMwR/lrgprt.pdf">http://lme4.r-forge.r-project.org/lMMwR/lrgprt.pdf</a></p>
+<p><a class="reference external" href="http://lme4.r-forge.r-project.org/slides/2009-07-07-Rennes/3Longitudinal-4.pdf">http://lme4.r-forge.r-project.org/slides/2009-07-07-Rennes/3Longitudinal-4.pdf</a></p>
+<p>Notation:</p>
+<ul class="simple">
+<li><cite>cov_re</cite> is the random effects covariance matrix (referred to above
+as Psi) and <cite>scale</cite> is the (scalar) error variance.  For a single
+group, the marginal covariance matrix of endog given exog is scale*I
++ Z * cov_re * Z&#8217;, where Z is the design matrix for the random
+effects in one group.</li>
+</ul>
+<p>Notes:</p>
+<p>1. Three different parameterizations are used here in different
+places.  The regression slopes (usually called <cite>fe_params</cite>) are
+identical in all three parameterizations, but the variance parameters
+differ.  The parameterizations are:</p>
+<ul class="simple">
+<li>The &#8220;natural parameterization&#8221; in which cov(endog) = scale*I + Z *
+cov_re * Z&#8217;, as described above.  This is the main parameterization
+visible to the user.</li>
+<li>The &#8220;profile parameterization&#8221; in which cov(endog) = I +
+Z * cov_re1 * Z&#8217;.  This is the parameterization of the profile
+likelihood that is maximized to produce parameter estimates.
+(see Lindstrom and Bates for details).  The &#8220;natural&#8221; cov_re is
+equal to the &#8220;profile&#8221; cov_re1 times scale.</li>
+<li>The &#8220;square root parameterization&#8221; in which we work with the
+Cholesky factor of cov_re1 instead of cov_re1 directly.</li>
+</ul>
+<p>All three parameterizations can be &#8220;packed&#8221; by concatenating fe_params
+together with the lower triangle of the dependence structure.  Note
+that when unpacking, it is important to either square or reflect the
+dependence structure depending on which parameterization is being
+used.</p>
+<p>2. The situation where the random effects covariance matrix is
+singular is numerically challenging.  Small changes in the covariance
+parameters may lead to large changes in the likelihood and
+derivatives.</p>
+<p>3. The optimization strategy is to first use OLS to get starting
+values for the mean structure.  Then we optionally perform a few EM
+steps, followed by optionally performing a few steepest ascent steps.
+This is followed by conjugate gradient optimization using one of the
+scipy gradient optimizers.  The EM and steepest ascent steps are used
+to get adequate starting values for the conjugate gradient
+optimization, which is much faster.</p>
+<div class="section" id="classes">
+<h2>3.9.3.1. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.regression.mixed_linear_model.MixedLM.html#statsmodels.regression.mixed_linear_model.MixedLM" title="statsmodels.regression.mixed_linear_model.MixedLM"><code class="xref py py-obj docutils literal"><span class="pre">MixedLM</span></code></a>(endog,&nbsp;exog,&nbsp;groups[,&nbsp;exog_re,&nbsp;...])</td>
+<td>An object specifying a linear mixed effects model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.regression.mixed_linear_model.MixedLMParams.html#statsmodels.regression.mixed_linear_model.MixedLMParams" title="statsmodels.regression.mixed_linear_model.MixedLMParams"><code class="xref py py-obj docutils literal"><span class="pre">MixedLMParams</span></code></a>(k_fe,&nbsp;k_re[,&nbsp;use_sqrt])</td>
+<td>This class represents a parameter state for a mixed linear model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.regression.mixed_linear_model.MixedLMResults.html#statsmodels.regression.mixed_linear_model.MixedLMResults" title="statsmodels.regression.mixed_linear_model.MixedLMResults"><code class="xref py py-obj docutils literal"><span class="pre">MixedLMResults</span></code></a>(model,&nbsp;params,&nbsp;cov_params)</td>
+<td>Class to contain results of fitting a linear mixed effects model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.regression.mixed_linear_model.MixedLMResultsWrapper.html#statsmodels.regression.mixed_linear_model.MixedLMResultsWrapper" title="statsmodels.regression.mixed_linear_model.MixedLMResultsWrapper"><code class="xref py py-obj docutils literal"><span class="pre">MixedLMResultsWrapper</span></code></a>(results)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.regression.mixed_linear_model.OrderedDict.html#statsmodels.regression.mixed_linear_model.OrderedDict" title="statsmodels.regression.mixed_linear_model.OrderedDict"><code class="xref py py-obj docutils literal"><span class="pre">OrderedDict</span></code></a>(*args,&nbsp;**kwds)</td>
+<td>Dictionary that remembers insertion order</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.regression.mixed_linear_model.Penalty.html#statsmodels.regression.mixed_linear_model.Penalty" title="statsmodels.regression.mixed_linear_model.Penalty"><code class="xref py py-obj docutils literal"><span class="pre">Penalty</span></code></a>(wts)</td>
+<td>A class for representing a scalar-value penalty.</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="exceptions">
+<h2>3.9.3.2. Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.regression.mixed_linear_model.ConvergenceWarning.html#statsmodels.regression.mixed_linear_model.ConvergenceWarning" title="statsmodels.regression.mixed_linear_model.ConvergenceWarning"><code class="xref py py-obj docutils literal"><span class="pre">ConvergenceWarning</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/statsmodels.regression.mixed_linear_model.MixedLM.html" class="btn btn-neutral float-right" title="3.9.3.1.1. statsmodels.regression.mixed_linear_model.MixedLM" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.regression.linear_model.InvalidTestWarning.html" class="btn btn-neutral" title="3.9.2.3.1. statsmodels.regression.linear_model.InvalidTestWarning" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,54 @@
+statsmodels.distributions.ExpandedNormal
+========================================
+
+.. currentmodule:: statsmodels.distributions
+.. autoclass:: ExpandedNormal
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ExpandedNormal.__init__
+   ~ExpandedNormal.cdf
+   ~ExpandedNormal.entropy
+   ~ExpandedNormal.est_loc_scale
+   ~ExpandedNormal.expect
+   ~ExpandedNormal.fit
+   ~ExpandedNormal.fit_fr
+   ~ExpandedNormal.fit_loc_scale
+   ~ExpandedNormal.freeze
+   ~ExpandedNormal.interval
+   ~ExpandedNormal.isf
+   ~ExpandedNormal.logcdf
+   ~ExpandedNormal.logpdf
+   ~ExpandedNormal.logsf
+   ~ExpandedNormal.mean
+   ~ExpandedNormal.median
+   ~ExpandedNormal.moment
+   ~ExpandedNormal.nnlf
+   ~ExpandedNormal.nnlf_fr
+   ~ExpandedNormal.pdf
+   ~ExpandedNormal.ppf
+   ~ExpandedNormal.rvs
+   ~ExpandedNormal.sf
+   ~ExpandedNormal.stats
+   ~ExpandedNormal.std
+   ~ExpandedNormal.var
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~ExpandedNormal.random_state
+

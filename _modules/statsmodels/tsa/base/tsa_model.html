@@ -1,0 +1,485 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tsa.base.tsa_model &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tsa.base.tsa_model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tsa.base.tsa_model</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">lrange</span>
+<span class="kn">import</span> <span class="nn">statsmodels.base.model</span> <span class="k">as</span> <span class="nn">base</span>
+<span class="kn">from</span> <span class="nn">statsmodels.base</span> <span class="k">import</span> <span class="n">data</span>
+<span class="kn">import</span> <span class="nn">statsmodels.base.wrapper</span> <span class="k">as</span> <span class="nn">wrap</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.base</span> <span class="k">import</span> <span class="n">datetools</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">arange</span><span class="p">,</span> <span class="n">asarray</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">Index</span>
+<span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">datetools</span> <span class="k">as</span> <span class="n">pandas_datetools</span>
+<span class="kn">import</span> <span class="nn">datetime</span>
+
+<span class="n">_freq_to_pandas</span> <span class="o">=</span> <span class="n">datetools</span><span class="o">.</span><span class="n">_freq_to_pandas</span>
+
+<span class="n">_tsa_doc</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">    </span><span class="si">%(model)s</span><span class="s2"></span>
+
+<span class="s2">    Parameters</span>
+<span class="s2">    ----------</span>
+<span class="s2">    </span><span class="si">%(params)s</span><span class="s2"></span>
+<span class="s2">    dates : array-like of datetime, optional</span>
+<span class="s2">        An array-like object of datetime objects. If a pandas object is given</span>
+<span class="s2">        for endog or exog, it is assumed to have a DateIndex.</span>
+<span class="s2">    freq : str, optional</span>
+<span class="s2">        The frequency of the time-series. A Pandas offset or &#39;B&#39;, &#39;D&#39;, &#39;W&#39;,</span>
+<span class="s2">        &#39;M&#39;, &#39;A&#39;, or &#39;Q&#39;. This is optional if dates are given.</span>
+<span class="s2">    </span><span class="si">%(extra_params)s</span><span class="s2"></span>
+<span class="s2">    </span><span class="si">%(extra_sections)s</span><span class="s2"></span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">_model_doc</span> <span class="o">=</span> <span class="s2">&quot;Timeseries model base class&quot;</span>
+
+<span class="n">_generic_params</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">_model_params_doc</span>
+<span class="n">_missing_param_doc</span> <span class="o">=</span> <span class="n">base</span><span class="o">.</span><span class="n">_missing_param_doc</span>
+
+<div class="viewcode-block" id="TimeSeriesModel"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.base.tsa_model.TimeSeriesModel.html#statsmodels.tsa.base.tsa_model.TimeSeriesModel">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesModel</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">LikelihoodModel</span><span class="p">):</span>
+
+    <span class="n">__doc__</span> <span class="o">=</span> <span class="n">_tsa_doc</span> <span class="o">%</span> <span class="p">{</span><span class="s2">&quot;model&quot;</span> <span class="p">:</span> <span class="n">_model_doc</span><span class="p">,</span> <span class="s2">&quot;params&quot;</span> <span class="p">:</span> <span class="n">_generic_params</span><span class="p">,</span>
+                          <span class="s2">&quot;extra_params&quot;</span> <span class="p">:</span> <span class="n">_missing_param_doc</span><span class="p">,</span>
+                          <span class="s2">&quot;extra_sections&quot;</span> <span class="p">:</span> <span class="s2">&quot;&quot;</span><span class="p">}</span>
+
+<div class="viewcode-block" id="TimeSeriesModel.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.base.tsa_model.TimeSeriesModel.__init__.html#statsmodels.tsa.base.tsa_model.TimeSeriesModel.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dates</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;none&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TimeSeriesModel</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="n">missing</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_init_dates</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_init_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">freq</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">dates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">row_labels</span>
+
+        <span class="k">if</span> <span class="n">dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">datetools</span><span class="o">.</span><span class="n">_is_datetime_index</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span> <span class="ow">and</span>
+                    <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">PandasData</span><span class="p">)):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Given a pandas object and the index does &quot;</span>
+                                 <span class="s2">&quot;not contain dates&quot;</span><span class="p">)</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">freq</span><span class="p">:</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">freq</span> <span class="o">=</span> <span class="n">datetools</span><span class="o">.</span><span class="n">_infer_freq</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+                <span class="k">except</span><span class="p">:</span>
+                    <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Frequency inference failed. Use `freq` &quot;</span>
+                            <span class="s2">&quot;keyword.&quot;</span><span class="p">)</span>
+            <span class="n">dates</span> <span class="o">=</span> <span class="n">Index</span><span class="p">(</span><span class="n">dates</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dates</span> <span class="o">=</span> <span class="n">dates</span>
+        <span class="k">if</span> <span class="n">freq</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span> <span class="c1">#NOTE: Can drop this once we move to pandas &gt;= 0.8.x</span>
+                <span class="n">_freq_to_pandas</span><span class="p">[</span><span class="n">freq</span><span class="p">]</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;freq </span><span class="si">%s</span><span class="s2"> not understood&quot;</span> <span class="o">%</span> <span class="n">freq</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">freq</span> <span class="o">=</span> <span class="n">freq</span>
+
+    <span class="k">def</span> <span class="nf">_get_exog_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xnames</span>
+
+    <span class="k">def</span> <span class="nf">_set_exog_names</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">vals</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span> <span class="nb">list</span><span class="p">):</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="p">[</span><span class="n">vals</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">xnames</span> <span class="o">=</span> <span class="n">vals</span>
+
+    <span class="c1">#overwrite with writable property for (V)AR models</span>
+    <span class="n">exog_names</span> <span class="o">=</span> <span class="nb">property</span><span class="p">(</span><span class="n">_get_exog_names</span><span class="p">,</span> <span class="n">_set_exog_names</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_dates_loc</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dates</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="s1">&#39;indexMap&#39;</span><span class="p">):</span> <span class="c1"># 0.7.x</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">dates</span><span class="o">.</span><span class="n">indexMap</span><span class="p">[</span><span class="n">date</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">date</span> <span class="o">=</span> <span class="n">dates</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span> <span class="c1"># pandas 0.8.0 returns a boolean array</span>
+                <span class="nb">len</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+                <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">where</span>
+                <span class="n">date</span> <span class="o">=</span> <span class="n">where</span><span class="p">(</span><span class="n">date</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">item</span><span class="p">()</span>
+            <span class="k">except</span> <span class="ne">TypeError</span><span class="p">:</span> <span class="c1"># this is expected behavior</span>
+                <span class="k">pass</span>
+        <span class="k">return</span> <span class="n">date</span>
+
+    <span class="k">def</span> <span class="nf">_str_to_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">date</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Takes a string and returns a datetime object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">datetools</span><span class="o">.</span><span class="n">date_parser</span><span class="p">(</span><span class="n">date</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_set_predict_start_date</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dates</span>
+        <span class="k">if</span> <span class="n">dates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="o">&gt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Start must be &lt;= len(endog)&quot;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_start</span> <span class="o">=</span> <span class="n">datetools</span><span class="o">.</span><span class="n">_date_from_idx</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                                    <span class="mi">1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">freq</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">start</span> <span class="o">&lt;</span> <span class="nb">len</span><span class="p">(</span><span class="n">dates</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_start</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="n">start</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Start must be &lt;= len(dates)&quot;</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_get_predict_start</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">start</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the index of the given start date. Subclasses should define</span>
+<span class="sd">        default behavior for start = None. That isn&#39;t handled here.</span>
+
+<span class="sd">        Start can be a string or an integer if self.data.dates is None.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">dates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dates</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">dates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Got a string for start and dates is None&quot;</span><span class="p">)</span>
+            <span class="n">dtstart</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_str_to_date</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_start</span> <span class="o">=</span> <span class="n">dtstart</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dates_loc</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">dtstart</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Start must be in dates. Got </span><span class="si">%s</span><span class="s2"> | </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span>
+                        <span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">start</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">dtstart</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_set_predict_start_date</span><span class="p">(</span><span class="n">start</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">start</span>
+
+
+    <span class="k">def</span> <span class="nf">_get_predict_end</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        See _get_predict_start for more information. Subclasses do not</span>
+<span class="sd">        need to define anything for this.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">out_of_sample</span> <span class="o">=</span> <span class="mi">0</span> <span class="c1"># will be overwritten if needed</span>
+        <span class="k">if</span> <span class="n">end</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># use data for ARIMA - endog changes</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">endog</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+
+        <span class="n">dates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dates</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">freq</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">dates</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Got a string for end and dates is None&quot;</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">dtend</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_str_to_date</span><span class="p">(</span><span class="n">end</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_end</span> <span class="o">=</span> <span class="n">dtend</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dates_loc</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">dtend</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">KeyError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span> <span class="c1"># end is greater than dates[-1]...probably</span>
+                <span class="k">if</span> <span class="n">dtend</span> <span class="o">&gt;</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                    <span class="n">end</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">endog</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span>
+                    <span class="n">freq</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">freq</span>
+                    <span class="n">out_of_sample</span> <span class="o">=</span> <span class="n">datetools</span><span class="o">.</span><span class="n">_idx_from_dates</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">dtend</span><span class="p">,</span>
+                                            <span class="n">freq</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">freq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;There is no frequency for these &quot;</span>
+                                         <span class="s2">&quot;dates and date </span><span class="si">%s</span><span class="s2"> is not in dates &quot;</span>
+                                         <span class="s2">&quot;index. Try giving a date that is in &quot;</span>
+                                         <span class="s2">&quot;the dates index or use an integer.&quot;</span>
+                                         <span class="o">%</span> <span class="n">dtend</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span> <span class="c1">#pragma: no cover</span>
+                        <span class="k">raise</span> <span class="n">err</span> <span class="c1"># should never get here</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_make_predict_dates</span><span class="p">()</span> <span class="c1"># attaches self.data.predict_dates</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span> <span class="n">dates</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_end</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="n">end</span><span class="p">]</span>
+            <span class="k">except</span> <span class="ne">IndexError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">endog</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># as an index</span>
+                <span class="n">out_of_sample</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">nobs</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">nobs</span>
+                <span class="k">if</span> <span class="n">freq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_end</span> <span class="o">=</span> <span class="n">datetools</span><span class="o">.</span><span class="n">_date_from_idx</span><span class="p">(</span><span class="n">dates</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                            <span class="n">out_of_sample</span><span class="p">,</span> <span class="n">freq</span><span class="p">)</span>
+                <span class="k">elif</span> <span class="n">out_of_sample</span> <span class="o">&lt;=</span> <span class="mi">0</span><span class="p">:</span> <span class="c1"># have no frequency but are in sample</span>
+                    <span class="c1">#TODO: what error to catch here to make sure dates is</span>
+                    <span class="c1">#on the index?</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dates_loc</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span>
+                                                <span class="n">end</span><span class="p">)</span>
+                    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+                        <span class="k">raise</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_end</span> <span class="o">=</span> <span class="n">end</span> <span class="o">+</span> <span class="n">out_of_sample</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dates_loc</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span>
+                                                <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_start</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">_make_predict_dates</span><span class="p">()</span>
+
+        <span class="k">elif</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">end</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">endog</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span> <span class="c1"># is an index</span>
+            <span class="k">if</span> <span class="n">end</span> <span class="o">&gt;</span> <span class="n">nobs</span><span class="p">:</span>
+                <span class="n">out_of_sample</span> <span class="o">=</span> <span class="n">end</span> <span class="o">-</span> <span class="n">nobs</span>
+                <span class="n">end</span> <span class="o">=</span> <span class="n">nobs</span>
+
+        <span class="k">elif</span> <span class="n">freq</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># should have a date with freq = None</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;When freq is None, you must give an integer &quot;</span>
+                             <span class="s2">&quot;index for end.&quot;</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">end</span><span class="p">,</span> <span class="n">out_of_sample</span>
+
+    <span class="k">def</span> <span class="nf">_make_predict_dates</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span>
+        <span class="n">dtstart</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">predict_start</span>
+        <span class="n">dtend</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">predict_end</span>
+        <span class="n">freq</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">freq</span>
+
+        <span class="k">if</span> <span class="n">freq</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">pandas_freq</span> <span class="o">=</span> <span class="n">_freq_to_pandas</span><span class="p">[</span><span class="n">freq</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DatetimeIndex</span>
+                <span class="n">dates</span> <span class="o">=</span> <span class="n">DatetimeIndex</span><span class="p">(</span><span class="n">start</span><span class="o">=</span><span class="n">dtstart</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="n">dtend</span><span class="p">,</span>
+                                        <span class="n">freq</span><span class="o">=</span><span class="n">pandas_freq</span><span class="p">)</span>
+            <span class="k">except</span> <span class="ne">ImportError</span> <span class="k">as</span> <span class="n">err</span><span class="p">:</span>
+                <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">DateRange</span>
+                <span class="n">dates</span> <span class="o">=</span> <span class="n">DateRange</span><span class="p">(</span><span class="n">dtstart</span><span class="p">,</span> <span class="n">dtend</span><span class="p">,</span> <span class="n">offset</span> <span class="o">=</span> <span class="n">pandas_freq</span><span class="p">)</span><span class="o">.</span><span class="n">values</span>
+        <span class="c1"># handle</span>
+        <span class="k">elif</span> <span class="n">freq</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">and</span> <span class="p">(</span><span class="nb">isinstance</span><span class="p">(</span><span class="n">dtstart</span><span class="p">,</span> <span class="nb">int</span><span class="p">)</span> <span class="ow">and</span>
+                               <span class="nb">isinstance</span><span class="p">(</span><span class="n">dtend</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="kn">from</span> <span class="nn">pandas</span> <span class="k">import</span> <span class="n">Index</span>
+            <span class="n">dates</span> <span class="o">=</span> <span class="n">Index</span><span class="p">(</span><span class="n">lrange</span><span class="p">(</span><span class="n">dtstart</span><span class="p">,</span> <span class="n">dtend</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span>
+        <span class="c1"># if freq is None and dtstart and dtend aren&#39;t integers, we&#39;re</span>
+        <span class="c1"># in sample</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">dates</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">dates</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dates_loc</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">dtstart</span><span class="p">)</span>
+            <span class="n">end</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_get_dates_loc</span><span class="p">(</span><span class="n">dates</span><span class="p">,</span> <span class="n">dtend</span><span class="p">)</span>
+            <span class="n">dates</span> <span class="o">=</span> <span class="n">dates</span><span class="p">[</span><span class="n">start</span><span class="p">:</span><span class="n">end</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="c1"># is this index inclusive?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="o">.</span><span class="n">predict_dates</span> <span class="o">=</span> <span class="n">dates</span></div>
+
+<div class="viewcode-block" id="TimeSeriesModelResults"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.base.tsa_model.TimeSeriesModelResults.html#statsmodels.tsa.base.tsa_model.TimeSeriesModelResults">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesModelResults</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">LikelihoodModelResults</span><span class="p">):</span>
+<div class="viewcode-block" id="TimeSeriesModelResults.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.base.tsa_model.TimeSeriesModelResults.__init__.html#statsmodels.tsa.base.tsa_model.TimeSeriesModelResults.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">normalized_cov_params</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="n">data</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">TimeSeriesModelResults</span><span class="p">,</span>
+                <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">params</span><span class="p">,</span> <span class="n">normalized_cov_params</span><span class="p">,</span> <span class="n">scale</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="TimeSeriesResultsWrapper"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.tsa.base.tsa_model.TimeSeriesResultsWrapper.html#statsmodels.tsa.base.tsa_model.TimeSeriesResultsWrapper">[docs]</a><span class="k">class</span> <span class="nc">TimeSeriesResultsWrapper</span><span class="p">(</span><span class="n">wrap</span><span class="o">.</span><span class="n">ResultsWrapper</span><span class="p">):</span>
+    <span class="n">_attrs</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">_wrap_attrs</span> <span class="o">=</span> <span class="n">wrap</span><span class="o">.</span><span class="n">union_dicts</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">LikelihoodResultsWrapper</span><span class="o">.</span><span class="n">_wrap_attrs</span><span class="p">,</span>
+                                    <span class="n">_attrs</span><span class="p">)</span>
+    <span class="n">_methods</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;predict&#39;</span> <span class="p">:</span> <span class="s1">&#39;dates&#39;</span><span class="p">}</span>
+    <span class="n">_wrap_methods</span> <span class="o">=</span> <span class="n">wrap</span><span class="o">.</span><span class="n">union_dicts</span><span class="p">(</span><span class="n">base</span><span class="o">.</span><span class="n">LikelihoodResultsWrapper</span><span class="o">.</span><span class="n">_wrap_methods</span><span class="p">,</span>
+                                     <span class="n">_methods</span><span class="p">)</span></div>
+<span class="n">wrap</span><span class="o">.</span><span class="n">populate_wrapper</span><span class="p">(</span><span class="n">TimeSeriesResultsWrapper</span><span class="p">,</span>
+                      <span class="n">TimeSeriesModelResults</span><span class="p">)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+    <span class="kn">import</span> <span class="nn">datetime</span>
+    <span class="kn">import</span> <span class="nn">pandas</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+
+    <span class="c1">#make a DataFrame</span>
+    <span class="c1">#TODO: attach a DataFrame to some of the datasets, for quicker use</span>
+    <span class="n">dates</span> <span class="o">=</span> <span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]))</span> <span class="o">+</span><span class="s1">&#39;:&#39;</span><span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="nb">int</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]))</span> \
+             <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span><span class="s1">&#39;quarter&#39;</span><span class="p">]]]</span>
+
+    <span class="n">df</span> <span class="o">=</span> <span class="n">pandas</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;realgdp&#39;</span><span class="p">,</span><span class="s1">&#39;realinv&#39;</span><span class="p">,</span><span class="s1">&#39;realcons&#39;</span><span class="p">]],</span> <span class="n">index</span><span class="o">=</span><span class="n">dates</span><span class="p">)</span>
+    <span class="n">ex_mod</span> <span class="o">=</span> <span class="n">TimeSeriesModel</span><span class="p">(</span><span class="n">df</span><span class="p">)</span>
+    <span class="c1">#ts_series = pandas.TimeSeries()</span>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

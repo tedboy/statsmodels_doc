@@ -1,0 +1,29 @@
+statsmodels.sandbox.tools.try_mctools.StatTestMC
+================================================
+
+.. currentmodule:: statsmodels.sandbox.tools.try_mctools
+.. autoclass:: StatTestMC
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~StatTestMC.__init__
+   ~StatTestMC.cdf
+   ~StatTestMC.get_mc_sorted
+   ~StatTestMC.histogram
+   ~StatTestMC.plot_hist
+   ~StatTestMC.quantiles
+   ~StatTestMC.run
+   ~StatTestMC.summary_cdf
+   ~StatTestMC.summary_quantiles
+
+
+
+
+

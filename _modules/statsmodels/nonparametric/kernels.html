@@ -1,0 +1,421 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.nonparametric.kernels &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.nonparametric.kernels</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.nonparametric.kernels</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Module of kernels that are able to handle continuous as well as categorical</span>
+<span class="sd">variables (both ordered and unordered).</span>
+
+<span class="sd">This is a slight deviation from the current approach in</span>
+<span class="sd">statsmodels.nonparametric.kernels where each kernel is a class object.</span>
+
+<span class="sd">Having kernel functions rather than classes makes extension to a multivariate</span>
+<span class="sd">kernel density estimation much easier.</span>
+
+<span class="sd">NOTE: As it is, this module does not interact with the existing API</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">erf</span>
+
+
+<span class="c1">#TODO:</span>
+<span class="c1"># - make sure we only receive int input for wang-ryzin and aitchison-aitken</span>
+<span class="c1"># - Check for the scalar Xi case everywhere</span>
+
+
+<div class="viewcode-block" id="aitchison_aitken"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.aitchison_aitken.html#statsmodels.nonparametric.kernels.aitchison_aitken">[docs]</a><span class="k">def</span> <span class="nf">aitchison_aitken</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">num_levels</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Aitchison-Aitken kernel, used for unordered discrete random variables.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    h : 1-D ndarray, shape (K,)</span>
+<span class="sd">        The bandwidths used to estimate the value of the kernel function.</span>
+<span class="sd">    Xi : 2-D ndarray of ints, shape (nobs, K)</span>
+<span class="sd">        The value of the training set.</span>
+<span class="sd">    x: 1-D ndarray, shape (K,)</span>
+<span class="sd">        The value at which the kernel density is being estimated.</span>
+<span class="sd">    num_levels: bool, optional</span>
+<span class="sd">        Gives the user the option to specify the number of levels for the</span>
+<span class="sd">        random variable.  If False, the number of levels is calculated from</span>
+<span class="sd">        the data.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    kernel_value : ndarray, shape (nobs, K)</span>
+<span class="sd">        The value of the kernel function at each training point for each var.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    See p.18 of [2]_ for details.  The value of the kernel L if :math:`X_{i}=x`</span>
+<span class="sd">    is :math:`1-\lambda`, otherwise it is :math:`\frac{\lambda}{c-1}`.</span>
+<span class="sd">    Here :math:`c` is the number of levels plus one of the RV.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] J. Aitchison and C.G.G. Aitken, &quot;Multivariate binary discrimination</span>
+<span class="sd">           by the kernel method&quot;, Biometrika, vol. 63, pp. 413-420, 1976.</span>
+<span class="sd">    .. [2] Racine, Jeff. &quot;Nonparametric Econometrics: A Primer,&quot; Foundation</span>
+<span class="sd">           and Trends in Econometrics: Vol 3: No 1, pp1-88., 2008.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Xi</span> <span class="o">=</span> <span class="n">Xi</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Xi</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>  <span class="c1"># seems needed in case Xi is scalar</span>
+    <span class="k">if</span> <span class="n">num_levels</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">num_levels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Xi</span><span class="p">)</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+
+    <span class="n">kernel_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">Xi</span><span class="o">.</span><span class="n">size</span><span class="p">)</span> <span class="o">*</span> <span class="n">h</span> <span class="o">/</span> <span class="p">(</span><span class="n">num_levels</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">Xi</span> <span class="o">==</span> <span class="n">x</span>
+    <span class="n">kernel_value</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">h</span><span class="p">))[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">kernel_value</span></div>
+
+
+<div class="viewcode-block" id="wang_ryzin"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.wang_ryzin.html#statsmodels.nonparametric.kernels.wang_ryzin">[docs]</a><span class="k">def</span> <span class="nf">wang_ryzin</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The Wang-Ryzin kernel, used for ordered discrete random variables.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    h : scalar or 1-D ndarray, shape (K,)</span>
+<span class="sd">        The bandwidths used to estimate the value of the kernel function.</span>
+<span class="sd">    Xi : ndarray of ints, shape (nobs, K)</span>
+<span class="sd">        The value of the training set.</span>
+<span class="sd">    x : scalar or 1-D ndarray of shape (K,)</span>
+<span class="sd">        The value at which the kernel density is being estimated.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    kernel_value : ndarray, shape (nobs, K)</span>
+<span class="sd">        The value of the kernel function at each training point for each var.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    See p. 19 in [1]_ for details.  The value of the kernel L if</span>
+<span class="sd">    :math:`X_{i}=x` is :math:`1-\lambda`, otherwise it is</span>
+<span class="sd">    :math:`\frac{1-\lambda}{2}\lambda^{|X_{i}-x|}`, where :math:`\lambda` is</span>
+<span class="sd">    the bandwidth.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] Racine, Jeff. &quot;Nonparametric Econometrics: A Primer,&quot; Foundation</span>
+<span class="sd">           and Trends in Econometrics: Vol 3: No 1, pp1-88., 2008.</span>
+<span class="sd">           http://dx.doi.org/10.1561/0800000009</span>
+<span class="sd">    .. [2] M.-C. Wang and J. van Ryzin, &quot;A class of smooth estimators for</span>
+<span class="sd">           discrete distributions&quot;, Biometrika, vol. 68, pp. 301-309, 1981.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">Xi</span> <span class="o">=</span> <span class="n">Xi</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">Xi</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>  <span class="c1"># seems needed in case Xi is scalar</span>
+    <span class="n">kernel_value</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">h</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">h</span> <span class="o">**</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Xi</span> <span class="o">-</span> <span class="n">x</span><span class="p">))</span>
+    <span class="n">idx</span> <span class="o">=</span> <span class="n">Xi</span> <span class="o">==</span> <span class="n">x</span>
+    <span class="n">kernel_value</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="n">idx</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">h</span><span class="p">))[</span><span class="n">idx</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">kernel_value</span></div>
+
+
+<div class="viewcode-block" id="gaussian"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.gaussian.html#statsmodels.nonparametric.kernels.gaussian">[docs]</a><span class="k">def</span> <span class="nf">gaussian</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Gaussian Kernel for continuous variables</span>
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    h : 1-D ndarray, shape (K,)</span>
+<span class="sd">        The bandwidths used to estimate the value of the kernel function.</span>
+<span class="sd">    Xi : 1-D ndarray, shape (K,)</span>
+<span class="sd">        The value of the training set.</span>
+<span class="sd">    x : 1-D ndarray, shape (K,)</span>
+<span class="sd">        The value at which the kernel density is being estimated.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    kernel_value : ndarray, shape (nobs, K)</span>
+<span class="sd">        The value of the kernel function at each training point for each var.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">Xi</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">2.</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="gaussian_convolution"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.gaussian_convolution.html#statsmodels.nonparametric.kernels.gaussian_convolution">[docs]</a><span class="k">def</span> <span class="nf">gaussian_convolution</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Calculates the Gaussian Convolution Kernel &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">4</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span> <span class="p">(</span><span class="n">Xi</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">4.</span><span class="p">))</span></div>
+
+
+<div class="viewcode-block" id="wang_ryzin_convolution"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.wang_ryzin_convolution.html#statsmodels.nonparametric.kernels.wang_ryzin_convolution">[docs]</a><span class="k">def</span> <span class="nf">wang_ryzin_convolution</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">Xj</span><span class="p">):</span>
+    <span class="c1"># This is the equivalent of the convolution case with the Gaussian Kernel</span>
+    <span class="c1"># However it is not exactly convolution. Think of a better name</span>
+    <span class="c1"># References</span>
+    <span class="n">ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Xi</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Xi</span><span class="p">):</span>
+        <span class="n">ordered</span> <span class="o">+=</span> <span class="n">wang_ryzin</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">wang_ryzin</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xj</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ordered</span></div>
+
+
+<div class="viewcode-block" id="aitchison_aitken_convolution"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.aitchison_aitken_convolution.html#statsmodels.nonparametric.kernels.aitchison_aitken_convolution">[docs]</a><span class="k">def</span> <span class="nf">aitchison_aitken_convolution</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">Xj</span><span class="p">):</span>
+    <span class="n">Xi_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Xi</span><span class="p">)</span>
+    <span class="n">ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Xi</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">num_levels</span> <span class="o">=</span> <span class="n">Xi_vals</span><span class="o">.</span><span class="n">size</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">Xi_vals</span><span class="p">:</span>
+        <span class="n">ordered</span> <span class="o">+=</span> <span class="n">aitchison_aitken</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">num_levels</span><span class="o">=</span><span class="n">num_levels</span><span class="p">)</span> <span class="o">*</span> \
+                   <span class="n">aitchison_aitken</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xj</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">num_levels</span><span class="o">=</span><span class="n">num_levels</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ordered</span></div>
+
+
+<div class="viewcode-block" id="gaussian_cdf"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.gaussian_cdf.html#statsmodels.nonparametric.kernels.gaussian_cdf">[docs]</a><span class="k">def</span> <span class="nf">gaussian_cdf</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">h</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">erf</span><span class="p">((</span><span class="n">x</span> <span class="o">-</span> <span class="n">Xi</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="n">h</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">))))</span></div>
+
+
+<div class="viewcode-block" id="aitchison_aitken_cdf"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.aitchison_aitken_cdf.html#statsmodels.nonparametric.kernels.aitchison_aitken_cdf">[docs]</a><span class="k">def</span> <span class="nf">aitchison_aitken_cdf</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x_u</span><span class="p">):</span>
+    <span class="n">x_u</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">x_u</span><span class="p">)</span>
+    <span class="n">Xi_vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Xi</span><span class="p">)</span>
+    <span class="n">ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Xi</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">num_levels</span> <span class="o">=</span> <span class="n">Xi_vals</span><span class="o">.</span><span class="n">size</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">Xi_vals</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">x_u</span><span class="p">:</span>  <span class="c1">#FIXME: why a comparison for unordered variables?</span>
+            <span class="n">ordered</span> <span class="o">+=</span> <span class="n">aitchison_aitken</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">num_levels</span><span class="o">=</span><span class="n">num_levels</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ordered</span></div>
+
+
+<div class="viewcode-block" id="wang_ryzin_cdf"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.wang_ryzin_cdf.html#statsmodels.nonparametric.kernels.wang_ryzin_cdf">[docs]</a><span class="k">def</span> <span class="nf">wang_ryzin_cdf</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x_u</span><span class="p">):</span>
+    <span class="n">ordered</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">Xi</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">Xi</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;=</span> <span class="n">x_u</span><span class="p">:</span>
+            <span class="n">ordered</span> <span class="o">+=</span> <span class="n">wang_ryzin</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">ordered</span></div>
+
+
+<div class="viewcode-block" id="d_gaussian"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.d_gaussian.html#statsmodels.nonparametric.kernels.d_gaussian">[docs]</a><span class="k">def</span> <span class="nf">d_gaussian</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="c1"># The derivative of the Gaussian Kernel</span>
+    <span class="k">return</span> <span class="mi">2</span> <span class="o">*</span> <span class="p">(</span><span class="n">Xi</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">gaussian</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">h</span><span class="o">**</span><span class="mi">2</span></div>
+
+
+<div class="viewcode-block" id="aitchison_aitken_reg"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.aitchison_aitken_reg.html#statsmodels.nonparametric.kernels.aitchison_aitken_reg">[docs]</a><span class="k">def</span> <span class="nf">aitchison_aitken_reg</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A version for the Aitchison-Aitken kernel for nonparametric regression.</span>
+
+<span class="sd">    Suggested by Li and Racine.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">kernel_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">Xi</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="n">ix</span> <span class="o">=</span> <span class="n">Xi</span> <span class="o">!=</span> <span class="n">x</span>
+    <span class="n">inDom</span> <span class="o">=</span> <span class="n">ix</span> <span class="o">*</span> <span class="n">h</span>
+    <span class="n">kernel_value</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span> <span class="o">=</span> <span class="n">inDom</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">kernel_value</span></div>
+
+
+<div class="viewcode-block" id="wang_ryzin_reg"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.kernels.wang_ryzin_reg.html#statsmodels.nonparametric.kernels.wang_ryzin_reg">[docs]</a><span class="k">def</span> <span class="nf">wang_ryzin_reg</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">Xi</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A version for the Wang-Ryzin kernel for nonparametric regression.</span>
+
+<span class="sd">    Suggested by Li and Racine in [1] ch.4</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">h</span> <span class="o">**</span> <span class="nb">abs</span><span class="p">(</span><span class="n">Xi</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

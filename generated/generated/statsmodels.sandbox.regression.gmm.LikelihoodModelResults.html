@@ -1,0 +1,545 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.7.4.4.9. statsmodels.sandbox.regression.gmm.LikelihoodModelResults &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.7.4. statsmodels.sandbox.regression.gmm" href="../statsmodels.sandbox.regression.gmm.html"/>
+        <link rel="next" title="6.7.4.4.9.1.1. statsmodels.sandbox.regression.gmm.LikelihoodModelResults.__init__" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.__init__.html"/>
+        <link rel="prev" title="6.7.4.4.8.2.2. statsmodels.sandbox.regression.gmm.LikelihoodModel.exog_names" href="statsmodels.sandbox.regression.gmm.LikelihoodModel.exog_names.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.anova_nistcertified.html">6.7.1. statsmodels.sandbox.regression.anova_nistcertified</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.ar_panel.html">6.7.2. statsmodels.sandbox.regression.ar_panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.example_kernridge.html">6.7.3. statsmodels.sandbox.regression.example_kernridge</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#issues">6.7.4.1. Issues</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#unclear">6.7.4.2. Unclear</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#functions">6.7.4.3. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#classes">6.7.4.4. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.kernridgeregress_class.html">6.7.5. statsmodels.sandbox.regression.kernridgeregress_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.onewaygls.html">6.7.6. statsmodels.sandbox.regression.onewaygls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.penalized.html">6.7.7. statsmodels.sandbox.regression.penalized</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.predstd.html">6.7.8. statsmodels.sandbox.regression.predstd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.sympy_diff.html">6.7.9. statsmodels.sandbox.regression.sympy_diff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.tools.html">6.7.10. statsmodels.sandbox.regression.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.treewalkerclass.html">6.7.11. statsmodels.sandbox.regression.treewalkerclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_catdata.html">6.7.12. statsmodels.sandbox.regression.try_catdata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_ols_anova.html">6.7.13. statsmodels.sandbox.regression.try_ols_anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_treewalker.html">6.7.14. statsmodels.sandbox.regression.try_treewalker</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a> &raquo;</li>
+        
+      <li>6.7.4.4.9. statsmodels.sandbox.regression.gmm.LikelihoodModelResults</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.regression.gmm.LikelihoodModelResults.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-regression-gmm-likelihoodmodelresults">
+<h1>6.7.4.4.9. statsmodels.sandbox.regression.gmm.LikelihoodModelResults<a class="headerlink" href="#statsmodels-sandbox-regression-gmm-likelihoodmodelresults" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.sandbox.regression.gmm.LikelihoodModelResults">
+<em class="property">class </em><code class="descclassname">statsmodels.sandbox.regression.gmm.</code><code class="descname">LikelihoodModelResults</code><span class="sig-paren">(</span><em>model</em>, <em>params</em>, <em>normalized_cov_params=None</em>, <em>scale=1.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/base/model.html#LikelihoodModelResults"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.regression.gmm.LikelihoodModelResults" title="Permalink to this definition">¶</a></dt>
+<dd><p>Class to contain results from likelihood models</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>model</strong> : LikelihoodModel instance or subclass instance</p>
+<blockquote>
+<div><p>LikelihoodModelResults holds a reference to the model that is fit.</p>
+</div></blockquote>
+<p><strong>params</strong> : 1d array_like</p>
+<blockquote>
+<div><p>parameter estimates from estimated model</p>
+</div></blockquote>
+<p><strong>normalized_cov_params</strong> : 2d array</p>
+<blockquote>
+<div><p>Normalized (before scaling) covariance of params. (dot(X.T,X))**-1</p>
+</div></blockquote>
+<p><strong>scale</strong> : float</p>
+<blockquote>
+<div><p>For (some subset of models) scale will typically be the
+mean square error from the estimated model (sigma^2)</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>Attributes</strong></p>
+<p><strong>mle_retvals</strong> : dict</p>
+<blockquote>
+<div><p>Contains the values returned from the chosen optimization method if
+full_output is True during the fit.  Available only if the model
+is fit by maximum likelihood.  See notes below for the output from
+the different methods.</p>
+</div></blockquote>
+<p><strong>mle_settings</strong> : dict</p>
+<blockquote>
+<div><p>Contains the arguments passed to the chosen optimization method.
+Available if the model is fit by maximum likelihood.  See
+LikelihoodModel.fit for more information.</p>
+</div></blockquote>
+<p><strong>model</strong> : model instance</p>
+<blockquote>
+<div><p>LikelihoodResults contains a reference to the model that is fit.</p>
+</div></blockquote>
+<p><strong>params</strong> : ndarray</p>
+<blockquote>
+<div><p>The parameters estimated for the model.</p>
+</div></blockquote>
+<p><strong>scale</strong> : float</p>
+<blockquote>
+<div><p>The scaling factor of the model given during instantiation.</p>
+</div></blockquote>
+<p><strong>tvalues</strong> : array</p>
+<blockquote class="last">
+<div><p>The t-values of the standard errors.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The covariance of params is given by scale times normalized_cov_params.</p>
+<p>Return values by solver if full_output is True during fit:</p>
+<blockquote>
+<div><dl class="docutils">
+<dt>&#8216;newton&#8217;</dt>
+<dd><dl class="first last docutils">
+<dt>fopt</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>The value of the (negative) loglikelihood at its
+minimum.</dd>
+<dt>iterations</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of iterations performed.</dd>
+<dt>score</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span><dd>The score vector at the optimum.</dd>
+<dt>Hessian</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span><dd>The Hessian at the optimum.</dd>
+<dt>warnflag</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>1 if maxiter is exceeded. 0 if successful convergence.</dd>
+<dt>converged</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd>True: converged. False: did not converge.</dd>
+<dt>allvecs</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd>List of solutions at each iteration.</dd>
+</dl>
+</dd>
+<dt>&#8216;nm&#8217;</dt>
+<dd><dl class="first last docutils">
+<dt>fopt</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>The value of the (negative) loglikelihood at its
+minimum.</dd>
+<dt>iterations</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of iterations performed.</dd>
+<dt>warnflag</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>1: Maximum number of function evaluations made.
+2: Maximum number of iterations reached.</dd>
+<dt>converged</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd>True: converged. False: did not converge.</dd>
+<dt>allvecs</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd>List of solutions at each iteration.</dd>
+</dl>
+</dd>
+<dt>&#8216;bfgs&#8217;</dt>
+<dd><dl class="first last docutils">
+<dt>fopt</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Value of the (negative) loglikelihood at its minimum.</dd>
+<dt>gopt</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Value of gradient at minimum, which should be near 0.</dd>
+<dt>Hinv</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span><dd>value of the inverse Hessian matrix at minimum.  Note
+that this is just an approximation and will often be
+different from the value of the analytic Hessian.</dd>
+<dt>fcalls</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of calls to loglike.</dd>
+<dt>gcalls</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of calls to gradient/score.</dd>
+<dt>warnflag</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>1: Maximum number of iterations exceeded. 2: Gradient
+and/or function calls are not changing.</dd>
+<dt>converged</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd>True: converged.  False: did not converge.</dd>
+<dt>allvecs</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd>Results at each iteration.</dd>
+</dl>
+</dd>
+<dt>&#8216;lbfgs&#8217;</dt>
+<dd><dl class="first last docutils">
+<dt>fopt</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Value of the (negative) loglikelihood at its minimum.</dd>
+<dt>gopt</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Value of gradient at minimum, which should be near 0.</dd>
+<dt>fcalls</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of calls to loglike.</dd>
+<dt>warnflag</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first">Warning flag:</p>
+<ul class="last simple">
+<li>0 if converged</li>
+<li>1 if too many function evaluations or too many iterations</li>
+<li>2 if stopped for another reason</li>
+</ul>
+</dd>
+<dt>converged</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd>True: converged.  False: did not converge.</dd>
+</dl>
+</dd>
+<dt>&#8216;powell&#8217;</dt>
+<dd><dl class="first last docutils">
+<dt>fopt</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Value of the (negative) loglikelihood at its minimum.</dd>
+<dt>direc</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">ndarray</span><dd>Current direction set.</dd>
+<dt>iterations</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of iterations performed.</dd>
+<dt>fcalls</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of calls to loglike.</dd>
+<dt>warnflag</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>1: Maximum number of function evaluations. 2: Maximum number
+of iterations.</dd>
+<dt>converged</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd>True : converged. False: did not converge.</dd>
+<dt>allvecs</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd>Results at each iteration.</dd>
+</dl>
+</dd>
+<dt>&#8216;cg&#8217;</dt>
+<dd><dl class="first last docutils">
+<dt>fopt</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Value of the (negative) loglikelihood at its minimum.</dd>
+<dt>fcalls</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of calls to loglike.</dd>
+<dt>gcalls</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of calls to gradient/score.</dd>
+<dt>warnflag</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>1: Maximum number of iterations exceeded. 2: Gradient and/
+or function calls not changing.</dd>
+<dt>converged</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd>True: converged. False: did not converge.</dd>
+<dt>allvecs</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd>Results at each iteration.</dd>
+</dl>
+</dd>
+<dt>&#8216;ncg&#8217;</dt>
+<dd><dl class="first last docutils">
+<dt>fopt</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">float</span><dd>Value of the (negative) loglikelihood at its minimum.</dd>
+<dt>fcalls</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of calls to loglike.</dd>
+<dt>gcalls</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of calls to gradient/score.</dd>
+<dt>hcalls</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>Number of calls to hessian.</dd>
+<dt>warnflag</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd>1: Maximum number of iterations exceeded.</dd>
+<dt>converged</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">bool</span><dd>True: converged. False: did not converge.</dd>
+<dt>allvecs</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">list</span><dd>Results at each iteration.</dd>
+</dl>
+</dd>
+</dl>
+</div></blockquote>
+<dl class="method">
+<dt id="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>model</em>, <em>params</em>, <em>normalized_cov_params=None</em>, <em>scale=1.0</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/base/model.html#LikelihoodModelResults.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>6.7.4.4.9.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.__init__.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.__init__" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(model,&nbsp;params[,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.bse.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.bse" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.bse"><code class="xref py py-obj docutils literal"><span class="pre">bse</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.conf_int.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.conf_int" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.conf_int"><code class="xref py py-obj docutils literal"><span class="pre">conf_int</span></code></a>([alpha,&nbsp;cols,&nbsp;method])</td>
+<td>Returns the confidence interval of the fitted parameters.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.cov_params.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.cov_params" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.cov_params"><code class="xref py py-obj docutils literal"><span class="pre">cov_params</span></code></a>([r_matrix,&nbsp;column,&nbsp;scale,&nbsp;cov_p,&nbsp;...])</td>
+<td>Returns the variance/covariance matrix.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.f_test.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.f_test" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.f_test"><code class="xref py py-obj docutils literal"><span class="pre">f_test</span></code></a>(r_matrix[,&nbsp;cov_p,&nbsp;scale,&nbsp;invcov])</td>
+<td>Compute the F-test for a joint linear hypothesis.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.initialize.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.initialize" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>(model,&nbsp;params,&nbsp;**kwd)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.llf.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.llf" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.llf"><code class="xref py py-obj docutils literal"><span class="pre">llf</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.load.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.load" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.load"><code class="xref py py-obj docutils literal"><span class="pre">load</span></code></a>(fname)</td>
+<td>load a pickle, (class method)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.normalized_cov_params.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.normalized_cov_params" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.normalized_cov_params"><code class="xref py py-obj docutils literal"><span class="pre">normalized_cov_params</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.predict.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.predict" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.predict"><code class="xref py py-obj docutils literal"><span class="pre">predict</span></code></a>([exog,&nbsp;transform])</td>
+<td>Call self.model.predict with self.params as the first argument.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.pvalues.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.pvalues" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.pvalues"><code class="xref py py-obj docutils literal"><span class="pre">pvalues</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.remove_data.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.remove_data" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.remove_data"><code class="xref py py-obj docutils literal"><span class="pre">remove_data</span></code></a>()</td>
+<td>remove data arrays, all nobs arrays from result and model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.save.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.save" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.save"><code class="xref py py-obj docutils literal"><span class="pre">save</span></code></a>(fname[,&nbsp;remove_data])</td>
+<td>save a pickle of this instance</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.t_test.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.t_test" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.t_test"><code class="xref py py-obj docutils literal"><span class="pre">t_test</span></code></a>(r_matrix[,&nbsp;cov_p,&nbsp;scale,&nbsp;use_t])</td>
+<td>Compute a t-test for a each linear hypothesis of the form Rb = q</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.tvalues.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.tvalues" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.tvalues"><code class="xref py py-obj docutils literal"><span class="pre">tvalues</span></code></a>()</td>
+<td>Return the t-statistic for a given parameter estimate.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.wald_test.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.wald_test" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.wald_test"><code class="xref py py-obj docutils literal"><span class="pre">wald_test</span></code></a>(r_matrix[,&nbsp;cov_p,&nbsp;scale,&nbsp;invcov,&nbsp;...])</td>
+<td>Compute a Wald-test for a joint linear hypothesis.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>6.7.4.4.9.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.use_t.html#statsmodels.sandbox.regression.gmm.LikelihoodModelResults.use_t" title="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.use_t"><code class="xref py py-obj docutils literal"><span class="pre">use_t</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.regression.gmm.LikelihoodModelResults.__init__.html" class="btn btn-neutral float-right" title="6.7.4.4.9.1.1. statsmodels.sandbox.regression.gmm.LikelihoodModelResults.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.regression.gmm.LikelihoodModel.exog_names.html" class="btn btn-neutral" title="6.7.4.4.8.2.2. statsmodels.sandbox.regression.gmm.LikelihoodModel.exog_names" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

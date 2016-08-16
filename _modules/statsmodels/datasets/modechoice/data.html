@@ -1,0 +1,305 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.datasets.modechoice.data &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.datasets.modechoice.data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.datasets.modechoice.data</h1><div class="highlight"><pre>
+<span></span><span class="ch">#! /usr/bin/env python</span>
+<span class="c1"># -*- coding: utf-8 -*-</span>
+
+<span class="sd">&quot;&quot;&quot;Travel Mode Choice&quot;&quot;&quot;</span>
+
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s1">&#39;restructuredtext&#39;</span>
+
+<span class="n">COPYRIGHT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;This is public domain.&quot;&quot;&quot;</span>
+<span class="n">TITLE</span> <span class="o">=</span> <span class="n">__doc__</span>
+<span class="n">SOURCE</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Greene, W.H. and D. Hensher (1997) Multinomial logit and discrete choice models</span>
+<span class="s2">in Greene, W. H. (1997) LIMDEP version 7.0 user&#39;s manual revised, Plainview,</span>
+<span class="s2">New York econometric software, Inc.</span>
+<span class="s2">Download from on-line complements to Greene, W.H. (2011) Econometric Analysis,</span>
+<span class="s2">Prentice Hall, 7th Edition (data table F18-2)</span>
+<span class="s2">http://people.stern.nyu.edu/wgreene/Text/Edition7/TableF18-2.csv</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">DESCRSHORT</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Data used to study travel mode choice between Australian cities</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">DESCRLONG</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;The data, collected as part of a 1987 intercity mode choice</span>
+<span class="s2">study, are a sub-sample of 210 non-business trips between Sydney, Canberra and</span>
+<span class="s2">Melbourne in which the traveler chooses a mode from four alternatives (plane,</span>
+<span class="s2">car, bus and train). The sample, 840 observations, is choice based with</span>
+<span class="s2">over-sampling of the less popular modes (plane, train and bus) and under-sampling</span>
+<span class="s2">of the more popular mode, car. The level of service data was derived from highway</span>
+<span class="s2">and transport networks in Sydney, Melbourne, non-metropolitan N.S.W. and Victoria,</span>
+<span class="s2">including the Australian Capital Territory.&quot;&quot;&quot;</span>
+
+<span class="n">NOTE</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;::</span>
+
+<span class="s2">    Number of observations: 840 Observations On 4 Modes for 210 Individuals.</span>
+<span class="s2">    Number of variables: 8</span>
+<span class="s2">    Variable name definitions::</span>
+
+<span class="s2">        individual = 1 to 210</span>
+<span class="s2">        mode =</span>
+<span class="s2">            1 - air</span>
+<span class="s2">            2 - train</span>
+<span class="s2">            3 - bus</span>
+<span class="s2">            4 - car</span>
+<span class="s2">        choice =</span>
+<span class="s2">            0 - no</span>
+<span class="s2">            1 - yes</span>
+<span class="s2">        ttme = terminal waiting time for plane, train and bus (minutes); 0</span>
+<span class="s2">               for car.</span>
+<span class="s2">        invc = in vehicle cost for all stages (dollars).</span>
+<span class="s2">        invt = travel time (in-vehicle time) for all stages (minutes).</span>
+<span class="s2">        gc = generalized cost measure:invc+(invt*value of travel time savings)</span>
+<span class="s2">            (dollars).</span>
+<span class="s2">        hinc = household income ($1000s).</span>
+<span class="s2">        psize = traveling group size in mode chosen (number).&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">statsmodels.datasets</span> <span class="k">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">du</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">abspath</span>
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../../generated/statsmodels.datasets.modechoice.load.html#statsmodels.datasets.modechoice.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the data modechoice data and return a Dataset class instance.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dataset instance:</span>
+<span class="sd">        See DATASET_PROPOSAL.txt for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_get_data</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">du</span><span class="o">.</span><span class="n">process_recarray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">endog_idx</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">exog_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span>
+                               <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="load_pandas"><a class="viewcode-back" href="../../../../generated/statsmodels.datasets.modechoice.load_pandas.html#statsmodels.datasets.modechoice.load_pandas">[docs]</a><span class="k">def</span> <span class="nf">load_pandas</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the data modechoice data and return a Dataset class instance.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dataset instance:</span>
+<span class="sd">        See DATASET_PROPOSAL.txt for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_get_data</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">du</span><span class="o">.</span><span class="n">process_recarray_pandas</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">endog_idx</span> <span class="o">=</span> <span class="mi">2</span><span class="p">,</span> <span class="n">exog_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">7</span><span class="p">,</span><span class="mi">8</span><span class="p">],</span>
+                                      <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_get_data</span><span class="p">():</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">recfromtxt</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filepath</span> <span class="o">+</span> <span class="s1">&#39;/modechoice.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">),</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;;&quot;</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

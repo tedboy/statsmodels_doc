@@ -1,0 +1,27 @@
+statsmodels.sandbox.tsa.diffusion.ArithmeticBrownian
+====================================================
+
+.. currentmodule:: statsmodels.sandbox.tsa.diffusion
+.. autoclass:: ArithmeticBrownian
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ArithmeticBrownian.__init__
+   ~ArithmeticBrownian.exactdist
+   ~ArithmeticBrownian.exactprocess
+   ~ArithmeticBrownian.expectedsim
+   ~ArithmeticBrownian.sim
+   ~ArithmeticBrownian.simEM
+   ~ArithmeticBrownian.simulateW
+
+
+
+
+

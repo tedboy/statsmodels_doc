@@ -1,0 +1,70 @@
+statsmodels.regression.linear_model
+===================================
+
+.. automodule:: statsmodels.regression.linear_model
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      add_constant
+      chain_dot
+      pinv_extended
+      yule_walker
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      GLS
+      GLSAR
+      OLS
+      OLSResults
+      RegressionModel
+      RegressionResults
+      RegressionResultsWrapper
+      WLS
+      cache_writable
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.regression.linear_model.GLS
+       generated/statsmodels.regression.linear_model.GLSAR
+       generated/statsmodels.regression.linear_model.OLS
+       generated/statsmodels.regression.linear_model.OLSResults
+       generated/statsmodels.regression.linear_model.RegressionModel
+       generated/statsmodels.regression.linear_model.RegressionResults
+       generated/statsmodels.regression.linear_model.RegressionResultsWrapper
+       generated/statsmodels.regression.linear_model.WLS
+       generated/statsmodels.regression.linear_model.cache_writable
+       generated/statsmodels.regression.linear_model.resettable_cache
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      InvalidTestWarning
+   
+   

@@ -1,0 +1,41 @@
+statsmodels.regression.quantile_regression.QuantReg
+===================================================
+
+.. currentmodule:: statsmodels.regression.quantile_regression
+
+.. autoclass:: QuantReg
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~QuantReg.__init__
+      ~QuantReg.fit
+      ~QuantReg.fit_regularized
+      ~QuantReg.from_formula
+      ~QuantReg.hessian
+      ~QuantReg.information
+      ~QuantReg.initialize
+      ~QuantReg.loglike
+      ~QuantReg.predict
+      ~QuantReg.score
+      ~QuantReg.whiten
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~QuantReg.df_model
+      ~QuantReg.df_resid
+      ~QuantReg.endog_names
+      ~QuantReg.exog_names
+   
+   

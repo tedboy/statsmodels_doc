@@ -1,0 +1,26 @@
+statsmodels.tsa.ar_model.ARResultsWrapper
+=========================================
+
+.. currentmodule:: statsmodels.tsa.ar_model
+.. autoclass:: ARResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ARResultsWrapper.__init__
+   ~ARResultsWrapper.conf_int
+   ~ARResultsWrapper.cov_params
+   ~ARResultsWrapper.load
+   ~ARResultsWrapper.predict
+   ~ARResultsWrapper.save
+
+
+
+
+

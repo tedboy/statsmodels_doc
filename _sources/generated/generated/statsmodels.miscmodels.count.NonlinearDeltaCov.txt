@@ -1,0 +1,25 @@
+statsmodels.miscmodels.count.NonlinearDeltaCov
+==============================================
+
+.. currentmodule:: statsmodels.miscmodels.count
+.. autoclass:: NonlinearDeltaCov
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NonlinearDeltaCov.__init__
+   ~NonlinearDeltaCov.cov
+   ~NonlinearDeltaCov.expected
+   ~NonlinearDeltaCov.grad
+   ~NonlinearDeltaCov.wald
+
+
+
+
+

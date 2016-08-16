@@ -1,0 +1,35 @@
+statsmodels.tsa.tests.test_stattools.TestADFConstantTrend2
+==========================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_stattools
+.. autoclass:: TestADFConstantTrend2
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestADFConstantTrend2.__init__
+   ~TestADFConstantTrend2.test_critvalues
+   ~TestADFConstantTrend2.test_pvalue
+   ~TestADFConstantTrend2.test_teststat
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TestADFConstantTrend2.data
+   ~TestADFConstantTrend2.levels
+   ~TestADFConstantTrend2.x
+   ~TestADFConstantTrend2.y
+

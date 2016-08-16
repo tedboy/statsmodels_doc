@@ -1,0 +1,873 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tools.grouputils &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tools.grouputils</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tools.grouputils</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Tools for working with groups</span>
+
+<span class="sd">This provides several functions to work with groups and a Group class that</span>
+<span class="sd">keeps track of the different representations and has methods to work more</span>
+<span class="sd">easily with groups.</span>
+
+
+<span class="sd">Author: Josef Perktold,</span>
+<span class="sd">Author: Nathaniel Smith, recipe for sparse_dummies on scipy user mailing list</span>
+
+<span class="sd">Created on Tue Nov 29 15:44:53 2011 : sparse_dummies</span>
+<span class="sd">Created on Wed Nov 30 14:28:24 2011 : combine_indices</span>
+<span class="sd">changes: add Group class</span>
+
+<span class="sd">Notes</span>
+<span class="sd">~~~~~</span>
+
+<span class="sd">This reverses the class I used before, where the class was for the data and</span>
+<span class="sd">the group was auxiliary. Here, it is only the group, no data is kept.</span>
+
+<span class="sd">sparse_dummies needs checking for corner cases, e.g.</span>
+<span class="sd">what if a category level has zero elements? This can happen with subset</span>
+<span class="sd">    selection even if the original groups where defined as arange.</span>
+
+<span class="sd">Not all methods and options have been tried out yet after refactoring</span>
+
+<span class="sd">need more efficient loop if groups are sorted -&gt; see GroupSorted.group_iter</span>
+
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">lrange</span><span class="p">,</span> <span class="n">lzip</span><span class="p">,</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">pandas</span> <span class="k">as</span> <span class="nn">pd</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.numpy</span> <span class="k">import</span> <span class="n">npc_unique</span>
+<span class="kn">import</span> <span class="nn">statsmodels.tools.data</span> <span class="k">as</span> <span class="nn">data_util</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tools.decorators</span> <span class="k">import</span> <span class="n">cache_readonly</span>
+<span class="kn">from</span> <span class="nn">pandas.core.index</span> <span class="k">import</span> <span class="n">Index</span><span class="p">,</span> <span class="n">MultiIndex</span>
+
+
+<div class="viewcode-block" id="combine_indices"><a class="viewcode-back" href="../../../generated/statsmodels.tools.grouputils.combine_indices.html#statsmodels.sandbox.panel.panel_short.combine_indices">[docs]</a><span class="k">def</span> <span class="nf">combine_indices</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span> <span class="n">return_labels</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;use np.unique to get integer group indices for product, intersection</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+
+    <span class="n">dt</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">dtype</span>
+    <span class="c1">#print(dt)</span>
+
+    <span class="n">is2d</span> <span class="o">=</span> <span class="p">(</span><span class="n">groups</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">)</span>  <span class="c1"># need to store</span>
+
+    <span class="k">if</span> <span class="n">is2d</span><span class="p">:</span>
+        <span class="n">ncols</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">groups</span><span class="o">.</span><span class="n">flags</span><span class="o">.</span><span class="n">c_contiguous</span><span class="p">:</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;C&#39;</span><span class="p">)</span>
+
+        <span class="n">groups_</span> <span class="o">=</span> <span class="n">groups</span><span class="o">.</span><span class="n">view</span><span class="p">([(</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">groups</span><span class="o">.</span><span class="n">dtype</span><span class="p">)]</span> <span class="o">*</span> <span class="n">groups</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">groups_</span> <span class="o">=</span> <span class="n">groups</span>
+
+    <span class="n">uni</span><span class="p">,</span> <span class="n">uni_idx</span><span class="p">,</span> <span class="n">uni_inv</span> <span class="o">=</span> <span class="n">npc_unique</span><span class="p">(</span><span class="n">groups_</span><span class="p">,</span> <span class="n">return_index</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span>
+                                       <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">is2d</span><span class="p">:</span>
+        <span class="n">uni</span> <span class="o">=</span> <span class="n">uni</span><span class="o">.</span><span class="n">view</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">ncols</span><span class="p">)</span>
+
+        <span class="c1">#avoiding a view would be</span>
+        <span class="c1">#for t in uni.dtype.fields.values():</span>
+        <span class="c1">#    assert (t[0] == dt)</span>
+        <span class="c1">#</span>
+        <span class="c1">#uni.dtype = dt</span>
+        <span class="c1">#uni.shape = (uni.size//ncols, ncols)</span>
+
+    <span class="k">if</span> <span class="n">return_labels</span><span class="p">:</span>
+        <span class="n">label</span> <span class="o">=</span> <span class="p">[(</span><span class="n">prefix</span><span class="o">+</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">uni</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span>
+                 <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">uni</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">uni_inv</span><span class="p">,</span> <span class="n">uni_idx</span><span class="p">,</span> <span class="n">uni</span><span class="p">,</span> <span class="n">label</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">uni_inv</span><span class="p">,</span> <span class="n">uni_idx</span><span class="p">,</span> <span class="n">uni</span></div>
+
+
+<span class="c1">#written for and used in try_covariance_grouploop.py</span>
+<div class="viewcode-block" id="group_sums"><a class="viewcode-back" href="../../../generated/statsmodels.tools.grouputils.group_sums.html#statsmodels.sandbox.panel.panel_short.group_sums">[docs]</a><span class="k">def</span> <span class="nf">group_sums</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">use_bincount</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;simple bincount version, again</span>
+
+<span class="sd">    group : array, integer</span>
+<span class="sd">        assumed to be consecutive integers</span>
+
+<span class="sd">    no dtype checking because I want to raise in that case</span>
+
+<span class="sd">    uses loop over columns of x</span>
+
+<span class="sd">    for comparison, simple python loop</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="k">elif</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">2</span> <span class="ow">and</span> <span class="n">use_bincount</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;not implemented yet&#39;</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">use_bincount</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">x</span><span class="p">[:,</span> <span class="n">col</span><span class="p">])</span>
+                         <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])])</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">uniques</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">([</span><span class="nb">len</span><span class="p">(</span><span class="n">uniques</span><span class="p">)]</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+        <span class="k">for</span> <span class="n">ii</span><span class="p">,</span> <span class="n">cat</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">uniques</span><span class="p">):</span>
+            <span class="n">result</span><span class="p">[</span><span class="n">ii</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">g</span> <span class="o">==</span> <span class="n">cat</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div>
+
+
+<div class="viewcode-block" id="group_sums_dummy"><a class="viewcode-back" href="../../../generated/statsmodels.tools.grouputils.group_sums_dummy.html#statsmodels.sandbox.panel.panel_short.group_sums_dummy">[docs]</a><span class="k">def</span> <span class="nf">group_sums_dummy</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">group_dummy</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;sum by groups given group dummy variable</span>
+
+<span class="sd">    group_dummy can be either ndarray or sparse matrix</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">data_util</span><span class="o">.</span><span class="n">_is_using_ndarray_type</span><span class="p">(</span><span class="n">group_dummy</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">group_dummy</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>  <span class="c1"># check for sparse</span>
+        <span class="k">return</span> <span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">group_dummy</span></div>
+
+
+<div class="viewcode-block" id="dummy_sparse"><a class="viewcode-back" href="../../../generated/statsmodels.tools.grouputils.dummy_sparse.html#statsmodels.sandbox.panel.panel_short.dummy_sparse">[docs]</a><span class="k">def</span> <span class="nf">dummy_sparse</span><span class="p">(</span><span class="n">groups</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;create a sparse indicator from a group array with integer labels</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    groups: ndarray, int, 1d (nobs,)</span>
+<span class="sd">        an array of group indicators for each observation. Group levels are</span>
+<span class="sd">        assumed to be defined as consecutive integers, i.e. range(n_groups)</span>
+<span class="sd">        where n_groups is the number of group levels. A group level with no</span>
+<span class="sd">        observations for it will still produce a column of zeros.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    indi : ndarray, int8, 2d (nobs, n_groups)</span>
+<span class="sd">        an indicator array with one row per observation, that has 1 in the</span>
+<span class="sd">        column of the group level for that observation</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+
+<span class="sd">    &gt;&gt;&gt; g = np.array([0, 0, 2, 1, 1, 2, 0])</span>
+<span class="sd">    &gt;&gt;&gt; indi = dummy_sparse(g)</span>
+<span class="sd">    &gt;&gt;&gt; indi</span>
+<span class="sd">    &lt;7x3 sparse matrix of type &#39;&lt;type &#39;numpy.int8&#39;&gt;&#39;</span>
+<span class="sd">        with 7 stored elements in Compressed Sparse Row format&gt;</span>
+<span class="sd">    &gt;&gt;&gt; indi.todense()</span>
+<span class="sd">    matrix([[1, 0, 0],</span>
+<span class="sd">            [1, 0, 0],</span>
+<span class="sd">            [0, 0, 1],</span>
+<span class="sd">            [0, 1, 0],</span>
+<span class="sd">            [0, 1, 0],</span>
+<span class="sd">            [0, 0, 1],</span>
+<span class="sd">            [1, 0, 0]], dtype=int8)</span>
+
+
+<span class="sd">    current behavior with missing groups</span>
+<span class="sd">    &gt;&gt;&gt; g = np.array([0, 0, 2, 0, 2, 0])</span>
+<span class="sd">    &gt;&gt;&gt; indi = dummy_sparse(g)</span>
+<span class="sd">    &gt;&gt;&gt; indi.todense()</span>
+<span class="sd">    matrix([[1, 0, 0],</span>
+<span class="sd">            [1, 0, 0],</span>
+<span class="sd">            [0, 0, 1],</span>
+<span class="sd">            [1, 0, 0],</span>
+<span class="sd">            [0, 0, 1],</span>
+<span class="sd">            [1, 0, 0]], dtype=int8)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span>
+
+    <span class="n">indptr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+    <span class="n">indi</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">indptr</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">indi</span></div>
+
+
+<div class="viewcode-block" id="Group"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Group.html#statsmodels.sandbox.panel.panel_short.Group">[docs]</a><span class="k">class</span> <span class="nc">Group</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="Group.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Group.__init__.html#statsmodels.sandbox.panel.panel_short.Group.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+
+        <span class="c1">#self.group = np.asarray(group)   #TODO: use checks in combine_indices</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">name</span> <span class="o">=</span> <span class="n">name</span>
+        <span class="n">uni</span><span class="p">,</span> <span class="n">uni_idx</span><span class="p">,</span> <span class="n">uni_inv</span> <span class="o">=</span> <span class="n">combine_indices</span><span class="p">(</span><span class="n">group</span><span class="p">)</span>
+
+        <span class="c1">#TODO: rename these to something easier to remember</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">group_int</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">uni_idx</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">uni</span> <span class="o">=</span> <span class="n">uni</span><span class="p">,</span> <span class="n">uni_idx</span><span class="p">,</span> <span class="n">uni_inv</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_groups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">uni</span><span class="p">)</span>
+
+        <span class="c1">#put this here so they can be overwritten before calling labels</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">separator</span> <span class="o">=</span> <span class="s1">&#39;.&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">name</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;=&#39;</span></div>
+
+    <span class="c1">#cache decorator</span>
+<div class="viewcode-block" id="Group.counts"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Group.counts.html#statsmodels.sandbox.panel.panel_short.Group.counts">[docs]</a>    <span class="k">def</span> <span class="nf">counts</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_int</span><span class="p">)</span></div>
+
+    <span class="c1">#cache_decorator</span>
+<div class="viewcode-block" id="Group.labels"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Group.labels.html#statsmodels.sandbox.panel.panel_short.Group.labels">[docs]</a>    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#is this only needed for product of groups (intersection)?</span>
+        <span class="n">prefix</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">prefix</span>
+        <span class="n">uni</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uni</span>
+        <span class="n">sep</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">separator</span>
+
+        <span class="k">if</span> <span class="n">uni</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="p">[(</span><span class="n">prefix</span><span class="o">+</span><span class="n">sep</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span><span class="p">]</span><span class="o">*</span><span class="nb">len</span><span class="p">(</span><span class="n">uni</span><span class="p">[</span><span class="mi">0</span><span class="p">])))</span> <span class="o">%</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">ii</span><span class="p">)</span>
+                     <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">uni</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">label</span> <span class="o">=</span> <span class="p">[</span><span class="n">prefix</span> <span class="o">+</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">ii</span> <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="n">uni</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">label</span></div>
+
+<div class="viewcode-block" id="Group.dummy"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Group.dummy.html#statsmodels.sandbox.panel.panel_short.Group.dummy">[docs]</a>    <span class="k">def</span> <span class="nf">dummy</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">drop_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sparse</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">int</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        drop_idx is only available if sparse=False</span>
+
+<span class="sd">        drop_idx is supposed to index into uni</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">uni</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">uni</span>
+        <span class="k">if</span> <span class="n">drop_idx</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">idx</span> <span class="o">=</span> <span class="n">lrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">uni</span><span class="p">))</span>
+            <span class="k">del</span> <span class="n">idx</span><span class="p">[</span><span class="n">drop_idx</span><span class="p">]</span>
+            <span class="n">uni</span> <span class="o">=</span> <span class="n">uni</span><span class="p">[</span><span class="n">idx</span><span class="p">]</span>
+
+        <span class="n">group</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">sparse</span><span class="p">:</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">group</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">==</span> <span class="n">uni</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:])</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="n">dtype</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">dummy_sparse</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">group_int</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Group.interaction"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Group.interaction.html#statsmodels.sandbox.panel.panel_short.Group.interaction">[docs]</a>    <span class="k">def</span> <span class="nf">interaction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">other</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">):</span>
+            <span class="n">other</span> <span class="o">=</span> <span class="n">other</span><span class="o">.</span><span class="n">group</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">((</span><span class="bp">self</span><span class="p">,</span> <span class="n">other</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Group.group_sums"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Group.group_sums.html#statsmodels.sandbox.panel.panel_short.Group.group_sums">[docs]</a>    <span class="k">def</span> <span class="nf">group_sums</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">use_bincount</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">group_sums</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_int</span><span class="p">,</span> <span class="n">use_bincount</span><span class="o">=</span><span class="n">use_bincount</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Group.group_demean"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Group.group_demean.html#statsmodels.sandbox.panel.panel_short.Group.group_demean">[docs]</a>    <span class="k">def</span> <span class="nf">group_demean</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">use_bincount</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+        <span class="n">means_g</span> <span class="o">=</span> <span class="n">group_sums</span><span class="p">(</span><span class="n">x</span> <span class="o">/</span> <span class="n">nobs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_int</span><span class="p">,</span>
+                             <span class="n">use_bincount</span><span class="o">=</span><span class="n">use_bincount</span><span class="p">)</span>
+        <span class="n">x_demeaned</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="n">means_g</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">group_int</span><span class="p">]</span>  <span class="c1"># check reverse_index?</span>
+        <span class="k">return</span> <span class="n">x_demeaned</span><span class="p">,</span> <span class="n">means_g</span></div></div>
+
+
+<div class="viewcode-block" id="GroupSorted"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.GroupSorted.html#statsmodels.sandbox.panel.panel_short.GroupSorted">[docs]</a><span class="k">class</span> <span class="nc">GroupSorted</span><span class="p">(</span><span class="n">Group</span><span class="p">):</span>
+<div class="viewcode-block" id="GroupSorted.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.GroupSorted.__init__.html#statsmodels.sandbox.panel.panel_short.GroupSorted.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">group</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">):</span>
+        <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">group</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">name</span><span class="p">)</span>
+
+        <span class="n">idx</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">group</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groupidx</span> <span class="o">=</span> <span class="n">groupidx</span> <span class="o">=</span> <span class="n">lzip</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="n">idx</span><span class="p">,</span> <span class="n">idx</span><span class="o">+</span><span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">group</span><span class="p">)])</span>
+
+        <span class="n">ngroups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">groupidx</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GroupSorted.group_iter"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.GroupSorted.group_iter.html#statsmodels.sandbox.panel.panel_short.GroupSorted.group_iter">[docs]</a>    <span class="k">def</span> <span class="nf">group_iter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">low</span><span class="p">,</span> <span class="n">upp</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupidx</span><span class="p">:</span>
+            <span class="k">yield</span> <span class="nb">slice</span><span class="p">(</span><span class="n">low</span><span class="p">,</span> <span class="n">upp</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GroupSorted.lag_indices"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.GroupSorted.lag_indices.html#statsmodels.sandbox.panel.panel_short.GroupSorted.lag_indices">[docs]</a>    <span class="k">def</span> <span class="nf">lag_indices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lag</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;return the index array for lagged values</span>
+
+<span class="sd">        Warning: if k is larger then the number of observations for an</span>
+<span class="sd">        individual, then no values for that individual are returned.</span>
+
+<span class="sd">        TODO: for the unbalanced case, I should get the same truncation for</span>
+<span class="sd">        the array with lag=0. From the return of lag_idx we wouldn&#39;t know</span>
+<span class="sd">        which individual is missing.</span>
+
+<span class="sd">        TODO: do I want the full equivalent of lagmat in tsa?</span>
+<span class="sd">        maxlag or lag or lags.</span>
+
+<span class="sd">        not tested yet</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">lag_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groupidx</span><span class="p">)[:,</span> <span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">lag</span>  <span class="c1"># asarray or already?</span>
+        <span class="n">mask_ok</span> <span class="o">=</span> <span class="p">(</span><span class="n">lag</span> <span class="o">&lt;=</span> <span class="n">lag_idx</span><span class="p">)</span>
+        <span class="c1">#still an observation that belongs to the same individual</span>
+
+        <span class="k">return</span> <span class="n">lag_idx</span><span class="p">[</span><span class="n">mask_ok</span><span class="p">]</span></div></div>
+
+
+<span class="k">def</span> <span class="nf">_is_hierarchical</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks if the first item of an array-like object is also array-like</span>
+<span class="sd">    If so, we have a MultiIndex and returns True. Else returns False.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">item</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="c1"># is there a better way to do this?</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">item</span><span class="p">,</span> <span class="p">(</span><span class="nb">list</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">ndarray</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">,</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">)):</span>
+        <span class="k">return</span> <span class="kc">True</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">False</span>
+
+
+<span class="k">def</span> <span class="nf">_make_hierarchical_index</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">names</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">MultiIndex</span><span class="o">.</span><span class="n">from_tuples</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">index</span><span class="p">],</span> <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_make_generic_names</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+    <span class="n">n_names</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+    <span class="n">pad</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">n_names</span><span class="p">)))</span>  <span class="c1"># number of digits</span>
+    <span class="k">return</span> <span class="p">[(</span><span class="s2">&quot;group{0:0&quot;</span><span class="o">+</span><span class="n">pad</span><span class="o">+</span><span class="s2">&quot;}&quot;</span><span class="p">)</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_names</span><span class="p">)]</span>
+
+
+<div class="viewcode-block" id="Grouping"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.html#statsmodels.sandbox.panel.panel_short.Grouping">[docs]</a><span class="k">class</span> <span class="nc">Grouping</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="Grouping.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.__init__.html#statsmodels.sandbox.panel.panel_short.Grouping.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        index : index-like</span>
+<span class="sd">            Can be pandas MultiIndex or Index or array-like. If array-like</span>
+<span class="sd">            and is a MultipleIndex (more than one grouping variable),</span>
+<span class="sd">            groups are expected to be in each row. E.g., [(&#39;red&#39;, 1),</span>
+<span class="sd">            (&#39;red&#39;, 2), (&#39;green&#39;, 1), (&#39;green&#39;, 2)]</span>
+<span class="sd">        names : list or str, optional</span>
+<span class="sd">            The names to use for the groups. Should be a str if only</span>
+<span class="sd">            one grouping variable is used.</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        If index is already a pandas Index then there is no copy.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">Index</span><span class="p">,</span> <span class="n">MultiIndex</span><span class="p">)):</span>
+            <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;set_names&#39;</span><span class="p">):</span> <span class="c1"># newer pandas</span>
+                    <span class="n">index</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">names</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">index</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># array-like</span>
+            <span class="k">if</span> <span class="n">_is_hierarchical</span><span class="p">(</span><span class="n">index</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">_make_hierarchical_index</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">names</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">index</span> <span class="o">=</span> <span class="n">Index</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="n">names</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">names</span> <span class="o">=</span> <span class="n">_make_generic_names</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+                <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;set_names&#39;</span><span class="p">):</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">set_names</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">inplace</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="n">names</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nlevels</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">slices</span> <span class="o">=</span> <span class="kc">None</span></div>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">index_shape</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;levshape&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levshape</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">levels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;levels&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">levels</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span><span class="o">.</span><span class="n">levels</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">labels</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># this was index_int, but that&#39;s not a very good name...</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="s1">&#39;labels&#39;</span><span class="p">):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">labels</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1"># pandas version issue here</span>
+            <span class="c1"># Compat code for the labels -&gt; codes change in pandas 0.15</span>
+            <span class="c1"># FIXME: use .codes directly when we don&#39;t want to support pandas &lt; 0.15</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Categorical</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">labl</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">labels</span>
+            <span class="k">except</span> <span class="ne">AttributeError</span><span class="p">:</span>
+                <span class="n">labl</span> <span class="o">=</span> <span class="n">tmp</span><span class="o">.</span><span class="n">codes</span>
+
+            <span class="k">return</span> <span class="n">labl</span><span class="p">[</span><span class="kc">None</span><span class="p">]</span>
+
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">group_names</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">names</span>
+
+<div class="viewcode-block" id="Grouping.reindex"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.reindex.html#statsmodels.sandbox.panel.panel_short.Grouping.reindex">[docs]</a>    <span class="k">def</span> <span class="nf">reindex</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Resets the index in-place.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#NOTE: this isn&#39;t of much use if the rest of the data doesn&#39;t change</span>
+        <span class="c1">#This needs to reset cache</span>
+        <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">names</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">group_names</span>
+        <span class="bp">self</span> <span class="o">=</span> <span class="n">Grouping</span><span class="p">(</span><span class="n">index</span><span class="p">,</span> <span class="n">names</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Grouping.get_slices"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.get_slices.html#statsmodels.sandbox.panel.panel_short.Grouping.get_slices">[docs]</a>    <span class="k">def</span> <span class="nf">get_slices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Sets the slices attribute to be a list of indices of the sorted</span>
+<span class="sd">        groups for the first index level. I.e., self.slices[0] is the</span>
+<span class="sd">        index where each observation is in the first (sorted) group.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#TODO: refactor this</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_level_values</span><span class="p">(</span><span class="n">level</span><span class="p">)</span><span class="o">.</span><span class="n">unique</span><span class="p">()</span>
+        <span class="n">groups</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">,</span> <span class="n">MultiIndex</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slices</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc_level</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+                           <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">slices</span> <span class="o">=</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">get_loc</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">x</span> <span class="ow">in</span> <span class="n">groups</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Grouping.count_categories"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.count_categories.html#statsmodels.sandbox.panel.panel_short.Grouping.count_categories">[docs]</a>    <span class="k">def</span> <span class="nf">count_categories</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets the attribute counts to equal the bincount of the (integer-valued)</span>
+<span class="sd">        labels.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1">#TODO: refactor this not to set an attribute. Why would we do this?</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">counts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">level</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="Grouping.check_index"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.check_index.html#statsmodels.sandbox.panel.panel_short.Grouping.check_index">[docs]</a>    <span class="k">def</span> <span class="nf">check_index</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">is_sorted</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">unique</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Sanity checks&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">index</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="k">if</span> <span class="n">is_sorted</span><span class="p">:</span>
+            <span class="n">test</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">lrange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)),</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+            <span class="n">test_sorted</span> <span class="o">=</span> <span class="n">test</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">test</span><span class="o">.</span><span class="n">index</span><span class="o">.</span><span class="n">equals</span><span class="p">(</span><span class="n">test_sorted</span><span class="o">.</span><span class="n">index</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Data is not be sorted&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">unique</span><span class="p">:</span>
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">index</span><span class="o">.</span><span class="n">unique</span><span class="p">()):</span>
+                <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Duplicate index entries&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Grouping.sort"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.sort.html#statsmodels.sandbox.panel.panel_short.Grouping.sort">[docs]</a>    <span class="k">def</span> <span class="nf">sort</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Applies a (potentially hierarchical) sort operation on a numpy array</span>
+<span class="sd">        or pandas series/dataframe based on the grouping index or a</span>
+<span class="sd">        user-supplied index.  Returns an object of the same type as the</span>
+<span class="sd">        original data as well as the matching (sorted) Pandas index.</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="k">if</span> <span class="n">index</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">index</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">index</span>
+        <span class="k">if</span> <span class="n">data_util</span><span class="o">.</span><span class="n">_is_using_ndarray_type</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">data</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">Series</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="n">index</span><span class="p">)</span>
+                <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">inplace</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>  <span class="c1"># copies</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">),</span> <span class="n">out</span><span class="o">.</span><span class="n">index</span>
+        <span class="k">elif</span> <span class="n">data_util</span><span class="o">.</span><span class="n">_is_using_pandas</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">data</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">reindex</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>  <span class="c1"># copies?</span>
+            <span class="n">out</span> <span class="o">=</span> <span class="n">out</span><span class="o">.</span><span class="n">sort_index</span><span class="p">()</span>
+            <span class="k">return</span> <span class="n">out</span><span class="p">,</span> <span class="n">out</span><span class="o">.</span><span class="n">index</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">msg</span> <span class="o">=</span> <span class="s1">&#39;data must be a Numpy array or a Pandas Series/DataFrame&#39;</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Grouping.transform_dataframe"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.transform_dataframe.html#statsmodels.sandbox.panel.panel_short.Grouping.transform_dataframe">[docs]</a>    <span class="k">def</span> <span class="nf">transform_dataframe</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dataframe</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Apply function to each column, by group</span>
+<span class="sd">        Assumes that the dataframe already has a proper index&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;dataframe does not have the same shape as index&#39;</span><span class="p">)</span>
+        <span class="n">out</span> <span class="o">=</span> <span class="n">dataframe</span><span class="o">.</span><span class="n">groupby</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">)</span><span class="o">.</span><span class="n">apply</span><span class="p">(</span><span class="n">function</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">if</span> <span class="mi">1</span> <span class="ow">in</span> <span class="n">out</span><span class="o">.</span><span class="n">shape</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ravel</span><span class="p">(</span><span class="n">out</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">out</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Grouping.transform_array"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.transform_array.html#statsmodels.sandbox.panel.panel_short.Grouping.transform_array">[docs]</a>    <span class="k">def</span> <span class="nf">transform_array</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Apply function to each column, by group&#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;array does not have the same shape as index&#39;</span><span class="p">)</span>
+        <span class="n">dataframe</span> <span class="o">=</span> <span class="n">pd</span><span class="o">.</span><span class="n">DataFrame</span><span class="p">(</span><span class="n">array</span><span class="p">,</span> <span class="n">index</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">index</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform_dataframe</span><span class="p">(</span><span class="n">dataframe</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">,</span>
+                                        <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Grouping.transform_slices"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.transform_slices.html#statsmodels.sandbox.panel.panel_short.Grouping.transform_slices">[docs]</a>    <span class="k">def</span> <span class="nf">transform_slices</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">array</span><span class="p">,</span> <span class="n">function</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Apply function to each group. Similar to transform_array but does</span>
+<span class="sd">        not coerce array to a DataFrame and back and only works on a 1D or 2D</span>
+<span class="sd">        numpy array. function is called function(group, group_idx, **kwargs).</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">array</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;array does not have the same shape as index&#39;</span><span class="p">)</span>
+        <span class="c1"># always reset because level is given. need to refactor this.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">get_slices</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
+        <span class="n">processed</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">slices</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">subset</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">s</span><span class="p">,</span> <span class="p">:]</span>
+            <span class="k">elif</span> <span class="n">array</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">subset</span> <span class="o">=</span> <span class="n">array</span><span class="p">[</span><span class="n">s</span><span class="p">]</span>
+            <span class="n">processed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">(</span><span class="n">subset</span><span class="p">,</span> <span class="n">s</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">))</span>
+        <span class="n">processed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">processed</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">processed</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">processed</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span></div>
+
+    <span class="c1">#TODO: this isn&#39;t general needs to be a PanelGrouping object</span>
+<div class="viewcode-block" id="Grouping.dummies_time"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.dummies_time.html#statsmodels.sandbox.panel.panel_short.Grouping.dummies_time">[docs]</a>    <span class="k">def</span> <span class="nf">dummies_time</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dummy_sparse</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dummies</span></div>
+
+<div class="viewcode-block" id="Grouping.dummies_groups"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.dummies_groups.html#statsmodels.sandbox.panel.panel_short.Grouping.dummies_groups">[docs]</a>    <span class="k">def</span> <span class="nf">dummies_groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dummy_sparse</span><span class="p">(</span><span class="n">level</span><span class="o">=</span><span class="n">level</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_dummies</span></div>
+
+<div class="viewcode-block" id="Grouping.dummy_sparse"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tools.grouputils.Grouping.dummy_sparse.html#statsmodels.sandbox.panel.panel_short.Grouping.dummy_sparse">[docs]</a>    <span class="k">def</span> <span class="nf">dummy_sparse</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">level</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;create a sparse indicator from a group array with integer labels</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        groups: ndarray, int, 1d (nobs,) an array of group indicators for each</span>
+<span class="sd">            observation. Group levels are assumed to be defined as consecutive</span>
+<span class="sd">            integers, i.e. range(n_groups) where n_groups is the number of</span>
+<span class="sd">            group levels. A group level with no observations for it will still</span>
+<span class="sd">            produce a column of zeros.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        indi : ndarray, int8, 2d (nobs, n_groups)</span>
+<span class="sd">            an indicator array with one row per observation, that has 1 in the</span>
+<span class="sd">            column of the group level for that observation</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+
+<span class="sd">        &gt;&gt;&gt; g = np.array([0, 0, 2, 1, 1, 2, 0])</span>
+<span class="sd">        &gt;&gt;&gt; indi = dummy_sparse(g)</span>
+<span class="sd">        &gt;&gt;&gt; indi</span>
+<span class="sd">        &lt;7x3 sparse matrix of type &#39;&lt;type &#39;numpy.int8&#39;&gt;&#39;</span>
+<span class="sd">            with 7 stored elements in Compressed Sparse Row format&gt;</span>
+<span class="sd">        &gt;&gt;&gt; indi.todense()</span>
+<span class="sd">        matrix([[1, 0, 0],</span>
+<span class="sd">                [1, 0, 0],</span>
+<span class="sd">                [0, 0, 1],</span>
+<span class="sd">                [0, 1, 0],</span>
+<span class="sd">                [0, 1, 0],</span>
+<span class="sd">                [0, 0, 1],</span>
+<span class="sd">                [1, 0, 0]], dtype=int8)</span>
+
+
+<span class="sd">        current behavior with missing groups</span>
+<span class="sd">        &gt;&gt;&gt; g = np.array([0, 0, 2, 0, 2, 0])</span>
+<span class="sd">        &gt;&gt;&gt; indi = dummy_sparse(g)</span>
+<span class="sd">        &gt;&gt;&gt; indi.todense()</span>
+<span class="sd">        matrix([[1, 0, 0],</span>
+<span class="sd">                [1, 0, 0],</span>
+<span class="sd">                [0, 0, 1],</span>
+<span class="sd">                [1, 0, 0],</span>
+<span class="sd">                [0, 0, 1],</span>
+<span class="sd">                [1, 0, 0]], dtype=int8)</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">[</span><span class="n">level</span><span class="p">]</span>
+        <span class="n">indptr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_dummies</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span> <span class="n">indptr</span><span class="p">))</span></div></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="c1">#---------- examples combine_indices</span>
+    <span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_equal</span>
+
+    <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">985367</span><span class="p">)</span>
+    <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randint</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">10</span><span class="p">,</span> <span class="mi">2</span><span class="p">))</span>
+    <span class="n">uv</span><span class="p">,</span> <span class="n">ux</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">combine_indices</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">return_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">uv</span><span class="p">,</span> <span class="n">ux</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">combine_indices</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;g1,g2=&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span>
+                                       <span class="n">return_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+
+    <span class="n">group0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;sector0&#39;</span><span class="p">,</span> <span class="s1">&#39;sector1&#39;</span><span class="p">])[</span><span class="n">groups</span><span class="p">[:,</span> <span class="mi">0</span><span class="p">]]</span>
+    <span class="n">group1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;region0&#39;</span><span class="p">,</span> <span class="s1">&#39;region1&#39;</span><span class="p">])[</span><span class="n">groups</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]]</span>
+    <span class="n">uv</span><span class="p">,</span> <span class="n">ux</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">combine_indices</span><span class="p">((</span><span class="n">group0</span><span class="p">,</span> <span class="n">group1</span><span class="p">),</span>
+                                       <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;sector,region=&#39;</span><span class="p">,</span>
+                                       <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;,&#39;</span><span class="p">,</span>
+                                       <span class="n">return_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">uv</span><span class="p">,</span> <span class="n">ux</span><span class="p">,</span> <span class="n">u</span><span class="p">,</span> <span class="n">label</span> <span class="o">=</span> <span class="n">combine_indices</span><span class="p">((</span><span class="n">group0</span><span class="p">,</span> <span class="n">group1</span><span class="p">),</span> <span class="n">prefix</span><span class="o">=</span><span class="s1">&#39;&#39;</span><span class="p">,</span> <span class="n">sep</span><span class="o">=</span><span class="s1">&#39;.&#39;</span><span class="p">,</span>
+                                       <span class="n">return_labels</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">group_joint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">label</span><span class="p">)[</span><span class="n">uv</span><span class="p">]</span>
+    <span class="n">group_joint_expected</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>
+                  <span class="p">[</span><span class="s1">&#39;sector1.region0&#39;</span><span class="p">,</span> <span class="s1">&#39;sector0.region1&#39;</span><span class="p">,</span> <span class="s1">&#39;sector0.region0&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;sector0.region1&#39;</span><span class="p">,</span> <span class="s1">&#39;sector1.region1&#39;</span><span class="p">,</span> <span class="s1">&#39;sector0.region0&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;sector1.region0&#39;</span><span class="p">,</span> <span class="s1">&#39;sector1.region0&#39;</span><span class="p">,</span> <span class="s1">&#39;sector0.region1&#39;</span><span class="p">,</span>
+                   <span class="s1">&#39;sector0.region0&#39;</span><span class="p">],</span>
+      <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;|S15&#39;</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">group_joint</span><span class="p">,</span> <span class="n">group_joint_expected</span><span class="p">)</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    &gt;&gt;&gt; uv</span>
+<span class="sd">    array([2, 1, 0, 0, 1, 0, 2, 0, 1, 0])</span>
+<span class="sd">    &gt;&gt;&gt; label</span>
+<span class="sd">    [&#39;sector0.region0&#39;, &#39;sector1.region0&#39;, &#39;sector1.region1&#39;]</span>
+<span class="sd">    &gt;&gt;&gt; np.array(label)[uv]</span>
+<span class="sd">    array([&#39;sector1.region1&#39;, &#39;sector1.region0&#39;, &#39;sector0.region0&#39;,</span>
+<span class="sd">           &#39;sector0.region0&#39;, &#39;sector1.region0&#39;, &#39;sector0.region0&#39;,</span>
+<span class="sd">           &#39;sector1.region1&#39;, &#39;sector0.region0&#39;, &#39;sector1.region0&#39;,</span>
+<span class="sd">           &#39;sector0.region0&#39;],</span>
+<span class="sd">          dtype=&#39;|S15&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; np.column_stack((group0, group1))</span>
+<span class="sd">    array([[&#39;sector1&#39;, &#39;region1&#39;],</span>
+<span class="sd">           [&#39;sector1&#39;, &#39;region0&#39;],</span>
+<span class="sd">           [&#39;sector0&#39;, &#39;region0&#39;],</span>
+<span class="sd">           [&#39;sector0&#39;, &#39;region0&#39;],</span>
+<span class="sd">           [&#39;sector1&#39;, &#39;region0&#39;],</span>
+<span class="sd">           [&#39;sector0&#39;, &#39;region0&#39;],</span>
+<span class="sd">           [&#39;sector1&#39;, &#39;region1&#39;],</span>
+<span class="sd">           [&#39;sector0&#39;, &#39;region0&#39;],</span>
+<span class="sd">           [&#39;sector1&#39;, &#39;region0&#39;],</span>
+<span class="sd">           [&#39;sector0&#39;, &#39;region0&#39;]],</span>
+<span class="sd">          dtype=&#39;|S7&#39;)</span>
+<span class="sd">      &#39;&#39;&#39;</span>
+
+    <span class="c1">#------------- examples sparse_dummies</span>
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">sparse</span>
+
+    <span class="n">g</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">lrange</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+    <span class="n">indptr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">int8</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">((</span><span class="n">data</span><span class="p">,</span> <span class="n">g</span><span class="p">,</span> <span class="n">indptr</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">todense</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">todense</span><span class="p">()</span> <span class="o">==</span> <span class="p">(</span><span class="n">g</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)))</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;group means&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span> <span class="o">*</span> <span class="n">a</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">g</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">bincount</span><span class="p">(</span><span class="n">g</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">x</span><span class="p">[:,</span> <span class="n">col</span><span class="p">])</span> <span class="k">for</span> <span class="n">col</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">3</span><span class="p">)]))</span>
+    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">u</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">g</span> <span class="o">==</span> <span class="n">cat</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">cat</span> <span class="ow">in</span> <span class="n">u</span><span class="p">:</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">g</span> <span class="o">==</span> <span class="n">cat</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">sparse</span><span class="o">.</span><span class="n">csr_matrix</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">]])</span>
+
+    <span class="c1">#------------- groupsums</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">group_sums</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="n">g</span><span class="p">,</span>
+                     <span class="n">use_bincount</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">group_sums</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="mi">0</span><span class="p">],</span> <span class="n">g</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">group_sums</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">)[:,</span> <span class="p">:,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">g</span><span class="p">))</span>
+
+    <span class="c1">#------------- examples class</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">)</span><span class="o">*</span><span class="mi">3</span><span class="p">)</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">g</span><span class="p">),</span> <span class="mi">3</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="s1">&#39;F&#39;</span><span class="p">)</span>
+    <span class="n">mygroup</span> <span class="o">=</span> <span class="n">Group</span><span class="p">(</span><span class="n">g</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mygroup</span><span class="o">.</span><span class="n">group_int</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mygroup</span><span class="o">.</span><span class="n">group_sums</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">mygroup</span><span class="o">.</span><span class="n">labels</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

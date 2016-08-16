@@ -1,0 +1,41 @@
+statsmodels.genmod.families.Binomial
+====================================
+
+.. currentmodule:: statsmodels.genmod.families
+.. autoclass:: Binomial
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Binomial.__init__
+   ~Binomial.deviance
+   ~Binomial.fitted
+   ~Binomial.initialize
+   ~Binomial.loglike
+   ~Binomial.predict
+   ~Binomial.resid_anscombe
+   ~Binomial.resid_dev
+   ~Binomial.starting_mu
+   ~Binomial.weights
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Binomial.link
+   ~Binomial.links
+   ~Binomial.valid
+   ~Binomial.variance
+

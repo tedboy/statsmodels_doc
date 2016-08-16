@@ -1,0 +1,55 @@
+statsmodels.robust.norms
+========================
+
+.. automodule:: statsmodels.robust.norms
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      estimate_location
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      AndrewWave
+      Hampel
+      HuberT
+      LeastSquares
+      RamsayE
+      RobustNorm
+      TrimmedMean
+      TukeyBiweight
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.robust.norms.AndrewWave
+       generated/statsmodels.robust.norms.Hampel
+       generated/statsmodels.robust.norms.HuberT
+       generated/statsmodels.robust.norms.LeastSquares
+       generated/statsmodels.robust.norms.RamsayE
+       generated/statsmodels.robust.norms.RobustNorm
+       generated/statsmodels.robust.norms.TrimmedMean
+       generated/statsmodels.robust.norms.TukeyBiweight
+
+   
+   
+
+   
+   
+   

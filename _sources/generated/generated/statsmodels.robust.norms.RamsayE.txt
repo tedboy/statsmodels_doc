@@ -1,0 +1,25 @@
+statsmodels.robust.norms.RamsayE
+================================
+
+.. currentmodule:: statsmodels.robust.norms
+.. autoclass:: RamsayE
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~RamsayE.__init__
+   ~RamsayE.psi
+   ~RamsayE.psi_deriv
+   ~RamsayE.rho
+   ~RamsayE.weights
+
+
+
+
+

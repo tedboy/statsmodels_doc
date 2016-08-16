@@ -1,0 +1,43 @@
+statsmodels.sandbox.tsa.fftarma.ArmaProcess
+===========================================
+
+.. currentmodule:: statsmodels.sandbox.tsa.fftarma
+.. autoclass:: ArmaProcess
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ArmaProcess.__init__
+   ~ArmaProcess.acf
+   ~ArmaProcess.acovf
+   ~ArmaProcess.arma2ar
+   ~ArmaProcess.arma2ma
+   ~ArmaProcess.from_coeffs
+   ~ArmaProcess.from_estimation
+   ~ArmaProcess.generate_sample
+   ~ArmaProcess.impulse_response
+   ~ArmaProcess.invertroots
+   ~ArmaProcess.pacf
+   ~ArmaProcess.periodogram
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~ArmaProcess.arroots
+   ~ArmaProcess.isinvertible
+   ~ArmaProcess.isstationary
+   ~ArmaProcess.maroots
+

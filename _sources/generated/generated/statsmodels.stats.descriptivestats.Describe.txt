@@ -1,0 +1,24 @@
+statsmodels.stats.descriptivestats.Describe
+===========================================
+
+.. currentmodule:: statsmodels.stats.descriptivestats
+.. autoclass:: Describe
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Describe.__init__
+   ~Describe.print_summary
+   ~Describe.sign_test
+   ~Describe.summary
+
+
+
+
+

@@ -1,0 +1,25 @@
+statsmodels.sandbox.distributions.transform_functions.NegSquareFunc
+===================================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.transform_functions
+.. autoclass:: NegSquareFunc
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NegSquareFunc.derivminus
+   ~NegSquareFunc.derivplus
+   ~NegSquareFunc.func
+   ~NegSquareFunc.inverseminus
+   ~NegSquareFunc.inverseplus
+
+
+
+
+

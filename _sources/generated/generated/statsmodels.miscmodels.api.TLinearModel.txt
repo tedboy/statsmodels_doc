@@ -1,0 +1,45 @@
+statsmodels.miscmodels.api.TLinearModel
+=======================================
+
+.. currentmodule:: statsmodels.miscmodels.api
+.. autoclass:: TLinearModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TLinearModel.__init__
+   ~TLinearModel.expandparams
+   ~TLinearModel.fit
+   ~TLinearModel.from_formula
+   ~TLinearModel.hessian
+   ~TLinearModel.information
+   ~TLinearModel.initialize
+   ~TLinearModel.jac
+   ~TLinearModel.loglike
+   ~TLinearModel.loglikeobs
+   ~TLinearModel.nloglike
+   ~TLinearModel.nloglikeobs
+   ~TLinearModel.predict
+   ~TLinearModel.reduceparams
+   ~TLinearModel.score
+   ~TLinearModel.score_obs
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TLinearModel.endog_names
+   ~TLinearModel.exog_names
+

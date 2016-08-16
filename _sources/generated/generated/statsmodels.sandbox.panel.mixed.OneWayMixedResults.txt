@@ -1,0 +1,51 @@
+statsmodels.sandbox.panel.mixed.OneWayMixedResults
+==================================================
+
+.. currentmodule:: statsmodels.sandbox.panel.mixed
+.. autoclass:: OneWayMixedResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OneWayMixedResults.__init__
+   ~OneWayMixedResults.bse
+   ~OneWayMixedResults.conf_int
+   ~OneWayMixedResults.cov_params
+   ~OneWayMixedResults.cov_random
+   ~OneWayMixedResults.f_test
+   ~OneWayMixedResults.initialize
+   ~OneWayMixedResults.llf
+   ~OneWayMixedResults.load
+   ~OneWayMixedResults.mean_random
+   ~OneWayMixedResults.normalized_cov_params
+   ~OneWayMixedResults.plot_random_univariate
+   ~OneWayMixedResults.plot_scatter_all_pairs
+   ~OneWayMixedResults.plot_scatter_pairs
+   ~OneWayMixedResults.predict
+   ~OneWayMixedResults.pvalues
+   ~OneWayMixedResults.remove_data
+   ~OneWayMixedResults.save
+   ~OneWayMixedResults.std_random
+   ~OneWayMixedResults.t_test
+   ~OneWayMixedResults.tvalues
+   ~OneWayMixedResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~OneWayMixedResults.params_random_units
+   ~OneWayMixedResults.use_t
+

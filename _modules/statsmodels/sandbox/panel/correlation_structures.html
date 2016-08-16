@@ -1,0 +1,420 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.panel.correlation_structures &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.panel.correlation_structures</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.panel.correlation_structures</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;Correlation and Covariance Structures</span>
+
+<span class="sd">Created on Sat Dec 17 20:46:05 2011</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License: BSD-3</span>
+
+
+<span class="sd">Reference</span>
+<span class="sd">---------</span>
+<span class="sd">quick reading of some section on mixed effects models in S-plus and of</span>
+<span class="sd">outline for GEE.</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<div class="viewcode-block" id="corr_equi"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.correlation_structures.corr_equi.html#statsmodels.sandbox.panel.correlation_structures.corr_equi">[docs]</a><span class="k">def</span> <span class="nf">corr_equi</span><span class="p">(</span><span class="n">k_vars</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;create equicorrelated correlation matrix with rho on off diagonal</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    k_vars : int</span>
+<span class="sd">        number of variables, correlation matrix will be (k_vars, k_vars)</span>
+<span class="sd">    rho : float</span>
+<span class="sd">        correlation between any two random variables</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    corr : ndarray (k_vars, k_vars)</span>
+<span class="sd">        correlation matrix</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">corr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">k_vars</span><span class="p">,</span> <span class="n">k_vars</span><span class="p">))</span>
+    <span class="n">corr</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span>
+    <span class="n">corr</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">diag_indices_from</span><span class="p">(</span><span class="n">corr</span><span class="p">)]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">return</span> <span class="n">corr</span></div>
+
+<div class="viewcode-block" id="corr_ar"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.correlation_structures.corr_ar.html#statsmodels.sandbox.panel.correlation_structures.corr_ar">[docs]</a><span class="k">def</span> <span class="nf">corr_ar</span><span class="p">(</span><span class="n">k_vars</span><span class="p">,</span> <span class="n">ar</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;create autoregressive correlation matrix</span>
+
+<span class="sd">    This might be MA, not AR, process if used for residual process - check</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ar : array_like, 1d</span>
+<span class="sd">        AR lag-polynomial including 1 for lag 0</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">toeplitz</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">k_vars</span><span class="p">:</span>
+        <span class="n">ar_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">k_vars</span><span class="p">)</span>
+        <span class="n">ar_</span><span class="p">[:</span><span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">)]</span> <span class="o">=</span> <span class="n">ar</span>
+        <span class="n">ar</span> <span class="o">=</span> <span class="n">ar_</span>
+
+    <span class="k">return</span> <span class="n">toeplitz</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="corr_arma"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.correlation_structures.corr_arma.html#statsmodels.sandbox.panel.correlation_structures.corr_arma">[docs]</a><span class="k">def</span> <span class="nf">corr_arma</span><span class="p">(</span><span class="n">k_vars</span><span class="p">,</span> <span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;create arma correlation matrix</span>
+
+<span class="sd">    converts arma to autoregressive lag-polynomial with k_var lags</span>
+
+<span class="sd">    ar and arma might need to be switched for generating residual process</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    ar : array_like, 1d</span>
+<span class="sd">        AR lag-polynomial including 1 for lag 0</span>
+<span class="sd">    ma : array_like, 1d</span>
+<span class="sd">        MA lag-polynomial</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">toeplitz</span>
+    <span class="kn">from</span> <span class="nn">statsmodels.tsa.arima_process</span> <span class="k">import</span> <span class="n">arma2ar</span>
+
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">arma2ar</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="n">k_vars</span><span class="p">)[:</span><span class="n">k_vars</span><span class="p">]</span>  <span class="c1">#bug in arma2ar</span>
+
+    <span class="k">return</span> <span class="n">toeplitz</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="corr2cov"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.correlation_structures.corr2cov.html#statsmodels.sandbox.panel.correlation_structures.corr2cov">[docs]</a><span class="k">def</span> <span class="nf">corr2cov</span><span class="p">(</span><span class="n">corr</span><span class="p">,</span> <span class="n">std</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;convert correlation matrix to covariance matrix</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    corr : ndarray, (k_vars, k_vars)</span>
+<span class="sd">        correlation matrix</span>
+<span class="sd">    std : ndarray, (k_vars,) or scalar</span>
+<span class="sd">        standard deviation for the vector of random variables. If scalar, then</span>
+<span class="sd">        it is assumed that all variables have the same scale given by std.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">std</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">std</span> <span class="o">=</span> <span class="n">std</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">corr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="n">cov</span> <span class="o">=</span> <span class="n">corr</span> <span class="o">*</span> <span class="n">std</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">std</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="p">:]</span>  <span class="c1">#same as outer product</span>
+    <span class="k">return</span> <span class="n">cov</span></div>
+
+
+<div class="viewcode-block" id="whiten_ar"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.correlation_structures.whiten_ar.html#statsmodels.sandbox.panel.correlation_structures.whiten_ar">[docs]</a><span class="k">def</span> <span class="nf">whiten_ar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">ar_coefs</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Whiten a series of columns according to an AR(p) covariance structure.</span>
+
+<span class="sd">    This drops the initial conditions (Cochran-Orcut ?)</span>
+<span class="sd">    Uses loop, so for short ar polynomials only, use lfilter otherwise</span>
+
+<span class="sd">    This needs to improve, option on method, full additional to conditional</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array-like, (nobs,) or (nobs, k_vars)</span>
+<span class="sd">        The data to be whitened along axis 0</span>
+<span class="sd">    ar_coefs : array</span>
+<span class="sd">        coefficients of AR lag- polynomial,   TODO: ar or ar_coefs?</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    x_new : ndarray</span>
+<span class="sd">        transformed array</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">ar_coefs</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>  <span class="c1">#make copy</span>
+    <span class="c1">#_x = x.copy()</span>
+    <span class="c1">#dimension handling is not DRY</span>
+    <span class="c1"># I think previous code worked for 2d because of single index rows in np</span>
+    <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="n">rho</span> <span class="o">=</span> <span class="n">rho</span><span class="p">[:,</span> <span class="kc">None</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">):</span>
+        <span class="n">_x</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">):]</span> <span class="o">=</span> <span class="n">_x</span><span class="p">[(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">):]</span> <span class="o">-</span> <span class="n">rho</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="o">-</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span>
+
+    <span class="k">return</span> <span class="n">_x</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="p">:]</span></div>
+
+
+<div class="viewcode-block" id="yule_walker_acov"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.panel.correlation_structures.yule_walker_acov.html#statsmodels.sandbox.panel.correlation_structures.yule_walker_acov">[docs]</a><span class="k">def</span> <span class="nf">yule_walker_acov</span><span class="p">(</span><span class="n">acov</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;unbiased&quot;</span><span class="p">,</span> <span class="n">df</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">inv</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Estimate AR(p) parameters from acovf using Yule-Walker equation.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    acov : array-like, 1d</span>
+<span class="sd">        auto-covariance</span>
+<span class="sd">    order : integer, optional</span>
+<span class="sd">        The order of the autoregressive process.  Default is 1.</span>
+<span class="sd">    inv : bool</span>
+<span class="sd">        If inv is True the inverse of R is also returned.  Default is False.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rho : ndarray</span>
+<span class="sd">        The estimated autoregressive coefficients</span>
+<span class="sd">    sigma</span>
+<span class="sd">        TODO</span>
+<span class="sd">    Rinv : ndarray</span>
+<span class="sd">        inverse of the Toepliz matrix</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+
+    <span class="n">R</span> <span class="o">=</span> <span class="n">toeplitz</span><span class="p">(</span><span class="n">r</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="n">rho</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">solve</span><span class="p">(</span><span class="n">R</span><span class="p">,</span> <span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="n">sigmasq</span> <span class="o">=</span> <span class="n">r</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="p">(</span><span class="n">r</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span><span class="o">*</span><span class="n">rho</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">inv</span> <span class="o">==</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rho</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigmasq</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">R</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">rho</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">sigmasq</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="ARCovariance"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.correlation_structures.ARCovariance.html#statsmodels.sandbox.panel.correlation_structures.ARCovariance">[docs]</a><span class="k">class</span> <span class="nc">ARCovariance</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    experimental class for Covariance of AR process</span>
+<span class="sd">    classmethod? staticmethods?</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ARCovariance.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.correlation_structures.ARCovariance.__init__.html#statsmodels.sandbox.panel.correlation_structures.ARCovariance.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ar_coefs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">ar</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ar</span> <span class="o">=</span> <span class="n">ar</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ar_coefs</span> <span class="o">=</span> <span class="o">-</span><span class="n">ar</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">k_lags</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">ar_coefs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">arcoefs</span> <span class="o">=</span> <span class="n">ar_coefs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">ar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">(([</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">ar_coefs</span><span class="p">))</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">k_lags</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ar</span><span class="p">)</span></div>
+
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="ARCovariance.fit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.correlation_structures.ARCovariance.fit.html#statsmodels.sandbox.panel.correlation_structures.ARCovariance.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">cov</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="n">rho</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="n">yule_walker_acov</span><span class="p">(</span><span class="n">cov</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="n">order</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">cls</span><span class="p">(</span><span class="n">ar_coefs</span><span class="o">=</span><span class="n">rho</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ARCovariance.whiten"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.correlation_structures.ARCovariance.whiten.html#statsmodels.sandbox.panel.correlation_structures.ARCovariance.whiten">[docs]</a>    <span class="k">def</span> <span class="nf">whiten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">whiten_ar</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ar_coefs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ARCovariance.corr"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.correlation_structures.ARCovariance.corr.html#statsmodels.sandbox.panel.correlation_structures.ARCovariance.corr">[docs]</a>    <span class="k">def</span> <span class="nf">corr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">k_vars</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">k_vars</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">ar</span><span class="p">)</span>   <span class="c1">#this could move into corr_arr</span>
+        <span class="k">return</span> <span class="n">corr_ar</span><span class="p">(</span><span class="n">k_vars</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ar</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ARCovariance.cov"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.panel.correlation_structures.ARCovariance.cov.html#statsmodels.sandbox.panel.correlation_structures.ARCovariance.cov">[docs]</a>    <span class="k">def</span> <span class="nf">cov</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cov2corr</span><span class="p">(</span><span class="n">corr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">k_vars</span><span class="o">=</span><span class="kc">None</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

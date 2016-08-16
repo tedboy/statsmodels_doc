@@ -1,0 +1,290 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1.1.2.13.1.17. statsmodels.api.Poisson.score_obs &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="1.1.2.13. statsmodels.api.Poisson" href="statsmodels.api.Poisson.html"/>
+        <link rel="next" title="1.1.2.13.2.1. statsmodels.api.Poisson.endog_names" href="statsmodels.api.Poisson.endog_names.html"/>
+        <link rel="prev" title="1.1.2.13.1.16. statsmodels.api.Poisson.score" href="statsmodels.api.Poisson.score.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../main_api.html">1. Main API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../statsmodels.api.html">1.1. statsmodels.api</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.api.html#functions">1.1.1. Functions</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.api.html#classes">1.1.2. Classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.GEE.html">1.1.2.1. statsmodels.api.GEE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.GLM.html">1.1.2.2. statsmodels.api.GLM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.GLS.html">1.1.2.3. statsmodels.api.GLS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.GLSAR.html">1.1.2.4. statsmodels.api.GLSAR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.Logit.html">1.1.2.5. statsmodels.api.Logit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.MNLogit.html">1.1.2.6. statsmodels.api.MNLogit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.MixedLM.html">1.1.2.7. statsmodels.api.MixedLM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.NegativeBinomial.html">1.1.2.8. statsmodels.api.NegativeBinomial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.NominalGEE.html">1.1.2.9. statsmodels.api.NominalGEE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.OLS.html">1.1.2.10. statsmodels.api.OLS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.OrdinalGEE.html">1.1.2.11. statsmodels.api.OrdinalGEE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.PHReg.html">1.1.2.12. statsmodels.api.PHReg</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="statsmodels.api.Poisson.html">1.1.2.13. statsmodels.api.Poisson</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.ProbPlot.html">1.1.2.14. statsmodels.api.ProbPlot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.Probit.html">1.1.2.15. statsmodels.api.Probit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.QuantReg.html">1.1.2.16. statsmodels.api.QuantReg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.RLM.html">1.1.2.17. statsmodels.api.RLM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.WLS.html">1.1.2.18. statsmodels.api.WLS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../main_api.html">1. Main API</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.api.html">1.1. statsmodels.api</a> &raquo;</li>
+        
+          <li><a href="statsmodels.api.Poisson.html">1.1.2.13. statsmodels.api.Poisson</a> &raquo;</li>
+        
+      <li>1.1.2.13.1.17. statsmodels.api.Poisson.score_obs</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.api.Poisson.score_obs.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-api-poisson-score-obs">
+<h1>1.1.2.13.1.17. statsmodels.api.Poisson.score_obs<a class="headerlink" href="#statsmodels-api-poisson-score-obs" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="statsmodels.api.Poisson.score_obs">
+<code class="descclassname">Poisson.</code><code class="descname">score_obs</code><span class="sig-paren">(</span><em>params</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/discrete/discrete_model.html#Poisson.score_obs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.api.Poisson.score_obs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Poisson model Jacobian of the log-likelihood for each observation</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>params</strong> : array-like</p>
+<blockquote>
+<div><p>The parameters of the model</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>score</strong> : ndarray (nobs, k_vars)</p>
+<blockquote class="last">
+<div><p>The score vector of the model evaluated at <cite>params</cite></p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<div class="math">
+\[\frac{\partial\ln L_{i}}{\partial\beta}=\left(y_{i}-\lambda_{i}\right)x_{i}\]</div>
+<p>for observations <span class="math">\(i=1,...,n\)</span></p>
+<p>where the loglinear model is assumed</p>
+<div class="math">
+\[\ln\lambda_{i}=x_{i}\beta\]</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.api.Poisson.endog_names.html" class="btn btn-neutral float-right" title="1.1.2.13.2.1. statsmodels.api.Poisson.endog_names" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.api.Poisson.score.html" class="btn btn-neutral" title="1.1.2.13.1.16. statsmodels.api.Poisson.score" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

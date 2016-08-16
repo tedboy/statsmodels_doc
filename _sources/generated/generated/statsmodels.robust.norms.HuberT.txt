@@ -1,0 +1,25 @@
+statsmodels.robust.norms.HuberT
+===============================
+
+.. currentmodule:: statsmodels.robust.norms
+.. autoclass:: HuberT
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~HuberT.__init__
+   ~HuberT.psi
+   ~HuberT.psi_deriv
+   ~HuberT.rho
+   ~HuberT.weights
+
+
+
+
+

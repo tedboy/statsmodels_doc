@@ -1,0 +1,29 @@
+statsmodels.sandbox.tsa.diffusion.OUprocess
+===========================================
+
+.. currentmodule:: statsmodels.sandbox.tsa.diffusion
+.. autoclass:: OUprocess
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OUprocess.__init__
+   ~OUprocess.exact
+   ~OUprocess.exactdist
+   ~OUprocess.exactprocess
+   ~OUprocess.expectedsim
+   ~OUprocess.fitls
+   ~OUprocess.sim
+   ~OUprocess.simEM
+   ~OUprocess.simulateW
+
+
+
+
+

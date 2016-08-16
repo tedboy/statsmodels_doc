@@ -1,0 +1,57 @@
+statsmodels.tsa.tests.test_arima.Test_Y_ARMA41_NoConst_CSS
+==========================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: Test_Y_ARMA41_NoConst_CSS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Test_Y_ARMA41_NoConst_CSS.setupClass
+   ~Test_Y_ARMA41_NoConst_CSS.test_aic
+   ~Test_Y_ARMA41_NoConst_CSS.test_arroots
+   ~Test_Y_ARMA41_NoConst_CSS.test_bic
+   ~Test_Y_ARMA41_NoConst_CSS.test_bse
+   ~Test_Y_ARMA41_NoConst_CSS.test_covparams
+   ~Test_Y_ARMA41_NoConst_CSS.test_fittedvalues
+   ~Test_Y_ARMA41_NoConst_CSS.test_hqic
+   ~Test_Y_ARMA41_NoConst_CSS.test_llf
+   ~Test_Y_ARMA41_NoConst_CSS.test_maroots
+   ~Test_Y_ARMA41_NoConst_CSS.test_params
+   ~Test_Y_ARMA41_NoConst_CSS.test_pvalues
+   ~Test_Y_ARMA41_NoConst_CSS.test_resid
+   ~Test_Y_ARMA41_NoConst_CSS.test_sigma2
+   ~Test_Y_ARMA41_NoConst_CSS.test_summary
+   ~Test_Y_ARMA41_NoConst_CSS.test_tvalues
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_aic
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_arroots
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_bic
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_bse
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_cov_params
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_fittedvalues
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_hqic
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_llf
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_maroots
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_params
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_pvalues
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_resid
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_sigma2
+   ~Test_Y_ARMA41_NoConst_CSS.decimal_t
+

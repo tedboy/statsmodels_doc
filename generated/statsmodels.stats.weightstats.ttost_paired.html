@@ -1,0 +1,327 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.11.22.3.3. statsmodels.stats.weightstats.ttost_paired &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="3.11.22. statsmodels.stats.weightstats" href="statsmodels.stats.weightstats.html"/>
+        <link rel="next" title="3.11.22.3.4. statsmodels.stats.weightstats.zconfint" href="statsmodels.stats.weightstats.zconfint.html"/>
+        <link rel="prev" title="3.11.22.3.2. statsmodels.stats.weightstats.ttost_ind" href="statsmodels.stats.weightstats.ttost_ind.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main.html#statsmodel-stats">3.11. statsmodel.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.api.html">3.11.1. statsmodels.stats.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.adnorm.html">3.11.2. statsmodels.stats.adnorm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.anova.html">3.11.3. statsmodels.stats.anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.base.html">3.11.4. statsmodels.stats.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.contrast.html">3.11.5. statsmodels.stats.contrast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.correlation_tools.html">3.11.6. statsmodels.stats.correlation_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.descriptivestats.html">3.11.7. statsmodels.stats.descriptivestats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.diagnostic.html">3.11.8. statsmodels.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.gof.html">3.11.9. statsmodels.stats.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.inter_rater.html">3.11.10. statsmodels.stats.inter_rater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.lilliefors.html">3.11.11. statsmodels.stats.lilliefors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.moment_helpers.html">3.11.12. statsmodels.stats.moment_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multicomp.html">3.11.13. statsmodels.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multitest.html">3.11.14. statsmodels.stats.multitest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multivariate_tools.html">3.11.15. statsmodels.stats.multivariate_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.outliers_influence.html">3.11.16. statsmodels.stats.outliers_influence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.power.html">3.11.17. statsmodels.stats.power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.proportion.html">3.11.18. statsmodels.stats.proportion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.sandwich_covariance.html">3.11.19. statsmodels.stats.sandwich_covariance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.stattools.html">3.11.20. statsmodels.stats.stattools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.tabledist.html">3.11.21. statsmodels.stats.tabledist</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="statsmodels.stats.weightstats.html">3.11.22. statsmodels.stats.weightstats</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.stats.weightstats.html#references">3.11.22.1. References</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.stats.weightstats.html#notes">3.11.22.2. Notes</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="statsmodels.stats.weightstats.html#functions">3.11.22.3. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.stats.weightstats.html#classes">3.11.22.4. Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+          <li><a href="statsmodels.stats.weightstats.html">3.11.22. statsmodels.stats.weightstats</a> &raquo;</li>
+        
+      <li>3.11.22.3.3. statsmodels.stats.weightstats.ttost_paired</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.stats.weightstats.ttost_paired.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-stats-weightstats-ttost-paired">
+<h1>3.11.22.3.3. statsmodels.stats.weightstats.ttost_paired<a class="headerlink" href="#statsmodels-stats-weightstats-ttost-paired" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.stats.weightstats.ttost_paired">
+<code class="descclassname">statsmodels.stats.weightstats.</code><code class="descname">ttost_paired</code><span class="sig-paren">(</span><em>x1</em>, <em>x2</em>, <em>low</em>, <em>upp</em>, <em>transform=None</em>, <em>weights=None</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/statsmodels/stats/weightstats.html#ttost_paired"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.stats.weightstats.ttost_paired" title="Permalink to this definition">¶</a></dt>
+<dd><p>test of (non-)equivalence for two dependent, paired sample</p>
+<p>TOST: two one-sided t tests</p>
+<p>null hypothesis:  md &lt; low or md &gt; upp
+alternative hypothesis:  low &lt; md &lt; upp</p>
+<p>where md is the mean, expected value of the difference x1 - x2</p>
+<p>If the pvalue is smaller than a threshold,say 0.05, then we reject the
+hypothesis that the difference between the two samples is larger than the
+the thresholds given by low and upp.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x1, x2</strong> : array_like</p>
+<blockquote>
+<div><p>two dependent samples</p>
+</div></blockquote>
+<p><strong>low, upp</strong> : float</p>
+<blockquote>
+<div><p>equivalence interval low &lt; mean of difference &lt; upp</p>
+</div></blockquote>
+<p><strong>weights</strong> : None or ndarray</p>
+<blockquote>
+<div><p>case weights for the two samples. For details on weights see
+<code class="docutils literal"><span class="pre">DescrStatsW</span></code></p>
+</div></blockquote>
+<p><strong>transform</strong> : None or function</p>
+<blockquote>
+<div><p>If None (default), then the data is not transformed. Given a function
+sample data and thresholds are transformed. If transform is log the
+the equivalence interval is in ratio: low &lt; x1 / x2 &lt; upp</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>pvalue</strong> : float</p>
+<blockquote>
+<div><p>pvalue of the non-equivalence test</p>
+</div></blockquote>
+<p><strong>t1, pv1, df1</strong> : tuple</p>
+<blockquote>
+<div><p>test statistic, pvalue and degrees of freedom for lower threshold test</p>
+</div></blockquote>
+<p><strong>t2, pv2, df2</strong> : tuple</p>
+<blockquote class="last">
+<div><p>test statistic, pvalue and degrees of freedom for upper threshold test</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.stats.weightstats.zconfint.html" class="btn btn-neutral float-right" title="3.11.22.3.4. statsmodels.stats.weightstats.zconfint" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.stats.weightstats.ttost_ind.html" class="btn btn-neutral" title="3.11.22.3.2. statsmodels.stats.weightstats.ttost_ind" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

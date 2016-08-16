@@ -1,0 +1,57 @@
+statsmodels.discrete.discrete_model.L1MultinomialResults
+========================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: L1MultinomialResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~L1MultinomialResults.__init__
+   ~L1MultinomialResults.aic
+   ~L1MultinomialResults.bic
+   ~L1MultinomialResults.bse
+   ~L1MultinomialResults.conf_int
+   ~L1MultinomialResults.cov_params
+   ~L1MultinomialResults.f_test
+   ~L1MultinomialResults.fittedvalues
+   ~L1MultinomialResults.get_margeff
+   ~L1MultinomialResults.initialize
+   ~L1MultinomialResults.llf
+   ~L1MultinomialResults.llnull
+   ~L1MultinomialResults.llr
+   ~L1MultinomialResults.llr_pvalue
+   ~L1MultinomialResults.load
+   ~L1MultinomialResults.margeff
+   ~L1MultinomialResults.normalized_cov_params
+   ~L1MultinomialResults.pred_table
+   ~L1MultinomialResults.predict
+   ~L1MultinomialResults.prsquared
+   ~L1MultinomialResults.pvalues
+   ~L1MultinomialResults.remove_data
+   ~L1MultinomialResults.resid_misclassified
+   ~L1MultinomialResults.save
+   ~L1MultinomialResults.summary
+   ~L1MultinomialResults.summary2
+   ~L1MultinomialResults.t_test
+   ~L1MultinomialResults.tvalues
+   ~L1MultinomialResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~L1MultinomialResults.use_t
+

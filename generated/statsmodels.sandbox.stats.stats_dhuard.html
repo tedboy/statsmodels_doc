@@ -1,0 +1,366 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.8.7. statsmodels.sandbox.stats.stats_dhuard &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.8.7.2.4.1. statsmodels.sandbox.stats.stats_dhuard.empiricalcdf" href="statsmodels.sandbox.stats.stats_dhuard.empiricalcdf.html"/>
+        <link rel="prev" title="6.8.6.2.3.1.5. statsmodels.sandbox.stats.runs.TotalRunsProb.runs_prob_odd" href="generated/statsmodels.sandbox.stats.runs.TotalRunsProb.runs_prob_odd.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.html">6.8.1. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.html">6.8.2. statsmodels.sandbox.stats.contrast_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.html">6.8.3. statsmodels.sandbox.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.ex_newtests.html">6.8.4. statsmodels.sandbox.stats.ex_newtests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.html">6.8.5. statsmodels.sandbox.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.runs.html">6.8.6. statsmodels.sandbox.stats.runs</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.8.7. statsmodels.sandbox.stats.stats_dhuard</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#notes">6.8.7.1. Notes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#idea">6.8.7.2. idea</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.8.7. statsmodels.sandbox.stats.stats_dhuard</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.stats.stats_dhuard.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.stats.stats_dhuard">
+<span id="statsmodels-sandbox-stats-stats-dhuard"></span><h1>6.8.7. statsmodels.sandbox.stats.stats_dhuard<a class="headerlink" href="#module-statsmodels.sandbox.stats.stats_dhuard" title="Permalink to this headline">¶</a></h1>
+<p>from David Huard&#8217;s scipy sandbox, also attached to a ticket and
+in the matplotlib-user mailinglist  (links ???)</p>
+<div class="section" id="notes">
+<h2>6.8.7.1. Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p>out of bounds interpolation raises exception and wouldn&#8217;t be completely
+defined</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">scoreatpercentile</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">25</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">])</span>
+</pre></div>
+</div>
+<p>Traceback (most recent call last):
+...</p>
+<blockquote>
+<div>raise ValueError(&#8220;A value in x_new is below the interpolation &#8220;</div></blockquote>
+<p>ValueError: A value in x_new is below the interpolation range.
+&gt;&gt;&gt; percentileofscore(x, [-50, 50])
+Traceback (most recent call last):
+...</p>
+<blockquote>
+<div>raise ValueError(&#8220;A value in x_new is below the interpolation &#8220;</div></blockquote>
+<p>ValueError: A value in x_new is below the interpolation range.</p>
+</div>
+<div class="section" id="idea">
+<h2>6.8.7.2. idea<a class="headerlink" href="#idea" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="histogram-and-empirical-interpolated-distribution">
+<h3>6.8.7.2.1. histogram and empirical interpolated distribution<a class="headerlink" href="#histogram-and-empirical-interpolated-distribution" title="Permalink to this headline">¶</a></h3>
+<p>dual constructor
+* empirical cdf : cdf on all observations through linear interpolation
+* binned cdf : based on histogram
+both should work essentially the same, although pdf of empirical has
+many spikes, fluctuates a lot
+- alternative: binning based on interpolated cdf : example in script
+* ppf: quantileatscore based on interpolated cdf
+* rvs : generic from ppf
+* stats, expectation ? how does integration wrt cdf work - theory?</p>
+<p>Problems
+* limits, lower and upper bound of support</p>
+<blockquote>
+<div>does not work or is undefined with empirical cdf and interpolation</div></blockquote>
+<ul class="simple">
+<li>extending bounds ?
+matlab has pareto tails for empirical distribution, breaks linearity</li>
+</ul>
+</div>
+<div class="section" id="empirical-distribution-with-higher-order-interpolation">
+<h3>6.8.7.2.2. empirical distribution with higher order interpolation<a class="headerlink" href="#empirical-distribution-with-higher-order-interpolation" title="Permalink to this headline">¶</a></h3>
+<ul class="simple">
+<li>should work easily enough with interpolating splines</li>
+<li>not piecewise linear</li>
+<li>can use pareto (or other) tails</li>
+<li>ppf how do I get the inverse function of a higher order spline?
+Chuck: resample and fit spline to inverse function
+this will have an approximation error in the inverse function</li>
+<li>-&gt; doesn&#8217;t work: higher order spline doesn&#8217;t preserve monotonicity
+see mailing list for response to my question</li>
+<li>pmf from derivative available in spline</li>
+</ul>
+<p>-&gt; forget this and use kernel density estimator instead</p>
+</div>
+<div class="section" id="bootstrap-empirical-distribution">
+<h3>6.8.7.2.3. bootstrap/empirical distribution:<a class="headerlink" href="#bootstrap-empirical-distribution" title="Permalink to this headline">¶</a></h3>
+<p>discrete distribution on real line given observations
+what&#8217;s defined?
+* cdf : step function
+* pmf : points with equal weight 1/nobs
+* rvs : resampling
+* ppf : quantileatscore on sample?
+* moments : from data ?
+* expectation ? sum_{all observations x} [func(x) * pmf(x)]
+* similar for discrete distribution on real line
+* References : ?
+* what&#8217;s the point? most of it is trivial, just for the record ?</p>
+<p>Created on Monday, May 03, 2010, 11:47:03 AM
+Author: josef-pktd, parts based on David Huard
+License: BSD</p>
+</div>
+<div class="section" id="functions">
+<h3>6.8.7.2.4. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.stats_dhuard.empiricalcdf.html#statsmodels.sandbox.stats.stats_dhuard.empiricalcdf" title="statsmodels.sandbox.stats.stats_dhuard.empiricalcdf"><code class="xref py py-obj docutils literal"><span class="pre">empiricalcdf</span></code></a>(data[,&nbsp;method])</td>
+<td>Return the empirical cdf.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.stats_dhuard.percentileofscore.html#statsmodels.sandbox.stats.stats_dhuard.percentileofscore" title="statsmodels.sandbox.stats.stats_dhuard.percentileofscore"><code class="xref py py-obj docutils literal"><span class="pre">percentileofscore</span></code></a>(data,&nbsp;score)</td>
+<td>Return the percentile-position of score relative to data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.stats_dhuard.scoreatpercentile.html#statsmodels.sandbox.stats.stats_dhuard.scoreatpercentile" title="statsmodels.sandbox.stats.stats_dhuard.scoreatpercentile"><code class="xref py py-obj docutils literal"><span class="pre">scoreatpercentile</span></code></a>(data,&nbsp;percentile)</td>
+<td>Return the score at the given percentile of the data.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h3>6.8.7.2.5. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h3>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.stats_dhuard.HistDist.html#statsmodels.sandbox.stats.stats_dhuard.HistDist" title="statsmodels.sandbox.stats.stats_dhuard.HistDist"><code class="xref py py-obj docutils literal"><span class="pre">HistDist</span></code></a>(data)</td>
+<td>Distribution with piecewise linear cdf, pdf is step function</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.stats.stats_dhuard.empiricalcdf.html" class="btn btn-neutral float-right" title="6.8.7.2.4.1. statsmodels.sandbox.stats.stats_dhuard.empiricalcdf" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.sandbox.stats.runs.TotalRunsProb.runs_prob_odd.html" class="btn btn-neutral" title="6.8.6.2.3.1.5. statsmodels.sandbox.stats.runs.TotalRunsProb.runs_prob_odd" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

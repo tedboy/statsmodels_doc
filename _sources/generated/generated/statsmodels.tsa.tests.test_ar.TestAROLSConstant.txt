@@ -1,0 +1,27 @@
+statsmodels.tsa.tests.test_ar.TestAROLSConstant
+===============================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_ar
+.. autoclass:: TestAROLSConstant
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestAROLSConstant.setupClass
+   ~TestAROLSConstant.test_bse
+   ~TestAROLSConstant.test_fpe
+   ~TestAROLSConstant.test_llf
+   ~TestAROLSConstant.test_params
+   ~TestAROLSConstant.test_pickle
+   ~TestAROLSConstant.test_predict
+
+
+
+
+

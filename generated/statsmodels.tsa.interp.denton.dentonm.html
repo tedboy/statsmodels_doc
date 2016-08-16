@@ -1,0 +1,340 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.8.5.1.1. statsmodels.tsa.interp.denton.dentonm &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="4.8.5. statsmodels.tsa.interp.denton" href="statsmodels.tsa.interp.denton.html"/>
+        <link rel="next" title="4.8.6. statsmodels.tsa.kalmanf.kalmanfilter" href="statsmodels.tsa.kalmanf.kalmanfilter.html"/>
+        <link rel="prev" title="4.8.5. statsmodels.tsa.interp.denton" href="statsmodels.tsa.interp.denton.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.api.html">4.8.1. statsmodels.tsa.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.adfvalues.html">4.8.2. statsmodels.tsa.adfvalues</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.ar_model.html">4.8.3. statsmodels.tsa.ar_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.descriptivestats.html">4.8.4. statsmodels.tsa.descriptivestats</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="statsmodels.tsa.interp.denton.html">4.8.5. statsmodels.tsa.interp.denton</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="statsmodels.tsa.interp.denton.html#functions">4.8.5.1. Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.kalmanf.kalmanfilter.html">4.8.6. statsmodels.tsa.kalmanf.kalmanfilter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.mlemodel.html">4.8.7. statsmodels.tsa.mlemodel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.seasonal.html">4.8.8. statsmodels.tsa.seasonal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.tsatools.html">4.8.9. statsmodels.tsa.tsatools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.varma_process.html">4.8.10. statsmodels.tsa.varma_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.x13.html">4.8.11. statsmodels.tsa.x13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.base.datetools.html">4.8.12. statsmodels.tsa.base.datetools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.base.tsa_model.html">4.8.13. statsmodels.tsa.base.tsa_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.api.html">4.8.14. statsmodels.tsa.filters.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters._utils.html">4.8.15. statsmodels.tsa.filters._utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.bk_filter.html">4.8.16. statsmodels.tsa.filters.bk_filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.cf_filter.html">4.8.17. statsmodels.tsa.filters.cf_filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.filtertools.html">4.8.18. statsmodels.tsa.filters.filtertools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.hp_filter.html">4.8.19. statsmodels.tsa.filters.hp_filter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+          <li><a href="statsmodels.tsa.interp.denton.html">4.8.5. statsmodels.tsa.interp.denton</a> &raquo;</li>
+        
+      <li>4.8.5.1.1. statsmodels.tsa.interp.denton.dentonm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.tsa.interp.denton.dentonm.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-tsa-interp-denton-dentonm">
+<h1>4.8.5.1.1. statsmodels.tsa.interp.denton.dentonm<a class="headerlink" href="#statsmodels-tsa-interp-denton-dentonm" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.tsa.interp.denton.dentonm">
+<code class="descclassname">statsmodels.tsa.interp.denton.</code><code class="descname">dentonm</code><span class="sig-paren">(</span><em>indicator</em>, <em>benchmark</em>, <em>freq='aq'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/statsmodels/tsa/interp/denton.html#dentonm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.tsa.interp.denton.dentonm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Modified Denton&#8217;s method to convert low-frequency to high-frequency data.</p>
+<p>Uses proportionate first-differences as the penalty function.  See notes.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>indicator</strong></p>
+<blockquote>
+<div><p>A low-frequency indicator series.  It is assumed that there are no
+pre-sample indicators.  Ie., the first indicators line up with
+the first benchmark.</p>
+</div></blockquote>
+<p><strong>benchmark</strong> : array-like</p>
+<blockquote>
+<div><p>The higher frequency benchmark.  A 1d or 2d data series in columns.
+If 2d, then M series are assumed.</p>
+</div></blockquote>
+<p><strong>freq</strong> : str {&#8220;aq&#8221;,&#8221;qm&#8221;, &#8220;other&#8221;}</p>
+<blockquote>
+<div><p>&#8220;aq&#8221; - Benchmarking an annual series to quarterly.
+&#8220;mq&#8221; - Benchmarking a quarterly series to monthly.
+&#8220;other&#8221; - Custom stride.  A kwarg, k, must be supplied.</p>
+</div></blockquote>
+<p><strong>kwargs :</strong></p>
+<blockquote>
+<div><dl class="docutils">
+<dt>k</dt>
+ <span class="classifier-delimiter">:</span> <span class="classifier">int</span><dd><p class="first last">The number of high-frequency observations that sum to make an
+aggregate low-frequency observation. <cite>k</cite> is used with
+<cite>freq</cite> == &#8220;other&#8221;.</p>
+</dd>
+</dl>
+</div></blockquote>
+<p><strong>Returns</strong></p>
+<p><strong>&#8212;&#8212;-</strong></p>
+<p class="last"><strong>benchmarked series</strong> : array</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Denton&#8217;s method minimizes the distance given by the penalty function, in
+a least squares sense, between the unknown benchmarked series and the
+indicator series subject to the condition that the sum of the benchmarked
+series is equal to the benchmark. The modification allows that the first
+value not be pre-determined as is the case with Denton&#8217;s original method.
+If the there is no benchmark provided for the last few indicator
+observations, then extrapolation is performed using the last
+benchmark-indicator ratio of the previous period.</p>
+<p>Minimizes sum((X[t]/I[t] - X[t-1]/I[t-1])**2)</p>
+<p>s.t.</p>
+<p>sum(X) = A, for each period.  Where X is the benchmarked series, I is
+the indicator, and A is the benchmark.</p>
+<p class="rubric">References</p>
+<dl class="docutils">
+<dt>Bloem, A.M, Dippelsman, R.J. and Maehle, N.O.  2001 Quarterly National</dt>
+<dd>Accounts Manual&#8211;Concepts, Data Sources, and Compilation. IMF.
+<a class="reference external" href="http://www.imf.org/external/pubs/ft/qna/2000/Textbook/index.htm">http://www.imf.org/external/pubs/ft/qna/2000/Textbook/index.htm</a></dd>
+<dt>Cholette, P. 1988. &#8220;Benchmarking systems of socio-economic time series.&#8221;</dt>
+<dd>Statistics Canada, Time Series Research and Analysis Division,
+Working Paper No TSRA-88-017E.</dd>
+<dt>Denton, F.T. 1971. &#8220;Adjustment of monthly or quarterly series to annual</dt>
+<dd>totals: an approach based on quadratic minimization.&#8221; Journal of the
+American Statistical Association. 99-102.</dd>
+</dl>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">indicator</span> <span class="o">=</span> <span class="p">[</span><span class="mi">50</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span><span class="mi">150</span><span class="p">,</span><span class="mi">100</span><span class="p">]</span> <span class="o">*</span> <span class="mi">5</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">benchmark</span> <span class="o">=</span> <span class="p">[</span><span class="mi">500</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">300</span><span class="p">,</span><span class="mi">400</span><span class="p">,</span><span class="mi">500</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">benchmarked</span> <span class="o">=</span> <span class="n">dentonm</span><span class="p">(</span><span class="n">indicator</span><span class="p">,</span> <span class="n">benchmark</span><span class="p">,</span> <span class="n">freq</span><span class="o">=</span><span class="s2">&quot;aq&quot;</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.tsa.kalmanf.kalmanfilter.html" class="btn btn-neutral float-right" title="4.8.6. statsmodels.tsa.kalmanf.kalmanfilter" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.tsa.interp.denton.html" class="btn btn-neutral" title="4.8.5. statsmodels.tsa.interp.denton" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

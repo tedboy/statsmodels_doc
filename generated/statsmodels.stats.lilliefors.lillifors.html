@@ -1,0 +1,316 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.11.11.1.4. statsmodels.stats.lilliefors.lillifors &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="3.11.11. statsmodels.stats.lilliefors" href="statsmodels.stats.lilliefors.html"/>
+        <link rel="next" title="3.11.11.1.5. statsmodels.stats.lilliefors.pval_lf" href="statsmodels.stats.lilliefors.pval_lf.html"/>
+        <link rel="prev" title="3.11.11.1.3. statsmodels.stats.lilliefors.kstest_normal" href="statsmodels.stats.lilliefors.kstest_normal.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main.html#statsmodel-stats">3.11. statsmodel.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.api.html">3.11.1. statsmodels.stats.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.adnorm.html">3.11.2. statsmodels.stats.adnorm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.anova.html">3.11.3. statsmodels.stats.anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.base.html">3.11.4. statsmodels.stats.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.contrast.html">3.11.5. statsmodels.stats.contrast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.correlation_tools.html">3.11.6. statsmodels.stats.correlation_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.descriptivestats.html">3.11.7. statsmodels.stats.descriptivestats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.diagnostic.html">3.11.8. statsmodels.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.gof.html">3.11.9. statsmodels.stats.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.inter_rater.html">3.11.10. statsmodels.stats.inter_rater</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="statsmodels.stats.lilliefors.html">3.11.11. statsmodels.stats.lilliefors</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="statsmodels.stats.lilliefors.html#functions">3.11.11.1. Functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.moment_helpers.html">3.11.12. statsmodels.stats.moment_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multicomp.html">3.11.13. statsmodels.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multitest.html">3.11.14. statsmodels.stats.multitest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multivariate_tools.html">3.11.15. statsmodels.stats.multivariate_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.outliers_influence.html">3.11.16. statsmodels.stats.outliers_influence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.power.html">3.11.17. statsmodels.stats.power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.proportion.html">3.11.18. statsmodels.stats.proportion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.sandwich_covariance.html">3.11.19. statsmodels.stats.sandwich_covariance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.stattools.html">3.11.20. statsmodels.stats.stattools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.tabledist.html">3.11.21. statsmodels.stats.tabledist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.weightstats.html">3.11.22. statsmodels.stats.weightstats</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+          <li><a href="statsmodels.stats.lilliefors.html">3.11.11. statsmodels.stats.lilliefors</a> &raquo;</li>
+        
+      <li>3.11.11.1.4. statsmodels.stats.lilliefors.lillifors</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.stats.lilliefors.lillifors.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-stats-lilliefors-lillifors">
+<h1>3.11.11.1.4. statsmodels.stats.lilliefors.lillifors<a class="headerlink" href="#statsmodels-stats-lilliefors-lillifors" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.stats.lilliefors.lillifors">
+<code class="descclassname">statsmodels.stats.lilliefors.</code><code class="descname">lillifors</code><span class="sig-paren">(</span><em>x</em>, <em>pvalmethod='approx'</em><span class="sig-paren">)</span><a class="headerlink" href="#statsmodels.stats.lilliefors.lillifors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Lillifors test for normality,</p>
+<p>Kolmogorov Smirnov test with estimated mean and variance</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>x</strong> : array_like, 1d</p>
+<blockquote>
+<div><p>data series, sample</p>
+</div></blockquote>
+<p><strong>pvalmethod</strong> : &#8216;approx&#8217;, &#8216;table&#8217;</p>
+<blockquote>
+<div><p>&#8216;approx&#8217; uses the approximation formula of Dalal and Wilkinson,
+valid for pvalues &lt; 0.1. If the pvalue is larger than 0.1, then the
+result of <cite>table</cite> is returned
+&#8216;table&#8217; uses the table from Dalal and Wilkinson, which is available
+for pvalues between 0.001 and 0.2, and the formula of Lilliefors for
+large n (n&gt;900). Values in the table are linearly interpolated.
+Values outside the range will be returned as bounds, 0.2 for large and
+0.001 for small pvalues.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>ksstat</strong> : float</p>
+<blockquote>
+<div><p>Kolmogorov-Smirnov test statistic with estimated mean and variance.</p>
+</div></blockquote>
+<p><strong>pvalue</strong> : float</p>
+<blockquote class="last">
+<div><p>If the pvalue is lower than some threshold, e.g. 0.05, then we can
+reject the Null hypothesis that the sample comes from a normal
+distribution</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>Reported power to distinguish normal from some other distributions is lower
+than with the Anderson-Darling test.</p>
+<p>could be vectorized</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.stats.lilliefors.pval_lf.html" class="btn btn-neutral float-right" title="3.11.11.1.5. statsmodels.stats.lilliefors.pval_lf" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.stats.lilliefors.kstest_normal.html" class="btn btn-neutral" title="3.11.11.1.3. statsmodels.stats.lilliefors.kstest_normal" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

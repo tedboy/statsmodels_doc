@@ -1,0 +1,26 @@
+statsmodels.sandbox.stats.contrast_tools.TwoWay
+===============================================
+
+.. currentmodule:: statsmodels.sandbox.stats.contrast_tools
+.. autoclass:: TwoWay
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TwoWay.__init__
+   ~TwoWay.ftest_interaction
+   ~TwoWay.r_nointer
+   ~TwoWay.summary_coeff
+   ~TwoWay.ttest_conditional_effect
+   ~TwoWay.ttest_interaction
+
+
+
+
+

@@ -1,0 +1,45 @@
+statsmodels.stats.descriptivestats
+==================================
+
+.. automodule:: statsmodels.stats.descriptivestats
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      iteritems
+      iterkeys
+      sign_test
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Describe
+      SimpleTable
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.descriptivestats.Describe
+       generated/statsmodels.stats.descriptivestats.SimpleTable
+
+   
+   
+
+   
+   
+   

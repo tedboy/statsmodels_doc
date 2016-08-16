@@ -1,0 +1,42 @@
+statsmodels.discrete.discrete_model.MultinomialModel
+====================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: MultinomialModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MultinomialModel.__init__
+   ~MultinomialModel.cdf
+   ~MultinomialModel.cov_params_func_l1
+   ~MultinomialModel.fit
+   ~MultinomialModel.fit_regularized
+   ~MultinomialModel.from_formula
+   ~MultinomialModel.hessian
+   ~MultinomialModel.information
+   ~MultinomialModel.initialize
+   ~MultinomialModel.loglike
+   ~MultinomialModel.pdf
+   ~MultinomialModel.predict
+   ~MultinomialModel.score
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~MultinomialModel.endog_names
+   ~MultinomialModel.exog_names
+

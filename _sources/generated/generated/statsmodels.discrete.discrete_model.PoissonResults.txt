@@ -1,0 +1,56 @@
+statsmodels.discrete.discrete_model.PoissonResults
+==================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: PoissonResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PoissonResults.__init__
+   ~PoissonResults.aic
+   ~PoissonResults.bic
+   ~PoissonResults.bse
+   ~PoissonResults.conf_int
+   ~PoissonResults.cov_params
+   ~PoissonResults.f_test
+   ~PoissonResults.fittedvalues
+   ~PoissonResults.get_margeff
+   ~PoissonResults.initialize
+   ~PoissonResults.llf
+   ~PoissonResults.llnull
+   ~PoissonResults.llr
+   ~PoissonResults.llr_pvalue
+   ~PoissonResults.load
+   ~PoissonResults.normalized_cov_params
+   ~PoissonResults.predict
+   ~PoissonResults.predict_prob
+   ~PoissonResults.prsquared
+   ~PoissonResults.pvalues
+   ~PoissonResults.remove_data
+   ~PoissonResults.resid
+   ~PoissonResults.save
+   ~PoissonResults.summary
+   ~PoissonResults.summary2
+   ~PoissonResults.t_test
+   ~PoissonResults.tvalues
+   ~PoissonResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~PoissonResults.use_t
+

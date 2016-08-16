@@ -1,0 +1,61 @@
+statsmodels.tsa.tests.test_arima.Test_ARIMA112CSS
+=================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: Test_ARIMA112CSS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Test_ARIMA112CSS.setupClass
+   ~Test_ARIMA112CSS.test_aic
+   ~Test_ARIMA112CSS.test_arroots
+   ~Test_ARIMA112CSS.test_bic
+   ~Test_ARIMA112CSS.test_bse
+   ~Test_ARIMA112CSS.test_covparams
+   ~Test_ARIMA112CSS.test_fittedvalues
+   ~Test_ARIMA112CSS.test_freq
+   ~Test_ARIMA112CSS.test_hqic
+   ~Test_ARIMA112CSS.test_llf
+   ~Test_ARIMA112CSS.test_maroots
+   ~Test_ARIMA112CSS.test_order
+   ~Test_ARIMA112CSS.test_params
+   ~Test_ARIMA112CSS.test_predict_levels
+   ~Test_ARIMA112CSS.test_pvalues
+   ~Test_ARIMA112CSS.test_resid
+   ~Test_ARIMA112CSS.test_sigma2
+   ~Test_ARIMA112CSS.test_summary
+   ~Test_ARIMA112CSS.test_tvalues
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Test_ARIMA112CSS.decimal_aic
+   ~Test_ARIMA112CSS.decimal_arroots
+   ~Test_ARIMA112CSS.decimal_bic
+   ~Test_ARIMA112CSS.decimal_bse
+   ~Test_ARIMA112CSS.decimal_cov_params
+   ~Test_ARIMA112CSS.decimal_fittedvalues
+   ~Test_ARIMA112CSS.decimal_hqic
+   ~Test_ARIMA112CSS.decimal_llf
+   ~Test_ARIMA112CSS.decimal_maroots
+   ~Test_ARIMA112CSS.decimal_params
+   ~Test_ARIMA112CSS.decimal_predict_levels
+   ~Test_ARIMA112CSS.decimal_pvalues
+   ~Test_ARIMA112CSS.decimal_resid
+   ~Test_ARIMA112CSS.decimal_sigma2
+   ~Test_ARIMA112CSS.decimal_t
+

@@ -1,0 +1,43 @@
+statsmodels.distributions.empirical_distribution
+================================================
+
+.. automodule:: statsmodels.distributions.empirical_distribution
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      monotone_fn_inverter
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ECDF
+      StepFunction
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.distributions.empirical_distribution.ECDF
+       generated/statsmodels.distributions.empirical_distribution.StepFunction
+
+   
+   
+
+   
+   
+   

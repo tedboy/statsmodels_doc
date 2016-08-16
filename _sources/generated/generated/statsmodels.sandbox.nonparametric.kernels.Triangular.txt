@@ -1,0 +1,44 @@
+statsmodels.sandbox.nonparametric.kernels.Triangular
+====================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernels
+.. autoclass:: Triangular
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Triangular.__init__
+   ~Triangular.density
+   ~Triangular.density_confint
+   ~Triangular.density_var
+   ~Triangular.geth
+   ~Triangular.in_domain
+   ~Triangular.moments
+   ~Triangular.seth
+   ~Triangular.smooth
+   ~Triangular.smoothconf
+   ~Triangular.smoothvar
+   ~Triangular.weight
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Triangular.L2Norm
+   ~Triangular.h
+   ~Triangular.kernel_var
+   ~Triangular.norm_const
+   ~Triangular.normal_reference_constant
+

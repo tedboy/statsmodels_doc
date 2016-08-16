@@ -1,0 +1,25 @@
+statsmodels.base.model.LikelihoodResultsWrapper
+===============================================
+
+.. currentmodule:: statsmodels.base.model
+.. autoclass:: LikelihoodResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~LikelihoodResultsWrapper.__init__
+   ~LikelihoodResultsWrapper.conf_int
+   ~LikelihoodResultsWrapper.cov_params
+   ~LikelihoodResultsWrapper.load
+   ~LikelihoodResultsWrapper.save
+
+
+
+
+

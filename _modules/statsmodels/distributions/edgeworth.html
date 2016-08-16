@@ -1,0 +1,426 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.distributions.edgeworth &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.distributions.edgeworth</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.distributions.edgeworth</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">division</span><span class="p">,</span> <span class="n">print_function</span><span class="p">,</span> <span class="n">absolute_import</span>
+
+<span class="kn">import</span> <span class="nn">warnings</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.polynomial.hermite_e</span> <span class="k">import</span> <span class="n">HermiteE</span>
+<span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="k">import</span> <span class="n">factorial</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">rv_continuous</span>
+<span class="kn">import</span> <span class="nn">scipy.special</span> <span class="k">as</span> <span class="nn">special</span>
+
+<span class="c1"># TODO:</span>
+<span class="c1"># * actually solve (31) of Blinnikov &amp; Moessner</span>
+<span class="c1"># * numerical stability: multiply factorials in logspace?</span>
+<span class="c1"># * ppf &amp; friends: Cornish &amp; Fisher series, or tabulate/solve</span>
+
+
+<span class="n">_faa_di_bruno_cache</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">1</span><span class="p">:</span> <span class="p">[[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]],</span>
+        <span class="mi">2</span><span class="p">:</span> <span class="p">[[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]],</span>
+        <span class="mi">3</span><span class="p">:</span> <span class="p">[[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">)],</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]],</span>
+        <span class="mi">4</span><span class="p">:</span> <span class="p">[[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">)],</span> <span class="p">[(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">)],</span> <span class="p">[(</span><span class="mi">3</span><span class="p">,</span> <span class="mi">1</span><span class="p">),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)],</span> <span class="p">[(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">1</span><span class="p">)]]}</span>
+
+
+<span class="k">def</span> <span class="nf">_faa_di_bruno_partitions</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Return all non-negative integer solutions of the diophantine equation::</span>
+
+<span class="sd">            n*k_n + ... + 2*k_2 + 1*k_1 = n   (1)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    n: int</span>
+<span class="sd">        the r.h.s. of Eq. (1)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    partitions: a list of solutions of (1). Each solution is itself</span>
+<span class="sd">        a list of the form `[(m, k_m), ...]` for non-zero `k_m`.</span>
+<span class="sd">        Notice that the index `m` is 1-based.</span>
+
+<span class="sd">    Examples:</span>
+<span class="sd">    ---------</span>
+<span class="sd">    &gt;&gt;&gt; _faa_di_bruno_partitions(2)</span>
+<span class="sd">    [[(1, 2)], [(2, 1)]]</span>
+<span class="sd">    &gt;&gt;&gt; for p in faa_di_bruno_partitions(4):</span>
+<span class="sd">    ...     assert 4 == sum(m * k for (m, k) in p)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected a positive integer; got </span><span class="si">%s</span><span class="s2"> instead&quot;</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">_faa_di_bruno_cache</span><span class="p">[</span><span class="n">n</span><span class="p">]</span>
+    <span class="k">except</span> <span class="ne">KeyError</span><span class="p">:</span>
+        <span class="c1"># TODO: higher order terms</span>
+        <span class="c1"># solve Eq. (31) from Blinninkov &amp; Moessner here</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">(</span><span class="s1">&#39;Higher order terms not yet implemented.&#39;</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="cumulant_from_moments"><a class="viewcode-back" href="../../../generated/statsmodels.distributions.edgeworth.cumulant_from_moments.html#statsmodels.distributions.cumulant_from_moments">[docs]</a><span class="k">def</span> <span class="nf">cumulant_from_moments</span><span class="p">(</span><span class="n">momt</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Compute n-th cumulant given moments.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    momt: array_like</span>
+<span class="sd">        `momt[j]` contains `(j+1)`-th moment.</span>
+<span class="sd">        These can be raw moments around zero, or central moments</span>
+<span class="sd">        (in which case, `momt[0]` == 0).</span>
+<span class="sd">    n: integer</span>
+<span class="sd">        which cumulant to calculate (must be &gt;1)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    kappa: float</span>
+<span class="sd">        n-th cumulant.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">n</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Expected a positive integer. Got </span><span class="si">%s</span><span class="s2"> instead.&quot;</span> <span class="o">%</span> <span class="n">n</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">momt</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">n</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;</span><span class="si">%s</span><span class="s2">-th cumulant requires </span><span class="si">%s</span><span class="s2"> moments, &quot;</span>
+                         <span class="s2">&quot;only got </span><span class="si">%s</span><span class="s2">.&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="nb">len</span><span class="p">(</span><span class="n">momt</span><span class="p">)))</span>
+    <span class="n">kappa</span> <span class="o">=</span> <span class="mf">0.</span>
+    <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">_faa_di_bruno_partitions</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">in</span> <span class="n">p</span><span class="p">)</span>
+        <span class="n">term</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">factorial</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+            <span class="n">term</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">momt</span><span class="p">[</span><span class="n">m</span> <span class="o">-</span> <span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">factorial</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="n">factorial</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">kappa</span> <span class="o">+=</span> <span class="n">term</span>
+    <span class="n">kappa</span> <span class="o">*=</span> <span class="n">factorial</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">kappa</span></div>
+
+<span class="c1">## copied from scipy.stats.distributions to avoid the overhead of</span>
+<span class="c1">## the public methods</span>
+<span class="n">_norm_pdf_C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="k">def</span> <span class="nf">_norm_pdf</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">2.0</span><span class="p">)</span> <span class="o">/</span> <span class="n">_norm_pdf_C</span>
+
+<span class="k">def</span> <span class="nf">_norm_cdf</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">special</span><span class="o">.</span><span class="n">ndtr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">_norm_sf</span><span class="p">(</span><span class="n">x</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">special</span><span class="o">.</span><span class="n">ndtr</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="ExpandedNormal"><a class="viewcode-back" href="../../../generated/generated/statsmodels.distributions.edgeworth.ExpandedNormal.html#statsmodels.distributions.ExpandedNormal">[docs]</a><span class="k">class</span> <span class="nc">ExpandedNormal</span><span class="p">(</span><span class="n">rv_continuous</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Construct the Edgeworth expansion pdf given cumulants.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cum: array_like</span>
+<span class="sd">        `cum[j]` contains `(j+1)`-th cumulant: cum[0] is the mean,</span>
+<span class="sd">        cum[1] is the variance and so on.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This is actually an asymptotic rather than convergent series, hence</span>
+<span class="sd">    higher orders of the expansion may or may not improve the result.</span>
+<span class="sd">    In a strongly non-Gaussian case, it is possible that the density</span>
+<span class="sd">    becomes negative, especially far out in the tails.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    Construct the 4th order expansion for the chi-square distribution using</span>
+<span class="sd">    the known values of the cumulants:</span>
+
+<span class="sd">    &gt;&gt;&gt; from scipy.misc import factorial</span>
+<span class="sd">    &gt;&gt;&gt; df = 12</span>
+<span class="sd">    &gt;&gt;&gt; chi2_c = [2**(j-1) * factorial(j-1) * df for j in range(1, 5)]</span>
+<span class="sd">    &gt;&gt;&gt; edgw_chi2 = ExpandedNormal(chi2_c, name=&#39;edgw_chi2&#39;, momtype=0)</span>
+
+<span class="sd">    Calculate several moments:</span>
+<span class="sd">    &gt;&gt;&gt; m, v = edgw_chi2.stats(moments=&#39;mv&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; np.allclose([m, v], [df, 2 * df])</span>
+<span class="sd">    True</span>
+
+<span class="sd">    Plot the density function:</span>
+<span class="sd">    &gt;&gt;&gt; mu, sigma = df, np.sqrt(2*df)</span>
+<span class="sd">    &gt;&gt;&gt; x = np.linspace(mu - 3*sigma, mu + 3*sigma)</span>
+<span class="sd">    &gt;&gt;&gt; plt.plot(x, stats.chi2.pdf(x, df=df), &#39;g-&#39;, lw=4, alpha=0.5)</span>
+<span class="sd">    &gt;&gt;&gt; plt.plot(x, stats.norm.pdf(x, mu, sigma), &#39;b--&#39;, lw=4, alpha=0.5)</span>
+<span class="sd">    &gt;&gt;&gt; plt.plot(x, edgw_chi2.pdf(x), &#39;r-&#39;, lw=2)</span>
+<span class="sd">    &gt;&gt;&gt; plt.show()</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    .. [1] E.A. Cornish and R.A. Fisher, Moments and cumulants in the</span>
+<span class="sd">         specification of distributions, Revue de l&#39;Institut Internat.</span>
+<span class="sd">         de Statistique. 5: 307 (1938), reprinted in</span>
+<span class="sd">         R.A. Fisher, Contributions to Mathematical Statistics. Wiley, 1950.</span>
+<span class="sd">    .. [2] http://en.wikipedia.org/wiki/Edgeworth_series</span>
+<span class="sd">    .. [3] S. Blinnikov and R. Moessner, Expansions for nearly Gaussian</span>
+<span class="sd">        distributions, Astron. Astrophys. Suppl. Ser. 130, 193 (1998)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="ExpandedNormal.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.distributions.edgeworth.ExpandedNormal.__init__.html#statsmodels.distributions.ExpandedNormal.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cum</span><span class="p">,</span> <span class="n">name</span><span class="o">=</span><span class="s1">&#39;Edgeworth expanded normal&#39;</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">cum</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;At least two cumulants are needed.&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mu</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_compute_coefs_pdf</span><span class="p">(</span><span class="n">cum</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_herm_pdf</span> <span class="o">=</span> <span class="n">HermiteE</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="o">.</span><span class="n">size</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_herm_cdf</span> <span class="o">=</span> <span class="n">HermiteE</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">_coef</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_herm_cdf</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="mf">0.</span>
+
+        <span class="c1"># warn if pdf(x) &lt; 0 for some values of x within 4 sigma </span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">real_if_close</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_herm_pdf</span><span class="o">.</span><span class="n">roots</span><span class="p">())</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mu</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span>
+        <span class="k">if</span> <span class="n">r</span><span class="p">[(</span><span class="n">np</span><span class="o">.</span><span class="n">imag</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">)]</span><span class="o">.</span><span class="n">any</span><span class="p">():</span>
+            <span class="n">mesg</span> <span class="o">=</span> <span class="s1">&#39;PDF has zeros at </span><span class="si">%s</span><span class="s1"> &#39;</span> <span class="o">%</span> <span class="n">r</span>
+            <span class="n">warnings</span><span class="o">.</span><span class="n">warn</span><span class="p">(</span><span class="n">mesg</span><span class="p">,</span> <span class="ne">UserWarning</span><span class="p">)</span>
+
+        <span class="n">kwds</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span><span class="p">,</span>
+                     <span class="s1">&#39;momtype&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">})</span>   <span class="c1"># use pdf, not ppf in self.moment()</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">ExpandedNormal</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
+
+    <span class="k">def</span> <span class="nf">_pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mu</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_herm_pdf</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">_norm_pdf</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span>
+
+    <span class="k">def</span> <span class="nf">_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mu</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">_norm_cdf</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">+</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_herm_cdf</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">_norm_pdf</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_sf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">_mu</span><span class="p">)</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">_norm_sf</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">-</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">_herm_cdf</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">*</span> <span class="n">_norm_pdf</span><span class="p">(</span><span class="n">y</span><span class="p">))</span>
+
+    <span class="k">def</span> <span class="nf">_compute_coefs_pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cum</span><span class="p">):</span>
+        <span class="c1"># scale cumulants by \sigma</span>
+        <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span> <span class="o">=</span> <span class="n">cum</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">cum</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">lam</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">cum</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">l</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">lam</span><span class="p">):</span>
+            <span class="n">lam</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">/=</span> <span class="n">cum</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="n">j</span>
+
+        <span class="n">coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">lam</span><span class="o">.</span><span class="n">size</span> <span class="o">*</span> <span class="mi">3</span> <span class="o">-</span> <span class="mi">5</span><span class="p">)</span>
+        <span class="n">coef</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mf">1.</span>
+        <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">lam</span><span class="o">.</span><span class="n">size</span> <span class="o">-</span> <span class="mi">2</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">_faa_di_bruno_partitions</span><span class="p">(</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+                <span class="n">term</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">**</span><span class="p">(</span><span class="n">s</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+                <span class="k">for</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">in</span> <span class="n">p</span><span class="p">:</span>
+                    <span class="n">term</span> <span class="o">*=</span> <span class="n">np</span><span class="o">.</span><span class="n">power</span><span class="p">(</span><span class="n">lam</span><span class="p">[</span><span class="n">m</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="n">factorial</span><span class="p">(</span><span class="n">m</span><span class="o">+</span><span class="mi">2</span><span class="p">),</span> <span class="n">k</span><span class="p">)</span> <span class="o">/</span> <span class="n">factorial</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">r</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">k</span> <span class="k">for</span> <span class="p">(</span><span class="n">m</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span> <span class="ow">in</span> <span class="n">p</span><span class="p">)</span>
+                <span class="n">coef</span><span class="p">[</span><span class="n">s</span> <span class="o">+</span> <span class="mi">1</span> <span class="o">+</span> <span class="mi">2</span><span class="o">*</span><span class="n">r</span><span class="p">]</span> <span class="o">+=</span> <span class="n">term</span>
+        <span class="k">return</span> <span class="n">coef</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="n">cum</span> <span class="o">=</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">]</span>
+    <span class="n">en</span> <span class="o">=</span> <span class="n">ExpandedNormal</span><span class="p">(</span><span class="n">cum</span><span class="p">)</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

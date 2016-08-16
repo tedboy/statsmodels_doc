@@ -1,0 +1,622 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.nonparametric.smoothers &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.nonparametric.smoothers</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.nonparametric.smoothers</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">This module contains scatterplot smoothers, that is classes</span>
+<span class="sd">who generate a smooth fit of a set of (x,y) pairs.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># pylint: disable-msg=C0103</span>
+<span class="c1"># pylint: disable-msg=W0142</span>
+<span class="c1"># pylint: disable-msg=E0611</span>
+<span class="c1"># pylint: disable-msg=E1101</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">.</span> <span class="k">import</span> <span class="n">kernels</span>
+<span class="c1">#import numbers</span>
+<span class="c1">#from scipy.linalg import solveh_banded</span>
+<span class="c1">#from scipy.optimize import golden</span>
+
+<span class="c1">#from models import _hbspline        # Need to alter setup to be able to import</span>
+                                    <span class="c1"># extension from models or drop for scipy</span>
+<span class="c1">#from models.bspline import BSpline, _band2array</span>
+
+<div class="viewcode-block" id="KernelSmoother"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.KernelSmoother.html#statsmodels.sandbox.gam.KernelSmoother">[docs]</a><span class="k">class</span> <span class="nc">KernelSmoother</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    1D Kernel Density Regression/Kernel Smoother</span>
+
+<span class="sd">    Requires:</span>
+<span class="sd">    x - array_like of x values</span>
+<span class="sd">    y - array_like of y values</span>
+<span class="sd">    Kernel - Kernel object, Default is Gaussian.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="KernelSmoother.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.KernelSmoother.__init__.html#statsmodels.sandbox.gam.KernelSmoother.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">Kernel</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">Kernel</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">Kernel</span> <span class="o">=</span> <span class="n">kernels</span><span class="o">.</span><span class="n">Gaussian</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Kernel</span> <span class="o">=</span> <span class="n">Kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="KernelSmoother.fit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.KernelSmoother.fit.html#statsmodels.sandbox.gam.KernelSmoother.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span>
+
+<div class="viewcode-block" id="KernelSmoother.predict"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.KernelSmoother.predict.html#statsmodels.sandbox.gam.KernelSmoother.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the kernel smoothed prediction at x</span>
+
+<span class="sd">        If x is a real number then a single value is returned.</span>
+
+<span class="sd">        Otherwise an attempt is made to cast x to numpy.ndarray and an array of</span>
+<span class="sd">        corresponding y-points is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span> <span class="c1"># if isinstance(x, numbers.Real):</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">Kernel</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">Kernel</span><span class="o">.</span><span class="n">smooth</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span>
+                                                <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">x</span><span class="p">)])</span></div>
+
+<div class="viewcode-block" id="KernelSmoother.conf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.KernelSmoother.conf.html#statsmodels.sandbox.gam.KernelSmoother.conf">[docs]</a>    <span class="k">def</span> <span class="nf">conf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the fitted curve and 1-sigma upper and lower point-wise</span>
+<span class="sd">        confidence.</span>
+<span class="sd">        These bounds are based on variance only, and do not include the bias.</span>
+<span class="sd">        If the bandwidth is much larger than the curvature of the underlying</span>
+<span class="sd">        funtion then the bias could be large.</span>
+
+<span class="sd">        x is the points on which you want to evaluate the fit and the errors.</span>
+
+<span class="sd">        Alternatively if x is specified as a positive integer, then the fit and</span>
+<span class="sd">        confidence bands points will be returned after every</span>
+<span class="sd">        xth sample point - so they are closer together where the data</span>
+<span class="sd">        is denser.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="n">sorted_x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">)</span>
+            <span class="n">sorted_x</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+            <span class="n">confx</span> <span class="o">=</span> <span class="n">sorted_x</span><span class="p">[::</span><span class="n">x</span><span class="p">]</span>
+            <span class="n">conffit</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">conf</span><span class="p">(</span><span class="n">confx</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">confx</span><span class="p">,</span> <span class="n">conffit</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">Kernel</span><span class="o">.</span><span class="n">smoothconf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">xx</span><span class="p">)</span>
+                                                                <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="KernelSmoother.var"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.KernelSmoother.var.html#statsmodels.sandbox.gam.KernelSmoother.var">[docs]</a>    <span class="k">def</span> <span class="nf">var</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">Kernel</span><span class="o">.</span><span class="n">smoothvar</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="n">xx</span><span class="p">)</span> <span class="k">for</span> <span class="n">xx</span> <span class="ow">in</span> <span class="n">x</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="KernelSmoother.std"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.KernelSmoother.std.html#statsmodels.sandbox.gam.KernelSmoother.std">[docs]</a>    <span class="k">def</span> <span class="nf">std</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div></div>
+
+<div class="viewcode-block" id="PolySmoother"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.PolySmoother.html#statsmodels.sandbox.gam.PolySmoother">[docs]</a><span class="k">class</span> <span class="nc">PolySmoother</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Polynomial smoother up to a given order.</span>
+<span class="sd">    Fit based on weighted least squares.</span>
+
+<span class="sd">    The x values can be specified at instantiation or when called.</span>
+
+<span class="sd">    This is a 3 liner with OLS or WLS, see test.</span>
+<span class="sd">    It&#39;s here as a test smoother for GAM</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#JP: heavily adjusted to work as plugin replacement for bspline</span>
+    <span class="c1">#   smoother in gam.py  initalized by function default_smoother</span>
+    <span class="c1">#   Only fixed exceptions, I didn&#39;t check whether it is statistically</span>
+    <span class="c1">#   correctand I think it is not, there are still be some dimension</span>
+    <span class="c1">#   problems, and there were some dimension problems initially.</span>
+    <span class="c1"># TODO: undo adjustments and fix dimensions correctly</span>
+    <span class="c1"># comment: this is just like polyfit with initialization options</span>
+    <span class="c1">#          and additional results (OLS on polynomial of x (x is 1d?))</span>
+
+
+<div class="viewcode-block" id="PolySmoother.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.PolySmoother.__init__.html#statsmodels.sandbox.gam.PolySmoother.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1">#order = 4 # set this because we get knots instead of order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+
+        <span class="c1">#print order, x.shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">order</span><span class="o">+</span><span class="mi">1</span><span class="p">,),</span> <span class="n">np</span><span class="o">.</span><span class="n">float64</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: 2d x detected in PolySmoother init, shape:&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">,:]</span> <span class="c1">#check orientation</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x</span><span class="o">**</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span></div>
+
+<div class="viewcode-block" id="PolySmoother.df_fit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.PolySmoother.df_fit.html#statsmodels.sandbox.gam.PolySmoother.df_fit">[docs]</a>    <span class="k">def</span> <span class="nf">df_fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;alias of df_model for backwards compatibility</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">df_model</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="PolySmoother.df_model"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.PolySmoother.df_model.html#statsmodels.sandbox.gam.PolySmoother.df_model">[docs]</a>    <span class="k">def</span> <span class="nf">df_model</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Degrees of freedom used in the fit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">+</span> <span class="mi">1</span></div>
+
+<div class="viewcode-block" id="PolySmoother.gram"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.PolySmoother.gram.html#statsmodels.sandbox.gam.PolySmoother.gram">[docs]</a>    <span class="k">def</span> <span class="nf">gram</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1">#fake for spline imitation</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="PolySmoother.smooth"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.PolySmoother.smooth.html#statsmodels.sandbox.gam.PolySmoother.smooth">[docs]</a>    <span class="k">def</span> <span class="nf">smooth</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;alias for fit,  for backwards compatibility,</span>
+
+<span class="sd">        do we need it with different behavior than fit?</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="PolySmoother.df_resid"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.PolySmoother.df_resid.html#statsmodels.sandbox.gam.PolySmoother.df_resid">[docs]</a>    <span class="k">def</span> <span class="nf">df_resid</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Residual degrees of freedom from last fit.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">-</span> <span class="mi">1</span></div>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">)</span>
+
+
+<div class="viewcode-block" id="PolySmoother.predict"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.PolySmoother.predict.html#statsmodels.sandbox.gam.PolySmoother.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1">#if x.ndim &gt; 1: x=x[0,:]  #why this this should select column not row</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: 2d x detected in PolySmoother predict, shape:&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="n">x</span><span class="o">=</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span>  <span class="c1">#TODO: check and clean this up</span>
+            <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">x</span><span class="o">**</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span>
+        <span class="k">else</span><span class="p">:</span> <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span>
+        <span class="c1">#return np.squeeze(np.dot(X.T, self.coef))</span>
+        <span class="c1">#need to check what dimension this is supposed to be</span>
+        <span class="k">if</span> <span class="n">X</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef</span><span class="p">))</span><span class="c1">#[0]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">X</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">coef</span><span class="p">))</span><span class="c1">#[0]</span></div>
+
+<div class="viewcode-block" id="PolySmoother.fit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.smoothers.PolySmoother.fit.html#statsmodels.sandbox.gam.PolySmoother.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">y</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">y</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">y</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">weights</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">_w</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">weights</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">x</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;X&quot;</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;x needed to fit PolySmoother&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span> 
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Warning: 2d x detected in PolySmoother predict, shape:&#39;</span><span class="p">,</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+                <span class="c1">#x=x[0,:] #TODO: check orientation, row or col</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([(</span><span class="n">x</span><span class="o">**</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span><span class="o">+</span><span class="mi">1</span><span class="p">)])</span><span class="o">.</span><span class="n">T</span>
+        <span class="c1">#print _w.shape</span>
+
+        <span class="n">X</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">X</span> <span class="o">*</span> <span class="n">_w</span>
+
+        <span class="n">_y</span> <span class="o">=</span> <span class="n">y</span> <span class="o">*</span> <span class="n">_w</span><span class="c1">#[:,None]</span>
+        <span class="c1">#self.coef = np.dot(L.pinv(X).T, _y[:,None])</span>
+        <span class="c1">#self.coef = np.dot(L.pinv(X), _y)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coef</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">_y</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">squeeze</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coef</span><span class="p">)</span></div></div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="c1"># comment out for now to remove dependency on _hbspline</span>
+
+<span class="c1">##class SmoothingSpline(BSpline):</span>
+<span class="c1">##</span>
+<span class="c1">##    penmax = 30.</span>
+<span class="c1">##</span>
+<span class="c1">##    def fit(self, y, x=None, weights=None, pen=0.):</span>
+<span class="c1">##        banded = True</span>
+<span class="c1">##</span>
+<span class="c1">##        if x is None:</span>
+<span class="c1">##            x = self.tau[(self.M-1):-(self.M-1)] # internal knots</span>
+<span class="c1">##</span>
+<span class="c1">##        if pen == 0.: # can&#39;t use cholesky for singular matrices</span>
+<span class="c1">##            banded = False</span>
+<span class="c1">##</span>
+<span class="c1">##        if x.shape != y.shape:</span>
+<span class="c1">##            raise ValueError(&#39;x and y shape do not agree, by default x are the Bspline\&#39;s internal knots&#39;)</span>
+<span class="c1">##</span>
+<span class="c1">##        bt = self.basis(x)</span>
+<span class="c1">##        if pen &gt;= self.penmax:</span>
+<span class="c1">##            pen = self.penmax</span>
+<span class="c1">##</span>
+<span class="c1">##        if weights is None:</span>
+<span class="c1">##            weights = np.array(1.)</span>
+<span class="c1">##</span>
+<span class="c1">##        wmean = weights.mean()</span>
+<span class="c1">##        _w = np.sqrt(weights / wmean)</span>
+<span class="c1">##        bt *= _w</span>
+<span class="c1">##</span>
+<span class="c1">##        # throw out rows with zeros (this happens at boundary points!)</span>
+<span class="c1">##</span>
+<span class="c1">##        mask = np.flatnonzero(1 - np.alltrue(np.equal(bt, 0), axis=0))</span>
+<span class="c1">##</span>
+<span class="c1">##        bt = bt[:, mask]</span>
+<span class="c1">##        y = y[mask]</span>
+<span class="c1">##</span>
+<span class="c1">##        self.df_total = y.shape[0]</span>
+<span class="c1">##</span>
+<span class="c1">##        if bt.shape[1] != y.shape[0]:</span>
+<span class="c1">##            raise ValueError(&quot;some x values are outside range of B-spline knots&quot;)</span>
+<span class="c1">##        bty = np.dot(bt, _w * y)</span>
+<span class="c1">##        self.N = y.shape[0]</span>
+<span class="c1">##        if not banded:</span>
+<span class="c1">##            self.btb = np.dot(bt, bt.T)</span>
+<span class="c1">##            _g = _band2array(self.g, lower=1, symmetric=True)</span>
+<span class="c1">##            self.coef, _, self.rank = L.lstsq(self.btb + pen*_g, bty)[0:3]</span>
+<span class="c1">##            self.rank = min(self.rank, self.btb.shape[0])</span>
+<span class="c1">##        else:</span>
+<span class="c1">##            self.btb = np.zeros(self.g.shape, np.float64)</span>
+<span class="c1">##            nband, nbasis = self.g.shape</span>
+<span class="c1">##            for i in range(nbasis):</span>
+<span class="c1">##                for k in range(min(nband, nbasis-i)):</span>
+<span class="c1">##                    self.btb[k, i] = (bt[i] * bt[i+k]).sum()</span>
+<span class="c1">##</span>
+<span class="c1">##            bty.shape = (1, bty.shape[0])</span>
+<span class="c1">##            self.chol, self.coef = solveh_banded(self.btb +</span>
+<span class="c1">##                                                 pen*self.g,</span>
+<span class="c1">##                                                 bty, lower=1)</span>
+<span class="c1">##</span>
+<span class="c1">##        self.coef = np.squeeze(self.coef)</span>
+<span class="c1">##        self.resid = np.sqrt(wmean) * (y * _w - np.dot(self.coef, bt))</span>
+<span class="c1">##        self.pen = pen</span>
+<span class="c1">##</span>
+<span class="c1">##    def gcv(self):</span>
+<span class="c1">##        &quot;&quot;&quot;</span>
+<span class="c1">##        Generalized cross-validation score of current fit.</span>
+<span class="c1">##        &quot;&quot;&quot;</span>
+<span class="c1">##</span>
+<span class="c1">##        norm_resid = (self.resid**2).sum()</span>
+<span class="c1">##        return norm_resid / (self.df_total - self.trace())</span>
+<span class="c1">##</span>
+<span class="c1">##    def df_resid(self):</span>
+<span class="c1">##        &quot;&quot;&quot;</span>
+<span class="c1">##        self.N - self.trace()</span>
+<span class="c1">##</span>
+<span class="c1">##        where self.N is the number of observations of last fit.</span>
+<span class="c1">##        &quot;&quot;&quot;</span>
+<span class="c1">##</span>
+<span class="c1">##        return self.N - self.trace()</span>
+<span class="c1">##</span>
+<span class="c1">##    def df_fit(self):</span>
+<span class="c1">##        &quot;&quot;&quot;</span>
+<span class="c1">##        = self.trace()</span>
+<span class="c1">##</span>
+<span class="c1">##        How many degrees of freedom used in the fit?</span>
+<span class="c1">##        &quot;&quot;&quot;</span>
+<span class="c1">##        return self.trace()</span>
+<span class="c1">##</span>
+<span class="c1">##    def trace(self):</span>
+<span class="c1">##        &quot;&quot;&quot;</span>
+<span class="c1">##        Trace of the smoothing matrix S(pen)</span>
+<span class="c1">##        &quot;&quot;&quot;</span>
+<span class="c1">##</span>
+<span class="c1">##        if self.pen &gt; 0:</span>
+<span class="c1">##            _invband = _hbspline.invband(self.chol.copy())</span>
+<span class="c1">##            tr = _trace_symbanded(_invband, self.btb, lower=1)</span>
+<span class="c1">##            return tr</span>
+<span class="c1">##        else:</span>
+<span class="c1">##            return self.rank</span>
+<span class="c1">##</span>
+<span class="c1">##class SmoothingSplineFixedDF(SmoothingSpline):</span>
+<span class="c1">##    &quot;&quot;&quot;</span>
+<span class="c1">##    Fit smoothing spline with approximately df degrees of freedom</span>
+<span class="c1">##    used in the fit, i.e. so that self.trace() is approximately df.</span>
+<span class="c1">##</span>
+<span class="c1">##    In general, df must be greater than the dimension of the null space</span>
+<span class="c1">##    of the Gram inner product. For cubic smoothing splines, this means</span>
+<span class="c1">##    that df &gt; 2.</span>
+<span class="c1">##    &quot;&quot;&quot;</span>
+<span class="c1">##</span>
+<span class="c1">##    target_df = 5</span>
+<span class="c1">##</span>
+<span class="c1">##    def __init__(self, knots, order=4, coef=None, M=None, target_df=None):</span>
+<span class="c1">##        if target_df is not None:</span>
+<span class="c1">##            self.target_df = target_df</span>
+<span class="c1">##        BSpline.__init__(self, knots, order=order, coef=coef, M=M)</span>
+<span class="c1">##        self.target_reached = False</span>
+<span class="c1">##</span>
+<span class="c1">##    def fit(self, y, x=None, df=None, weights=None, tol=1.0e-03):</span>
+<span class="c1">##</span>
+<span class="c1">##        df = df or self.target_df</span>
+<span class="c1">##</span>
+<span class="c1">##        apen, bpen = 0, 1.0e-03</span>
+<span class="c1">##        olddf = y.shape[0] - self.m</span>
+<span class="c1">##</span>
+<span class="c1">##        if not self.target_reached:</span>
+<span class="c1">##            while True:</span>
+<span class="c1">##                curpen = 0.5 * (apen + bpen)</span>
+<span class="c1">##                SmoothingSpline.fit(self, y, x=x, weights=weights, pen=curpen)</span>
+<span class="c1">##                curdf = self.trace()</span>
+<span class="c1">##                if curdf &gt; df:</span>
+<span class="c1">##                    apen, bpen = curpen, 2 * curpen</span>
+<span class="c1">##                else:</span>
+<span class="c1">##                    apen, bpen = apen, curpen</span>
+<span class="c1">##                    if apen &gt;= self.penmax:</span>
+<span class="c1">##                        raise ValueError(&quot;penalty too large, try setting penmax higher or decreasing df&quot;)</span>
+<span class="c1">##                if np.fabs(curdf - df) / df &lt; tol:</span>
+<span class="c1">##                    self.target_reached = True</span>
+<span class="c1">##                    break</span>
+<span class="c1">##        else:</span>
+<span class="c1">##            SmoothingSpline.fit(self, y, x=x, weights=weights, pen=self.pen)</span>
+<span class="c1">##</span>
+<span class="c1">##class SmoothingSplineGCV(SmoothingSpline):</span>
+<span class="c1">##</span>
+<span class="c1">##    &quot;&quot;&quot;</span>
+<span class="c1">##    Fit smoothing spline trying to optimize GCV.</span>
+<span class="c1">##</span>
+<span class="c1">##    Try to find a bracketing interval for scipy.optimize.golden</span>
+<span class="c1">##    based on bracket.</span>
+<span class="c1">##</span>
+<span class="c1">##    It is probably best to use target_df instead, as it is</span>
+<span class="c1">##    sometimes difficult to find a bracketing interval.</span>
+<span class="c1">##</span>
+<span class="c1">##    &quot;&quot;&quot;</span>
+<span class="c1">##</span>
+<span class="c1">##    def fit(self, y, x=None, weights=None, tol=1.0e-03,</span>
+<span class="c1">##            bracket=(0,1.0e-03)):</span>
+<span class="c1">##</span>
+<span class="c1">##        def _gcv(pen, y, x):</span>
+<span class="c1">##            SmoothingSpline.fit(y, x=x, pen=np.exp(pen), weights=weights)</span>
+<span class="c1">##            a = self.gcv()</span>
+<span class="c1">##            return a</span>
+<span class="c1">##</span>
+<span class="c1">##        a = golden(_gcv, args=(y,x), brack=(-100,20), tol=tol)</span>
+<span class="c1">##</span>
+<span class="c1">##def _trace_symbanded(a,b, lower=0):</span>
+<span class="c1">##    &quot;&quot;&quot;</span>
+<span class="c1">##    Compute the trace(a*b) for two upper or lower banded real symmetric matrices.</span>
+<span class="c1">##    &quot;&quot;&quot;</span>
+<span class="c1">##</span>
+<span class="c1">##    if lower:</span>
+<span class="c1">##        t = _zero_triband(a * b, lower=1)</span>
+<span class="c1">##        return t[0].sum() + 2 * t[1:].sum()</span>
+<span class="c1">##    else:</span>
+<span class="c1">##        t = _zero_triband(a * b, lower=0)</span>
+<span class="c1">##        return t[-1].sum() + 2 * t[:-1].sum()</span>
+<span class="c1">##</span>
+<span class="c1">##</span>
+<span class="c1">##</span>
+<span class="c1">##def _zero_triband(a, lower=0):</span>
+<span class="c1">##    &quot;&quot;&quot;</span>
+<span class="c1">##    Zero out unnecessary elements of a real symmetric banded matrix.</span>
+<span class="c1">##    &quot;&quot;&quot;</span>
+<span class="c1">##</span>
+<span class="c1">##    nrow, ncol = a.shape</span>
+<span class="c1">##    if lower:</span>
+<span class="c1">##        for i in range(nrow): a[i,(ncol-i):] = 0.</span>
+<span class="c1">##    else:</span>
+<span class="c1">##        for i in range(nrow): a[i,0:i] = 0.</span>
+<span class="c1">##    return a</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

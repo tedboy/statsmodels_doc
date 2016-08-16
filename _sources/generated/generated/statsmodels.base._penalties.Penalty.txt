@@ -1,0 +1,23 @@
+statsmodels.base._penalties.Penalty
+===================================
+
+.. currentmodule:: statsmodels.base._penalties
+.. autoclass:: Penalty
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Penalty.__init__
+   ~Penalty.func
+   ~Penalty.grad
+
+
+
+
+

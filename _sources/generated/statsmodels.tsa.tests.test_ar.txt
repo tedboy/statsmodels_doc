@@ -1,0 +1,55 @@
+statsmodels.tsa.tests.test_ar
+=============================
+
+.. automodule:: statsmodels.tsa.tests.test_ar
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      assert_equal
+      test_ar_dates
+      test_ar_named_series
+      test_ar_series
+      test_ar_start_params
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      AR
+      CheckARMixin
+      TestARMLEConstant
+      TestAROLSConstant
+      TestAROLSNoConstant
+      TestAutolagAR
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tsa.tests.test_ar.AR
+       generated/statsmodels.tsa.tests.test_ar.CheckARMixin
+       generated/statsmodels.tsa.tests.test_ar.TestARMLEConstant
+       generated/statsmodels.tsa.tests.test_ar.TestAROLSConstant
+       generated/statsmodels.tsa.tests.test_ar.TestAROLSNoConstant
+       generated/statsmodels.tsa.tests.test_ar.TestAutolagAR
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,45 @@
+statsmodels.genmod.families
+===========================
+
+.. automodule:: statsmodels.genmod.families
+
+   
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Binomial
+      Family
+      Gamma
+      Gaussian
+      InverseGaussian
+      NegativeBinomial
+      Poisson
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.genmod.families.Binomial
+       generated/statsmodels.genmod.families.Family
+       generated/statsmodels.genmod.families.Gamma
+       generated/statsmodels.genmod.families.Gaussian
+       generated/statsmodels.genmod.families.InverseGaussian
+       generated/statsmodels.genmod.families.NegativeBinomial
+       generated/statsmodels.genmod.families.Poisson
+
+   
+   
+
+   
+   
+   

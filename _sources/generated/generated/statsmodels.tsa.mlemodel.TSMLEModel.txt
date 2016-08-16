@@ -1,0 +1,39 @@
+statsmodels.tsa.mlemodel.TSMLEModel
+===================================
+
+.. currentmodule:: statsmodels.tsa.mlemodel
+.. autoclass:: TSMLEModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TSMLEModel.__init__
+   ~TSMLEModel.fit
+   ~TSMLEModel.from_formula
+   ~TSMLEModel.geterrors
+   ~TSMLEModel.hessian
+   ~TSMLEModel.information
+   ~TSMLEModel.initialize
+   ~TSMLEModel.loglike
+   ~TSMLEModel.predict
+   ~TSMLEModel.score
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TSMLEModel.endog_names
+   ~TSMLEModel.exog_names
+

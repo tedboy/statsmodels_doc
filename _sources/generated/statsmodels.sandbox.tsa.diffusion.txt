@@ -1,0 +1,49 @@
+statsmodels.sandbox.tsa.diffusion
+=================================
+
+.. automodule:: statsmodels.sandbox.tsa.diffusion
+
+   
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      AffineDiffusion
+      ArithmeticBrownian
+      BrownianBridge
+      CompoundPoisson
+      Diffusion
+      ExactDiffusion
+      GeometricBrownian
+      OUprocess
+      SchwartzOne
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.tsa.diffusion.AffineDiffusion
+       generated/statsmodels.sandbox.tsa.diffusion.ArithmeticBrownian
+       generated/statsmodels.sandbox.tsa.diffusion.BrownianBridge
+       generated/statsmodels.sandbox.tsa.diffusion.CompoundPoisson
+       generated/statsmodels.sandbox.tsa.diffusion.Diffusion
+       generated/statsmodels.sandbox.tsa.diffusion.ExactDiffusion
+       generated/statsmodels.sandbox.tsa.diffusion.GeometricBrownian
+       generated/statsmodels.sandbox.tsa.diffusion.OUprocess
+       generated/statsmodels.sandbox.tsa.diffusion.SchwartzOne
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,54 @@
+statsmodels.discrete.discrete_model.OrderedResults
+==================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: OrderedResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OrderedResults.__init__
+   ~OrderedResults.aic
+   ~OrderedResults.bic
+   ~OrderedResults.bse
+   ~OrderedResults.conf_int
+   ~OrderedResults.cov_params
+   ~OrderedResults.f_test
+   ~OrderedResults.fittedvalues
+   ~OrderedResults.get_margeff
+   ~OrderedResults.initialize
+   ~OrderedResults.llf
+   ~OrderedResults.llnull
+   ~OrderedResults.llr
+   ~OrderedResults.llr_pvalue
+   ~OrderedResults.load
+   ~OrderedResults.normalized_cov_params
+   ~OrderedResults.predict
+   ~OrderedResults.prsquared
+   ~OrderedResults.pvalues
+   ~OrderedResults.remove_data
+   ~OrderedResults.save
+   ~OrderedResults.summary
+   ~OrderedResults.summary2
+   ~OrderedResults.t_test
+   ~OrderedResults.tvalues
+   ~OrderedResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~OrderedResults.use_t
+

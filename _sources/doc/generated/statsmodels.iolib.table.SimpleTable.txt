@@ -1,0 +1,47 @@
+statsmodels.iolib.table.SimpleTable
+===================================
+
+.. currentmodule:: statsmodels.iolib.table
+
+.. autoclass:: SimpleTable
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~SimpleTable.__init__
+      ~SimpleTable.append
+      ~SimpleTable.as_csv
+      ~SimpleTable.as_html
+      ~SimpleTable.as_latex_tabular
+      ~SimpleTable.as_text
+      ~SimpleTable.count
+      ~SimpleTable.extend
+      ~SimpleTable.extend_right
+      ~SimpleTable.get_colwidths
+      ~SimpleTable.index
+      ~SimpleTable.insert
+      ~SimpleTable.insert_header_row
+      ~SimpleTable.insert_stubs
+      ~SimpleTable.label_cells
+      ~SimpleTable.pad
+      ~SimpleTable.pop
+      ~SimpleTable.remove
+      ~SimpleTable.reverse
+      ~SimpleTable.sort
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~SimpleTable.data
+   
+   

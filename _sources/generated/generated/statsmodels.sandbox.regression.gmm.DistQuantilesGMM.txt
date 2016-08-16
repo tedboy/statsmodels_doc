@@ -1,0 +1,48 @@
+statsmodels.sandbox.regression.gmm.DistQuantilesGMM
+===================================================
+
+.. currentmodule:: statsmodels.sandbox.regression.gmm
+.. autoclass:: DistQuantilesGMM
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~DistQuantilesGMM.__init__
+   ~DistQuantilesGMM.calc_weightmatrix
+   ~DistQuantilesGMM.fit
+   ~DistQuantilesGMM.fitgmm
+   ~DistQuantilesGMM.fitgmm_cu
+   ~DistQuantilesGMM.fititer
+   ~DistQuantilesGMM.fitonce
+   ~DistQuantilesGMM.fitstart
+   ~DistQuantilesGMM.from_formula
+   ~DistQuantilesGMM.gmmobjective
+   ~DistQuantilesGMM.gmmobjective_cu
+   ~DistQuantilesGMM.gradient_momcond
+   ~DistQuantilesGMM.momcond
+   ~DistQuantilesGMM.momcond_mean
+   ~DistQuantilesGMM.predict
+   ~DistQuantilesGMM.score
+   ~DistQuantilesGMM.score_cu
+   ~DistQuantilesGMM.start_weights
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~DistQuantilesGMM.endog_names
+   ~DistQuantilesGMM.exog_names
+   ~DistQuantilesGMM.results_class
+

@@ -1,0 +1,59 @@
+statsmodels.tsa.tests.test_arima.CheckArimaResultsMixin
+=======================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: CheckArimaResultsMixin
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CheckArimaResultsMixin.test_aic
+   ~CheckArimaResultsMixin.test_arroots
+   ~CheckArimaResultsMixin.test_bic
+   ~CheckArimaResultsMixin.test_bse
+   ~CheckArimaResultsMixin.test_covparams
+   ~CheckArimaResultsMixin.test_fittedvalues
+   ~CheckArimaResultsMixin.test_hqic
+   ~CheckArimaResultsMixin.test_llf
+   ~CheckArimaResultsMixin.test_maroots
+   ~CheckArimaResultsMixin.test_order
+   ~CheckArimaResultsMixin.test_params
+   ~CheckArimaResultsMixin.test_predict_levels
+   ~CheckArimaResultsMixin.test_pvalues
+   ~CheckArimaResultsMixin.test_resid
+   ~CheckArimaResultsMixin.test_sigma2
+   ~CheckArimaResultsMixin.test_summary
+   ~CheckArimaResultsMixin.test_tvalues
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~CheckArimaResultsMixin.decimal_aic
+   ~CheckArimaResultsMixin.decimal_arroots
+   ~CheckArimaResultsMixin.decimal_bic
+   ~CheckArimaResultsMixin.decimal_bse
+   ~CheckArimaResultsMixin.decimal_cov_params
+   ~CheckArimaResultsMixin.decimal_fittedvalues
+   ~CheckArimaResultsMixin.decimal_hqic
+   ~CheckArimaResultsMixin.decimal_llf
+   ~CheckArimaResultsMixin.decimal_maroots
+   ~CheckArimaResultsMixin.decimal_params
+   ~CheckArimaResultsMixin.decimal_predict_levels
+   ~CheckArimaResultsMixin.decimal_pvalues
+   ~CheckArimaResultsMixin.decimal_resid
+   ~CheckArimaResultsMixin.decimal_sigma2
+   ~CheckArimaResultsMixin.decimal_t
+

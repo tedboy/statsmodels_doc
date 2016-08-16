@@ -1,0 +1,25 @@
+statsmodels.discrete.discrete_model.OrderedResultsWrapper
+=========================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: OrderedResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OrderedResultsWrapper.__init__
+   ~OrderedResultsWrapper.conf_int
+   ~OrderedResultsWrapper.cov_params
+   ~OrderedResultsWrapper.load
+   ~OrderedResultsWrapper.save
+
+
+
+
+

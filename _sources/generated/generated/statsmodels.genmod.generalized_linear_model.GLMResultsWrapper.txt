@@ -1,0 +1,25 @@
+statsmodels.genmod.generalized_linear_model.GLMResultsWrapper
+=============================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_linear_model
+.. autoclass:: GLMResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GLMResultsWrapper.__init__
+   ~GLMResultsWrapper.conf_int
+   ~GLMResultsWrapper.cov_params
+   ~GLMResultsWrapper.load
+   ~GLMResultsWrapper.save
+
+
+
+
+

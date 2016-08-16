@@ -1,0 +1,535 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.stats.tabledist &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.stats.tabledist</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.stats.tabledist</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Sat Oct 01 20:20:16 2011</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License: BSD-3</span>
+
+
+<span class="sd">TODO:</span>
+<span class="sd">check orientation, size and alpha should be increasing for interp1d,</span>
+<span class="sd">but what is alpha? can be either sf or cdf probability</span>
+<span class="sd">change it to use one consistent notation</span>
+
+<span class="sd">check: instead of bound checking I could use the fill-value of the interpolators</span>
+
+
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.interpolate</span> <span class="k">import</span> <span class="n">interp1d</span><span class="p">,</span> <span class="n">interp2d</span><span class="p">,</span> <span class="n">Rbf</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tools.decorators</span> <span class="k">import</span> <span class="n">cache_readonly</span>
+
+
+<div class="viewcode-block" id="TableDist"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.tabledist.TableDist.html#statsmodels.stats.tabledist.TableDist">[docs]</a><span class="k">class</span> <span class="nc">TableDist</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Distribution, critical values and p-values from tables</span>
+
+<span class="sd">    currently only 1 extra parameter, e.g. sample size</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    alpha : array_like, 1d</span>
+<span class="sd">        probabiliy in the table, could be either sf (right tail) or cdf (left</span>
+<span class="sd">        tail)</span>
+<span class="sd">    size : array_like, 1d</span>
+<span class="sd">        second paramater in the table</span>
+<span class="sd">    crit_table : array_like, 2d</span>
+<span class="sd">        array with critical values for sample size in rows and probability in</span>
+<span class="sd">        columns</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    size and alpha should be increasing</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="TableDist.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.tabledist.TableDist.__init__.html#statsmodels.stats.tabledist.TableDist.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">alpha</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">crit_table</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">crit_table</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">crit_table</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_alpha</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">signcrit</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">crit_table</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signcrit</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span> <span class="c1">#increasing</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">critv_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crit_table</span><span class="p">[:,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">critv_bounds</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">crit_table</span><span class="p">[:,[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]]</span></div>
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="TableDist.polyn"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.tabledist.TableDist.polyn.html#statsmodels.stats.tabledist.TableDist.polyn">[docs]</a>    <span class="k">def</span> <span class="nf">polyn</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">polyn</span> <span class="o">=</span> <span class="p">[</span><span class="n">interp1d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crit_table</span><span class="p">[:,</span><span class="n">i</span><span class="p">])</span>
+                               <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">n_alpha</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="n">polyn</span></div>
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="TableDist.poly2d"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.tabledist.TableDist.poly2d.html#statsmodels.stats.tabledist.TableDist.poly2d">[docs]</a>    <span class="k">def</span> <span class="nf">poly2d</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#check for monotonicity ?</span>
+        <span class="c1">#fix this, interp needs increasing</span>
+        <span class="n">poly2d</span> <span class="o">=</span> <span class="n">interp2d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">crit_table</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">poly2d</span></div>
+
+    <span class="nd">@cache_readonly</span>
+<div class="viewcode-block" id="TableDist.polyrbf"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.tabledist.TableDist.polyrbf.html#statsmodels.stats.tabledist.TableDist.polyrbf">[docs]</a>    <span class="k">def</span> <span class="nf">polyrbf</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">xs</span><span class="p">,</span> <span class="n">xa</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">meshgrid</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">size</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">float</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span><span class="p">)</span>
+        <span class="n">polyrbf</span> <span class="o">=</span> <span class="n">Rbf</span><span class="p">(</span><span class="n">xs</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">xa</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="bp">self</span><span class="o">.</span><span class="n">crit_table</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span><span class="n">function</span><span class="o">=</span><span class="s1">&#39;linear&#39;</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">polyrbf</span></div>
+
+    <span class="k">def</span> <span class="nf">_critvals</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;rows of the table, linearly interpolated for given sample size</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n : float</span>
+<span class="sd">            sample size, second parameter of the table</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        critv : ndarray, 1d</span>
+<span class="sd">            critical values (ppf) corresponding to a row of the table</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        This is used in two step interpolation, or if we want to know the</span>
+<span class="sd">        critical values for all alphas for any sample size that we can obtain</span>
+<span class="sd">        through interpolation</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">p</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyn</span><span class="p">])</span>
+
+<div class="viewcode-block" id="TableDist.prob"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.tabledist.TableDist.prob.html#statsmodels.stats.tabledist.TableDist.prob">[docs]</a>    <span class="k">def</span> <span class="nf">prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;find pvalues by interpolation, eiter cdf(x) or sf(x)</span>
+
+<span class="sd">        returns extrem probabilities, 0.001 and 0.2, for out of range</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : array_like</span>
+<span class="sd">            observed value, assumed to follow the distribution in the table</span>
+<span class="sd">        n : float</span>
+<span class="sd">            sample size, second parameter of the table</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        prob : arraylike</span>
+<span class="sd">            This is the probability for each value of x, the p-value in</span>
+<span class="sd">            underlying distribution is for a statistical test.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">critv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_critvals</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+<span class="c1">#        if self.signcrit == 1:</span>
+<span class="c1">#            if x &lt; critv[0]:  #generalize: ? np.sign(x - critvals[0]) == self.signcrit:</span>
+<span class="c1">#                return alpha[0]</span>
+<span class="c1">#            elif x &gt; critv[-1]:</span>
+<span class="c1">#                return alpha[-1]</span>
+<span class="c1">#        elif self.signcrit == -1:</span>
+<span class="c1">#            if x &gt; critv[0]:</span>
+<span class="c1">#                return alpha[0]</span>
+<span class="c1">#            elif x &lt; critv[-1]:</span>
+<span class="c1">#                return alpha[-1]</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">signcrit</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="c1">#reverse if critv is decreasing</span>
+            <span class="n">critv</span><span class="p">,</span> <span class="n">alpha</span> <span class="o">=</span> <span class="n">critv</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">alpha</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="c1">#now critv is increasing</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">x</span> <span class="o">&lt;</span> <span class="n">critv</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="k">elif</span> <span class="n">x</span> <span class="o">&gt;</span> <span class="n">critv</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">return</span> <span class="n">alpha</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="k">return</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">critv</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)(</span><span class="n">x</span><span class="p">)[()]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="c1">#vectorized</span>
+            <span class="n">cond_low</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&lt;</span> <span class="n">critv</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+            <span class="n">cond_high</span> <span class="o">=</span> <span class="p">(</span><span class="n">x</span> <span class="o">&gt;</span> <span class="n">critv</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">cond_interior</span> <span class="o">=</span> <span class="o">~</span><span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">cond_low</span><span class="p">,</span> <span class="n">cond_high</span><span class="p">)</span>
+
+            <span class="n">probs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1">#mistake if nan left</span>
+            <span class="n">probs</span><span class="p">[</span><span class="n">cond_low</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="n">probs</span><span class="p">[</span><span class="n">cond_low</span><span class="p">]</span> <span class="o">=</span> <span class="n">alpha</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">probs</span><span class="p">[</span><span class="n">cond_interior</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">critv</span><span class="p">,</span> <span class="n">alpha</span><span class="p">)(</span><span class="n">x</span><span class="p">[</span><span class="n">cond_interior</span><span class="p">])</span>
+
+            <span class="k">return</span> <span class="n">probs</span></div>
+
+
+<div class="viewcode-block" id="TableDist.crit2"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.tabledist.TableDist.crit2.html#statsmodels.stats.tabledist.TableDist.crit2">[docs]</a>    <span class="k">def</span> <span class="nf">crit2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;returns interpolated quantiles, similar to ppf or isf</span>
+
+<span class="sd">        this can be either cdf or sf depending on the table, twosided?</span>
+
+<span class="sd">        this doesn&#39;t work, no more knots warning</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">poly2d</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">prob</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="TableDist.crit"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.tabledist.TableDist.crit.html#statsmodels.stats.tabledist.TableDist.crit">[docs]</a>    <span class="k">def</span> <span class="nf">crit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;returns interpolated quantiles, similar to ppf or isf</span>
+
+<span class="sd">        use two sequential 1d interpolation, first by n then by prob</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prob : array_like</span>
+<span class="sd">            probabilities corresponding to the definition of table columns</span>
+<span class="sd">        n : int or float</span>
+<span class="sd">            sample size, second parameter of the table</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ppf : array_like</span>
+<span class="sd">            critical values with same shape as prob</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+        <span class="n">critv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_critvals</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+        <span class="c1">#vectorized</span>
+        <span class="n">cond_ilow</span> <span class="o">=</span> <span class="p">(</span><span class="n">prob</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">cond_ihigh</span> <span class="o">=</span> <span class="p">(</span><span class="n">prob</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">cond_interior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">cond_ilow</span><span class="p">,</span> <span class="n">cond_ihigh</span><span class="p">)</span>
+
+        <span class="c1">#scalar</span>
+        <span class="k">if</span> <span class="n">prob</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cond_interior</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">critv</span><span class="p">)(</span><span class="n">prob</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="c1">#vectorized</span>
+        <span class="n">quantile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1">#nans for outside</span>
+        <span class="n">quantile</span><span class="p">[</span><span class="n">cond_interior</span><span class="p">]</span> <span class="o">=</span> <span class="n">interp1d</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">critv</span><span class="p">)(</span><span class="n">prob</span><span class="p">[</span><span class="n">cond_interior</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">quantile</span></div>
+
+<div class="viewcode-block" id="TableDist.crit3"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.tabledist.TableDist.crit3.html#statsmodels.stats.tabledist.TableDist.crit3">[docs]</a>    <span class="k">def</span> <span class="nf">crit3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prob</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;returns interpolated quantiles, similar to ppf or isf</span>
+
+<span class="sd">        uses Rbf to interpolate critical values as function of `prob` and `n`</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        prob : array_like</span>
+<span class="sd">            probabilities corresponding to the definition of table columns</span>
+<span class="sd">        n : int or float</span>
+<span class="sd">            sample size, second parameter of the table</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        ppf : array_like</span>
+<span class="sd">            critical values with same shape as prob, returns nan for arguments</span>
+<span class="sd">            that are outside of the table bounds</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">prob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">prob</span><span class="p">)</span>
+        <span class="n">alpha</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">alpha</span>
+
+        <span class="c1">#vectorized</span>
+        <span class="n">cond_ilow</span> <span class="o">=</span> <span class="p">(</span><span class="n">prob</span> <span class="o">&gt;</span> <span class="n">alpha</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">cond_ihigh</span> <span class="o">=</span> <span class="p">(</span><span class="n">prob</span> <span class="o">&lt;</span> <span class="n">alpha</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">cond_interior</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_or</span><span class="p">(</span><span class="n">cond_ilow</span><span class="p">,</span> <span class="n">cond_ihigh</span><span class="p">)</span>
+
+        <span class="c1">#scalar</span>
+        <span class="k">if</span> <span class="n">prob</span><span class="o">.</span><span class="n">size</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">cond_interior</span><span class="p">:</span>
+                <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyrbf</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">prob</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+
+        <span class="c1">#vectorized</span>
+        <span class="n">quantile</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">prob</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span> <span class="c1">#nans for outside</span>
+
+        <span class="n">quantile</span><span class="p">[</span><span class="n">cond_interior</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polyrbf</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">prob</span><span class="p">[</span><span class="n">cond_interior</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">quantile</span></div></div>
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    example Lilliefors test for normality</span>
+<span class="sd">    An Analytic Approximation to the Distribution of Lilliefors&#39;s Test Statistic for Normality</span>
+<span class="sd">    Author(s): Gerard E. Dallal and Leland WilkinsonSource: The American Statistician, Vol. 40, No. 4 (Nov., 1986), pp. 294-296Published by: American Statistical AssociationStable URL: http://www.jstor.org/stable/2684607 .</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1">#for this test alpha is sf probability, i.e. right tail probability</span>
+
+    <span class="n">alpha</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">0.2</span>  <span class="p">,</span>  <span class="mf">0.15</span> <span class="p">,</span>  <span class="mf">0.1</span>  <span class="p">,</span>  <span class="mf">0.05</span> <span class="p">,</span>  <span class="mf">0.01</span> <span class="p">,</span>  <span class="mf">0.001</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">size</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mi">4</span><span class="p">,</span>   <span class="mi">5</span><span class="p">,</span>   <span class="mi">6</span><span class="p">,</span>   <span class="mi">7</span><span class="p">,</span>   <span class="mi">8</span><span class="p">,</span>   <span class="mi">9</span><span class="p">,</span>  <span class="mi">10</span><span class="p">,</span>  <span class="mi">11</span><span class="p">,</span>  <span class="mi">12</span><span class="p">,</span>  <span class="mi">13</span><span class="p">,</span>  <span class="mi">14</span><span class="p">,</span>  <span class="mi">15</span><span class="p">,</span>
+                     <span class="mi">16</span><span class="p">,</span>  <span class="mi">17</span><span class="p">,</span>  <span class="mi">18</span><span class="p">,</span>  <span class="mi">19</span><span class="p">,</span>  <span class="mi">20</span><span class="p">,</span>  <span class="mi">25</span><span class="p">,</span>  <span class="mi">30</span><span class="p">,</span>  <span class="mi">40</span><span class="p">,</span> <span class="mi">100</span><span class="p">,</span> <span class="mi">400</span><span class="p">,</span> <span class="mi">900</span><span class="p">],</span> <span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1">#critical values, rows are by sample size, columns are by alpha</span>
+    <span class="n">crit_lf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span>   <span class="p">[[</span><span class="mi">303</span><span class="p">,</span> <span class="mi">321</span><span class="p">,</span> <span class="mi">346</span><span class="p">,</span> <span class="mi">376</span><span class="p">,</span> <span class="mi">413</span><span class="p">,</span> <span class="mi">433</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">289</span><span class="p">,</span> <span class="mi">303</span><span class="p">,</span> <span class="mi">319</span><span class="p">,</span> <span class="mi">343</span><span class="p">,</span> <span class="mi">397</span><span class="p">,</span> <span class="mi">439</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">269</span><span class="p">,</span> <span class="mi">281</span><span class="p">,</span> <span class="mi">297</span><span class="p">,</span> <span class="mi">323</span><span class="p">,</span> <span class="mi">371</span><span class="p">,</span> <span class="mi">424</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">252</span><span class="p">,</span> <span class="mi">264</span><span class="p">,</span> <span class="mi">280</span><span class="p">,</span> <span class="mi">304</span><span class="p">,</span> <span class="mi">351</span><span class="p">,</span> <span class="mi">402</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">239</span><span class="p">,</span> <span class="mi">250</span><span class="p">,</span> <span class="mi">265</span><span class="p">,</span> <span class="mi">288</span><span class="p">,</span> <span class="mi">333</span><span class="p">,</span> <span class="mi">384</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">227</span><span class="p">,</span> <span class="mi">238</span><span class="p">,</span> <span class="mi">252</span><span class="p">,</span> <span class="mi">274</span><span class="p">,</span> <span class="mi">317</span><span class="p">,</span> <span class="mi">365</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">217</span><span class="p">,</span> <span class="mi">228</span><span class="p">,</span> <span class="mi">241</span><span class="p">,</span> <span class="mi">262</span><span class="p">,</span> <span class="mi">304</span><span class="p">,</span> <span class="mi">352</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">208</span><span class="p">,</span> <span class="mi">218</span><span class="p">,</span> <span class="mi">231</span><span class="p">,</span> <span class="mi">251</span><span class="p">,</span> <span class="mi">291</span><span class="p">,</span> <span class="mi">338</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">200</span><span class="p">,</span> <span class="mi">210</span><span class="p">,</span> <span class="mi">222</span><span class="p">,</span> <span class="mi">242</span><span class="p">,</span> <span class="mi">281</span><span class="p">,</span> <span class="mi">325</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">193</span><span class="p">,</span> <span class="mi">202</span><span class="p">,</span> <span class="mi">215</span><span class="p">,</span> <span class="mi">234</span><span class="p">,</span> <span class="mi">271</span><span class="p">,</span> <span class="mi">314</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">187</span><span class="p">,</span> <span class="mi">196</span><span class="p">,</span> <span class="mi">208</span><span class="p">,</span> <span class="mi">226</span><span class="p">,</span> <span class="mi">262</span><span class="p">,</span> <span class="mi">305</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">181</span><span class="p">,</span> <span class="mi">190</span><span class="p">,</span> <span class="mi">201</span><span class="p">,</span> <span class="mi">219</span><span class="p">,</span> <span class="mi">254</span><span class="p">,</span> <span class="mi">296</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">176</span><span class="p">,</span> <span class="mi">184</span><span class="p">,</span> <span class="mi">195</span><span class="p">,</span> <span class="mi">213</span><span class="p">,</span> <span class="mi">247</span><span class="p">,</span> <span class="mi">287</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">171</span><span class="p">,</span> <span class="mi">179</span><span class="p">,</span> <span class="mi">190</span><span class="p">,</span> <span class="mi">207</span><span class="p">,</span> <span class="mi">240</span><span class="p">,</span> <span class="mi">279</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">167</span><span class="p">,</span> <span class="mi">175</span><span class="p">,</span> <span class="mi">185</span><span class="p">,</span> <span class="mi">202</span><span class="p">,</span> <span class="mi">234</span><span class="p">,</span> <span class="mi">273</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">163</span><span class="p">,</span> <span class="mi">170</span><span class="p">,</span> <span class="mi">181</span><span class="p">,</span> <span class="mi">197</span><span class="p">,</span> <span class="mi">228</span><span class="p">,</span> <span class="mi">266</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">159</span><span class="p">,</span> <span class="mi">166</span><span class="p">,</span> <span class="mi">176</span><span class="p">,</span> <span class="mi">192</span><span class="p">,</span> <span class="mi">223</span><span class="p">,</span> <span class="mi">260</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">143</span><span class="p">,</span> <span class="mi">150</span><span class="p">,</span> <span class="mi">159</span><span class="p">,</span> <span class="mi">173</span><span class="p">,</span> <span class="mi">201</span><span class="p">,</span> <span class="mi">236</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">131</span><span class="p">,</span> <span class="mi">138</span><span class="p">,</span> <span class="mi">146</span><span class="p">,</span> <span class="mi">159</span><span class="p">,</span> <span class="mi">185</span><span class="p">,</span> <span class="mi">217</span><span class="p">],</span>
+                           <span class="p">[</span><span class="mi">115</span><span class="p">,</span> <span class="mi">120</span><span class="p">,</span> <span class="mi">128</span><span class="p">,</span> <span class="mi">139</span><span class="p">,</span> <span class="mi">162</span><span class="p">,</span> <span class="mi">189</span><span class="p">],</span>
+                           <span class="p">[</span> <span class="mi">74</span><span class="p">,</span>  <span class="mi">77</span><span class="p">,</span>  <span class="mi">82</span><span class="p">,</span>  <span class="mi">89</span><span class="p">,</span> <span class="mi">104</span><span class="p">,</span> <span class="mi">122</span><span class="p">],</span>
+                           <span class="p">[</span> <span class="mi">37</span><span class="p">,</span>  <span class="mi">39</span><span class="p">,</span>  <span class="mi">41</span><span class="p">,</span>  <span class="mi">45</span><span class="p">,</span>  <span class="mi">52</span><span class="p">,</span>  <span class="mi">61</span><span class="p">],</span>
+                           <span class="p">[</span> <span class="mi">25</span><span class="p">,</span>  <span class="mi">26</span><span class="p">,</span>  <span class="mi">28</span><span class="p">,</span>  <span class="mi">30</span><span class="p">,</span>  <span class="mi">35</span><span class="p">,</span>  <span class="mi">42</span><span class="p">]])[:,::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="mf">1000.</span>
+
+
+    <span class="n">lf</span> <span class="o">=</span> <span class="n">TableDist</span><span class="p">(</span><span class="n">alpha</span><span class="p">,</span> <span class="n">size</span><span class="p">,</span> <span class="n">crit_lf</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">prob</span><span class="p">(</span><span class="mf">0.166</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be:&#39;</span><span class="p">,</span> <span class="mf">0.15</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit2</span><span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be:&#39;</span><span class="p">,</span> <span class="mf">0.166</span><span class="p">,</span> <span class="s1">&#39;interp2d bad&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit</span><span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be:&#39;</span><span class="p">,</span> <span class="mf">0.166</span><span class="p">,</span> <span class="s1">&#39;two 1d&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit3</span><span class="p">(</span><span class="mf">0.15</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be:&#39;</span><span class="p">,</span> <span class="mf">0.166</span><span class="p">,</span> <span class="s1">&#39;Rbf&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit2</span><span class="p">(</span><span class="mf">0.17</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be in:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">.</span><span class="mi">159</span><span class="p">,</span> <span class="o">.</span><span class="mi">166</span><span class="p">),</span> <span class="s1">&#39;interp2d bad&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit</span><span class="p">(</span><span class="mf">0.17</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be in:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">.</span><span class="mi">159</span><span class="p">,</span> <span class="o">.</span><span class="mi">166</span><span class="p">),</span> <span class="s1">&#39;two 1d&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit3</span><span class="p">(</span><span class="mf">0.17</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be in:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">.</span><span class="mi">159</span><span class="p">,</span> <span class="o">.</span><span class="mi">166</span><span class="p">),</span> <span class="s1">&#39;Rbf&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit2</span><span class="p">(</span><span class="mf">0.19</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be in:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">.</span><span class="mi">159</span><span class="p">,</span> <span class="o">.</span><span class="mi">166</span><span class="p">),</span> <span class="s1">&#39;interp2d bad&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit</span><span class="p">(</span><span class="mf">0.19</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be in:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">.</span><span class="mi">159</span><span class="p">,</span> <span class="o">.</span><span class="mi">166</span><span class="p">),</span> <span class="s1">&#39;two 1d&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit3</span><span class="p">(</span><span class="mf">0.19</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be in:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">.</span><span class="mi">159</span><span class="p">,</span> <span class="o">.</span><span class="mi">166</span><span class="p">),</span> <span class="s1">&#39;Rbf&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit2</span><span class="p">(</span><span class="mf">0.199</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be in:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">.</span><span class="mi">159</span><span class="p">,</span> <span class="o">.</span><span class="mi">166</span><span class="p">),</span> <span class="s1">&#39;interp2d bad&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit</span><span class="p">(</span><span class="mf">0.199</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be in:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">.</span><span class="mi">159</span><span class="p">,</span> <span class="o">.</span><span class="mi">166</span><span class="p">),</span> <span class="s1">&#39;two 1d&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">lf</span><span class="o">.</span><span class="n">crit3</span><span class="p">(</span><span class="mf">0.199</span><span class="p">,</span> <span class="mi">20</span><span class="p">),</span> <span class="s1">&#39;should be in:&#39;</span><span class="p">,</span> <span class="p">(</span><span class="o">.</span><span class="mi">159</span><span class="p">,</span> <span class="o">.</span><span class="mi">166</span><span class="p">),</span> <span class="s1">&#39;Rbf&#39;</span><span class="p">)</span>
+    <span class="c1">#testing</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lf</span><span class="o">.</span><span class="n">prob</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">crit_lf</span><span class="p">[</span><span class="n">i</span><span class="p">]])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">lf</span><span class="o">.</span><span class="n">n_alpha</span><span class="p">)</span> <span class="o">-</span> <span class="n">lf</span><span class="o">.</span><span class="n">alpha</span><span class="p">)))</span>
+    <span class="c1">#1.6653345369377348e-16</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lf</span><span class="o">.</span><span class="n">crit</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">lf</span><span class="o">.</span><span class="n">alpha</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">lf</span><span class="o">.</span><span class="n">n_alpha</span><span class="p">)</span> <span class="o">-</span> <span class="n">crit_lf</span><span class="p">)))</span>
+    <span class="c1">#6.9388939039072284e-18)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lf</span><span class="o">.</span><span class="n">crit3</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">lf</span><span class="o">.</span><span class="n">alpha</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">lf</span><span class="o">.</span><span class="n">n_alpha</span><span class="p">)</span> <span class="o">-</span> <span class="n">crit_lf</span><span class="p">)))</span>
+    <span class="c1">#4.0615705243496336e-12)</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lf</span><span class="o">.</span><span class="n">crit3</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">lf</span><span class="o">.</span><span class="n">alpha</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">1.1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">lf</span><span class="o">.</span><span class="n">n_alpha</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">crit_lf</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lf</span><span class="o">.</span><span class="n">crit3</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">lf</span><span class="o">.</span><span class="n">alpha</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="mf">1.1</span><span class="p">])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">lf</span><span class="o">.</span><span class="n">n_alpha</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">crit_lf</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lf</span><span class="o">.</span><span class="n">prob</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="mf">0.9</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">crit_lf</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">lf</span><span class="o">.</span><span class="n">n_alpha</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">lf</span><span class="o">.</span><span class="n">alpha</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lf</span><span class="o">.</span><span class="n">prob</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="mf">1.1</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">])</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">crit_lf</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="mi">1</span><span class="p">:]])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">lf</span><span class="o">.</span><span class="n">n_alpha</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">lf</span><span class="o">.</span><span class="n">alpha</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+    <span class="c1">#start at size_idx=2 because of non-monotonicity of lf_crit</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">lf</span><span class="o">.</span><span class="n">prob</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">size</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">*</span><span class="mf">0.9</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">size</span><span class="p">))</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="n">crit_lf</span><span class="p">[</span><span class="n">i</span><span class="p">,:</span><span class="o">-</span><span class="mi">1</span><span class="p">]])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">lf</span><span class="o">.</span><span class="n">n_alpha</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">lf</span><span class="o">.</span><span class="n">alpha</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

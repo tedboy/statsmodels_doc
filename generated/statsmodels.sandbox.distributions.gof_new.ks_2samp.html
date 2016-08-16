@@ -1,0 +1,343 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.3.6.2.9. statsmodels.sandbox.distributions.gof_new.ks_2samp &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6.3.6. statsmodels.sandbox.distributions.gof_new" href="statsmodels.sandbox.distributions.gof_new.html"/>
+        <link rel="next" title="6.3.6.2.10. statsmodels.sandbox.distributions.gof_new.kstest" href="statsmodels.sandbox.distributions.gof_new.kstest.html"/>
+        <link rel="prev" title="6.3.6.2.8. statsmodels.sandbox.distributions.gof_new.gof_mc" href="statsmodels.sandbox.distributions.gof_new.gof_mc.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.html">6.3.1. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.copula.html">6.3.2. statsmodels.sandbox.distributions.copula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.html">6.3.3. statsmodels.sandbox.distributions.estimators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.extras.html">6.3.4. statsmodels.sandbox.distributions.extras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.genpareto.html">6.3.5. statsmodels.sandbox.distributions.genpareto</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="statsmodels.sandbox.distributions.gof_new.html">6.3.6. statsmodels.sandbox.distributions.gof_new</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.distributions.gof_new.html#references">6.3.6.1. References</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="statsmodels.sandbox.distributions.gof_new.html#functions">6.3.6.2. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.distributions.gof_new.html#classes">6.3.6.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.multivariate.html">6.3.7. statsmodels.sandbox.distributions.multivariate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.mv_measures.html">6.3.8. statsmodels.sandbox.distributions.mv_measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.html">6.3.9. statsmodels.sandbox.distributions.mv_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.otherdist.html">6.3.10. statsmodels.sandbox.distributions.otherdist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.quantize.html">6.3.11. statsmodels.sandbox.distributions.quantize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.sppatch.html">6.3.12. statsmodels.sandbox.distributions.sppatch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.transform_functions.html">6.3.13. statsmodels.sandbox.distributions.transform_functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.transformed.html">6.3.14. statsmodels.sandbox.distributions.transformed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.try_max.html">6.3.15. statsmodels.sandbox.distributions.try_max</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.try_pot.html">6.3.16. statsmodels.sandbox.distributions.try_pot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="statsmodels.sandbox.distributions.gof_new.html">6.3.6. statsmodels.sandbox.distributions.gof_new</a> &raquo;</li>
+        
+      <li>6.3.6.2.9. statsmodels.sandbox.distributions.gof_new.ks_2samp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.distributions.gof_new.ks_2samp.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-distributions-gof-new-ks-2samp">
+<h1>6.3.6.2.9. statsmodels.sandbox.distributions.gof_new.ks_2samp<a class="headerlink" href="#statsmodels-sandbox-distributions-gof-new-ks-2samp" title="Permalink to this headline">¶</a></h1>
+<dl class="function">
+<dt id="statsmodels.sandbox.distributions.gof_new.ks_2samp">
+<code class="descclassname">statsmodels.sandbox.distributions.gof_new.</code><code class="descname">ks_2samp</code><span class="sig-paren">(</span><em>data1</em>, <em>data2</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/statsmodels/sandbox/distributions/gof_new.html#ks_2samp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.distributions.gof_new.ks_2samp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Computes the Kolmogorov-Smirnof statistic on 2 samples.</p>
+<p>This is a two-sided test for the null hypothesis that 2 independent samples
+are drawn from the same continuous distribution.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>a, b</strong> : sequence of 1-D ndarrays</p>
+<blockquote>
+<div><p>two arrays of sample observations assumed to be drawn from a continuous
+distribution, sample sizes can be different</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>D</strong> : float</p>
+<blockquote>
+<div><p>KS statistic</p>
+</div></blockquote>
+<p><strong>p-value</strong> : float</p>
+<blockquote class="last">
+<div><p>two-tailed p-value</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This tests whether 2 samples are drawn from the same distribution. Note
+that, like in the case of the one-sample K-S test, the distribution is
+assumed to be continuous.</p>
+<p>This is the two-sided test, one-sided tests are not implemented.
+The test uses the two-sided asymptotic Kolmogorov-Smirnov distribution.</p>
+<p>If the K-S statistic is small or the p-value is high, then we cannot
+reject the hypothesis that the distributions of the two samples
+are the same.</p>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">ks_2samp</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="c1">#fix random seed to get the same result</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">12345678</span><span class="p">);</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">n1</span> <span class="o">=</span> <span class="mi">200</span>  <span class="c1"># size of first sample</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">n2</span> <span class="o">=</span> <span class="mi">300</span>  <span class="c1"># size of second sample</span>
+</pre></div>
+</div>
+<p>different distribution
+we can reject the null hypothesis since the pvalue is below 1%</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rvs1</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n1</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">);</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">rvs2</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n2</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">1.5</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ks_2samp</span><span class="p">(</span><span class="n">rvs1</span><span class="p">,</span><span class="n">rvs2</span><span class="p">)</span>
+<span class="go">(0.20833333333333337, 4.6674975515806989e-005)</span>
+</pre></div>
+</div>
+<p>slightly different distribution
+we cannot reject the null hypothesis at a 10% or lower alpha since
+the pvalue at 0.144 is higher than 10%</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rvs3</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n2</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ks_2samp</span><span class="p">(</span><span class="n">rvs1</span><span class="p">,</span><span class="n">rvs3</span><span class="p">)</span>
+<span class="go">(0.10333333333333333, 0.14498781825751686)</span>
+</pre></div>
+</div>
+<p>identical distribution
+we cannot reject the null hypothesis since the pvalue is high, 41%</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">rvs4</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="n">n2</span><span class="p">,</span><span class="n">loc</span><span class="o">=</span><span class="mf">0.0</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mf">1.0</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">ks_2samp</span><span class="p">(</span><span class="n">rvs1</span><span class="p">,</span><span class="n">rvs4</span><span class="p">)</span>
+<span class="go">(0.07999999999999996, 0.41126949729859719)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.distributions.gof_new.kstest.html" class="btn btn-neutral float-right" title="6.3.6.2.10. statsmodels.sandbox.distributions.gof_new.kstest" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.distributions.gof_new.gof_mc.html" class="btn btn-neutral" title="6.3.6.2.8. statsmodels.sandbox.distributions.gof_new.gof_mc" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

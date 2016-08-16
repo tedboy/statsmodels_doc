@@ -1,0 +1,39 @@
+statsmodels.api.RLM
+===================
+
+.. currentmodule:: statsmodels.api
+.. autoclass:: RLM
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~RLM.__init__
+   ~RLM.deviance
+   ~RLM.fit
+   ~RLM.from_formula
+   ~RLM.hessian
+   ~RLM.information
+   ~RLM.initialize
+   ~RLM.loglike
+   ~RLM.predict
+   ~RLM.score
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~RLM.endog_names
+   ~RLM.exog_names
+

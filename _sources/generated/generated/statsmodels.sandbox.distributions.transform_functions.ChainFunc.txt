@@ -1,0 +1,24 @@
+statsmodels.sandbox.distributions.transform_functions.ChainFunc
+===============================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.transform_functions
+.. autoclass:: ChainFunc
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ChainFunc.__init__
+   ~ChainFunc.deriv
+   ~ChainFunc.func
+   ~ChainFunc.inverse
+
+
+
+
+

@@ -1,0 +1,53 @@
+statsmodels.robust.robust_linear_model.RLMResults
+=================================================
+
+.. currentmodule:: statsmodels.robust.robust_linear_model
+.. autoclass:: RLMResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~RLMResults.__init__
+   ~RLMResults.bcov_scaled
+   ~RLMResults.bcov_unscaled
+   ~RLMResults.bse
+   ~RLMResults.chisq
+   ~RLMResults.conf_int
+   ~RLMResults.cov_params
+   ~RLMResults.f_test
+   ~RLMResults.fittedvalues
+   ~RLMResults.initialize
+   ~RLMResults.llf
+   ~RLMResults.load
+   ~RLMResults.normalized_cov_params
+   ~RLMResults.predict
+   ~RLMResults.pvalues
+   ~RLMResults.remove_data
+   ~RLMResults.resid
+   ~RLMResults.save
+   ~RLMResults.sresid
+   ~RLMResults.summary
+   ~RLMResults.summary2
+   ~RLMResults.t_test
+   ~RLMResults.tvalues
+   ~RLMResults.wald_test
+   ~RLMResults.weights
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~RLMResults.use_t
+

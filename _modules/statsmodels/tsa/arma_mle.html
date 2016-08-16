@@ -1,0 +1,592 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tsa.arma_mle &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tsa.arma_mle</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tsa.arma_mle</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Sun Oct 10 14:57:50 2010</span>
+
+<span class="sd">Author: josef-pktd, Skipper Seabold</span>
+<span class="sd">License: BSD</span>
+
+<span class="sd">TODO: check everywhere initialization of signal.lfilter</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">signal</span><span class="p">,</span> <span class="n">optimize</span>
+<span class="kn">from</span> <span class="nn">statsmodels.base.model</span> <span class="k">import</span> <span class="p">(</span><span class="n">LikelihoodModel</span><span class="p">,</span>
+        <span class="n">GenericLikelihoodModel</span><span class="p">)</span>
+
+
+<span class="c1">#copied from sandbox/regression/mle.py</span>
+<span class="c1">#rename until merge of classes is complete</span>
+<div class="viewcode-block" id="Arma"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.html#statsmodels.miscmodels.tmodel.Arma">[docs]</a><span class="k">class</span> <span class="nc">Arma</span><span class="p">(</span><span class="n">GenericLikelihoodModel</span><span class="p">):</span>  <span class="c1">#switch to generic mle</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    univariate Autoregressive Moving Average model, conditional on initial values</span>
+
+<span class="sd">    The ARMA model is estimated either with conditional Least Squares or with</span>
+<span class="sd">    conditional Maximum Likelihood. The implementation is</span>
+<span class="sd">    using scipy.filter.lfilter which makes it faster than the Kalman Filter</span>
+<span class="sd">    Implementation. The Kalman Filter Implementation however uses the exact</span>
+<span class="sd">    Maximum Likelihood and will be more accurate, statistically more efficent</span>
+<span class="sd">    in small samples.</span>
+
+<span class="sd">    In large samples conditional LS, conditional MLE and exact MLE should be very</span>
+<span class="sd">    close to each other, they are equivalent asymptotically.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    this can subclass TSMLEModel</span>
+
+<span class="sd">    TODO:</span>
+
+<span class="sd">    - CondLS return raw estimation results</span>
+<span class="sd">    - needs checking that there is no wrong state retained, when running fit</span>
+<span class="sd">      several times with different options</span>
+<span class="sd">    - still needs consistent order options.</span>
+<span class="sd">    - Currently assumes that the mean is zero, no mean or effect of exogenous</span>
+<span class="sd">      variables are included in the estimation.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="Arma.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.__init__.html#statsmodels.miscmodels.tmodel.Arma.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="c1">#need to override p,q (nar,nma) correctly</span>
+        <span class="nb">super</span><span class="p">(</span><span class="n">Arma</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span>
+        <span class="c1">#set default arma(1,1)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nar</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nma</span> <span class="o">=</span> <span class="mi">1</span></div>
+        <span class="c1">#self.initialize()</span>
+
+
+<div class="viewcode-block" id="Arma.initialize"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.initialize.html#statsmodels.miscmodels.tmodel.Arma.initialize">[docs]</a>    <span class="k">def</span> <span class="nf">initialize</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Arma.geterrors"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.geterrors.html#statsmodels.miscmodels.tmodel.Arma.geterrors">[docs]</a>    <span class="k">def</span> <span class="nf">geterrors</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="c1">#copied from sandbox.tsa.arima.ARIMA</span>
+        <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nma</span>
+        <span class="n">ar</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">params</span><span class="p">[:</span><span class="n">p</span><span class="p">]))</span>
+        <span class="n">ma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">1</span><span class="p">],</span> <span class="n">params</span><span class="p">[</span><span class="n">p</span><span class="p">:</span><span class="n">p</span><span class="o">+</span><span class="n">q</span><span class="p">]))</span>
+
+        <span class="c1">#lfilter_zi requires same length for ar and ma</span>
+        <span class="n">maxlag</span> <span class="o">=</span> <span class="mi">1</span><span class="o">+</span><span class="nb">max</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">)</span>
+        <span class="n">armax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">maxlag</span><span class="p">)</span>
+        <span class="n">armax</span><span class="p">[:</span><span class="n">p</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ar</span>
+        <span class="n">mamax</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">maxlag</span><span class="p">)</span>
+        <span class="n">mamax</span><span class="p">[:</span><span class="n">q</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">ma</span>
+        <span class="c1">#remove zi again to match better with Skipper&#39;s version</span>
+        <span class="c1">#zi = signal.lfilter_zi(armax, mamax)</span>
+        <span class="c1">#errorsest = signal.lfilter(rhoy, rhoe, self.endog, zi=zi)[0] #zi is also returned</span>
+        <span class="n">errorsest</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">lfilter</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">errorsest</span></div>
+
+<div class="viewcode-block" id="Arma.loglike"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.loglike.html#statsmodels.miscmodels.tmodel.Arma.loglike">[docs]</a>    <span class="k">def</span> <span class="nf">loglike</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loglikelihood for arma model</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The ancillary parameter is assumed to be the last element of</span>
+<span class="sd">        the params vector</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="c1">#        #copied from sandbox.tsa.arima.ARIMA</span>
+<span class="c1">#        p = self.nar</span>
+<span class="c1">#        rhoy = np.concatenate(([1], params[:p]))</span>
+<span class="c1">#        rhoe = np.concatenate(([1], params[p:-1]))</span>
+<span class="c1">#        errorsest = signal.lfilter(rhoy, rhoe, self.endog)</span>
+        <span class="n">errorsest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geterrors</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">)</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">errorsest</span><span class="p">)</span>
+        <span class="c1">#this doesn&#39;t help for exploding paths</span>
+        <span class="c1">#errorsest[np.isnan(errorsest)] = 100</span>
+<span class="c1">#        llike  =  -0.5 * (np.sum(np.log(sigma2),axis)</span>
+<span class="c1">#                          + np.sum((errorsest**2)/sigma2, axis)</span>
+<span class="c1">#                          +  nobs*np.log(2*np.pi))</span>
+        <span class="n">llike</span>  <span class="o">=</span>  <span class="o">-</span><span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">nobs</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span>
+                          <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">((</span><span class="n">errorsest</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">sigma2</span><span class="p">,</span> <span class="n">axis</span><span class="p">)</span>
+                          <span class="o">+</span>  <span class="n">nobs</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">llike</span></div>
+
+    <span class="c1">#add for Jacobian calculation  bsejac in GenericMLE, copied from loglike</span>
+<div class="viewcode-block" id="Arma.nloglikeobs"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.nloglikeobs.html#statsmodels.miscmodels.tmodel.Arma.nloglikeobs">[docs]</a>    <span class="k">def</span> <span class="nf">nloglikeobs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loglikelihood for arma model</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        The ancillary parameter is assumed to be the last element of</span>
+<span class="sd">        the params vector</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+<span class="c1">#        #copied from sandbox.tsa.arima.ARIMA</span>
+<span class="c1">#        p = self.nar</span>
+<span class="c1">#        rhoy = np.concatenate(([1], params[:p]))</span>
+<span class="c1">#        rhoe = np.concatenate(([1], params[p:-1]))</span>
+<span class="c1">#        errorsest = signal.lfilter(rhoy, rhoe, self.endog)</span>
+        <span class="n">errorsest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geterrors</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">params</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">)</span>
+        <span class="n">axis</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">errorsest</span><span class="p">)</span>
+        <span class="c1">#this doesn&#39;t help for exploding paths</span>
+        <span class="c1">#errorsest[np.isnan(errorsest)] = 100</span>
+<span class="c1">#        llike  =  -0.5 * (np.sum(np.log(sigma2),axis)</span>
+<span class="c1">#                          + np.sum((errorsest**2)/sigma2, axis)</span>
+<span class="c1">#                          +  nobs*np.log(2*np.pi))</span>
+        <span class="n">llike</span>  <span class="o">=</span>  <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span>
+                          <span class="o">+</span> <span class="p">(</span><span class="n">errorsest</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">sigma2</span>
+                          <span class="o">+</span>  <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">llike</span></div>
+
+<span class="c1">#use generic instead</span>
+<span class="c1">#    def score(self, params):</span>
+<span class="c1">#        &quot;&quot;&quot;</span>
+<span class="c1">#        Score vector for Arma model</span>
+<span class="c1">#        &quot;&quot;&quot;</span>
+<span class="c1">#        #return None</span>
+<span class="c1">#        #print params</span>
+<span class="c1">#        jac = ndt.Jacobian(self.loglike, stepMax=1e-4)</span>
+<span class="c1">#        return jac(params)[-1]</span>
+
+
+<span class="c1">#use generic instead</span>
+<span class="c1">#    def hessian(self, params):</span>
+<span class="c1">#        &quot;&quot;&quot;</span>
+<span class="c1">#        Hessian of arma model.  Currently uses numdifftools</span>
+<span class="c1">#        &quot;&quot;&quot;</span>
+<span class="c1">#        #return None</span>
+<span class="c1">#        Hfun = ndt.Jacobian(self.score, stepMax=1e-4)</span>
+<span class="c1">#        return Hfun(params)[-1]</span>
+
+    <span class="c1">#copied from arima.ARIMA, needs splitting out of method specific code</span>
+<div class="viewcode-block" id="Arma.fit"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.fit.html#statsmodels.miscmodels.tmodel.Arma.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">start_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ls&quot;</span><span class="p">,</span> <span class="o">**</span><span class="n">optkwds</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Estimate lag coefficients of an ARIMA process.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        order : sequence</span>
+<span class="sd">            p,d,q where p is the number of AR lags, d is the number of</span>
+<span class="sd">            differences to induce stationarity, and q is the number of</span>
+<span class="sd">            MA lags to estimate.</span>
+<span class="sd">        method : str {&quot;ls&quot;, &quot;ssm&quot;}</span>
+<span class="sd">            Method of estimation.  LS is conditional least squares.</span>
+<span class="sd">            SSM is state-space model and the Kalman filter is used to</span>
+<span class="sd">            maximize the exact likelihood.</span>
+<span class="sd">        rhoy0, rhoe0 : array_like (optional)</span>
+<span class="sd">            starting values for estimation</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        (rh, cov_x, infodict, mesg, ier) : output of scipy.optimize.leastsq</span>
+
+<span class="sd">        rh :</span>
+<span class="sd">            estimate of lag parameters, concatenated [rhoy, rhoe]</span>
+<span class="sd">        cov_x :</span>
+<span class="sd">            unscaled (!) covariance matrix of coefficient estimates</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">order</span><span class="p">,</span> <span class="s1">&#39;__iter__&#39;</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;order must be an iterable sequence.  Got type </span><span class="se">\</span>
+<span class="si">%s</span><span class="s2"> instead&quot;</span> <span class="o">%</span> <span class="nb">type</span><span class="p">(</span><span class="n">order</span><span class="p">))</span>
+
+        <span class="n">p</span><span class="p">,</span><span class="n">q</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nar</span> <span class="o">=</span> <span class="n">p</span>  <span class="c1"># needed for geterrors, needs cleanup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nma</span> <span class="o">=</span> <span class="n">q</span>
+
+<span class="c1">##        if d &gt; 0:</span>
+<span class="c1">##            raise ValueError(&quot;Differencing not implemented yet&quot;)</span>
+<span class="c1">##            # assume no constant, ie mu = 0</span>
+<span class="c1">##            # unless overwritten then use w_bar for mu</span>
+<span class="c1">##            Y = np.diff(endog, d, axis=0) #TODO: handle lags?</span>
+
+        <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="o">.</span><span class="n">squeeze</span><span class="p">()</span> <span class="c1"># remove the squeeze might be needed later</span>
+<span class="c1">#        def errfn( rho):</span>
+<span class="c1">#            #rhoy, rhoe = rho</span>
+<span class="c1">#            rhoy = np.concatenate(([1], rho[:p]))</span>
+<span class="c1">#            rhoe = np.concatenate(([1], rho[p:]))</span>
+<span class="c1">#            etahatr = signal.lfilter(rhoy, rhoe, x)</span>
+<span class="c1">#            #print rho,np.sum(etahatr*etahatr)</span>
+<span class="c1">#            return etahatr</span>
+
+        <span class="c1">#replace with start_params</span>
+        <span class="k">if</span> <span class="n">start_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">arcoefs0</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">p</span><span class="p">)</span>
+            <span class="n">macoefs0</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">q</span><span class="p">)</span>
+            <span class="n">start_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">arcoefs0</span><span class="p">,</span> <span class="n">macoefs0</span><span class="p">]</span>
+
+        <span class="n">method</span> <span class="o">=</span> <span class="n">method</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;ls&quot;</span><span class="p">:</span>
+            <span class="c1">#update</span>
+            <span class="n">optim_kwds</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">ftol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">optim_kwds</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">optkwds</span><span class="p">)</span>
+            <span class="c1">#changes: use self.geterrors  (nobs,):</span>
+<span class="c1">#            rh, cov_x, infodict, mesg, ier = \</span>
+<span class="c1">#               optimize.leastsq(errfn, np.r_[rhoy0, rhoe0],ftol=1e-10,full_output=True)</span>
+            <span class="n">rh</span><span class="p">,</span> <span class="n">cov_x</span><span class="p">,</span> <span class="n">infodict</span><span class="p">,</span> <span class="n">mesg</span><span class="p">,</span> <span class="n">ier</span> <span class="o">=</span> \
+               <span class="n">optimize</span><span class="o">.</span><span class="n">leastsq</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geterrors</span><span class="p">,</span> <span class="n">start_params</span><span class="p">,</span> <span class="o">**</span><span class="n">optim_kwds</span><span class="p">)</span>
+            <span class="c1">#TODO: need missing parameter estimates for LS, scale, residual-sdt</span>
+            <span class="c1">#TODO: integrate this into the MLE.fit framework?</span>
+        <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;ssm&quot;</span><span class="p">:</span>
+            <span class="k">pass</span>
+        <span class="k">else</span><span class="p">:</span>  <span class="c1">#this is also conditional least squares</span>
+            <span class="c1"># fmin_bfgs is slow or doesn&#39;t work yet</span>
+            <span class="n">errfnsum</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">rho</span> <span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">geterrors</span><span class="p">(</span><span class="n">rho</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+            <span class="c1">#xopt, {fopt, gopt, Hopt, func_calls, grad_calls</span>
+            <span class="n">optim_kwds</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">maxiter</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">full_output</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+            <span class="n">optim_kwds</span><span class="o">.</span><span class="n">update</span><span class="p">(</span><span class="n">optkwds</span><span class="p">)</span>
+
+            <span class="n">rh</span><span class="p">,</span> <span class="n">fopt</span><span class="p">,</span> <span class="n">gopt</span><span class="p">,</span> <span class="n">cov_x</span><span class="p">,</span> <span class="n">_</span><span class="p">,</span><span class="n">_</span><span class="p">,</span> <span class="n">ier</span> <span class="o">=</span> \
+                <span class="n">optimize</span><span class="o">.</span><span class="n">fmin_bfgs</span><span class="p">(</span><span class="n">errfnsum</span><span class="p">,</span> <span class="n">start_params</span><span class="p">,</span> <span class="o">**</span><span class="n">optim_kwds</span><span class="p">)</span>
+            <span class="n">infodict</span><span class="p">,</span> <span class="n">mesg</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">rh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ar_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">rh</span><span class="p">[:</span><span class="n">p</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ma_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">1</span><span class="p">],</span> <span class="n">rh</span><span class="p">[</span><span class="n">p</span><span class="p">:</span><span class="n">p</span><span class="o">+</span><span class="n">q</span><span class="p">]))</span>
+        <span class="c1">#rh[-q:])) doesnt work for q=0, added p+q as endpoint for safety if var is included</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_estimate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geterrors</span><span class="p">(</span><span class="n">rh</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">rh</span><span class="p">,</span> <span class="n">cov_x</span><span class="p">,</span> <span class="n">infodict</span><span class="p">,</span> <span class="n">mesg</span><span class="p">,</span> <span class="n">ier</span></div>
+
+
+    <span class="c1">#renamed and needs check with other fit</span>
+<div class="viewcode-block" id="Arma.fit_mle"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.fit_mle.html#statsmodels.miscmodels.tmodel.Arma.fit_mle">[docs]</a>    <span class="k">def</span> <span class="nf">fit_mle</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span> <span class="n">start_params</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;nm&#39;</span><span class="p">,</span> <span class="n">maxiter</span><span class="o">=</span><span class="mi">5000</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">08</span><span class="p">,</span>
+                <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Estimate an ARMA model with given order using Conditional Maximum Likelihood</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        order : tuple, 2 elements</span>
+<span class="sd">            specifies the number of lags(nar, nma) to include, not including lag 0</span>
+<span class="sd">        start_params : array_like, 1d, (nar+nma+1,)</span>
+<span class="sd">            start parameters for the optimization, the length needs to be equal to the</span>
+<span class="sd">            number of ar plus ma coefficients plus 1 for the residual variance</span>
+<span class="sd">        method : str</span>
+<span class="sd">            optimization method, as described in LikelihoodModel</span>
+<span class="sd">        maxiter : int</span>
+<span class="sd">            maximum number of iteration in the optimization</span>
+<span class="sd">        tol : float</span>
+<span class="sd">            tolerance (?) for the optimization</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        mlefit : instance of (GenericLikelihood ?)Result class</span>
+<span class="sd">            contains estimation results and additional statistics</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">nar</span><span class="p">,</span> <span class="n">nma</span> <span class="o">=</span> <span class="n">p</span><span class="p">,</span> <span class="n">q</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nma</span> <span class="o">=</span> <span class="n">nar</span><span class="p">,</span> <span class="n">nma</span>
+        <span class="k">if</span> <span class="n">start_params</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">start_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">((</span><span class="mf">0.05</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nar</span> <span class="o">+</span> <span class="n">nma</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">mlefit</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="n">Arma</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">start_params</span><span class="o">=</span><span class="n">start_params</span><span class="p">,</span>
+                <span class="n">maxiter</span><span class="o">=</span><span class="n">maxiter</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="n">method</span><span class="p">,</span> <span class="n">tol</span><span class="o">=</span><span class="n">tol</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">)</span>
+        <span class="c1">#bug fix: running ls and then mle didn&#39;t overwrite this</span>
+        <span class="n">rh</span> <span class="o">=</span> <span class="n">mlefit</span><span class="o">.</span><span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">rh</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ar_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">1</span><span class="p">],</span> <span class="o">-</span><span class="n">rh</span><span class="p">[:</span><span class="n">p</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ma_est</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">concatenate</span><span class="p">(([</span><span class="mi">1</span><span class="p">],</span> <span class="n">rh</span><span class="p">[</span><span class="n">p</span><span class="p">:</span><span class="n">p</span><span class="o">+</span><span class="n">q</span><span class="p">]))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">error_estimate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">geterrors</span><span class="p">(</span><span class="n">rh</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mlefit</span></div>
+
+    <span class="c1">#copied from arima.ARIMA</span>
+<div class="viewcode-block" id="Arma.predicted"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.predicted.html#statsmodels.miscmodels.tmodel.Arma.predicted">[docs]</a>    <span class="k">def</span> <span class="nf">predicted</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ma</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;past predicted values of time series</span>
+<span class="sd">        just added, not checked yet</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+<span class="c1">#        #ar, ma not used, not useful as arguments for predicted pattern</span>
+<span class="c1">#        #need it for prediction for other time series, endog</span>
+<span class="c1">#        if ar is None:</span>
+<span class="c1">#            ar = self.ar_est</span>
+<span class="c1">#        if ma is None:</span>
+<span class="c1">#            ma = self.ma_est</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_estimate</span></div>
+
+    <span class="c1">#copied from arima.ARIMA</span>
+<div class="viewcode-block" id="Arma.forecast"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.forecast.html#statsmodels.miscmodels.tmodel.Arma.forecast">[docs]</a>    <span class="k">def</span> <span class="nf">forecast</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">ar</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ma</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nperiod</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;nperiod ahead forecast at the end of the data period</span>
+
+<span class="sd">        forecast is based on the error estimates</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">eta</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">error_estimate</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nperiod</span><span class="p">)]</span>
+        <span class="k">if</span> <span class="n">ar</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ar_est</span>
+        <span class="k">if</span> <span class="n">ma</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">ma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">ma_est</span>
+        <span class="k">return</span> <span class="n">signal</span><span class="o">.</span><span class="n">lfilter</span><span class="p">(</span><span class="n">ma</span><span class="p">,</span> <span class="n">ar</span><span class="p">,</span> <span class="n">eta</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Arma.forecast2"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.forecast2.html#statsmodels.miscmodels.tmodel.Arma.forecast2">[docs]</a>    <span class="k">def</span> <span class="nf">forecast2</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ahead</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">end</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">endog</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;rolling h-period ahead forecast without reestimation, 1 period ahead only</span>
+
+<span class="sd">        in construction: uses loop to go over data and</span>
+<span class="sd">        not sure how to get (finite) forecast polynomial for h-step</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        just the idea:</span>
+<span class="sd">        To improve performance with expanding arrays, specify total period by endog</span>
+<span class="sd">        and the conditional forecast period by step_ahead</span>
+
+<span class="sd">        This should be used by/with results which should contain predicted error or</span>
+<span class="sd">        noise. Could be either a recursive loop or lfilter with a h-step ahead</span>
+<span class="sd">        forecast filter, but then I need to calculate that one. ???</span>
+
+<span class="sd">        further extension: allow reestimation option</span>
+
+<span class="sd">        question: return h-step ahead or range(h)-step ahead ?</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">step_ahead</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">NotImplementedError</span>
+
+        <span class="n">p</span><span class="p">,</span><span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nma</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_estimate</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">endog</span>
+
+        <span class="c1">#this is for 1step ahead only, still need h-step predictive polynomial</span>
+        <span class="n">arcoefs_rev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">p</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">macoefs_rev</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="n">p</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">p</span><span class="o">+</span><span class="n">q</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+
+        <span class="n">predicted</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1"># create error vector iteratively</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">end</span><span class="p">):</span>
+            <span class="n">predicted</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="nb">sum</span><span class="p">(</span><span class="n">arcoefs_rev</span><span class="o">*</span><span class="n">y</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">p</span><span class="p">:</span><span class="n">i</span><span class="p">])</span> <span class="o">+</span> <span class="nb">sum</span><span class="p">(</span><span class="n">macoefs_rev</span> <span class="o">*</span> <span class="n">errors</span><span class="p">[</span><span class="n">i</span><span class="o">-</span><span class="n">p</span><span class="p">:</span><span class="n">i</span><span class="p">]))</span>
+
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">predicted</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Arma.forecast3"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.forecast3.html#statsmodels.miscmodels.tmodel.Arma.forecast3">[docs]</a>    <span class="k">def</span> <span class="nf">forecast3</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">step_ahead</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span> <span class="c1">#, end=None):</span>
+        <span class="sd">&#39;&#39;&#39;another try for h-step ahead forecasting</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="kn">from</span> <span class="nn">.arima_process</span> <span class="k">import</span> <span class="n">arma2ma</span><span class="p">,</span> <span class="n">ArmaProcess</span>
+        <span class="n">p</span><span class="p">,</span><span class="n">q</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nar</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nma</span>
+        <span class="n">k</span><span class="o">=</span><span class="mi">0</span>
+        <span class="n">ar</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">p</span><span class="p">]</span>
+        <span class="n">ma</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">[</span><span class="n">k</span><span class="o">+</span><span class="n">p</span><span class="p">:</span><span class="n">k</span><span class="o">+</span><span class="n">p</span><span class="o">+</span><span class="n">q</span><span class="p">]</span>
+        <span class="n">marep</span> <span class="o">=</span> <span class="n">arma2ma</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span><span class="n">ma</span><span class="p">,</span> <span class="n">start</span><span class="p">)[</span><span class="n">step_ahead</span><span class="o">+</span><span class="mi">1</span><span class="p">:]</span>  <span class="c1">#truncated ma representation</span>
+        <span class="n">errors</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">error_estimate</span>
+        <span class="n">forecasts</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">convolve</span><span class="p">(</span><span class="n">errors</span><span class="p">,</span> <span class="n">marep</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">forecasts</span><span class="c1">#[-(errors.shape[0] - start-5):] #get 5 overlapping for testing</span></div>
+
+
+
+
+    <span class="c1">#copied from arima.ARIMA</span>
+    <span class="c1">#TODO: is this needed as a method at all?</span>
+    <span class="c1">#JP: not needed in this form, but can be replace with using the parameters</span>
+    <span class="nd">@classmethod</span>
+<div class="viewcode-block" id="Arma.generate_sample"><a class="viewcode-back" href="../../../generated/generated/statsmodels.tsa.tests.test_arima.Arma.generate_sample.html#statsmodels.miscmodels.tmodel.Arma.generate_sample">[docs]</a>    <span class="k">def</span> <span class="nf">generate_sample</span><span class="p">(</span><span class="n">cls</span><span class="p">,</span> <span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">,</span> <span class="n">nsample</span><span class="p">,</span> <span class="n">std</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">eta</span> <span class="o">=</span> <span class="n">std</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nsample</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">signal</span><span class="o">.</span><span class="n">lfilter</span><span class="p">(</span><span class="n">ma</span><span class="p">,</span> <span class="n">ar</span><span class="p">,</span> <span class="n">eta</span><span class="p">)</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

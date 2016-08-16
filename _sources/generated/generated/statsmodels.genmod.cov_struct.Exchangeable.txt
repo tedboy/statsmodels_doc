@@ -1,0 +1,26 @@
+statsmodels.genmod.cov_struct.Exchangeable
+==========================================
+
+.. currentmodule:: statsmodels.genmod.cov_struct
+.. autoclass:: Exchangeable
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Exchangeable.__init__
+   ~Exchangeable.covariance_matrix
+   ~Exchangeable.covariance_matrix_solve
+   ~Exchangeable.initialize
+   ~Exchangeable.summary
+   ~Exchangeable.update
+
+
+
+
+

@@ -1,0 +1,337 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.11.17.2.1.1.2. statsmodels.stats.power.FTestAnovaPower.plot_power &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="3.11.17.2.1. statsmodels.stats.power.FTestAnovaPower" href="statsmodels.stats.power.FTestAnovaPower.html"/>
+        <link rel="next" title="3.11.17.2.1.1.3. statsmodels.stats.power.FTestAnovaPower.power" href="statsmodels.stats.power.FTestAnovaPower.power.html"/>
+        <link rel="prev" title="3.11.17.2.1.1.1. statsmodels.stats.power.FTestAnovaPower.__init__" href="statsmodels.stats.power.FTestAnovaPower.__init__.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../main.html#statsmodel-stats">3.11. statsmodel.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.api.html">3.11.1. statsmodels.stats.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.adnorm.html">3.11.2. statsmodels.stats.adnorm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.anova.html">3.11.3. statsmodels.stats.anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.base.html">3.11.4. statsmodels.stats.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.contrast.html">3.11.5. statsmodels.stats.contrast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.correlation_tools.html">3.11.6. statsmodels.stats.correlation_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.descriptivestats.html">3.11.7. statsmodels.stats.descriptivestats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.diagnostic.html">3.11.8. statsmodels.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.gof.html">3.11.9. statsmodels.stats.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.inter_rater.html">3.11.10. statsmodels.stats.inter_rater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.lilliefors.html">3.11.11. statsmodels.stats.lilliefors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.moment_helpers.html">3.11.12. statsmodels.stats.moment_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.multicomp.html">3.11.13. statsmodels.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.multitest.html">3.11.14. statsmodels.stats.multitest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.multivariate_tools.html">3.11.15. statsmodels.stats.multivariate_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.outliers_influence.html">3.11.16. statsmodels.stats.outliers_influence</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.stats.power.html">3.11.17. statsmodels.stats.power</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.stats.power.html#functions">3.11.17.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.stats.power.html#classes">3.11.17.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.proportion.html">3.11.18. statsmodels.stats.proportion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.sandwich_covariance.html">3.11.19. statsmodels.stats.sandwich_covariance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.stattools.html">3.11.20. statsmodels.stats.stattools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.tabledist.html">3.11.21. statsmodels.stats.tabledist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.stats.weightstats.html">3.11.22. statsmodels.stats.weightstats</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.stats.power.html">3.11.17. statsmodels.stats.power</a> &raquo;</li>
+        
+          <li><a href="statsmodels.stats.power.FTestAnovaPower.html">3.11.17.2.1. statsmodels.stats.power.FTestAnovaPower</a> &raquo;</li>
+        
+      <li>3.11.17.2.1.1.2. statsmodels.stats.power.FTestAnovaPower.plot_power</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.stats.power.FTestAnovaPower.plot_power.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-stats-power-ftestanovapower-plot-power">
+<h1>3.11.17.2.1.1.2. statsmodels.stats.power.FTestAnovaPower.plot_power<a class="headerlink" href="#statsmodels-stats-power-ftestanovapower-plot-power" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="statsmodels.stats.power.FTestAnovaPower.plot_power">
+<code class="descclassname">FTestAnovaPower.</code><code class="descname">plot_power</code><span class="sig-paren">(</span><em>dep_var='nobs'</em>, <em>nobs=None</em>, <em>effect_size=None</em>, <em>alpha=0.05</em>, <em>ax=None</em>, <em>title=None</em>, <em>plt_kwds=None</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="headerlink" href="#statsmodels.stats.power.FTestAnovaPower.plot_power" title="Permalink to this definition">¶</a></dt>
+<dd><p>plot power with number of observations or effect size on x-axis</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>dep_var</strong> : string in [&#8216;nobs&#8217;, &#8216;effect_size&#8217;, &#8216;alpha&#8217;]</p>
+<blockquote>
+<div><p>This specifies which variable is used for the horizontal axis.
+If dep_var=&#8217;nobs&#8217; (default), then one curve is created for each
+value of <code class="docutils literal"><span class="pre">effect_size</span></code>. If dep_var=&#8217;effect_size&#8217; or alpha, then
+one curve is created for each value of <code class="docutils literal"><span class="pre">nobs</span></code>.</p>
+</div></blockquote>
+<p><strong>nobs</strong> : scalar or array_like</p>
+<blockquote>
+<div><p>specifies the values of the number of observations in the plot</p>
+</div></blockquote>
+<p><strong>effect_size</strong> : scalar or array_like</p>
+<blockquote>
+<div><p>specifies the values of the effect_size in the plot</p>
+</div></blockquote>
+<p><strong>alpha</strong> : float or array_like</p>
+<blockquote>
+<div><p>The significance level (type I error) used in the power
+calculation. Can only be more than a scalar, if <code class="docutils literal"><span class="pre">dep_var='alpha'</span></code></p>
+</div></blockquote>
+<p><strong>ax</strong> : None or axis instance</p>
+<blockquote>
+<div><p>If ax is None, than a matplotlib figure is created. If ax is a
+matplotlib axis instance, then it is reused, and the plot elements
+are created with it.</p>
+</div></blockquote>
+<p><strong>title</strong> : string</p>
+<blockquote>
+<div><p>title for the axis. Use an empty string, <code class="docutils literal"><span class="pre">''</span></code>, to avoid a title.</p>
+</div></blockquote>
+<p><strong>plt_kwds</strong> : None or dict</p>
+<blockquote>
+<div><p>not used yet</p>
+</div></blockquote>
+<p><strong>kwds</strong> : optional keywords for power function</p>
+<blockquote>
+<div><p>These remaining keyword arguments are used as arguments to the
+power function. Many power function support <code class="docutils literal"><span class="pre">alternative</span></code> as a
+keyword argument, two-sample test support <code class="docutils literal"><span class="pre">ratio</span></code>.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first last"><strong>fig</strong> : matplotlib figure instance</p>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This works only for classes where the <code class="docutils literal"><span class="pre">power</span></code> method has
+<code class="docutils literal"><span class="pre">effect_size</span></code>, <code class="docutils literal"><span class="pre">nobs</span></code> and <code class="docutils literal"><span class="pre">alpha</span></code> as the first three arguments.
+If the second argument is <code class="docutils literal"><span class="pre">nobs1</span></code>, then the number of observations
+in the plot are those for the first sample.
+TODO: fix this for FTestPower and GofChisquarePower</p>
+<p>TODO: maybe add line variable, if we want more than nobs and effectsize</p>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.stats.power.FTestAnovaPower.power.html" class="btn btn-neutral float-right" title="3.11.17.2.1.1.3. statsmodels.stats.power.FTestAnovaPower.power" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.stats.power.FTestAnovaPower.__init__.html" class="btn btn-neutral" title="3.11.17.2.1.1.1. statsmodels.stats.power.FTestAnovaPower.__init__" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

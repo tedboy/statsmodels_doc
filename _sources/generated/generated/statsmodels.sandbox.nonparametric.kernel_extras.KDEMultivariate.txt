@@ -1,0 +1,25 @@
+statsmodels.sandbox.nonparametric.kernel_extras.KDEMultivariate
+===============================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernel_extras
+.. autoclass:: KDEMultivariate
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KDEMultivariate.__init__
+   ~KDEMultivariate.cdf
+   ~KDEMultivariate.imse
+   ~KDEMultivariate.loo_likelihood
+   ~KDEMultivariate.pdf
+
+
+
+
+

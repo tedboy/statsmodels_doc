@@ -1,0 +1,323 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.8.3. statsmodels.tsa.ar_model &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="4. Other modules of interest" href="../submain.html"/>
+        <link rel="next" title="4.8.3.1.1. statsmodels.tsa.ar_model.add_trend" href="statsmodels.tsa.ar_model.add_trend.html"/>
+        <link rel="prev" title="4.8.2.1.2. statsmodels.tsa.adfvalues.mackinnonp" href="statsmodels.tsa.adfvalues.mackinnonp.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.api.html">4.8.1. statsmodels.tsa.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.adfvalues.html">4.8.2. statsmodels.tsa.adfvalues</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.8.3. statsmodels.tsa.ar_model</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">4.8.3.1. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">4.8.3.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.descriptivestats.html">4.8.4. statsmodels.tsa.descriptivestats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.interp.denton.html">4.8.5. statsmodels.tsa.interp.denton</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.kalmanf.kalmanfilter.html">4.8.6. statsmodels.tsa.kalmanf.kalmanfilter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.mlemodel.html">4.8.7. statsmodels.tsa.mlemodel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.seasonal.html">4.8.8. statsmodels.tsa.seasonal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.tsatools.html">4.8.9. statsmodels.tsa.tsatools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.varma_process.html">4.8.10. statsmodels.tsa.varma_process</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.x13.html">4.8.11. statsmodels.tsa.x13</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.base.datetools.html">4.8.12. statsmodels.tsa.base.datetools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.base.tsa_model.html">4.8.13. statsmodels.tsa.base.tsa_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.api.html">4.8.14. statsmodels.tsa.filters.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters._utils.html">4.8.15. statsmodels.tsa.filters._utils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.bk_filter.html">4.8.16. statsmodels.tsa.filters.bk_filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.cf_filter.html">4.8.17. statsmodels.tsa.filters.cf_filter</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.filtertools.html">4.8.18. statsmodels.tsa.filters.filtertools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.tsa.filters.hp_filter.html">4.8.19. statsmodels.tsa.filters.hp_filter</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+      <li>4.8.3. statsmodels.tsa.ar_model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.tsa.ar_model.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.tsa.ar_model">
+<span id="statsmodels-tsa-ar-model"></span><h1>4.8.3. statsmodels.tsa.ar_model<a class="headerlink" href="#module-statsmodels.tsa.ar_model" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functions">
+<h2>4.8.3.1. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.ar_model.add_trend.html#statsmodels.tsa.ar_model.add_trend" title="statsmodels.tsa.ar_model.add_trend"><code class="xref py py-obj docutils literal"><span class="pre">add_trend</span></code></a>(X[,&nbsp;trend,&nbsp;prepend,&nbsp;has_constant])</td>
+<td>Adds a trend and/or constant to an array.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.ar_model.approx_fprime.html#statsmodels.tsa.ar_model.approx_fprime" title="statsmodels.tsa.ar_model.approx_fprime"><code class="xref py py-obj docutils literal"><span class="pre">approx_fprime</span></code></a>(x,&nbsp;f[,&nbsp;epsilon,&nbsp;args,&nbsp;kwargs,&nbsp;...])</td>
+<td>Gradient of function, or Jacobian if function f returns 1d array</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.ar_model.approx_hess.html#statsmodels.tsa.ar_model.approx_hess" title="statsmodels.tsa.ar_model.approx_hess"><code class="xref py py-obj docutils literal"><span class="pre">approx_hess</span></code></a>(x,&nbsp;f[,&nbsp;epsilon,&nbsp;args,&nbsp;kwargs])</td>
+<td>Calculate Hessian with finite difference derivative approximation</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tsa.ar_model.iteritems.html#statsmodels.tsa.ar_model.iteritems" title="statsmodels.tsa.ar_model.iteritems"><code class="xref py py-obj docutils literal"><span class="pre">iteritems</span></code></a>(obj,&nbsp;**kwargs)</td>
+<td>replacement for six&#8217;s iteritems for Python2/3 compat</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tsa.ar_model.lagmat.html#statsmodels.tsa.ar_model.lagmat" title="statsmodels.tsa.ar_model.lagmat"><code class="xref py py-obj docutils literal"><span class="pre">lagmat</span></code></a>(x,&nbsp;maxlag[,&nbsp;trim,&nbsp;original])</td>
+<td>create 2d array of lags</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>4.8.3.2. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.ar_model.AR.html#statsmodels.tsa.ar_model.AR" title="statsmodels.tsa.ar_model.AR"><code class="xref py py-obj docutils literal"><span class="pre">AR</span></code></a>(endog[,&nbsp;dates,&nbsp;freq,&nbsp;missing])</td>
+<td>Autoregressive AR(p) model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.ar_model.ARResults.html#statsmodels.tsa.ar_model.ARResults" title="statsmodels.tsa.ar_model.ARResults"><code class="xref py py-obj docutils literal"><span class="pre">ARResults</span></code></a>(model,&nbsp;params[,&nbsp;...])</td>
+<td>Class to hold results from fitting an AR model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.ar_model.ARResultsWrapper.html#statsmodels.tsa.ar_model.ARResultsWrapper" title="statsmodels.tsa.ar_model.ARResultsWrapper"><code class="xref py py-obj docutils literal"><span class="pre">ARResultsWrapper</span></code></a>(results)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.ar_model.KalmanFilter.html#statsmodels.tsa.ar_model.KalmanFilter" title="statsmodels.tsa.ar_model.KalmanFilter"><code class="xref py py-obj docutils literal"><span class="pre">KalmanFilter</span></code></a></td>
+<td>Kalman Filter code intended for use with the ARMA model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.ar_model.OLS.html#statsmodels.tsa.ar_model.OLS" title="statsmodels.tsa.ar_model.OLS"><code class="xref py py-obj docutils literal"><span class="pre">OLS</span></code></a>(endog[,&nbsp;exog,&nbsp;missing,&nbsp;hasconst])</td>
+<td>A simple ordinary least squares model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.tsa.ar_model.cache_writable.html#statsmodels.tsa.ar_model.cache_writable" title="statsmodels.tsa.ar_model.cache_writable"><code class="xref py py-obj docutils literal"><span class="pre">cache_writable</span></code></a>([cachename,&nbsp;resetlist])</td>
+<td>Decorator for CachedWritableAttribute</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.tsa.ar_model.resettable_cache.html#statsmodels.tsa.ar_model.resettable_cache" title="statsmodels.tsa.ar_model.resettable_cache"><code class="xref py py-obj docutils literal"><span class="pre">resettable_cache</span></code></a></td>
+<td>alias of <code class="xref py py-class docutils literal"><span class="pre">ResettableCache</span></code></td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.tsa.ar_model.add_trend.html" class="btn btn-neutral float-right" title="4.8.3.1.1. statsmodels.tsa.ar_model.add_trend" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.tsa.adfvalues.mackinnonp.html" class="btn btn-neutral" title="4.8.2.1.2. statsmodels.tsa.adfvalues.mackinnonp" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

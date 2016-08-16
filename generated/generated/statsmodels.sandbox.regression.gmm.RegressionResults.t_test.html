@@ -1,0 +1,367 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.7.4.4.14.1.47. statsmodels.sandbox.regression.gmm.RegressionResults.t_test &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.7.4.4.14. statsmodels.sandbox.regression.gmm.RegressionResults" href="statsmodels.sandbox.regression.gmm.RegressionResults.html"/>
+        <link rel="next" title="6.7.4.4.14.1.48. statsmodels.sandbox.regression.gmm.RegressionResults.tvalues" href="statsmodels.sandbox.regression.gmm.RegressionResults.tvalues.html"/>
+        <link rel="prev" title="6.7.4.4.14.1.46. statsmodels.sandbox.regression.gmm.RegressionResults.summary2" href="statsmodels.sandbox.regression.gmm.RegressionResults.summary2.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.anova_nistcertified.html">6.7.1. statsmodels.sandbox.regression.anova_nistcertified</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.ar_panel.html">6.7.2. statsmodels.sandbox.regression.ar_panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.example_kernridge.html">6.7.3. statsmodels.sandbox.regression.example_kernridge</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#issues">6.7.4.1. Issues</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#unclear">6.7.4.2. Unclear</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#functions">6.7.4.3. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.regression.gmm.html#classes">6.7.4.4. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.kernridgeregress_class.html">6.7.5. statsmodels.sandbox.regression.kernridgeregress_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.onewaygls.html">6.7.6. statsmodels.sandbox.regression.onewaygls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.penalized.html">6.7.7. statsmodels.sandbox.regression.penalized</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.predstd.html">6.7.8. statsmodels.sandbox.regression.predstd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.sympy_diff.html">6.7.9. statsmodels.sandbox.regression.sympy_diff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.tools.html">6.7.10. statsmodels.sandbox.regression.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.treewalkerclass.html">6.7.11. statsmodels.sandbox.regression.treewalkerclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_catdata.html">6.7.12. statsmodels.sandbox.regression.try_catdata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_ols_anova.html">6.7.13. statsmodels.sandbox.regression.try_ols_anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.regression.try_treewalker.html">6.7.14. statsmodels.sandbox.regression.try_treewalker</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a> &raquo;</li>
+        
+          <li><a href="statsmodels.sandbox.regression.gmm.RegressionResults.html">6.7.4.4.14. statsmodels.sandbox.regression.gmm.RegressionResults</a> &raquo;</li>
+        
+      <li>6.7.4.4.14.1.47. statsmodels.sandbox.regression.gmm.RegressionResults.t_test</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.regression.gmm.RegressionResults.t_test.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-regression-gmm-regressionresults-t-test">
+<h1>6.7.4.4.14.1.47. statsmodels.sandbox.regression.gmm.RegressionResults.t_test<a class="headerlink" href="#statsmodels-sandbox-regression-gmm-regressionresults-t-test" title="Permalink to this headline">¶</a></h1>
+<dl class="method">
+<dt id="statsmodels.sandbox.regression.gmm.RegressionResults.t_test">
+<code class="descclassname">RegressionResults.</code><code class="descname">t_test</code><span class="sig-paren">(</span><em>r_matrix</em>, <em>cov_p=None</em>, <em>scale=None</em>, <em>use_t=None</em><span class="sig-paren">)</span><a class="headerlink" href="#statsmodels.sandbox.regression.gmm.RegressionResults.t_test" title="Permalink to this definition">¶</a></dt>
+<dd><p>Compute a t-test for a each linear hypothesis of the form Rb = q</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>r_matrix</strong> : array-like, str, tuple</p>
+<blockquote>
+<div><ul class="simple">
+<li>array : If an array is given, a p x k 2d array or length k 1d
+array specifying the linear restrictions. It is assumed
+that the linear combination is equal to zero.</li>
+<li>str : The full hypotheses to test can be given as a string.
+See the examples.</li>
+<li>tuple : A tuple of arrays in the form (R, q). If q is given,
+can be either a scalar or a length p row vector.</li>
+</ul>
+</div></blockquote>
+<p><strong>cov_p</strong> : array-like, optional</p>
+<blockquote>
+<div><p>An alternative estimate for the parameter covariance matrix.
+If None is given, self.normalized_cov_params is used.</p>
+</div></blockquote>
+<p><strong>scale</strong> : float, optional</p>
+<blockquote>
+<div><p>An optional <cite>scale</cite> to use.  Default is the scale specified
+by the model fit.</p>
+</div></blockquote>
+<p><strong>use_t</strong> : bool, optional</p>
+<blockquote>
+<div><p>If use_t is None, then the default of the model is used.
+If use_t is True, then the p-values are based on the t
+distribution.
+If use_t is False, then the p-values are based on the normal
+distribution.</p>
+</div></blockquote>
+</td>
+</tr>
+<tr class="field-even field"><th class="field-name">Returns:</th><td class="field-body"><p class="first"><strong>res</strong> : ContrastResults instance</p>
+<blockquote class="last">
+<div><p>The results for the test are attributes of this results instance.
+The available results have the same elements as the parameter table
+in <cite>summary()</cite>.</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<div class="admonition seealso">
+<p class="first admonition-title">See also</p>
+<dl class="docutils">
+<dt><a class="reference internal" href="statsmodels.sandbox.regression.gmm.RegressionResults.tvalues.html#statsmodels.sandbox.regression.gmm.RegressionResults.tvalues" title="statsmodels.sandbox.regression.gmm.RegressionResults.tvalues"><code class="xref py py-obj docutils literal"><span class="pre">tvalues</span></code></a></dt>
+<dd>individual t statistics</dd>
+<dt><a class="reference internal" href="statsmodels.sandbox.regression.gmm.RegressionResults.f_test.html#statsmodels.sandbox.regression.gmm.RegressionResults.f_test" title="statsmodels.sandbox.regression.gmm.RegressionResults.f_test"><code class="xref py py-obj docutils literal"><span class="pre">f_test</span></code></a></dt>
+<dd>for F tests</dd>
+</dl>
+<p class="last"><code class="xref py py-obj docutils literal"><span class="pre">patsy.DesignInfo.linear_constraint</span></code></p>
+</div>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">longley</span><span class="o">.</span><span class="n">load</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">data</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">data</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="n">data</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">results</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">r</span><span class="p">[</span><span class="mi">5</span><span class="p">:]</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="go">[ 0.  0.  0.  0.  0.  1. -1.]</span>
+</pre></div>
+</div>
+<p>r tests that the coefficients on the 5th and 6th independent
+variable are the same.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">T_test</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">t_test</span><span class="p">(</span><span class="n">r</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">T_test</span><span class="p">)</span>
+<span class="go">&lt;T contrast: effect=-1829.2025687192481, sd=455.39079425193762,</span>
+<span class="go">t=-4.0167754636411717, p=0.0015163772380899498, df_denom=9&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T_test</span><span class="o">.</span><span class="n">effect</span>
+<span class="go">-1829.2025687192481</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T_test</span><span class="o">.</span><span class="n">sd</span>
+<span class="go">455.39079425193762</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T_test</span><span class="o">.</span><span class="n">tvalue</span>
+<span class="go">-4.0167754636411717</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">T_test</span><span class="o">.</span><span class="n">pvalue</span>
+<span class="go">0.0015163772380899498</span>
+</pre></div>
+</div>
+<p>Alternatively, you can specify the hypothesis tests using a string</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">statsmodels.formula.api</span> <span class="k">import</span> <span class="n">ols</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">dta</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">longley</span><span class="o">.</span><span class="n">load_pandas</span><span class="p">()</span><span class="o">.</span><span class="n">data</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">formula</span> <span class="o">=</span> <span class="s1">&#39;TOTEMP ~ GNPDEFL + GNP + UNEMP + ARMED + POP + YEAR&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">results</span> <span class="o">=</span> <span class="n">ols</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">dta</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">hypotheses</span> <span class="o">=</span> <span class="s1">&#39;GNPDEFL = GNP, UNEMP = 2, YEAR/1829 = 1&#39;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">t_test</span> <span class="o">=</span> <span class="n">results</span><span class="o">.</span><span class="n">t_test</span><span class="p">(</span><span class="n">hypotheses</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="n">t_test</span><span class="p">)</span>
+</pre></div>
+</div>
+</dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.regression.gmm.RegressionResults.tvalues.html" class="btn btn-neutral float-right" title="6.7.4.4.14.1.48. statsmodels.sandbox.regression.gmm.RegressionResults.tvalues" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.regression.gmm.RegressionResults.summary2.html" class="btn btn-neutral" title="6.7.4.4.14.1.46. statsmodels.sandbox.regression.gmm.RegressionResults.summary2" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

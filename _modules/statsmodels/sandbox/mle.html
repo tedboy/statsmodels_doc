@@ -1,0 +1,280 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.mle &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.mle</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.mle</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;What&#39;s the origin of this file? It is not ours.</span>
+<span class="sd">Does not run because of missing mtx files, now included</span>
+
+<span class="sd">changes: JP corrections to imports so it runs, comment out print</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">dot</span><span class="p">,</span>  <span class="n">outer</span><span class="p">,</span> <span class="n">random</span><span class="p">,</span> <span class="n">argsort</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">io</span><span class="p">,</span> <span class="n">linalg</span><span class="p">,</span> <span class="n">optimize</span>
+<span class="kn">from</span> <span class="nn">scipy.sparse</span> <span class="k">import</span> <span class="n">eye</span> <span class="k">as</span> <span class="n">speye</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<div class="viewcode-block" id="R"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.mle.R.html#statsmodels.sandbox.mle.R">[docs]</a><span class="k">def</span> <span class="nf">R</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="n">rq</span> <span class="o">=</span> <span class="n">dot</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">A</span><span class="o">*</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">dot</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">B</span><span class="o">*</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">v</span><span class="o">-</span><span class="n">rq</span><span class="o">*</span><span class="n">B</span><span class="o">*</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">B</span><span class="o">*</span><span class="n">v</span><span class="p">)</span>
+    <span class="n">data</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">res</span><span class="p">))</span>
+    <span class="k">return</span> <span class="n">rq</span></div>
+
+<div class="viewcode-block" id="Rp"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.mle.Rp.html#statsmodels.sandbox.mle.Rp">[docs]</a><span class="k">def</span> <span class="nf">Rp</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Gradient &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">A</span><span class="o">*</span><span class="n">v</span><span class="o">-</span><span class="n">R</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">B</span><span class="o">*</span><span class="n">v</span><span class="p">)</span><span class="o">/</span><span class="n">dot</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">B</span><span class="o">*</span><span class="n">v</span><span class="p">)</span>
+    <span class="c1">#print &quot;Rp: &quot;, result</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="Rpp"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.mle.Rpp.html#statsmodels.sandbox.mle.Rpp">[docs]</a><span class="k">def</span> <span class="nf">Rpp</span><span class="p">(</span><span class="n">v</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot; Hessian &quot;&quot;&quot;</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">A</span><span class="o">-</span><span class="n">R</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">*</span><span class="n">B</span><span class="o">-</span><span class="n">outer</span><span class="p">(</span><span class="n">B</span><span class="o">*</span><span class="n">v</span><span class="p">,</span><span class="n">Rp</span><span class="p">(</span><span class="n">v</span><span class="p">))</span><span class="o">-</span><span class="n">outer</span><span class="p">(</span><span class="n">Rp</span><span class="p">(</span><span class="n">v</span><span class="p">),</span><span class="n">B</span><span class="o">*</span><span class="n">v</span><span class="p">))</span><span class="o">/</span><span class="n">dot</span><span class="p">(</span><span class="n">v</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="n">B</span><span class="o">*</span><span class="n">v</span><span class="p">)</span>
+    <span class="c1">#print &quot;Rpp: &quot;, result</span>
+    <span class="k">return</span> <span class="n">result</span></div>
+
+
+<span class="n">A</span> <span class="o">=</span> <span class="n">io</span><span class="o">.</span><span class="n">mmread</span><span class="p">(</span><span class="s1">&#39;/home/takanori/anaconda2/lib/python2.7/site-packages/statsmodels/sandbox/nos4.mtx&#39;</span><span class="p">)</span> <span class="c1"># clustered eigenvalues</span>
+<span class="c1">#B = io.mmread(&#39;bcsstm02.mtx.gz&#39;)</span>
+<span class="c1">#A = io.mmread(&#39;bcsstk06.mtx.gz&#39;) # clustered eigenvalues</span>
+<span class="c1">#B = io.mmread(&#39;bcsstm06.mtx.gz&#39;)</span>
+<span class="n">n</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+<span class="n">B</span> <span class="o">=</span> <span class="n">speye</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">)</span>
+<span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+<span class="n">v_0</span><span class="o">=</span><span class="n">random</span><span class="o">.</span><span class="n">rand</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;try fmin_bfgs&quot;</span><span class="p">)</span>
+<span class="n">full_output</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="n">data</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">v</span><span class="p">,</span><span class="n">fopt</span><span class="p">,</span> <span class="n">gopt</span><span class="p">,</span> <span class="n">Hopt</span><span class="p">,</span> <span class="n">func_calls</span><span class="p">,</span> <span class="n">grad_calls</span><span class="p">,</span> <span class="n">warnflag</span><span class="p">,</span> <span class="n">allvecs</span> <span class="o">=</span> \
+        <span class="n">optimize</span><span class="o">.</span><span class="n">fmin_bfgs</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">v_0</span><span class="p">,</span><span class="n">fprime</span><span class="o">=</span><span class="n">Rp</span><span class="p">,</span><span class="n">full_output</span><span class="o">=</span><span class="n">full_output</span><span class="p">,</span><span class="n">retall</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">warnflag</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+   <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span><span class="n">data</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rayleigh quotient BFGS&#39;</span><span class="p">,</span><span class="n">R</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;fmin_bfgs OK&quot;</span><span class="p">)</span>
+
+<span class="nb">print</span><span class="p">(</span><span class="s2">&quot;try fmin_ncg&quot;</span><span class="p">)</span>
+
+<span class="c1">#</span>
+<span class="c1"># WARNING: the program may hangs if fmin_ncg is used</span>
+<span class="c1">#</span>
+<span class="n">data</span><span class="o">=</span><span class="p">[]</span>
+<span class="n">v</span><span class="p">,</span><span class="n">fopt</span><span class="p">,</span> <span class="n">fcalls</span><span class="p">,</span> <span class="n">gcalls</span><span class="p">,</span> <span class="n">hcalls</span><span class="p">,</span> <span class="n">warnflag</span><span class="p">,</span> <span class="n">allvecs</span> <span class="o">=</span> \
+        <span class="n">optimize</span><span class="o">.</span><span class="n">fmin_ncg</span><span class="p">(</span><span class="n">R</span><span class="p">,</span><span class="n">v_0</span><span class="p">,</span><span class="n">fprime</span><span class="o">=</span><span class="n">Rp</span><span class="p">,</span><span class="n">fhess</span><span class="o">=</span><span class="n">Rpp</span><span class="p">,</span><span class="n">full_output</span><span class="o">=</span><span class="n">full_output</span><span class="p">,</span><span class="n">retall</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+<span class="k">if</span> <span class="n">warnflag</span><span class="o">==</span><span class="mi">0</span><span class="p">:</span>
+   <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+   <span class="n">plt</span><span class="o">.</span><span class="n">semilogy</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)),</span><span class="n">data</span><span class="p">)</span>
+   <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rayleigh quotient NCG&#39;</span><span class="p">,</span><span class="n">R</span><span class="p">(</span><span class="n">v</span><span class="p">))</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

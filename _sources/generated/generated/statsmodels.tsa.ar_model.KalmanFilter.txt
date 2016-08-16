@@ -1,0 +1,25 @@
+statsmodels.tsa.ar_model.KalmanFilter
+=====================================
+
+.. currentmodule:: statsmodels.tsa.ar_model
+.. autoclass:: KalmanFilter
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KalmanFilter.R
+   ~KalmanFilter.T
+   ~KalmanFilter.Z
+   ~KalmanFilter.geterrors
+   ~KalmanFilter.loglike
+
+
+
+
+

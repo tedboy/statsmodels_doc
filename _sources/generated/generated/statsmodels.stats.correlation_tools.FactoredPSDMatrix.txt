@@ -1,0 +1,25 @@
+statsmodels.stats.correlation_tools.FactoredPSDMatrix
+=====================================================
+
+.. currentmodule:: statsmodels.stats.correlation_tools
+.. autoclass:: FactoredPSDMatrix
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~FactoredPSDMatrix.__init__
+   ~FactoredPSDMatrix.decorrelate
+   ~FactoredPSDMatrix.logdet
+   ~FactoredPSDMatrix.solve
+   ~FactoredPSDMatrix.to_matrix
+
+
+
+
+

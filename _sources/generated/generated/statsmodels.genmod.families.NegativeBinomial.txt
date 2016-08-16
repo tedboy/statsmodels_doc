@@ -1,0 +1,40 @@
+statsmodels.genmod.families.NegativeBinomial
+============================================
+
+.. currentmodule:: statsmodels.genmod.families
+.. autoclass:: NegativeBinomial
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NegativeBinomial.__init__
+   ~NegativeBinomial.deviance
+   ~NegativeBinomial.fitted
+   ~NegativeBinomial.loglike
+   ~NegativeBinomial.predict
+   ~NegativeBinomial.resid_anscombe
+   ~NegativeBinomial.resid_dev
+   ~NegativeBinomial.starting_mu
+   ~NegativeBinomial.weights
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~NegativeBinomial.link
+   ~NegativeBinomial.links
+   ~NegativeBinomial.valid
+   ~NegativeBinomial.variance
+

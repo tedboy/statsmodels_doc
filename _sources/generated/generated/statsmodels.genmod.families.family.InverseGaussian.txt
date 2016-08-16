@@ -1,0 +1,40 @@
+statsmodels.genmod.families.family.InverseGaussian
+==================================================
+
+.. currentmodule:: statsmodels.genmod.families.family
+.. autoclass:: InverseGaussian
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~InverseGaussian.__init__
+   ~InverseGaussian.deviance
+   ~InverseGaussian.fitted
+   ~InverseGaussian.loglike
+   ~InverseGaussian.predict
+   ~InverseGaussian.resid_anscombe
+   ~InverseGaussian.resid_dev
+   ~InverseGaussian.starting_mu
+   ~InverseGaussian.weights
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~InverseGaussian.link
+   ~InverseGaussian.links
+   ~InverseGaussian.valid
+   ~InverseGaussian.variance
+

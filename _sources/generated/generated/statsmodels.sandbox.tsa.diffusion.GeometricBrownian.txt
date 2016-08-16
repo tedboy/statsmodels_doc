@@ -1,0 +1,25 @@
+statsmodels.sandbox.tsa.diffusion.GeometricBrownian
+===================================================
+
+.. currentmodule:: statsmodels.sandbox.tsa.diffusion
+.. autoclass:: GeometricBrownian
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GeometricBrownian.__init__
+   ~GeometricBrownian.expectedsim
+   ~GeometricBrownian.sim
+   ~GeometricBrownian.simEM
+   ~GeometricBrownian.simulateW
+
+
+
+
+

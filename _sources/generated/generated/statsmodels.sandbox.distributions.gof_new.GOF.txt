@@ -1,0 +1,30 @@
+statsmodels.sandbox.distributions.gof_new.GOF
+=============================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.gof_new
+.. autoclass:: GOF
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GOF.__init__
+   ~GOF.a
+   ~GOF.asqu
+   ~GOF.d
+   ~GOF.d_minus
+   ~GOF.d_plus
+   ~GOF.get_test
+   ~GOF.usqu
+   ~GOF.v
+   ~GOF.wsqu
+
+
+
+
+

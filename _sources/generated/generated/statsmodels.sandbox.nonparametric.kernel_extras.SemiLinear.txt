@@ -1,0 +1,27 @@
+statsmodels.sandbox.nonparametric.kernel_extras.SemiLinear
+==========================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernel_extras
+.. autoclass:: SemiLinear
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~SemiLinear.__init__
+   ~SemiLinear.aic_hurvich
+   ~SemiLinear.cv_loo
+   ~SemiLinear.fit
+   ~SemiLinear.loo_likelihood
+   ~SemiLinear.r_squared
+   ~SemiLinear.sig_test
+
+
+
+
+

@@ -1,0 +1,30 @@
+statsmodels.regression.mixed_linear_model.MixedLMParams
+=======================================================
+
+.. currentmodule:: statsmodels.regression.mixed_linear_model
+.. autoclass:: MixedLMParams
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MixedLMParams.__init__
+   ~MixedLMParams.copy
+   ~MixedLMParams.from_components
+   ~MixedLMParams.from_packed
+   ~MixedLMParams.get_cov_re
+   ~MixedLMParams.get_fe_params
+   ~MixedLMParams.get_packed
+   ~MixedLMParams.set_cov_re
+   ~MixedLMParams.set_fe_params
+   ~MixedLMParams.set_packed
+
+
+
+
+

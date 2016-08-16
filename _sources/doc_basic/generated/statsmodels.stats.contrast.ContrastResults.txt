@@ -1,0 +1,25 @@
+statsmodels.stats.contrast.ContrastResults
+==========================================
+
+.. currentmodule:: statsmodels.stats.contrast
+
+.. autoclass:: ContrastResults
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~ContrastResults.__init__
+      ~ContrastResults.conf_int
+      ~ContrastResults.summary
+      ~ContrastResults.summary_frame
+   
+   
+
+   
+   
+   

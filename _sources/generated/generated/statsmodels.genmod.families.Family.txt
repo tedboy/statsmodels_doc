@@ -1,0 +1,39 @@
+statsmodels.genmod.families.Family
+==================================
+
+.. currentmodule:: statsmodels.genmod.families
+.. autoclass:: Family
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Family.__init__
+   ~Family.deviance
+   ~Family.fitted
+   ~Family.loglike
+   ~Family.predict
+   ~Family.resid_anscombe
+   ~Family.resid_dev
+   ~Family.starting_mu
+   ~Family.weights
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Family.link
+   ~Family.links
+   ~Family.valid
+

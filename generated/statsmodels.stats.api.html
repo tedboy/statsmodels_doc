@@ -1,0 +1,518 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.11.1. statsmodels.stats.api &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="3. Main modules of interest" href="../main.html"/>
+        <link rel="next" title="3.11.1.1.1. statsmodels.stats.api.acorr_breush_godfrey" href="statsmodels.stats.api.acorr_breush_godfrey.html"/>
+        <link rel="prev" title="3.10.3.3.2.1.1. statsmodels.robust.scale.HuberScale.__init__" href="generated/statsmodels.robust.scale.HuberScale.__init__.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main.html#statsmodel-stats">3.11. statsmodel.stats</a><ul class="current">
+<li class="toctree-l3 current"><a class="current reference internal" href="#">3.11.1. statsmodels.stats.api</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">3.11.1.1. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">3.11.1.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.adnorm.html">3.11.2. statsmodels.stats.adnorm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.anova.html">3.11.3. statsmodels.stats.anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.base.html">3.11.4. statsmodels.stats.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.contrast.html">3.11.5. statsmodels.stats.contrast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.correlation_tools.html">3.11.6. statsmodels.stats.correlation_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.descriptivestats.html">3.11.7. statsmodels.stats.descriptivestats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.diagnostic.html">3.11.8. statsmodels.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.gof.html">3.11.9. statsmodels.stats.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.inter_rater.html">3.11.10. statsmodels.stats.inter_rater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.lilliefors.html">3.11.11. statsmodels.stats.lilliefors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.moment_helpers.html">3.11.12. statsmodels.stats.moment_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multicomp.html">3.11.13. statsmodels.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multitest.html">3.11.14. statsmodels.stats.multitest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multivariate_tools.html">3.11.15. statsmodels.stats.multivariate_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.outliers_influence.html">3.11.16. statsmodels.stats.outliers_influence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.power.html">3.11.17. statsmodels.stats.power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.proportion.html">3.11.18. statsmodels.stats.proportion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.sandwich_covariance.html">3.11.19. statsmodels.stats.sandwich_covariance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.stattools.html">3.11.20. statsmodels.stats.stattools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.tabledist.html">3.11.21. statsmodels.stats.tabledist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.weightstats.html">3.11.22. statsmodels.stats.weightstats</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+      <li>3.11.1. statsmodels.stats.api</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.stats.api.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.stats.api">
+<span id="statsmodels-stats-api"></span><h1>3.11.1. statsmodels.stats.api<a class="headerlink" href="#module-statsmodels.stats.api" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functions">
+<h2>3.11.1.1. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.acorr_breush_godfrey.html#statsmodels.stats.api.acorr_breush_godfrey" title="statsmodels.stats.api.acorr_breush_godfrey"><code class="xref py py-obj docutils literal"><span class="pre">acorr_breush_godfrey</span></code></a>(results[,&nbsp;nlags,&nbsp;store])</td>
+<td>Breush Godfrey Lagrange Multiplier tests for residual autocorrelation</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.acorr_ljungbox.html#statsmodels.stats.api.acorr_ljungbox" title="statsmodels.stats.api.acorr_ljungbox"><code class="xref py py-obj docutils literal"><span class="pre">acorr_ljungbox</span></code></a>(x[,&nbsp;lags,&nbsp;boxpierce])</td>
+<td>Ljung-Box test for no autocorrelation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.anova_lm.html#statsmodels.stats.api.anova_lm" title="statsmodels.stats.api.anova_lm"><code class="xref py py-obj docutils literal"><span class="pre">anova_lm</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td>ANOVA table for one or more fitted linear models.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.binom_test.html#statsmodels.stats.api.binom_test" title="statsmodels.stats.api.binom_test"><code class="xref py py-obj docutils literal"><span class="pre">binom_test</span></code></a>(count,&nbsp;nobs[,&nbsp;prop,&nbsp;alternative])</td>
+<td>Perform a test that the probability of success is p.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.binom_test_reject_interval.html#statsmodels.stats.api.binom_test_reject_interval" title="statsmodels.stats.api.binom_test_reject_interval"><code class="xref py py-obj docutils literal"><span class="pre">binom_test_reject_interval</span></code></a>(value,&nbsp;nobs[,&nbsp;...])</td>
+<td>rejection region for binomial test for one sample proportion</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.binom_tost.html#statsmodels.stats.api.binom_tost" title="statsmodels.stats.api.binom_tost"><code class="xref py py-obj docutils literal"><span class="pre">binom_tost</span></code></a>(count,&nbsp;nobs,&nbsp;low,&nbsp;upp)</td>
+<td>exact TOST test for one proportion using binomial distribution</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.binom_tost_reject_interval.html#statsmodels.stats.api.binom_tost_reject_interval" title="statsmodels.stats.api.binom_tost_reject_interval"><code class="xref py py-obj docutils literal"><span class="pre">binom_tost_reject_interval</span></code></a>(low,&nbsp;upp,&nbsp;nobs[,&nbsp;...])</td>
+<td>rejection region for binomial TOST</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.breaks_cusumolsresid.html#statsmodels.stats.api.breaks_cusumolsresid" title="statsmodels.stats.api.breaks_cusumolsresid"><code class="xref py py-obj docutils literal"><span class="pre">breaks_cusumolsresid</span></code></a>(olsresidual[,&nbsp;ddof])</td>
+<td>cusum test for parameter stability based on ols residuals</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.breaks_hansen.html#statsmodels.stats.api.breaks_hansen" title="statsmodels.stats.api.breaks_hansen"><code class="xref py py-obj docutils literal"><span class="pre">breaks_hansen</span></code></a>(olsresults)</td>
+<td>test for model stability, breaks in parameters for ols, Hansen 1992</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.chisquare_effectsize.html#statsmodels.stats.api.chisquare_effectsize" title="statsmodels.stats.api.chisquare_effectsize"><code class="xref py py-obj docutils literal"><span class="pre">chisquare_effectsize</span></code></a>(probs0,&nbsp;probs1[,&nbsp;...])</td>
+<td>effect size for a chisquare goodness-of-fit test</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.cochrans_q.html#statsmodels.stats.api.cochrans_q" title="statsmodels.stats.api.cochrans_q"><code class="xref py py-obj docutils literal"><span class="pre">cochrans_q</span></code></a>(x)</td>
+<td>Cochran&#8217;s Q test for identical effect of k treatments</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.corr_clipped.html#statsmodels.stats.api.corr_clipped" title="statsmodels.stats.api.corr_clipped"><code class="xref py py-obj docutils literal"><span class="pre">corr_clipped</span></code></a>(corr[,&nbsp;threshold])</td>
+<td>Find a near correlation matrix that is positive semi-definite</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.corr_nearest.html#statsmodels.stats.api.corr_nearest" title="statsmodels.stats.api.corr_nearest"><code class="xref py py-obj docutils literal"><span class="pre">corr_nearest</span></code></a>(corr[,&nbsp;threshold,&nbsp;n_fact])</td>
+<td>Find the nearest correlation matrix that is positive semi-definite.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.cov_cluster.html#statsmodels.stats.api.cov_cluster" title="statsmodels.stats.api.cov_cluster"><code class="xref py py-obj docutils literal"><span class="pre">cov_cluster</span></code></a>(results,&nbsp;group[,&nbsp;use_correction])</td>
+<td>cluster robust covariance matrix</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.cov_cluster_2groups.html#statsmodels.stats.api.cov_cluster_2groups" title="statsmodels.stats.api.cov_cluster_2groups"><code class="xref py py-obj docutils literal"><span class="pre">cov_cluster_2groups</span></code></a>(results,&nbsp;group[,&nbsp;...])</td>
+<td>cluster robust covariance matrix for two groups/clusters</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.cov_hac.html#statsmodels.stats.api.cov_hac" title="statsmodels.stats.api.cov_hac"><code class="xref py py-obj docutils literal"><span class="pre">cov_hac</span></code></a>(results[,&nbsp;nlags,&nbsp;weights_func,&nbsp;...])</td>
+<td>heteroscedasticity and autocorrelation robust covariance matrix (Newey-West)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.cov_hc0.html#statsmodels.stats.api.cov_hc0" title="statsmodels.stats.api.cov_hc0"><code class="xref py py-obj docutils literal"><span class="pre">cov_hc0</span></code></a>(results)</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.cov_hc1.html#statsmodels.stats.api.cov_hc1" title="statsmodels.stats.api.cov_hc1"><code class="xref py py-obj docutils literal"><span class="pre">cov_hc1</span></code></a>(results)</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.cov_hc2.html#statsmodels.stats.api.cov_hc2" title="statsmodels.stats.api.cov_hc2"><code class="xref py py-obj docutils literal"><span class="pre">cov_hc2</span></code></a>(results)</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.cov_hc3.html#statsmodels.stats.api.cov_hc3" title="statsmodels.stats.api.cov_hc3"><code class="xref py py-obj docutils literal"><span class="pre">cov_hc3</span></code></a>(results)</td>
+<td>See statsmodels.RegressionResults</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.cov_nearest.html#statsmodels.stats.api.cov_nearest" title="statsmodels.stats.api.cov_nearest"><code class="xref py py-obj docutils literal"><span class="pre">cov_nearest</span></code></a>(cov[,&nbsp;method,&nbsp;threshold,&nbsp;...])</td>
+<td>Find the nearest covariance matrix that is postive (semi-) definite</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.cov_nw_panel.html#statsmodels.stats.api.cov_nw_panel" title="statsmodels.stats.api.cov_nw_panel"><code class="xref py py-obj docutils literal"><span class="pre">cov_nw_panel</span></code></a>(results,&nbsp;nlags,&nbsp;groupidx[,&nbsp;...])</td>
+<td>Panel HAC robust covariance matrix</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.cov_white_simple.html#statsmodels.stats.api.cov_white_simple" title="statsmodels.stats.api.cov_white_simple"><code class="xref py py-obj docutils literal"><span class="pre">cov_white_simple</span></code></a>(results[,&nbsp;use_correction])</td>
+<td>heteroscedasticity robust covariance matrix (White)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.durbin_watson.html#statsmodels.stats.api.durbin_watson" title="statsmodels.stats.api.durbin_watson"><code class="xref py py-obj docutils literal"><span class="pre">durbin_watson</span></code></a>(resids[,&nbsp;axis])</td>
+<td>Calculates the Durbin-Watson statistic</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.fdrcorrection.html#statsmodels.stats.api.fdrcorrection" title="statsmodels.stats.api.fdrcorrection"><code class="xref py py-obj docutils literal"><span class="pre">fdrcorrection</span></code></a>(pvals[,&nbsp;alpha,&nbsp;method,&nbsp;is_sorted])</td>
+<td>pvalue correction for false discovery rate</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.fdrcorrection_twostage.html#statsmodels.stats.api.fdrcorrection_twostage" title="statsmodels.stats.api.fdrcorrection_twostage"><code class="xref py py-obj docutils literal"><span class="pre">fdrcorrection_twostage</span></code></a>(pvals[,&nbsp;alpha,&nbsp;...])</td>
+<td>(iterated) two stage linear step-up procedure with estimation of number of true</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.gof_chisquare_discrete.html#statsmodels.stats.api.gof_chisquare_discrete" title="statsmodels.stats.api.gof_chisquare_discrete"><code class="xref py py-obj docutils literal"><span class="pre">gof_chisquare_discrete</span></code></a>(distfn,&nbsp;arg,&nbsp;rvs,&nbsp;...)</td>
+<td>perform chisquare test for random sample of a discrete distribution</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.het_arch.html#statsmodels.stats.api.het_arch" title="statsmodels.stats.api.het_arch"><code class="xref py py-obj docutils literal"><span class="pre">het_arch</span></code></a>(resid[,&nbsp;maxlag,&nbsp;autolag,&nbsp;store,&nbsp;...])</td>
+<td>Engle&#8217;s Test for Autoregressive Conditional Heteroscedasticity (ARCH)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.het_breushpagan.html#statsmodels.stats.api.het_breushpagan" title="statsmodels.stats.api.het_breushpagan"><code class="xref py py-obj docutils literal"><span class="pre">het_breushpagan</span></code></a>(resid,&nbsp;exog_het)</td>
+<td>Breush-Pagan Lagrange Multiplier test for heteroscedasticity</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.het_white.html#statsmodels.stats.api.het_white" title="statsmodels.stats.api.het_white"><code class="xref py py-obj docutils literal"><span class="pre">het_white</span></code></a>(resid,&nbsp;exog[,&nbsp;retres])</td>
+<td>White&#8217;s Lagrange Multiplier Test for Heteroscedasticity</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.jarque_bera.html#statsmodels.stats.api.jarque_bera" title="statsmodels.stats.api.jarque_bera"><code class="xref py py-obj docutils literal"><span class="pre">jarque_bera</span></code></a>(resids[,&nbsp;axis])</td>
+<td>Calculate residual skewness, kurtosis, and do the JB test for normality</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.lillifors.html#statsmodels.stats.api.lillifors" title="statsmodels.stats.api.lillifors"><code class="xref py py-obj docutils literal"><span class="pre">lillifors</span></code></a>(x[,&nbsp;pvalmethod])</td>
+<td>Lillifors test for normality,</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.linear_harvey_collier.html#statsmodels.stats.api.linear_harvey_collier" title="statsmodels.stats.api.linear_harvey_collier"><code class="xref py py-obj docutils literal"><span class="pre">linear_harvey_collier</span></code></a>(res)</td>
+<td>Harvey Collier test for linearity</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.linear_lm.html#statsmodels.stats.api.linear_lm" title="statsmodels.stats.api.linear_lm"><code class="xref py py-obj docutils literal"><span class="pre">linear_lm</span></code></a>(resid,&nbsp;exog[,&nbsp;func])</td>
+<td>Lagrange multiplier test for linearity against functional alternative</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.linear_rainbow.html#statsmodels.stats.api.linear_rainbow" title="statsmodels.stats.api.linear_rainbow"><code class="xref py py-obj docutils literal"><span class="pre">linear_rainbow</span></code></a>(res[,&nbsp;frac])</td>
+<td>Rainbow test for linearity</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.mcnemar.html#statsmodels.stats.api.mcnemar" title="statsmodels.stats.api.mcnemar"><code class="xref py py-obj docutils literal"><span class="pre">mcnemar</span></code></a>(x[,&nbsp;y,&nbsp;exact,&nbsp;correction])</td>
+<td>McNemar test</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.multipletests.html#statsmodels.stats.api.multipletests" title="statsmodels.stats.api.multipletests"><code class="xref py py-obj docutils literal"><span class="pre">multipletests</span></code></a>(pvals[,&nbsp;alpha,&nbsp;method,&nbsp;...])</td>
+<td>test results and p-value correction for multiple tests</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.normal_ad.html#statsmodels.stats.api.normal_ad" title="statsmodels.stats.api.normal_ad"><code class="xref py py-obj docutils literal"><span class="pre">normal_ad</span></code></a>(x[,&nbsp;axis])</td>
+<td>Anderson-Darling test for normal distribution unknown mean and variance</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.omni_normtest.html#statsmodels.stats.api.omni_normtest" title="statsmodels.stats.api.omni_normtest"><code class="xref py py-obj docutils literal"><span class="pre">omni_normtest</span></code></a>(resids[,&nbsp;axis])</td>
+<td>Omnibus test for normality</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.power_binom_tost.html#statsmodels.stats.api.power_binom_tost" title="statsmodels.stats.api.power_binom_tost"><code class="xref py py-obj docutils literal"><span class="pre">power_binom_tost</span></code></a>(low,&nbsp;upp,&nbsp;nobs[,&nbsp;p_alt,&nbsp;alpha])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.power_ztost_prop.html#statsmodels.stats.api.power_ztost_prop" title="statsmodels.stats.api.power_ztost_prop"><code class="xref py py-obj docutils literal"><span class="pre">power_ztost_prop</span></code></a>(low,&nbsp;upp,&nbsp;nobs,&nbsp;p_alt[,&nbsp;...])</td>
+<td>Power of proportions equivalence test based on normal distribution</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.powerdiscrepancy.html#statsmodels.stats.api.powerdiscrepancy" title="statsmodels.stats.api.powerdiscrepancy"><code class="xref py py-obj docutils literal"><span class="pre">powerdiscrepancy</span></code></a>(observed,&nbsp;expected[,&nbsp;...])</td>
+<td>Calculates power discrepancy, a class of goodness-of-fit tests as a measure of discrepancy between observed and expected data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.proportion_confint.html#statsmodels.stats.api.proportion_confint" title="statsmodels.stats.api.proportion_confint"><code class="xref py py-obj docutils literal"><span class="pre">proportion_confint</span></code></a>(count,&nbsp;nobs[,&nbsp;alpha,&nbsp;method])</td>
+<td>confidence interval for a binomial proportion</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.proportion_effectsize.html#statsmodels.stats.api.proportion_effectsize" title="statsmodels.stats.api.proportion_effectsize"><code class="xref py py-obj docutils literal"><span class="pre">proportion_effectsize</span></code></a>(prop1,&nbsp;prop2[,&nbsp;method])</td>
+<td>effect size for a test comparing two proportions</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.proportions_chisquare.html#statsmodels.stats.api.proportions_chisquare" title="statsmodels.stats.api.proportions_chisquare"><code class="xref py py-obj docutils literal"><span class="pre">proportions_chisquare</span></code></a>(count,&nbsp;nobs[,&nbsp;value])</td>
+<td>test for proportions based on chisquare test</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.proportions_chisquare_allpairs.html#statsmodels.stats.api.proportions_chisquare_allpairs" title="statsmodels.stats.api.proportions_chisquare_allpairs"><code class="xref py py-obj docutils literal"><span class="pre">proportions_chisquare_allpairs</span></code></a>(count,&nbsp;nobs)</td>
+<td>chisquare test of proportions for all pairs of k samples</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.proportions_chisquare_pairscontrol.html#statsmodels.stats.api.proportions_chisquare_pairscontrol" title="statsmodels.stats.api.proportions_chisquare_pairscontrol"><code class="xref py py-obj docutils literal"><span class="pre">proportions_chisquare_pairscontrol</span></code></a>(count,&nbsp;nobs)</td>
+<td>chisquare test of proportions for pairs of k samples compared to control</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.proportions_ztest.html#statsmodels.stats.api.proportions_ztest" title="statsmodels.stats.api.proportions_ztest"><code class="xref py py-obj docutils literal"><span class="pre">proportions_ztest</span></code></a>(count,&nbsp;nobs[,&nbsp;value,&nbsp;...])</td>
+<td>test for proportions based on normal (z) test</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.proportions_ztost.html#statsmodels.stats.api.proportions_ztost" title="statsmodels.stats.api.proportions_ztost"><code class="xref py py-obj docutils literal"><span class="pre">proportions_ztost</span></code></a>(count,&nbsp;nobs,&nbsp;low,&nbsp;upp[,&nbsp;...])</td>
+<td>Equivalence test based on normal distribution</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.recursive_olsresiduals.html#statsmodels.stats.api.recursive_olsresiduals" title="statsmodels.stats.api.recursive_olsresiduals"><code class="xref py py-obj docutils literal"><span class="pre">recursive_olsresiduals</span></code></a>(olsresults[,&nbsp;skip,&nbsp;...])</td>
+<td>calculate recursive ols with residuals and cusum test statistic</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.runstest_1samp.html#statsmodels.stats.api.runstest_1samp" title="statsmodels.stats.api.runstest_1samp"><code class="xref py py-obj docutils literal"><span class="pre">runstest_1samp</span></code></a>(x[,&nbsp;cutoff,&nbsp;correction])</td>
+<td>use runs test on binary discretized data above/below cutoff</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.runstest_2samp.html#statsmodels.stats.api.runstest_2samp" title="statsmodels.stats.api.runstest_2samp"><code class="xref py py-obj docutils literal"><span class="pre">runstest_2samp</span></code></a>(x[,&nbsp;y,&nbsp;groups,&nbsp;correction])</td>
+<td>Wald-Wolfowitz runstest for two samples</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.se_cov.html#statsmodels.stats.api.se_cov" title="statsmodels.stats.api.se_cov"><code class="xref py py-obj docutils literal"><span class="pre">se_cov</span></code></a>(cov)</td>
+<td>get standard deviation from covariance matrix</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.symmetry_bowker.html#statsmodels.stats.api.symmetry_bowker" title="statsmodels.stats.api.symmetry_bowker"><code class="xref py py-obj docutils literal"><span class="pre">symmetry_bowker</span></code></a>(table)</td>
+<td>Test for symmetry of a (k, k) square contingency table</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.ttest_ind.html#statsmodels.stats.api.ttest_ind" title="statsmodels.stats.api.ttest_ind"><code class="xref py py-obj docutils literal"><span class="pre">ttest_ind</span></code></a>(x1,&nbsp;x2[,&nbsp;alternative,&nbsp;usevar,&nbsp;...])</td>
+<td>ttest independent sample</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.ttost_ind.html#statsmodels.stats.api.ttost_ind" title="statsmodels.stats.api.ttost_ind"><code class="xref py py-obj docutils literal"><span class="pre">ttost_ind</span></code></a>(x1,&nbsp;x2,&nbsp;low,&nbsp;upp[,&nbsp;usevar,&nbsp;...])</td>
+<td>test of (non-)equivalence for two independent samples</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.ttost_paired.html#statsmodels.stats.api.ttost_paired" title="statsmodels.stats.api.ttost_paired"><code class="xref py py-obj docutils literal"><span class="pre">ttost_paired</span></code></a>(x1,&nbsp;x2,&nbsp;low,&nbsp;upp[,&nbsp;transform,&nbsp;...])</td>
+<td>test of (non-)equivalence for two dependent, paired sample</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.tukeyhsd.html#statsmodels.stats.api.tukeyhsd" title="statsmodels.stats.api.tukeyhsd"><code class="xref py py-obj docutils literal"><span class="pre">tukeyhsd</span></code></a>(mean_all,&nbsp;nobs_all,&nbsp;var_all[,&nbsp;df,&nbsp;...])</td>
+<td>simultaneous Tukey HSD</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.unitroot_adf.html#statsmodels.stats.api.unitroot_adf" title="statsmodels.stats.api.unitroot_adf"><code class="xref py py-obj docutils literal"><span class="pre">unitroot_adf</span></code></a>(x[,&nbsp;maxlag,&nbsp;trendorder,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.zconfint.html#statsmodels.stats.api.zconfint" title="statsmodels.stats.api.zconfint"><code class="xref py py-obj docutils literal"><span class="pre">zconfint</span></code></a>(x1[,&nbsp;x2,&nbsp;value,&nbsp;alpha,&nbsp;...])</td>
+<td>confidence interval based on normal distribution z-test</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.api.ztest.html#statsmodels.stats.api.ztest" title="statsmodels.stats.api.ztest"><code class="xref py py-obj docutils literal"><span class="pre">ztest</span></code></a>(x1[,&nbsp;x2,&nbsp;value,&nbsp;alternative,&nbsp;usevar,&nbsp;ddof])</td>
+<td>test for mean based on normal distribution, one or two samples</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.api.ztost.html#statsmodels.stats.api.ztost" title="statsmodels.stats.api.ztost"><code class="xref py py-obj docutils literal"><span class="pre">ztost</span></code></a>(x1,&nbsp;low,&nbsp;upp[,&nbsp;x2,&nbsp;usevar,&nbsp;ddof])</td>
+<td>Equivalence test based on normal distribution</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>3.11.1.2. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.api.CompareCox.html#statsmodels.stats.api.CompareCox" title="statsmodels.stats.api.CompareCox"><code class="xref py py-obj docutils literal"><span class="pre">CompareCox</span></code></a></td>
+<td>Cox Test for non-nested models</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.api.CompareJ.html#statsmodels.stats.api.CompareJ" title="statsmodels.stats.api.CompareJ"><code class="xref py py-obj docutils literal"><span class="pre">CompareJ</span></code></a></td>
+<td>J-Test for comparing non-nested models</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.api.CompareMeans.html#statsmodels.stats.api.CompareMeans" title="statsmodels.stats.api.CompareMeans"><code class="xref py py-obj docutils literal"><span class="pre">CompareMeans</span></code></a>(d1,&nbsp;d2)</td>
+<td>class for two sample comparison</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.api.DescrStatsW.html#statsmodels.stats.api.DescrStatsW" title="statsmodels.stats.api.DescrStatsW"><code class="xref py py-obj docutils literal"><span class="pre">DescrStatsW</span></code></a>(data[,&nbsp;weights,&nbsp;ddof])</td>
+<td>descriptive statistics and tests with weights for case weights</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.api.Describe.html#statsmodels.stats.api.Describe" title="statsmodels.stats.api.Describe"><code class="xref py py-obj docutils literal"><span class="pre">Describe</span></code></a>(dataset)</td>
+<td>Calculates descriptive statistics for data.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.api.FTestAnovaPower.html#statsmodels.stats.api.FTestAnovaPower" title="statsmodels.stats.api.FTestAnovaPower"><code class="xref py py-obj docutils literal"><span class="pre">FTestAnovaPower</span></code></a>(**kwds)</td>
+<td>Statistical Power calculations F-test for one factor balanced ANOVA</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.api.FTestPower.html#statsmodels.stats.api.FTestPower" title="statsmodels.stats.api.FTestPower"><code class="xref py py-obj docutils literal"><span class="pre">FTestPower</span></code></a>(**kwds)</td>
+<td>Statistical Power calculations for generic F-test</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.api.GofChisquarePower.html#statsmodels.stats.api.GofChisquarePower" title="statsmodels.stats.api.GofChisquarePower"><code class="xref py py-obj docutils literal"><span class="pre">GofChisquarePower</span></code></a>(**kwds)</td>
+<td>Statistical Power calculations for one sample chisquare test</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.api.HetGoldfeldQuandt.html#statsmodels.stats.api.HetGoldfeldQuandt" title="statsmodels.stats.api.HetGoldfeldQuandt"><code class="xref py py-obj docutils literal"><span class="pre">HetGoldfeldQuandt</span></code></a></td>
+<td>test whether variance is the same in 2 subsamples</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.api.NormalIndPower.html#statsmodels.stats.api.NormalIndPower" title="statsmodels.stats.api.NormalIndPower"><code class="xref py py-obj docutils literal"><span class="pre">NormalIndPower</span></code></a>([ddof])</td>
+<td>Statistical Power calculations for z-test for two independent samples.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.api.Runs.html#statsmodels.stats.api.Runs" title="statsmodels.stats.api.Runs"><code class="xref py py-obj docutils literal"><span class="pre">Runs</span></code></a>(x)</td>
+<td>class for runs in a binary sequence</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.api.TTestIndPower.html#statsmodels.stats.api.TTestIndPower" title="statsmodels.stats.api.TTestIndPower"><code class="xref py py-obj docutils literal"><span class="pre">TTestIndPower</span></code></a>(**kwds)</td>
+<td>Statistical Power calculations for t-test for two independent sample</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.api.TTestPower.html#statsmodels.stats.api.TTestPower" title="statsmodels.stats.api.TTestPower"><code class="xref py py-obj docutils literal"><span class="pre">TTestPower</span></code></a>(**kwds)</td>
+<td>Statistical Power calculations for one sample or paired sample t-test</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.stats.api.acorr_breush_godfrey.html" class="btn btn-neutral float-right" title="3.11.1.1.1. statsmodels.stats.api.acorr_breush_godfrey" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.robust.scale.HuberScale.__init__.html" class="btn btn-neutral" title="3.10.3.3.2.1.1. statsmodels.robust.scale.HuberScale.__init__" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

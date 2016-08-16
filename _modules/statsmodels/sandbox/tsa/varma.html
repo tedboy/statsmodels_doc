@@ -1,0 +1,391 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.tsa.varma &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.tsa.varma</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.tsa.varma</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;VAR and VARMA process</span>
+
+<span class="sd">this doesn&#39;t actually do much, trying out a version for a time loop</span>
+
+<span class="sd">alternative representation:</span>
+<span class="sd">* textbook, different blocks in matrices</span>
+<span class="sd">* Kalman filter</span>
+<span class="sd">* VAR, VARX and ARX could be calculated with signal.lfilter</span>
+<span class="sd">  only tried some examples, not implemented</span>
+
+<span class="sd">TODO: try minimizing sum of squares of (Y-Yhat)</span>
+
+<span class="sd">Note: filter has smallest lag at end of array and largest lag at beginning,</span>
+<span class="sd">    be careful for asymmetric lags coefficients</span>
+<span class="sd">    check this again if it is consistently used</span>
+
+
+<span class="sd">changes</span>
+<span class="sd">2009-09-08 : separated from movstat.py</span>
+
+<span class="sd">Author : josefpkt</span>
+<span class="sd">License : BSD</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">signal</span>
+<span class="c1">#import matplotlib.pylab as plt</span>
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_array_equal</span><span class="p">,</span> <span class="n">assert_array_almost_equal</span>
+
+
+<span class="c1">#NOTE: this just returns that predicted values given the</span>
+<span class="c1">#B matrix in polynomial form.</span>
+<span class="c1">#TODO: make sure VAR class returns B/params in this form.</span>
+<div class="viewcode-block" id="VAR"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.tsa.varma.VAR.html#statsmodels.sandbox.tsa.varma.VAR">[docs]</a><span class="k">def</span> <span class="nf">VAR</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">B</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; multivariate linear filter</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x: (TxK) array</span>
+<span class="sd">        columns are variables, rows are observations for time period</span>
+<span class="sd">    B: (PxKxK) array</span>
+<span class="sd">        b_t-1 is bottom &quot;row&quot;, b_t-P is top &quot;row&quot; when printing</span>
+<span class="sd">        B(:,:,0) is lag polynomial matrix for variable 1</span>
+<span class="sd">        B(:,:,k) is lag polynomial matrix for variable k</span>
+<span class="sd">        B(p,:,k) is pth lag for variable k</span>
+<span class="sd">        B[p,:,:].T corresponds to A_p in Wikipedia</span>
+<span class="sd">    const: float or array (not tested)</span>
+<span class="sd">        constant added to autoregression</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    xhat: (TxK) array</span>
+<span class="sd">        filtered, predicted values of x array</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    xhat(t,i) = sum{_p}sum{_k} { x(t-P:t,:) .* B(:,:,i) }  for all i = 0,K-1, for all t=p..T</span>
+
+<span class="sd">    xhat does not include the forecasting observation, xhat(T+1),</span>
+<span class="sd">    xhat is 1 row shorter than signal.correlate</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    http://en.wikipedia.org/wiki/Vector_Autoregression</span>
+<span class="sd">    http://en.wikipedia.org/wiki/General_matrix_notation_of_a_VAR(p)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xhat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">T</span><span class="p">):</span> <span class="c1">#[p+2]:#</span>
+<span class="c1">##        print(p,T)</span>
+<span class="c1">##        print(x[t-p:t,:,np.newaxis].shape)</span>
+<span class="c1">##        print(B.shape)</span>
+        <span class="c1">#print(x[t-p:t,:,np.newaxis])</span>
+        <span class="n">xhat</span><span class="p">[</span><span class="n">t</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">const</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">p</span><span class="p">:</span><span class="n">t</span><span class="p">,:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span><span class="o">*</span><span class="n">B</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">xhat</span></div>
+
+
+<div class="viewcode-block" id="VARMA"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.tsa.varma.VARMA.html#statsmodels.sandbox.tsa.varma.VARMA">[docs]</a><span class="k">def</span> <span class="nf">VARMA</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="mi">0</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; multivariate linear filter</span>
+
+<span class="sd">    x (TxK)</span>
+<span class="sd">    B (PxKxK)</span>
+
+<span class="sd">    xhat(t,i) = sum{_p}sum{_k} { x(t-P:t,:) .* B(:,:,i) } +</span>
+<span class="sd">                sum{_q}sum{_k} { e(t-Q:t,:) .* C(:,:,i) }for all i = 0,K-1</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="n">B</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="n">C</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">xhat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">e</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">start</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">P</span><span class="p">,</span><span class="n">Q</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span><span class="n">T</span><span class="p">):</span> <span class="c1">#[p+2]:#</span>
+<span class="c1">##        print(p,T</span>
+<span class="c1">##        print(x[t-p:t,:,np.newaxis].shape</span>
+<span class="c1">##        print(B.shape</span>
+        <span class="c1">#print(x[t-p:t,:,np.newaxis]</span>
+        <span class="n">xhat</span><span class="p">[</span><span class="n">t</span><span class="p">,:]</span> <span class="o">=</span>  <span class="n">const</span> <span class="o">+</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">P</span><span class="p">:</span><span class="n">t</span><span class="p">,:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span><span class="o">*</span><span class="n">B</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span> <span class="o">+</span> \
+                     <span class="p">(</span><span class="n">e</span><span class="p">[</span><span class="n">t</span><span class="o">-</span><span class="n">Q</span><span class="p">:</span><span class="n">t</span><span class="p">,:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span><span class="o">*</span><span class="n">C</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">e</span><span class="p">[</span><span class="n">t</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">t</span><span class="p">,:]</span> <span class="o">-</span> <span class="n">xhat</span><span class="p">[</span><span class="n">t</span><span class="p">,:]</span>
+    <span class="k">return</span> <span class="n">xhat</span><span class="p">,</span> <span class="n">e</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+
+    <span class="n">T</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="c1">#x = np.arange(10).reshape(5,2)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T</span><span class="p">)]</span><span class="o">*</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">P</span><span class="p">,</span><span class="n">K</span><span class="p">,</span><span class="n">K</span><span class="p">))</span>
+    <span class="c1">#B[:,:,1] = 2</span>
+    <span class="n">B</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">xhat</span> <span class="o">=</span> <span class="n">VAR</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">xhat</span><span class="p">[</span><span class="n">P</span><span class="p">:,</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">P</span><span class="p">))</span><span class="o">*</span><span class="mi">2</span><span class="p">))</span>
+    <span class="c1">#print(xhat)</span>
+
+
+    <span class="n">T</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">Q</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">P</span> <span class="o">=</span> <span class="mi">3</span>
+    <span class="n">const</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1">#x = np.arange(10).reshape(5,2)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T</span><span class="p">)]</span><span class="o">*</span><span class="n">K</span><span class="p">)</span>
+    <span class="n">B</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">P</span><span class="p">,</span><span class="n">K</span><span class="p">,</span><span class="n">K</span><span class="p">))</span>
+    <span class="c1">#B[:,:,1] = 2</span>
+    <span class="n">B</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">C</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">Q</span><span class="p">,</span><span class="n">K</span><span class="p">,</span><span class="n">K</span><span class="p">))</span>
+    <span class="n">xhat1</span> <span class="o">=</span> <span class="n">VAR</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">B</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="n">const</span><span class="p">)</span>
+    <span class="n">xhat2</span><span class="p">,</span> <span class="n">err2</span> <span class="o">=</span> <span class="n">VARMA</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">,</span> <span class="n">const</span><span class="o">=</span><span class="n">const</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">xhat2</span> <span class="o">==</span> <span class="n">xhat1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">xhat2</span><span class="p">[</span><span class="n">P</span><span class="p">:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span><span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">P</span><span class="p">))</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="n">const</span><span class="p">))</span>
+
+    <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mf">0.5</span>
+    <span class="n">xhat3</span><span class="p">,</span> <span class="n">err3</span> <span class="o">=</span> <span class="n">VARMA</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">)</span>
+
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">P</span><span class="p">,</span><span class="n">K</span><span class="p">)),</span><span class="n">x</span><span class="p">]</span>  <span class="c1">#prepend inital conditions</span>
+    <span class="n">xhat4</span><span class="p">,</span> <span class="n">err4</span> <span class="o">=</span> <span class="n">VARMA</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">)</span>
+
+    <span class="n">C</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">B</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">xhat5</span><span class="p">,</span> <span class="n">err5</span> <span class="o">=</span> <span class="n">VARMA</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">B</span><span class="p">,</span><span class="n">C</span><span class="p">)</span>
+    <span class="c1">#print(err5)</span>
+
+    <span class="c1">#in differences</span>
+    <span class="c1">#VARMA(np.diff(x,axis=0),B,C)</span>
+
+
+    <span class="c1">#Note:</span>
+    <span class="c1"># * signal correlate applies same filter to all columns if kernel.shape[1]&lt;K</span>
+    <span class="c1">#   e.g. signal.correlate(x0,np.ones((3,1)),&#39;valid&#39;)</span>
+    <span class="c1"># * if kernel.shape[1]==K, then `valid` produces a single column</span>
+    <span class="c1">#   -&gt; possible to run signal.correlate K times with different filters,</span>
+    <span class="c1">#      see the following example, which replicates VAR filter</span>
+    <span class="n">x0</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T</span><span class="p">),</span> <span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">T</span><span class="p">)])</span>
+    <span class="n">B</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">P</span><span class="p">,</span><span class="n">K</span><span class="p">))</span>
+    <span class="n">B</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">P</span><span class="p">,</span><span class="n">K</span><span class="p">))</span>
+    <span class="n">B</span><span class="p">[</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">xhat0</span> <span class="o">=</span> <span class="n">VAR</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">B</span><span class="p">)</span>
+    <span class="n">xcorr00</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">B</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">])</span><span class="c1">#[:,0]</span>
+    <span class="n">xcorr01</span> <span class="o">=</span> <span class="n">signal</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">B</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">B</span><span class="p">[:,:,</span><span class="mi">0</span><span class="p">],</span><span class="s1">&#39;valid&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">xhat0</span><span class="p">[</span><span class="n">P</span><span class="p">:,</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">signal</span><span class="o">.</span><span class="n">correlate</span><span class="p">(</span><span class="n">x0</span><span class="p">,</span><span class="n">B</span><span class="p">[:,:,</span><span class="mi">1</span><span class="p">],</span><span class="s1">&#39;valid&#39;</span><span class="p">)[:</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="n">xhat0</span><span class="p">[</span><span class="n">P</span><span class="p">:,</span><span class="mi">1</span><span class="p">]))</span>
+
+    <span class="c1">#import error</span>
+    <span class="c1">#from movstat import acovf, acf</span>
+    <span class="kn">from</span> <span class="nn">statsmodels.tsa.stattools</span> <span class="k">import</span> <span class="n">acovf</span><span class="p">,</span> <span class="n">acf</span>
+    <span class="n">aav</span> <span class="o">=</span> <span class="n">acovf</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">aav</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">var</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))</span>
+    <span class="n">aac</span> <span class="o">=</span> <span class="n">acf</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">])</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

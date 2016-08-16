@@ -1,0 +1,33 @@
+statsmodels.sandbox.regression.gmm.Model
+========================================
+
+.. currentmodule:: statsmodels.sandbox.regression.gmm
+.. autoclass:: Model
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Model.__init__
+   ~Model.fit
+   ~Model.from_formula
+   ~Model.predict
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Model.endog_names
+   ~Model.exog_names
+

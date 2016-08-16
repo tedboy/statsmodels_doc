@@ -1,0 +1,43 @@
+statsmodels.base._constraints
+=============================
+
+.. automodule:: statsmodels.base._constraints
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      fit_constrained
+      fit_constrained_wrap
+      transform_params_constraint
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      TransformRestriction
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.base._constraints.TransformRestriction
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,30 @@
+statsmodels.tsa.varma_process.VarmaPoly
+=======================================
+
+.. currentmodule:: statsmodels.tsa.varma_process
+
+.. autoclass:: VarmaPoly
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~VarmaPoly.__init__
+      ~VarmaPoly.getisinvertible
+      ~VarmaPoly.getisstationary
+      ~VarmaPoly.hstack
+      ~VarmaPoly.hstackarma_minus1
+      ~VarmaPoly.reduceform
+      ~VarmaPoly.stacksquare
+      ~VarmaPoly.vstack
+      ~VarmaPoly.vstackarma_minus1
+   
+   
+
+   
+   
+   

@@ -1,0 +1,39 @@
+statsmodels.sandbox.panel.mixed.OneWayMixed
+===========================================
+
+.. currentmodule:: statsmodels.sandbox.panel.mixed
+.. autoclass:: OneWayMixed
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OneWayMixed.__init__
+   ~OneWayMixed.cont
+   ~OneWayMixed.cov_fixed
+   ~OneWayMixed.cov_params
+   ~OneWayMixed.cov_random
+   ~OneWayMixed.deviance
+   ~OneWayMixed.fit
+   ~OneWayMixed.initialize
+   ~OneWayMixed.logL
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~OneWayMixed.bse
+   ~OneWayMixed.params
+   ~OneWayMixed.params_random_units
+

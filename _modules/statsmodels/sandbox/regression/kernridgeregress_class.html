@@ -1,0 +1,424 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.regression.kernridgeregress_class &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.regression.kernridgeregress_class</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.regression.kernridgeregress_class</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Kernel Ridge Regression for local non-parametric regression&#39;&#39;&#39;</span>
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">spatial</span> <span class="k">as</span> <span class="n">ssp</span>
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_equal</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pylab</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<div class="viewcode-block" id="plt_closeall"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.kernridgeregress_class.plt_closeall.html#statsmodels.sandbox.regression.example_kernridge.plt_closeall">[docs]</a><span class="k">def</span> <span class="nf">plt_closeall</span><span class="p">(</span><span class="n">n</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;close a number of open matplotlib windows&#39;&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span> <span class="n">plt</span><span class="o">.</span><span class="n">close</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="kernel_rbf"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.kernridgeregress_class.kernel_rbf.html#statsmodels.sandbox.regression.example_kernridge.kernel_rbf">[docs]</a><span class="k">def</span> <span class="nf">kernel_rbf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="c1">#scale = kwds.get(&#39;scale&#39;,1)</span>
+    <span class="n">dist</span> <span class="o">=</span> <span class="n">ssp</span><span class="o">.</span><span class="n">minkowski_distance_p</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,:],</span><span class="n">y</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,:,:],</span><span class="mi">2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mf">0.5</span><span class="o">/</span><span class="n">scale</span><span class="o">*</span><span class="p">(</span><span class="n">dist</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="kernel_euclid"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.kernridgeregress_class.kernel_euclid.html#statsmodels.sandbox.regression.example_kernridge.kernel_euclid">[docs]</a><span class="k">def</span> <span class="nf">kernel_euclid</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">p</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="k">return</span> <span class="n">ssp</span><span class="o">.</span><span class="n">minkowski_distance</span><span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,:],</span><span class="n">y</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">,:,:],</span><span class="n">p</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="GaussProcess"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.kernridgeregress_class.GaussProcess.html#statsmodels.sandbox.regression.example_kernridge.GaussProcess">[docs]</a><span class="k">class</span> <span class="nc">GaussProcess</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;class to perform kernel ridge regression (gaussian process)</span>
+
+<span class="sd">    Warning: this class is memory intensive, it creates nobs x nobs distance</span>
+<span class="sd">    matrix and its inverse, where nobs is the number of rows (observations).</span>
+<span class="sd">    See sparse version for larger number of observations</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    Todo:</span>
+<span class="sd">    * normalize multidimensional x array on demand, either by var or cov</span>
+<span class="sd">    * add confidence band</span>
+<span class="sd">    * automatic selection or proposal of smoothing parameters</span>
+
+<span class="sd">    Note: this is different from kernel smoothing regression,</span>
+<span class="sd">       see for example http://en.wikipedia.org/wiki/Kernel_smoother</span>
+
+<span class="sd">    In this version of the kernel ridge regression, the training points</span>
+<span class="sd">    are fitted exactly.</span>
+<span class="sd">    Needs a fast version for leave-one-out regression, for fitting each</span>
+<span class="sd">    observation on all the other points.</span>
+<span class="sd">    This version could be numerically improved for the calculation for many</span>
+<span class="sd">    different values of the ridge coefficient. see also short summary by</span>
+<span class="sd">    Isabelle Guyon (ETHZ) in a manuscript KernelRidge.pdf</span>
+
+<span class="sd">    Needs verification and possibly additional statistical results or</span>
+<span class="sd">    summary statistics for interpretation, but this is a problem with</span>
+<span class="sd">    non-parametric, non-linear methods.</span>
+
+<span class="sd">    Reference</span>
+<span class="sd">    ---------</span>
+
+<span class="sd">    Rasmussen, C.E. and C.K.I. Williams, 2006, Gaussian Processes for Machine</span>
+<span class="sd">    Learning, the MIT Press, www.GaussianProcess.org/gpal, chapter 2</span>
+
+<span class="sd">    a short summary of the kernel ridge regression is at</span>
+<span class="sd">    http://www.ics.uci.edu/~welling/teaching/KernelsICS273B/Kernel-Ridge.pdf</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="GaussProcess.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.kernridgeregress_class.GaussProcess.__init__.html#statsmodels.sandbox.regression.example_kernridge.GaussProcess.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kernel</span><span class="o">=</span><span class="n">kernel_rbf</span><span class="p">,</span>
+                 <span class="n">scale</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">ridgecoeff</span> <span class="o">=</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span> <span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        x : 2d array (N,K)</span>
+<span class="sd">           data array of explanatory variables, columns represent variables</span>
+<span class="sd">           rows represent observations</span>
+<span class="sd">        y : 2d array (N,1) (optional)</span>
+<span class="sd">           endogenous variable that should be fitted or predicted</span>
+<span class="sd">           can alternatively be specified as parameter to fit method</span>
+<span class="sd">        kernel : function, default: kernel_rbf</span>
+<span class="sd">           kernel: (x1,x2)-&gt;kernel matrix is a function that takes as parameter</span>
+<span class="sd">           two column arrays and return the kernel or distance matrix</span>
+<span class="sd">        scale : float (optional)</span>
+<span class="sd">           smoothing parameter for the rbf kernel</span>
+<span class="sd">        ridgecoeff : float (optional)</span>
+<span class="sd">           coefficient that is multiplied with the identity matrix in the</span>
+<span class="sd">           ridge regression</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        After initialization, kernel matrix is calculated and if y is given</span>
+<span class="sd">        as parameter then also the linear regression parameter and the</span>
+<span class="sd">        fitted or estimated y values, yest, are calculated. yest is available</span>
+<span class="sd">        as an attribute in this case.</span>
+
+<span class="sd">        Both scale and the ridge coefficient smooth the fitted curve.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span> <span class="o">=</span> <span class="n">kernel</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">scale</span> <span class="o">=</span> <span class="n">scale</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ridgecoeff</span> <span class="o">=</span> <span class="n">ridgecoeff</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">distxsample</span> <span class="o">=</span> <span class="n">kernel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">x</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">Kinv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distxsample</span> <span class="o">+</span>
+                             <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">distxsample</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">*</span><span class="n">ridgecoeff</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">y</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">y</span> <span class="o">=</span> <span class="n">y</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">yest</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">y</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="GaussProcess.fit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.kernridgeregress_class.GaussProcess.fit.html#statsmodels.sandbox.regression.example_kernridge.GaussProcess.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">y</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;fit the training explanatory variables to a sample ouput variable&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parest</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">Kinv</span><span class="p">,</span> <span class="n">y</span><span class="p">)</span> <span class="c1">#self.kernel(y,y,scale=self.scale))</span>
+        <span class="n">yhat</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">distxsample</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">parest</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">yhat</span></div>
+
+<span class="c1">##        print ds33.shape</span>
+<span class="c1">##        ds33_2 = kernel(x,x[::k,:],scale=scale)</span>
+<span class="c1">##        dsinv = np.linalg.inv(ds33+np.eye(*distxsample.shape)*ridgecoeff)</span>
+<span class="c1">##        B = np.dot(dsinv,y[::k,:])</span>
+<div class="viewcode-block" id="GaussProcess.predict"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.kernridgeregress_class.GaussProcess.predict.html#statsmodels.sandbox.regression.example_kernridge.GaussProcess.predict">[docs]</a>    <span class="k">def</span> <span class="nf">predict</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;predict new y values for a given array of explanatory variables&#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xpredict</span> <span class="o">=</span> <span class="n">x</span>
+        <span class="n">distxpredict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">kernel</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">ypredict</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">distxpredict</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">parest</span><span class="p">)</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">ypredict</span></div>
+
+<div class="viewcode-block" id="GaussProcess.plot"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.kernridgeregress_class.GaussProcess.plot.html#statsmodels.sandbox.regression.example_kernridge.GaussProcess.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">plt</span><span class="o">=</span><span class="n">plt</span> <span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;some basic plots&#39;&#39;&#39;</span>
+        <span class="c1">#todo return proper graph handles</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">();</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">y</span><span class="p">,</span> <span class="s1">&#39;bo-&#39;</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">yest</span><span class="p">,</span> <span class="s1">&#39;r.-&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;sample (training) points&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">xpredict</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="s1">&#39;bo-&#39;</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">xpredict</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">ypredict</span><span class="p">,</span><span class="s1">&#39;r.-&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;all points&#39;</span><span class="p">)</span></div></div>
+
+
+
+<div class="viewcode-block" id="example1"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.kernridgeregress_class.example1.html#statsmodels.sandbox.regression.example_kernridge.example1">[docs]</a><span class="k">def</span> <span class="nf">example1</span><span class="p">():</span>
+    <span class="n">m</span><span class="p">,</span><span class="n">k</span> <span class="o">=</span> <span class="mi">500</span><span class="p">,</span><span class="mi">4</span>
+    <span class="n">upper</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">scale</span><span class="o">=</span><span class="mi">10</span>
+    <span class="n">xs1a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">upper</span><span class="p">,</span><span class="n">m</span><span class="p">)[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="n">xs1</span> <span class="o">=</span> <span class="n">xs1a</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span> <span class="o">+</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mf">1.0</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">k</span><span class="p">)))</span>
+    <span class="n">xs1</span> <span class="o">/=</span> <span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">xs1</span><span class="p">[::</span><span class="n">k</span><span class="p">,:],</span><span class="mi">0</span><span class="p">)</span>   <span class="c1"># normalize scale, could use cov to normalize</span>
+    <span class="n">y1true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xs1</span><span class="p">)</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">xs1</span><span class="p">),</span><span class="mi">1</span><span class="p">)[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">y1true</span> <span class="o">+</span> <span class="mf">0.250</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">stride</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1">#use only some points as trainig points e.g 2 means every 2nd</span>
+    <span class="n">gp1</span> <span class="o">=</span> <span class="n">GaussProcess</span><span class="p">(</span><span class="n">xs1</span><span class="p">[::</span><span class="n">stride</span><span class="p">,:],</span><span class="n">y1</span><span class="p">[::</span><span class="n">stride</span><span class="p">,:],</span> <span class="n">kernel</span><span class="o">=</span><span class="n">kernel_euclid</span><span class="p">,</span>
+                       <span class="n">ridgecoeff</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">yhatr1</span> <span class="o">=</span> <span class="n">gp1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xs1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y1true</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span><span class="n">y1true</span><span class="p">,</span> <span class="n">yhatr1</span><span class="p">,</span><span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;euclid kernel: true y versus noisy y and estimated y&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span><span class="s1">&#39;bo-&#39;</span><span class="p">,</span><span class="n">y1true</span><span class="p">,</span><span class="s1">&#39;go-&#39;</span><span class="p">,</span><span class="n">yhatr1</span><span class="p">,</span><span class="s1">&#39;r.-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;euclid kernel: true (green), noisy (blue) and estimated (red) &#39;</span><span class="o">+</span>
+              <span class="s1">&#39;observations&#39;</span><span class="p">)</span>
+
+    <span class="n">gp2</span> <span class="o">=</span> <span class="n">GaussProcess</span><span class="p">(</span><span class="n">xs1</span><span class="p">[::</span><span class="n">stride</span><span class="p">,:],</span><span class="n">y1</span><span class="p">[::</span><span class="n">stride</span><span class="p">,:],</span> <span class="n">kernel</span><span class="o">=</span><span class="n">kernel_rbf</span><span class="p">,</span>
+                       <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">ridgecoeff</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">yhatr2</span> <span class="o">=</span> <span class="n">gp2</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xs1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y1true</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span><span class="n">y1true</span><span class="p">,</span> <span class="n">yhatr2</span><span class="p">,</span><span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;rbf kernel: true versus noisy (blue) and estimated (red) observations&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span><span class="s1">&#39;bo-&#39;</span><span class="p">,</span><span class="n">y1true</span><span class="p">,</span><span class="s1">&#39;go-&#39;</span><span class="p">,</span><span class="n">yhatr2</span><span class="p">,</span><span class="s1">&#39;r.-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;rbf kernel: true (green), noisy (blue) and estimated (red) &#39;</span><span class="o">+</span>
+              <span class="s1">&#39;observations&#39;</span><span class="p">)</span></div>
+    <span class="c1">#gp2.plot(y1)</span>
+
+
+<div class="viewcode-block" id="example2"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.kernridgeregress_class.example2.html#statsmodels.sandbox.regression.example_kernridge.example2">[docs]</a><span class="k">def</span> <span class="nf">example2</span><span class="p">(</span><span class="n">m</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">stride</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="c1">#m,k = 100,1</span>
+    <span class="n">upper</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">xs1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">upper</span><span class="p">,</span><span class="n">m</span><span class="p">)[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span>
+    <span class="n">y1true</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sin</span><span class="p">(</span><span class="n">xs1</span><span class="o">**</span><span class="mi">2</span><span class="p">),</span><span class="mi">1</span><span class="p">)[:,</span><span class="n">np</span><span class="o">.</span><span class="n">newaxis</span><span class="p">]</span><span class="o">/</span><span class="n">xs1</span>
+    <span class="n">y1</span> <span class="o">=</span> <span class="n">y1true</span> <span class="o">+</span> <span class="mf">0.05</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">ridgecoeff</span> <span class="o">=</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span>
+    <span class="c1">#stride = 2 #use only some points as trainig points e.g 2 means every 2nd</span>
+    <span class="n">gp1</span> <span class="o">=</span> <span class="n">GaussProcess</span><span class="p">(</span><span class="n">xs1</span><span class="p">[::</span><span class="n">stride</span><span class="p">,:],</span><span class="n">y1</span><span class="p">[::</span><span class="n">stride</span><span class="p">,:],</span> <span class="n">kernel</span><span class="o">=</span><span class="n">kernel_euclid</span><span class="p">,</span>
+                       <span class="n">ridgecoeff</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span>
+    <span class="n">yhatr1</span> <span class="o">=</span> <span class="n">gp1</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xs1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y1true</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span><span class="n">y1true</span><span class="p">,</span> <span class="n">yhatr1</span><span class="p">,</span><span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;euclid kernel: true versus noisy (blue) and estimated (red) observations&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span><span class="s1">&#39;bo-&#39;</span><span class="p">,</span><span class="n">y1true</span><span class="p">,</span><span class="s1">&#39;go-&#39;</span><span class="p">,</span><span class="n">yhatr1</span><span class="p">,</span><span class="s1">&#39;r.-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;euclid kernel: true (green), noisy (blue) and estimated (red) &#39;</span><span class="o">+</span>
+              <span class="s1">&#39;observations&#39;</span><span class="p">)</span>
+
+    <span class="n">gp2</span> <span class="o">=</span> <span class="n">GaussProcess</span><span class="p">(</span><span class="n">xs1</span><span class="p">[::</span><span class="n">stride</span><span class="p">,:],</span><span class="n">y1</span><span class="p">[::</span><span class="n">stride</span><span class="p">,:],</span> <span class="n">kernel</span><span class="o">=</span><span class="n">kernel_rbf</span><span class="p">,</span>
+                       <span class="n">scale</span><span class="o">=</span><span class="n">scale</span><span class="p">,</span> <span class="n">ridgecoeff</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">yhatr2</span> <span class="o">=</span> <span class="n">gp2</span><span class="o">.</span><span class="n">predict</span><span class="p">(</span><span class="n">xs1</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y1true</span><span class="p">,</span> <span class="n">y1</span><span class="p">,</span><span class="s1">&#39;bo&#39;</span><span class="p">,</span><span class="n">y1true</span><span class="p">,</span> <span class="n">yhatr2</span><span class="p">,</span><span class="s1">&#39;r.&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;rbf kernel: true versus noisy (blue) and estimated (red) observations&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">y1</span><span class="p">,</span><span class="s1">&#39;bo-&#39;</span><span class="p">,</span><span class="n">y1true</span><span class="p">,</span><span class="s1">&#39;go-&#39;</span><span class="p">,</span><span class="n">yhatr2</span><span class="p">,</span><span class="s1">&#39;r.-&#39;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;rbf kernel: true (green), noisy (blue) and estimated (red) &#39;</span><span class="o">+</span>
+              <span class="s1">&#39;observations&#39;</span><span class="p">)</span></div>
+    <span class="c1">#gp2.plot(y1)</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">example2</span><span class="p">()</span>
+    <span class="c1">#example2(m=1000, scale=0.01)</span>
+    <span class="c1">#example2(m=100, scale=0.5)   # oversmoothing</span>
+    <span class="c1">#example2(m=2000, scale=0.005) # this looks good for rbf, zoom in</span>
+    <span class="c1">#example2(m=200, scale=0.01,stride=4)</span>
+    <span class="n">example1</span><span class="p">()</span>
+    <span class="c1">#plt.show()</span>
+    <span class="c1">#plt_closeall()   # use this to close the open figure windows</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

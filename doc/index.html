@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>7. From official doc &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="next" title="7.1. Linear Regression" href="regression.html"/>
+        <link rel="prev" title="6.11.8.1.2. statsmodels.sandbox.tsa.varma.VARMA" href="../generated/statsmodels.sandbox.tsa.varma.VARMA.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">7. From official doc</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="regression.html">7.1. Linear Regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glm.html">7.2. Generalized Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gee.html">7.3. Generalized Estimating Equations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rlm.html">7.4. Robust Linear Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixed_linear.html">7.5. Linear Mixed Effects Models</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discretemod.html">7.6. Regression with Discrete Dependent Variable</a></li>
+<li class="toctree-l2"><a class="reference internal" href="anova.html">7.7. ANOVA</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html">7.8. Time Series analysis <code class="docutils literal"><span class="pre">tsa</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="duration.html">7.9. Models for Survival and Duration Analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html">7.10. Statistics <code class="docutils literal"><span class="pre">stats</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="nonparametric.html">7.11. Nonparametric Methods <code class="docutils literal"><span class="pre">nonparametric</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="gmm.html">7.12. Generalized Method of Moments <code class="docutils literal"><span class="pre">gmm</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="emplike.html">7.13. Empirical Likelihood <code class="docutils literal"><span class="pre">emplike</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscmodels.html">7.14. Other Models <code class="docutils literal"><span class="pre">miscmodels</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html">7.15. Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html">7.16. Graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iolib.html">7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="tools.html">7.18. Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html">7.19. The Datasets Package</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sandbox.html">7.20. Sandbox</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+      <li>7. From official doc</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/doc/index.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="from-official-doc">
+<h1>7. From official doc<a class="headerlink" href="#from-official-doc" title="Permalink to this headline">¶</a></h1>
+<p>From bottom of this page: <a class="reference external" href="http://statsmodels.sourceforge.net/stable/index.html">http://statsmodels.sourceforge.net/stable/index.html</a></p>
+<div class="toctree-wrapper compound" id="table-of-contents">
+<p class="caption"><span class="caption-text">Table of Contents</span><a class="headerlink" href="#table-of-contents" title="Permalink to this toctree">¶</a></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="regression.html">7.1. Linear Regression</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="regression.html#examples">7.1.1. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regression.html#technical-documentation">7.1.2. Technical Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="regression.html#module-reference">7.1.3. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="glm.html">7.2. Generalized Linear Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="glm.html#examples">7.2.1. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glm.html#technical-documentation">7.2.2. Technical Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="glm.html#module-reference">7.2.3. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gee.html">7.3. Generalized Estimating Equations</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gee.html#examples">7.3.1. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="gee.html#module-reference">7.3.2. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rlm.html">7.4. Robust Linear Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rlm.html#examples">7.4.1. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rlm.html#technical-documentation">7.4.2. Technical Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="rlm.html#module-reference">7.4.3. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="mixed_linear.html">7.5. Linear Mixed Effects Models</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="mixed_linear.html#examples">7.5.1. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixed_linear.html#technical-documentation">7.5.2. Technical Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mixed_linear.html#module-reference">7.5.3. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="discretemod.html">7.6. Regression with Discrete Dependent Variable</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="discretemod.html#examples">7.6.1. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discretemod.html#technical-documentation">7.6.2. Technical Documentation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="discretemod.html#module-reference">7.6.3. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="anova.html">7.7. ANOVA</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="anova.html#examples">7.7.1. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="anova.html#module-reference">7.7.2. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tsa.html">7.8. Time Series analysis <code class="docutils literal"><span class="pre">tsa</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html#descriptive-statistics-and-tests">7.8.1. Descriptive Statistics and Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html#estimation">7.8.2. Estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html#id1">7.8.3. Vector Autogressive Processes (VAR)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html#arma-process">7.8.4. ARMA Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html#time-series-filters">7.8.5. Time Series Filters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html#tsa-tools">7.8.6. TSA Tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html#varma-process">7.8.7. VARMA Process</a></li>
+<li class="toctree-l2"><a class="reference internal" href="tsa.html#interpolation">7.8.8. Interpolation</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="duration.html">7.9. Models for Survival and Duration Analysis</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="duration.html#examples">7.9.1. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="duration.html#module-reference">7.9.2. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="stats.html">7.10. Statistics <code class="docutils literal"><span class="pre">stats</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="stats.html#residual-diagnostics-and-specification-tests">7.10.1. Residual Diagnostics and Specification Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html#sandwich-robust-covariances">7.10.2. Sandwich Robust Covariances</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html#goodness-of-fit-tests-and-measures">7.10.3. Goodness of Fit Tests and Measures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html#non-parametric-tests">7.10.4. Non-Parametric Tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html#interrater-reliability-and-agreement">7.10.5. Interrater Reliability and Agreement</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html#multiple-tests-and-multiple-comparison-procedures">7.10.6. Multiple Tests and Multiple Comparison Procedures</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html#basic-statistics-and-t-tests-with-frequency-weights">7.10.7. Basic Statistics and t-Tests with frequency weights</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html#power-and-sample-size-calculations">7.10.8. Power and Sample Size Calculations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html#proportion">7.10.9. Proportion</a></li>
+<li class="toctree-l2"><a class="reference internal" href="stats.html#moment-helpers">7.10.10. Moment Helpers</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="nonparametric.html">7.11. Nonparametric Methods <code class="docutils literal"><span class="pre">nonparametric</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="nonparametric.html#kernel-density-estimation">7.11.1. Kernel density estimation</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nonparametric.html#kernel-regression">7.11.2. Kernel regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nonparametric.html#references">7.11.3. References</a></li>
+<li class="toctree-l2"><a class="reference internal" href="nonparametric.html#module-reference">7.11.4. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="gmm.html">7.12. Generalized Method of Moments <code class="docutils literal"><span class="pre">gmm</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="gmm.html#module-reference">7.12.1. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="emplike.html">7.13. Empirical Likelihood <code class="docutils literal"><span class="pre">emplike</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="emplike.html#introduction">7.13.1. Introduction</a></li>
+<li class="toctree-l2"><a class="reference internal" href="emplike.html#examples">7.13.2. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="emplike.html#module-reference">7.13.3. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="miscmodels.html">7.14. Other Models <code class="docutils literal"><span class="pre">miscmodels</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="miscmodels.html#count-models-count">7.14.1. Count Models <code class="docutils literal"><span class="pre">count</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="miscmodels.html#linear-model-with-t-distributed-errors">7.14.2. Linear Model with t-distributed errors</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="distributions.html">7.15. Distributions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html#empirical-distributions">7.15.1. Empirical Distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html#distribution-extras">7.15.2. Distribution Extras</a></li>
+<li class="toctree-l2"><a class="reference internal" href="distributions.html#univariate-distributions-by-non-linear-transformations">7.15.3. Univariate Distributions by non-linear Transformations</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="graphics.html">7.16. Graphics</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html#goodness-of-fit-plots">7.16.1. Goodness of Fit Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html#boxplots">7.16.2. Boxplots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html#correlation-plots">7.16.3. Correlation Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html#functional-plots">7.16.4. Functional Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html#regression-plots">7.16.5. Regression Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html#time-series-plots">7.16.6. Time Series Plots</a></li>
+<li class="toctree-l2"><a class="reference internal" href="graphics.html#other-plots">7.16.7. Other Plots</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="iolib.html">7.17. Input-Output <code class="docutils literal"><span class="pre">iolib</span></code></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="iolib.html#examples">7.17.1. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="iolib.html#module-reference">7.17.2. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="tools.html">7.18. Tools</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="tools.html#module-reference">7.18.1. Module Reference</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="datasets.html">7.19. The Datasets Package</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#using-datasets-from-stata">7.19.1. Using Datasets from Stata</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#using-datasets-from-r">7.19.2. Using Datasets from R</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#r-datasets-function-reference">7.19.3. R Datasets Function Reference</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#available-datasets">7.19.4. Available Datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#usage">7.19.5. Usage</a></li>
+<li class="toctree-l2"><a class="reference internal" href="datasets.html#additional-information">7.19.6. Additional information</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="sandbox.html">7.20. Sandbox</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="sandbox.html#examples">7.20.1. Examples</a></li>
+<li class="toctree-l2"><a class="reference internal" href="sandbox.html#module-reference">7.20.2. Module Reference</a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="regression.html" class="btn btn-neutral float-right" title="7.1. Linear Regression" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../generated/statsmodels.sandbox.tsa.varma.VARMA.html" class="btn btn-neutral" title="6.11.8.1.2. statsmodels.sandbox.tsa.varma.VARMA" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

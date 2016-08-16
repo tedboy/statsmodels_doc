@@ -1,0 +1,33 @@
+statsmodels.sandbox.pca.Pca
+===========================
+
+.. currentmodule:: statsmodels.sandbox.pca
+.. autoclass:: Pca
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Pca.__init__
+   ~Pca.deproject
+   ~Pca.getCovarianceMatrix
+   ~Pca.getEigensystem
+   ~Pca.getEigenvalues
+   ~Pca.getEigenvectors
+   ~Pca.getEnergies
+   ~Pca.plot2d
+   ~Pca.plot3d
+   ~Pca.project
+   ~Pca.reset
+   ~Pca.sigclip
+   ~Pca.subtractPC
+
+
+
+
+

@@ -1,0 +1,30 @@
+statsmodels.stats.contrast.Contrast
+===================================
+
+.. currentmodule:: statsmodels.stats.contrast
+.. autoclass:: Contrast
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Contrast.__init__
+   ~Contrast.compute_matrix
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Contrast.contrast_matrix
+

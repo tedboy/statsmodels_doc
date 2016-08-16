@@ -1,0 +1,59 @@
+statsmodels.stats.diagnostic
+============================
+
+.. automodule:: statsmodels.stats.diagnostic
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      acorr_breush_godfrey
+      acorr_ljungbox
+      breaks_cusumolsresid
+      breaks_hansen
+      het_arch
+      het_breushpagan
+      het_white
+      kstest_normal
+      lillifors
+      linear_harvey_collier
+      linear_lm
+      linear_rainbow
+      normal_ad
+      recursive_olsresiduals
+      unitroot_adf
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CompareCox
+      CompareJ
+      HetGoldfeldQuandt
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.diagnostic.CompareCox
+       generated/statsmodels.stats.diagnostic.CompareJ
+       generated/statsmodels.stats.diagnostic.HetGoldfeldQuandt
+
+   
+   
+
+   
+   
+   

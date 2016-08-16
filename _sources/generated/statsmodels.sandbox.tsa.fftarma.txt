@@ -1,0 +1,45 @@
+statsmodels.sandbox.tsa.fftarma
+===============================
+
+.. automodule:: statsmodels.sandbox.tsa.fftarma
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      spdar1
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ArmaFft
+      ArmaProcess
+      OneTimeProperty
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.tsa.fftarma.ArmaFft
+       generated/statsmodels.sandbox.tsa.fftarma.ArmaProcess
+       generated/statsmodels.sandbox.tsa.fftarma.OneTimeProperty
+
+   
+   
+
+   
+   
+   

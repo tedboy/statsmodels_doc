@@ -1,0 +1,23 @@
+statsmodels.sandbox.tsa.diffusion.Diffusion
+===========================================
+
+.. currentmodule:: statsmodels.sandbox.tsa.diffusion
+.. autoclass:: Diffusion
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Diffusion.__init__
+   ~Diffusion.expectedsim
+   ~Diffusion.simulateW
+
+
+
+
+

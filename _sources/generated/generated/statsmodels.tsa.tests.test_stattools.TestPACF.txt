@@ -1,0 +1,35 @@
+statsmodels.tsa.tests.test_stattools.TestPACF
+=============================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_stattools
+.. autoclass:: TestPACF
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestPACF.__init__
+   ~TestPACF.test_ld
+   ~TestPACF.test_ols
+   ~TestPACF.test_yw
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TestPACF.data
+   ~TestPACF.filename
+   ~TestPACF.results
+   ~TestPACF.x
+

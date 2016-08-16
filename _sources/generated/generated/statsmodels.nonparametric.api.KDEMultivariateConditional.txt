@@ -1,0 +1,25 @@
+statsmodels.nonparametric.api.KDEMultivariateConditional
+========================================================
+
+.. currentmodule:: statsmodels.nonparametric.api
+.. autoclass:: KDEMultivariateConditional
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~KDEMultivariateConditional.__init__
+   ~KDEMultivariateConditional.cdf
+   ~KDEMultivariateConditional.imse
+   ~KDEMultivariateConditional.loo_likelihood
+   ~KDEMultivariateConditional.pdf
+
+
+
+
+

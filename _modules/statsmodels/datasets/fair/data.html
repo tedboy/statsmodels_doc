@@ -1,0 +1,298 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.datasets.fair.data &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.datasets.fair.data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.datasets.fair.data</h1><div class="highlight"><pre>
+<span></span><span class="ch">#! /usr/bin/env python</span>
+
+<span class="sd">&quot;&quot;&quot;Fair&#39;s Extramarital Affairs Data&quot;&quot;&quot;</span>
+
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s1">&#39;restructuredtext&#39;</span>
+
+<span class="n">COPYRIGHT</span>   <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Included with permission of the author.&quot;&quot;&quot;</span>
+<span class="n">TITLE</span>       <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Affairs dataset&quot;&quot;&quot;</span>
+<span class="n">SOURCE</span>      <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Fair, Ray. 1978. &quot;A Theory of Extramarital Affairs,&quot; `Journal of Political</span>
+<span class="s2">    Economy`, February, 45-61.</span>
+
+<span class="s2">The data is available at http://fairmodel.econ.yale.edu/rayfair/pdf/2011b.htm</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">DESCRSHORT</span>  <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Extramarital affair data.&quot;&quot;&quot;</span>
+
+<span class="n">DESCRLONG</span>   <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Extramarital affair data used to explain the allocation</span>
+<span class="s2">of an individual&#39;s time among work, time spent with a spouse, and time</span>
+<span class="s2">spent with a paramour. The data is used as an example of regression</span>
+<span class="s2">with censored data.&quot;&quot;&quot;</span>
+
+<span class="c1">#suggested notes</span>
+<span class="n">NOTE</span>        <span class="o">=</span> <span class="s2">&quot;&quot;&quot;::</span>
+
+<span class="s2">    Number of observations: 6366</span>
+<span class="s2">    Number of variables: 9</span>
+<span class="s2">    Variable name definitions:</span>
+
+<span class="s2">        rate_marriage   : How rate marriage, 1 = very poor, 2 = poor, 3 = fair,</span>
+<span class="s2">                        4 = good, 5 = very good</span>
+<span class="s2">        age             : Age</span>
+<span class="s2">        yrs_married     : No. years married. Interval approximations. See</span>
+<span class="s2">                        original paper for detailed explanation.</span>
+<span class="s2">        children        : No. children</span>
+<span class="s2">        religious       : How relgious, 1 = not, 2 = mildly, 3 = fairly,</span>
+<span class="s2">                        4 = strongly</span>
+<span class="s2">        educ            : Level of education, 9 = grade school, 12 = high</span>
+<span class="s2">                        school, 14 = some college, 16 = college graduate,</span>
+<span class="s2">                        17 = some graduate school, 20 = advanced degree</span>
+<span class="s2">        occupation      : 1 = student, 2 = farming, agriculture; semi-skilled,</span>
+<span class="s2">                        or unskilled worker; 3 = white-colloar; 4 = teacher</span>
+<span class="s2">                        counselor social worker, nurse; artist, writers;</span>
+<span class="s2">                        technician, skilled worker, 5 = managerial,</span>
+<span class="s2">                        administrative, business, 6 = professional with</span>
+<span class="s2">                        advanced degree</span>
+<span class="s2">        occupation_husb : Husband&#39;s occupation. Same as occupation.</span>
+<span class="s2">        affairs         : measure of time spent in extramarital affairs</span>
+
+<span class="s2">    See the original paper for more details.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">statsmodels.datasets</span> <span class="k">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">du</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">abspath</span>
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../../generated/statsmodels.datasets.fair.load.html#statsmodels.datasets.fair.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the data and return a Dataset class instance.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Dataset instance:</span>
+<span class="sd">        See DATASET_PROPOSAL.txt for more information.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_get_data</span><span class="p">()</span>
+    <span class="c1">##### SET THE INDICES #####</span>
+    <span class="c1">#NOTE: None for exog_idx is the complement of endog_idx</span>
+    <span class="k">return</span> <span class="n">du</span><span class="o">.</span><span class="n">process_recarray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">endog_idx</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">exog_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="load_pandas"><a class="viewcode-back" href="../../../../generated/statsmodels.datasets.fair.load_pandas.html#statsmodels.datasets.fair.load_pandas">[docs]</a><span class="k">def</span> <span class="nf">load_pandas</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_get_data</span><span class="p">()</span>
+    <span class="c1">##### SET THE INDICES #####</span>
+    <span class="c1">#NOTE: None for exog_idx is the complement of endog_idx</span>
+    <span class="k">return</span> <span class="n">du</span><span class="o">.</span><span class="n">process_recarray_pandas</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">endog_idx</span><span class="o">=</span><span class="mi">8</span><span class="p">,</span> <span class="n">exog_idx</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span>
+                                      <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_get_data</span><span class="p">():</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+    <span class="c1">##### EDIT THE FOLLOWING TO POINT TO DatasetName.csv #####</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">recfromtxt</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filepath</span> <span class="o">+</span> <span class="s1">&#39;/fair.csv&#39;</span><span class="p">,</span> <span class="s1">&#39;rb&#39;</span><span class="p">),</span>
+            <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span> <span class="n">names</span> <span class="o">=</span> <span class="kc">True</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

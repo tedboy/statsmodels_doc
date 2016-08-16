@@ -1,0 +1,1182 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.stats.contrast_tools &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.stats.contrast_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.stats.contrast_tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;functions to work with contrasts for multiple tests</span>
+
+<span class="sd">contrast matrices for comparing all pairs, all levels to reference level, ...</span>
+<span class="sd">extension to 2-way groups in progress</span>
+
+<span class="sd">TwoWay: class for bringing two-way analysis together and try out</span>
+<span class="sd">various helper functions</span>
+
+
+<span class="sd">Idea for second part</span>
+<span class="sd">- get all transformation matrices to move in between different full rank</span>
+<span class="sd">  parameterizations</span>
+<span class="sd">- standardize to one parameterization to get all interesting effects.</span>
+
+<span class="sd">- multivariate normal distribution</span>
+<span class="sd">  - exploit or expand what we have in LikelihoodResults, cov_params, f_test,</span>
+<span class="sd">    t_test, example: resols_dropf_full.cov_params(C2)</span>
+<span class="sd">  - connect to new multiple comparison for contrast matrices, based on</span>
+<span class="sd">    multivariate normal or t distribution (Hothorn, Bretz, Westfall)</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">zip</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1">#next 3 functions copied from multicomp.py</span>
+
+<div class="viewcode-block" id="contrast_allpairs"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.contrast_allpairs.html#statsmodels.sandbox.stats.contrast_tools.contrast_allpairs">[docs]</a><span class="k">def</span> <span class="nf">contrast_allpairs</span><span class="p">(</span><span class="n">nm</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;contrast or restriction matrix for all pairs of nm variables</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nm : int</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    contr : ndarray, 2d, (nm*(nm-1)/2, nm)</span>
+<span class="sd">       contrast matrix for all pairwise comparisons</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">contr</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nm</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="n">nm</span><span class="p">):</span>
+            <span class="n">contr_row</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nm</span><span class="p">)</span>
+            <span class="n">contr_row</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">contr_row</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span>
+            <span class="n">contr</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">contr_row</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">contr</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="contrast_all_one"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.contrast_all_one.html#statsmodels.sandbox.stats.contrast_tools.contrast_all_one">[docs]</a><span class="k">def</span> <span class="nf">contrast_all_one</span><span class="p">(</span><span class="n">nm</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;contrast or restriction matrix for all against first comparison</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nm : int</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    contr : ndarray, 2d, (nm-1, nm)</span>
+<span class="sd">       contrast matrix for all against first comparisons</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">contr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nm</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nm</span><span class="o">-</span><span class="mi">1</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">contr</span></div>
+
+<div class="viewcode-block" id="contrast_diff_mean"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.contrast_diff_mean.html#statsmodels.sandbox.stats.contrast_tools.contrast_diff_mean">[docs]</a><span class="k">def</span> <span class="nf">contrast_diff_mean</span><span class="p">(</span><span class="n">nm</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;contrast or restriction matrix for all against mean comparison</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    nm : int</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    contr : ndarray, 2d, (nm-1, nm)</span>
+<span class="sd">       contrast matrix for all against mean comparisons</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nm</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">nm</span><span class="p">,</span><span class="n">nm</span><span class="p">))</span><span class="o">/</span><span class="n">nm</span></div>
+
+<div class="viewcode-block" id="signstr"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.signstr.html#statsmodels.sandbox.stats.contrast_tools.signstr">[docs]</a><span class="k">def</span> <span class="nf">signstr</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">noplus</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">x</span> <span class="ow">in</span> <span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">]:</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">noplus</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;+&#39;</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;-&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="s1">&#39;&#39;</span> <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">sign</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">&gt;=</span><span class="mi">0</span> <span class="k">else</span> <span class="s1">&#39;-&#39;</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="nb">str</span><span class="p">(</span><span class="n">x</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="contrast_labels"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.contrast_labels.html#statsmodels.sandbox.stats.contrast_tools.contrast_labels">[docs]</a><span class="k">def</span> <span class="nf">contrast_labels</span><span class="p">(</span><span class="n">contrasts</span><span class="p">,</span> <span class="n">names</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">reverse</span><span class="p">:</span>
+        <span class="n">sl</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">sl</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+    <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">signstr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">noplus</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span><span class="n">v</span><span class="p">)</span>
+                          <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">names</span><span class="p">)[</span><span class="n">sl</span><span class="p">]</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>
+                             <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">contrasts</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">labels</span></div>
+
+<div class="viewcode-block" id="contrast_product"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.contrast_product.html#statsmodels.sandbox.stats.contrast_tools.contrast_product">[docs]</a><span class="k">def</span> <span class="nf">contrast_product</span><span class="p">(</span><span class="n">names1</span><span class="p">,</span> <span class="n">names2</span><span class="p">,</span> <span class="n">intgroup1</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">intgroup2</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">pairs</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;build contrast matrices for products of two categorical variables</span>
+
+<span class="sd">    this is an experimental script and should be converted to a class</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    names1, names2 : lists of strings</span>
+<span class="sd">        contains the list of level labels for each categorical variable</span>
+<span class="sd">    intgroup1, intgroup2 : ndarrays     TODO: this part not tested, finished yet</span>
+<span class="sd">        categorical variable</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This creates a full rank matrix. It does not do all pairwise comparisons,</span>
+<span class="sd">    parameterization is using contrast_all_one to get differences with first</span>
+<span class="sd">    level.</span>
+
+<span class="sd">    ? does contrast_all_pairs work as a plugin to get all pairs ?</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">n1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names1</span><span class="p">)</span>
+    <span class="n">n2</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">names2</span><span class="p">)</span>
+    <span class="n">names_prod</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;</span><span class="si">%s</span><span class="s1">_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">names1</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">names2</span><span class="p">]</span>
+    <span class="n">ee1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">n1</span><span class="p">))</span>
+    <span class="n">ee1</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pairs</span><span class="p">:</span>
+        <span class="n">dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">ee1</span><span class="p">,</span> <span class="o">-</span><span class="n">contrast_all_one</span><span class="p">(</span><span class="n">n1</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">ee1</span><span class="p">,</span> <span class="o">-</span><span class="n">contrast_allpairs</span><span class="p">(</span><span class="n">n1</span><span class="p">)]</span>
+
+    <span class="n">contrast_prod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">dd</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n2</span><span class="p">))</span>
+    <span class="n">names_contrast_prod0</span> <span class="o">=</span> <span class="n">contrast_labels</span><span class="p">(</span><span class="n">contrast_prod</span><span class="p">,</span> <span class="n">names_prod</span><span class="p">,</span> <span class="n">reverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">names_contrast_prod</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">signstr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">noplus</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span><span class="n">v</span><span class="p">)</span>
+                              <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">names_prod</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>
+                                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">contrast_prod</span><span class="p">]</span>
+
+    <span class="n">ee2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">1</span><span class="p">,</span><span class="n">n2</span><span class="p">))</span>
+    <span class="n">ee2</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="c1">#dd2 = np.r_[ee2, -contrast_all_one(n2)]</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">pairs</span><span class="p">:</span>
+        <span class="n">dd2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">ee2</span><span class="p">,</span> <span class="o">-</span><span class="n">contrast_all_one</span><span class="p">(</span><span class="n">n2</span><span class="p">)]</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dd2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">ee2</span><span class="p">,</span> <span class="o">-</span><span class="n">contrast_allpairs</span><span class="p">(</span><span class="n">n2</span><span class="p">)]</span>
+
+    <span class="n">contrast_prod2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">kron</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">n1</span><span class="p">),</span> <span class="n">dd2</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+    <span class="n">names_contrast_prod2</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="s1">&#39;</span><span class="si">%s%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">signstr</span><span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">noplus</span><span class="o">=</span><span class="kc">True</span><span class="p">),</span><span class="n">v</span><span class="p">)</span>
+                              <span class="k">for</span> <span class="n">c</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">names_prod</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="k">if</span> <span class="n">c</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">])</span>
+                                 <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">contrast_prod2</span><span class="p">]</span>
+
+    <span class="k">if</span> <span class="p">(</span><span class="ow">not</span> <span class="n">intgroup1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="ow">not</span> <span class="n">intgroup1</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="n">d1</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dummy_1d</span><span class="p">(</span><span class="n">intgroup1</span><span class="p">)</span>
+        <span class="n">d2</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">dummy_1d</span><span class="p">(</span><span class="n">intgroup2</span><span class="p">)</span>
+        <span class="n">dummy</span> <span class="o">=</span> <span class="n">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">dummy</span> <span class="o">=</span> <span class="kc">None</span>
+
+    <span class="k">return</span> <span class="p">(</span><span class="n">names_prod</span><span class="p">,</span> <span class="n">contrast_prod</span><span class="p">,</span> <span class="n">names_contrast_prod</span><span class="p">,</span>
+                        <span class="n">contrast_prod2</span><span class="p">,</span> <span class="n">names_contrast_prod2</span><span class="p">,</span> <span class="n">dummy</span><span class="p">)</span></div>
+
+
+
+
+
+<div class="viewcode-block" id="dummy_1d"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.dummy_1d.html#statsmodels.sandbox.stats.contrast_tools.dummy_1d">[docs]</a><span class="k">def</span> <span class="nf">dummy_1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">varname</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;dummy variable for id integer groups</span>
+
+<span class="sd">    Paramters</span>
+<span class="sd">    ---------</span>
+<span class="sd">    x : ndarray, 1d</span>
+<span class="sd">        categorical variable, requires integers if varname is None</span>
+<span class="sd">    varname : string</span>
+<span class="sd">        name of the variable used in labels for category levels</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dummy : ndarray, 2d</span>
+<span class="sd">        array of dummy variables, one column for each level of the</span>
+<span class="sd">        category (full set)</span>
+<span class="sd">    labels : list of strings</span>
+<span class="sd">        labels for the columns, i.e. levels of each category</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    use tools.categorical instead for more more options</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    statsmodels.tools.categorical</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; x = np.array([&#39;F&#39;, &#39;F&#39;, &#39;M&#39;, &#39;M&#39;, &#39;F&#39;, &#39;F&#39;, &#39;M&#39;, &#39;M&#39;, &#39;F&#39;, &#39;F&#39;, &#39;M&#39;, &#39;M&#39;],</span>
+<span class="sd">          dtype=&#39;|S1&#39;)</span>
+<span class="sd">    &gt;&gt;&gt; dummy_1d(x, varname=&#39;gender&#39;)</span>
+<span class="sd">    (array([[1, 0],</span>
+<span class="sd">           [1, 0],</span>
+<span class="sd">           [0, 1],</span>
+<span class="sd">           [0, 1],</span>
+<span class="sd">           [1, 0],</span>
+<span class="sd">           [1, 0],</span>
+<span class="sd">           [0, 1],</span>
+<span class="sd">           [0, 1],</span>
+<span class="sd">           [1, 0],</span>
+<span class="sd">           [1, 0],</span>
+<span class="sd">           [0, 1],</span>
+<span class="sd">           [0, 1]]), [&#39;gender_F&#39;, &#39;gender_M&#39;])</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">varname</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>  <span class="c1">#assumes integer</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;level_</span><span class="si">%d</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span><span class="o">==</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span><span class="o">+</span><span class="mi">1</span><span class="p">))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">labels</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">grouplabels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="p">[</span><span class="n">varname</span> <span class="o">+</span> <span class="s1">&#39;_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="nb">str</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">grouplabels</span><span class="p">]</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span><span class="o">==</span><span class="n">grouplabels</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">),</span> <span class="n">labels</span></div>
+
+
+<div class="viewcode-block" id="dummy_product"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.dummy_product.html#statsmodels.sandbox.stats.contrast_tools.dummy_product">[docs]</a><span class="k">def</span> <span class="nf">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;dummy variable from product of two dummy variables</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d1, d2 : ndarray</span>
+<span class="sd">        two dummy variables, assumes full set for methods &#39;drop-last&#39;</span>
+<span class="sd">        and &#39;drop-first&#39;</span>
+<span class="sd">    method : {&#39;full&#39;, &#39;drop-last&#39;, &#39;drop-first&#39;}</span>
+<span class="sd">        &#39;full&#39; returns the full product, encoding of intersection of</span>
+<span class="sd">        categories.</span>
+<span class="sd">        The drop methods provide a difference dummy encoding:</span>
+<span class="sd">        (constant, main effects, interaction effects). The first or last columns</span>
+<span class="sd">        of the dummy variable (i.e. levels) are dropped to get full rank</span>
+<span class="sd">        dummy matrix.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dummy : ndarray</span>
+<span class="sd">        dummy variable for product, see method</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span><span class="p">:</span>
+        <span class="n">dd</span> <span class="o">=</span> <span class="p">(</span><span class="n">d1</span><span class="p">[:,:,</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="n">d2</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:])</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">d1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;drop-last&#39;</span><span class="p">:</span>  <span class="c1">#same as SAS transreg</span>
+        <span class="n">d12rl</span> <span class="o">=</span> <span class="n">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">d2</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">),</span> <span class="n">d1</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">d2</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">d12rl</span><span class="p">))</span>
+        <span class="c1">#Note: dtype int should preserve dtype of d1 and d2</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;drop-first&#39;</span><span class="p">:</span>
+        <span class="n">d12r</span> <span class="o">=</span> <span class="n">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">d2</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">),</span> <span class="n">d1</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">d2</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:],</span><span class="n">d12r</span><span class="p">))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;method not recognized&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dd</span></div>
+
+<div class="viewcode-block" id="dummy_limits"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.dummy_limits.html#statsmodels.sandbox.stats.contrast_tools.dummy_limits">[docs]</a><span class="k">def</span> <span class="nf">dummy_limits</span><span class="p">(</span><span class="n">d</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;start and endpoints of groups in a sorted dummy variable array</span>
+
+<span class="sd">    helper function for nested categories</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; d1 = np.array([[1, 0, 0],</span>
+<span class="sd">                       [1, 0, 0],</span>
+<span class="sd">                       [1, 0, 0],</span>
+<span class="sd">                       [1, 0, 0],</span>
+<span class="sd">                       [0, 1, 0],</span>
+<span class="sd">                       [0, 1, 0],</span>
+<span class="sd">                       [0, 1, 0],</span>
+<span class="sd">                       [0, 1, 0],</span>
+<span class="sd">                       [0, 0, 1],</span>
+<span class="sd">                       [0, 0, 1],</span>
+<span class="sd">                       [0, 0, 1],</span>
+<span class="sd">                       [0, 0, 1]])</span>
+<span class="sd">    &gt;&gt;&gt; dummy_limits(d1)</span>
+<span class="sd">    (array([0, 4, 8]), array([ 4,  8, 12]))</span>
+
+<span class="sd">    get group slices from an array</span>
+
+<span class="sd">    &gt;&gt;&gt; [np.arange(d1.shape[0])[b:e] for b,e in zip(*dummy_limits(d1))]</span>
+<span class="sd">    [array([0, 1, 2, 3]), array([4, 5, 6, 7]), array([ 8,  9, 10, 11])]</span>
+<span class="sd">    &gt;&gt;&gt; [np.arange(d1.shape[0])[b:e] for b,e in zip(*dummy_limits(d1))]</span>
+<span class="sd">    [array([0, 1, 2, 3]), array([4, 5, 6, 7]), array([ 8,  9, 10, 11])]</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">nobs</span><span class="p">,</span> <span class="n">nvars</span> <span class="o">=</span> <span class="n">d</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">start1</span><span class="p">,</span> <span class="n">col1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">end1</span><span class="p">,</span> <span class="n">col1_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span><span class="o">==-</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span>
+    <span class="c1">#print(cc, np.r_[[0], col1], np.r_[col1_, [nvars-1]]</span>
+    <span class="k">if</span> <span class="p">((</span><span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="n">col1</span><span class="p">]</span> <span class="o">==</span> <span class="n">cc</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+            <span class="ow">or</span> <span class="p">(</span><span class="ow">not</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">col1_</span><span class="p">,</span> <span class="p">[</span><span class="n">nvars</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span> <span class="o">==</span> <span class="n">cc</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">())):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;dummy variable is not sorted&#39;</span><span class="p">)</span>
+
+    <span class="n">start</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[[</span><span class="mi">0</span><span class="p">],</span> <span class="n">start1</span><span class="o">+</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">end</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">end1</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span> <span class="p">[</span><span class="n">nobs</span><span class="p">]]</span>
+    <span class="k">return</span> <span class="n">start</span><span class="p">,</span> <span class="n">end</span></div>
+
+
+
+<div class="viewcode-block" id="dummy_nested"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.dummy_nested.html#statsmodels.sandbox.stats.contrast_tools.dummy_nested">[docs]</a><span class="k">def</span> <span class="nf">dummy_nested</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;unfinished and incomplete mainly copy past dummy_product</span>
+<span class="sd">    dummy variable from product of two dummy variables</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    d1, d2 : ndarray</span>
+<span class="sd">        two dummy variables, d2 is assumed to be nested in d1</span>
+<span class="sd">        Assumes full set for methods &#39;drop-last&#39; and &#39;drop-first&#39;.</span>
+<span class="sd">    method : {&#39;full&#39;, &#39;drop-last&#39;, &#39;drop-first&#39;}</span>
+<span class="sd">        &#39;full&#39; returns the full product, which in this case is d2.</span>
+<span class="sd">        The drop methods provide an effects encoding:</span>
+<span class="sd">        (constant, main effects, subgroup effects). The first or last columns</span>
+<span class="sd">        of the dummy variable (i.e. levels) are dropped to get full rank</span>
+<span class="sd">        encoding.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    dummy : ndarray</span>
+<span class="sd">        dummy variable for product, see method</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;full&#39;</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">d2</span>
+
+    <span class="n">start1</span><span class="p">,</span> <span class="n">end1</span> <span class="o">=</span> <span class="n">dummy_limits</span><span class="p">(</span><span class="n">d1</span><span class="p">)</span>
+    <span class="n">start2</span><span class="p">,</span> <span class="n">end2</span> <span class="o">=</span> <span class="n">dummy_limits</span><span class="p">(</span><span class="n">d2</span><span class="p">)</span>
+    <span class="n">first</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">start2</span><span class="p">,</span> <span class="n">start1</span><span class="p">)</span>
+    <span class="n">last</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">in1d</span><span class="p">(</span><span class="n">end2</span><span class="p">,</span> <span class="n">end1</span><span class="p">)</span>
+    <span class="n">equal</span> <span class="o">=</span> <span class="p">(</span><span class="n">first</span> <span class="o">==</span> <span class="n">last</span><span class="p">)</span>
+    <span class="n">col_dropf</span> <span class="o">=</span> <span class="o">~</span><span class="n">first</span><span class="o">*~</span><span class="n">equal</span>
+    <span class="n">col_dropl</span> <span class="o">=</span> <span class="o">~</span><span class="n">last</span><span class="o">*~</span><span class="n">equal</span>
+
+
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;drop-last&#39;</span><span class="p">:</span>
+        <span class="n">d12rl</span> <span class="o">=</span> <span class="n">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">d2</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">),</span> <span class="n">d1</span><span class="p">[:,:</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">d2</span><span class="p">[:,</span><span class="n">col_dropl</span><span class="p">]))</span>
+        <span class="c1">#Note: dtype int should preserve dtype of d1 and d2</span>
+    <span class="k">elif</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;drop-first&#39;</span><span class="p">:</span>
+        <span class="n">d12r</span> <span class="o">=</span> <span class="n">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">d2</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">dd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">d1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="nb">int</span><span class="p">),</span> <span class="n">d1</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:],</span> <span class="n">d2</span><span class="p">[:,</span><span class="n">col_dropf</span><span class="p">]))</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;method not recognized&#39;</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">dd</span><span class="p">,</span> <span class="n">col_dropf</span><span class="p">,</span> <span class="n">col_dropl</span></div>
+
+
+<div class="viewcode-block" id="DummyTransform"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.DummyTransform.html#statsmodels.sandbox.stats.contrast_tools.DummyTransform">[docs]</a><span class="k">class</span> <span class="nc">DummyTransform</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Conversion between full rank dummy encodings</span>
+
+
+<span class="sd">    y = X b + u</span>
+<span class="sd">    b = C a</span>
+<span class="sd">    a = C^{-1} b</span>
+
+<span class="sd">    y = X C a + u</span>
+
+<span class="sd">    define Z = X C, then</span>
+
+<span class="sd">    y = Z a + u</span>
+
+<span class="sd">    contrasts:</span>
+
+<span class="sd">    R_b b = r</span>
+
+<span class="sd">    R_a a = R_b C a = r</span>
+
+<span class="sd">    where R_a = R_b C</span>
+
+<span class="sd">    Here C is the transform matrix, with dot_left and dot_right as the main</span>
+<span class="sd">    methods, and the same for the inverse transform matrix, C^{-1}</span>
+
+<span class="sd">    Note:</span>
+<span class="sd">     - The class was mainly written to keep left and right straight.</span>
+<span class="sd">     - No checking is done.</span>
+<span class="sd">     - not sure yet if method names make sense</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="DummyTransform.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.DummyTransform.__init__.html#statsmodels.sandbox.stats.contrast_tools.DummyTransform.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;C such that d1 C = d2, with d1 = X, d2 = Z</span>
+
+<span class="sd">        should be (x, z) in arguments ?</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transf_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">invtransf_matrix</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">d2</span><span class="p">,</span> <span class="n">d1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="DummyTransform.dot_left"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.DummyTransform.dot_left.html#statsmodels.sandbox.stats.contrast_tools.DummyTransform.dot_left">[docs]</a>    <span class="k">def</span> <span class="nf">dot_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">a</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; b = C a</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">transf_matrix</span><span class="p">,</span> <span class="n">a</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DummyTransform.dot_right"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.DummyTransform.dot_right.html#statsmodels.sandbox.stats.contrast_tools.DummyTransform.dot_right">[docs]</a>    <span class="k">def</span> <span class="nf">dot_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; z = x C</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">transf_matrix</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DummyTransform.inv_dot_left"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.DummyTransform.inv_dot_left.html#statsmodels.sandbox.stats.contrast_tools.DummyTransform.inv_dot_left">[docs]</a>    <span class="k">def</span> <span class="nf">inv_dot_left</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">b</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; a = C^{-1} b</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invtransf_matrix</span><span class="p">,</span> <span class="n">b</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="DummyTransform.inv_dot_right"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.DummyTransform.inv_dot_right.html#statsmodels.sandbox.stats.contrast_tools.DummyTransform.inv_dot_right">[docs]</a>    <span class="k">def</span> <span class="nf">inv_dot_right</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">z</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39; x = z C^{-1}</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">z</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">invtransf_matrix</span><span class="p">)</span></div></div>
+
+
+
+
+
+<div class="viewcode-block" id="groupmean_d"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.stats.contrast_tools.groupmean_d.html#statsmodels.sandbox.stats.contrast_tools.groupmean_d">[docs]</a><span class="k">def</span> <span class="nf">groupmean_d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">d</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;groupmeans using dummy variables</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : array_like, ndim</span>
+<span class="sd">        data array, tested for 1,2 and 3 dimensions</span>
+<span class="sd">    d : ndarray, 1d</span>
+<span class="sd">        dummy variable, needs to have the same length</span>
+<span class="sd">        as x in axis 0.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    groupmeans : ndarray, ndim-1</span>
+<span class="sd">        means for each group along axis 0, the levels</span>
+<span class="sd">        of the groups are the last axis</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This will be memory intensive if there are many levels</span>
+<span class="sd">    in the categorical variable, i.e. many columns in the</span>
+<span class="sd">    dummy variable. In this case it is recommended to use</span>
+<span class="sd">    a more efficient version.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="c1">##    if x.ndim == 1:</span>
+<span class="c1">##        nvars = 1</span>
+<span class="c1">##    else:</span>
+    <span class="n">nvars</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">ndim</span> <span class="o">+</span> <span class="mi">1</span>
+    <span class="n">sli</span> <span class="o">=</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span> <span class="o">+</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">nvars</span><span class="o">-</span><span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="p">[</span><span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)]</span>
+    <span class="k">return</span> <span class="p">(</span><span class="n">x</span><span class="p">[</span><span class="o">...</span><span class="p">,</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="n">d</span><span class="p">[</span><span class="n">sli</span><span class="p">])</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="mf">1.</span><span class="o">/</span><span class="n">d</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span></div>
+
+
+
+<div class="viewcode-block" id="TwoWay"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TwoWay.html#statsmodels.sandbox.stats.contrast_tools.TwoWay">[docs]</a><span class="k">class</span> <span class="nc">TwoWay</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;a wrapper class for two way anova type of analysis with OLS</span>
+
+
+<span class="sd">    currently mainly to bring things together</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    unclear: adding multiple test might assume block design or orthogonality</span>
+
+<span class="sd">    This estimates the full dummy version with OLS.</span>
+<span class="sd">    The drop first dummy representation can be recovered through the</span>
+<span class="sd">    transform method.</span>
+
+<span class="sd">    TODO: add more methods, tests, pairwise, multiple, marginal effects</span>
+<span class="sd">    try out what can be added for userfriendly access.</span>
+
+<span class="sd">    missing: ANOVA table</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="TwoWay.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TwoWay.__init__.html#statsmodels.sandbox.stats.contrast_tools.TwoWay.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">factor1</span><span class="p">,</span> <span class="n">factor2</span><span class="p">,</span> <span class="n">varnames</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nobs</span> <span class="o">=</span> <span class="n">factor1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">varnames</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vname1</span> <span class="o">=</span> <span class="s1">&#39;a&#39;</span>
+            <span class="n">vname2</span> <span class="o">=</span> <span class="s1">&#39;b&#39;</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vname1</span><span class="p">,</span> <span class="n">vname1</span> <span class="o">=</span> <span class="n">varnames</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">d1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d1_labels</span> <span class="o">=</span> <span class="n">d1</span><span class="p">,</span> <span class="n">d1_labels</span> <span class="o">=</span> <span class="n">dummy_1d</span><span class="p">(</span><span class="n">factor1</span><span class="p">,</span> <span class="n">vname1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">d2_labels</span> <span class="o">=</span> <span class="n">d2</span><span class="p">,</span> <span class="n">d2_labels</span> <span class="o">=</span> <span class="n">dummy_1d</span><span class="p">(</span><span class="n">factor2</span><span class="p">,</span> <span class="n">vname2</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nlevel1</span> <span class="o">=</span> <span class="n">nlevel1</span> <span class="o">=</span> <span class="n">d1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nlevel2</span> <span class="o">=</span> <span class="n">nlevel2</span> <span class="o">=</span> <span class="n">d2</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+
+        <span class="c1">#get product dummies</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="n">contrast_product</span><span class="p">(</span><span class="n">d1_labels</span><span class="p">,</span> <span class="n">d2_labels</span><span class="p">)</span>
+        <span class="n">prodlab</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">C1lab</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">C2lab</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">res</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">prod_label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C1_label</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C2</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">C2_label</span><span class="p">,</span> <span class="n">_</span> <span class="o">=</span> <span class="n">res</span>
+        <span class="n">dp_full</span> <span class="o">=</span> <span class="n">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">)</span>
+        <span class="n">dp_dropf</span> <span class="o">=</span> <span class="n">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;drop-first&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">transform</span> <span class="o">=</span> <span class="n">DummyTransform</span><span class="p">(</span><span class="n">dp_full</span><span class="p">,</span> <span class="n">dp_dropf</span><span class="p">)</span>
+
+        <span class="c1">#estimate the model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span> <span class="o">=</span> <span class="n">dp_full</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="n">dp_full</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">resols</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">dp_full</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resols</span><span class="o">.</span><span class="n">params</span>
+
+        <span class="c1">#get transformed parameters, (constant, main, interaction effect)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">params_dropf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">inv_dot_left</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start_interaction</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">+</span> <span class="p">(</span><span class="n">nlevel1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="p">(</span><span class="n">nlevel2</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_interaction</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">start_interaction</span></div>
+
+    <span class="c1">#convert to cached property</span>
+<div class="viewcode-block" id="TwoWay.r_nointer"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TwoWay.r_nointer.html#statsmodels.sandbox.stats.contrast_tools.TwoWay.r_nointer">[docs]</a>    <span class="k">def</span> <span class="nf">r_nointer</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;contrast/restriction matrix for no interaction</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">nia</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_interaction</span>
+        <span class="n">R_nointer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nia</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span><span class="o">-</span><span class="n">nia</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nia</span><span class="p">)))</span>
+        <span class="c1">#inter_direct = resols_full_dropf.tval[-nia:]</span>
+        <span class="n">R_nointer_transf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">inv_dot_right</span><span class="p">(</span><span class="n">R_nointer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_nointer_transf</span> <span class="o">=</span> <span class="n">R_nointer_transf</span>
+        <span class="k">return</span> <span class="n">R_nointer_transf</span></div>
+
+<div class="viewcode-block" id="TwoWay.ttest_interaction"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TwoWay.ttest_interaction.html#statsmodels.sandbox.stats.contrast_tools.TwoWay.ttest_interaction">[docs]</a>    <span class="k">def</span> <span class="nf">ttest_interaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;ttests for no-interaction terms are zero</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#use self.r_nointer instead</span>
+        <span class="n">nia</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n_interaction</span>
+        <span class="n">R_nointer</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nia</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nvars</span><span class="o">-</span><span class="n">nia</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nia</span><span class="p">)))</span>
+        <span class="c1">#inter_direct = resols_full_dropf.tval[-nia:]</span>
+        <span class="n">R_nointer_transf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="o">.</span><span class="n">inv_dot_right</span><span class="p">(</span><span class="n">R_nointer</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">R_nointer_transf</span> <span class="o">=</span> <span class="n">R_nointer_transf</span>
+        <span class="n">t_res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">resols</span><span class="o">.</span><span class="n">t_test</span><span class="p">(</span><span class="n">R_nointer_transf</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">t_res</span></div>
+
+<div class="viewcode-block" id="TwoWay.ftest_interaction"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TwoWay.ftest_interaction.html#statsmodels.sandbox.stats.contrast_tools.TwoWay.ftest_interaction">[docs]</a>    <span class="k">def</span> <span class="nf">ftest_interaction</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;ttests for no-interaction terms are zero</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">R_nointer_transf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">r_nointer</span><span class="p">()</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resols</span><span class="o">.</span><span class="n">f_test</span><span class="p">(</span><span class="n">R_nointer_transf</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TwoWay.ttest_conditional_effect"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TwoWay.ttest_conditional_effect.html#statsmodels.sandbox.stats.contrast_tools.TwoWay.ttest_conditional_effect">[docs]</a>    <span class="k">def</span> <span class="nf">ttest_conditional_effect</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">factorind</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">factorind</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resols</span><span class="o">.</span><span class="n">t_test</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C1</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">C1_label</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">resols</span><span class="o">.</span><span class="n">t_test</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">C2</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">C2_label</span></div>
+
+<div class="viewcode-block" id="TwoWay.summary_coeff"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TwoWay.summary_coeff.html#statsmodels.sandbox.stats.contrast_tools.TwoWay.summary_coeff">[docs]</a>    <span class="k">def</span> <span class="nf">summary_coeff</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="kn">from</span> <span class="nn">statsmodels.iolib</span> <span class="k">import</span> <span class="n">SimpleTable</span>
+        <span class="n">params_arr</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nlevel1</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">nlevel2</span><span class="p">)</span>
+        <span class="n">stubs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d1_labels</span>
+        <span class="n">headers</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">d2_labels</span>
+        <span class="n">title</span> <span class="o">=</span> <span class="s1">&#39;Estimated Coefficients by factors&#39;</span>
+        <span class="n">table_fmt</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span>
+            <span class="n">data_fmts</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;</span><span class="si">%#10.4g</span><span class="s2">&quot;</span><span class="p">]</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">nlevel2</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">SimpleTable</span><span class="p">(</span><span class="n">params_arr</span><span class="p">,</span> <span class="n">headers</span><span class="p">,</span> <span class="n">stubs</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="n">title</span><span class="p">,</span>
+                           <span class="n">txt_fmt</span><span class="o">=</span><span class="n">table_fmt</span><span class="p">)</span></div></div>
+
+
+
+
+
+
+
+<span class="c1">#--------------- tests</span>
+
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_equal</span>
+
+<span class="c1">#TODO: several tests still missing, several are in the example with print</span>
+
+<div class="viewcode-block" id="TestContrastTools"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TestContrastTools.html#statsmodels.sandbox.stats.contrast_tools.TestContrastTools">[docs]</a><span class="k">class</span> <span class="nc">TestContrastTools</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="TestContrastTools.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TestContrastTools.__init__.html#statsmodels.sandbox.stats.contrast_tools.TestContrastTools.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v1name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a0&#39;</span><span class="p">,</span> <span class="s1">&#39;a1&#39;</span><span class="p">,</span> <span class="s1">&#39;a2&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v2name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;b0&#39;</span><span class="p">,</span> <span class="s1">&#39;b1&#39;</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">d1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]])</span></div>
+
+<div class="viewcode-block" id="TestContrastTools.test_dummy_1d"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TestContrastTools.test_dummy_1d.html#statsmodels.sandbox.stats.contrast_tools.TestContrastTools.test_dummy_1d">[docs]</a>    <span class="k">def</span> <span class="nf">test_dummy_1d</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;F&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">,</span> <span class="s1">&#39;M&#39;</span><span class="p">],</span>
+              <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;|S1&#39;</span><span class="p">)</span>
+        <span class="n">d</span><span class="p">,</span> <span class="n">labels</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span>
+                               <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]),</span> <span class="p">[</span><span class="s1">&#39;gender_F&#39;</span><span class="p">,</span> <span class="s1">&#39;gender_M&#39;</span><span class="p">])</span>
+        <span class="n">res_d</span><span class="p">,</span> <span class="n">res_labels</span> <span class="o">=</span> <span class="n">dummy_1d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">varname</span><span class="o">=</span><span class="s1">&#39;gender&#39;</span><span class="p">)</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="n">res_d</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="n">res_labels</span><span class="p">,</span> <span class="n">labels</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="TestContrastTools.test_contrast_product"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TestContrastTools.test_contrast_product.html#statsmodels.sandbox.stats.contrast_tools.TestContrastTools.test_contrast_product">[docs]</a>    <span class="k">def</span> <span class="nf">test_contrast_product</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">res_cp</span> <span class="o">=</span> <span class="n">contrast_product</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v1name</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">v2name</span><span class="p">)</span>
+        <span class="n">res_t</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="mi">6</span>
+        <span class="n">res_t</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a0_b0&#39;</span><span class="p">,</span> <span class="s1">&#39;a0_b1&#39;</span><span class="p">,</span> <span class="s1">&#39;a1_b0&#39;</span><span class="p">,</span> <span class="s1">&#39;a1_b1&#39;</span><span class="p">,</span> <span class="s1">&#39;a2_b0&#39;</span><span class="p">,</span> <span class="s1">&#39;a2_b1&#39;</span><span class="p">]</span>
+        <span class="n">res_t</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
+                           <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
+                           <span class="p">[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
+                           <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">]])</span>
+        <span class="n">res_t</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a1_b0-a0_b0&#39;</span><span class="p">,</span> <span class="s1">&#39;a1_b1-a0_b1&#39;</span><span class="p">,</span> <span class="s1">&#39;a2_b0-a0_b0&#39;</span><span class="p">,</span> <span class="s1">&#39;a2_b1-a0_b1&#39;</span><span class="p">]</span>
+        <span class="n">res_t</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span>  <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
+                           <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">],</span>
+                           <span class="p">[</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span> <span class="o">-</span><span class="mf">1.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">]])</span>
+        <span class="n">res_t</span><span class="p">[</span><span class="mi">4</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a0_b1-a0_b0&#39;</span><span class="p">,</span> <span class="s1">&#39;a1_b1-a1_b0&#39;</span><span class="p">,</span> <span class="s1">&#39;a2_b1-a2_b0&#39;</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">ii</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">testing</span><span class="o">.</span><span class="n">assert_equal</span><span class="p">(</span><span class="n">res_cp</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">res_t</span><span class="p">[</span><span class="n">ii</span><span class="p">],</span> <span class="n">err_msg</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">ii</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="TestContrastTools.test_dummy_limits"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.stats.contrast_tools.TestContrastTools.test_dummy_limits.html#statsmodels.sandbox.stats.contrast_tools.TestContrastTools.test_dummy_limits">[docs]</a>    <span class="k">def</span> <span class="nf">test_dummy_limits</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">b</span><span class="p">,</span><span class="n">e</span> <span class="o">=</span> <span class="n">dummy_limits</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">d1</span><span class="p">)</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">8</span><span class="p">]))</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="n">e</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mi">4</span><span class="p">,</span>  <span class="mi">8</span><span class="p">,</span> <span class="mi">12</span><span class="p">]))</span></div></div>
+
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">tt</span> <span class="o">=</span> <span class="n">TestContrastTools</span><span class="p">()</span>
+    <span class="n">tt</span><span class="o">.</span><span class="n">test_contrast_product</span><span class="p">()</span>
+    <span class="n">tt</span><span class="o">.</span><span class="n">test_dummy_1d</span><span class="p">()</span>
+    <span class="n">tt</span><span class="o">.</span><span class="n">test_dummy_limits</span><span class="p">()</span>
+
+    <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+
+    <span class="n">examples</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;small&#39;</span><span class="p">,</span> <span class="s1">&#39;large&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+
+    <span class="n">v1name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;a0&#39;</span><span class="p">,</span> <span class="s1">&#39;a1&#39;</span><span class="p">,</span> <span class="s1">&#39;a2&#39;</span><span class="p">]</span>
+    <span class="n">v2name</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;b0&#39;</span><span class="p">,</span> <span class="s1">&#39;b1&#39;</span><span class="p">]</span>
+    <span class="n">res_cp</span> <span class="o">=</span> <span class="n">contrast_product</span><span class="p">(</span><span class="n">v1name</span><span class="p">,</span> <span class="n">v2name</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">res_cp</span><span class="p">)</span>
+
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span>
+    <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">//</span><span class="mi">4</span>
+    <span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">12</span><span class="p">)</span><span class="o">//</span><span class="mi">2</span><span class="o">%</span><span class="mi">2</span>
+
+    <span class="k">if</span> <span class="s1">&#39;small&#39;</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+        <span class="n">d1</span><span class="p">,</span> <span class="n">d1_labels</span> <span class="o">=</span> <span class="n">dummy_1d</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+        <span class="n">d2</span><span class="p">,</span> <span class="n">d2_labels</span> <span class="o">=</span> <span class="n">dummy_1d</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+
+
+    <span class="k">if</span> <span class="s1">&#39;large&#39;</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">x2</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">nobs</span> <span class="o">=</span> <span class="n">x1</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">d1</span><span class="p">,</span> <span class="n">d1_labels</span> <span class="o">=</span> <span class="n">dummy_1d</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+    <span class="n">d2</span><span class="p">,</span> <span class="n">d2_labels</span> <span class="o">=</span> <span class="n">dummy_1d</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+
+    <span class="n">dd_full</span> <span class="o">=</span> <span class="n">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;full&#39;</span><span class="p">)</span>
+    <span class="n">dd_dropl</span> <span class="o">=</span> <span class="n">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;drop-last&#39;</span><span class="p">)</span>
+    <span class="n">dd_dropf</span> <span class="o">=</span> <span class="n">dummy_product</span><span class="p">(</span><span class="n">d1</span><span class="p">,</span> <span class="n">d2</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;drop-first&#39;</span><span class="p">)</span>
+
+    <span class="c1">#Note: full parameterization of dummies is orthogonal</span>
+    <span class="c1">#np.eye(6)*10 in &quot;large&quot; example</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">dd_full</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="n">dd_full</span><span class="p">)</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">dd_full</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span><span class="o">.</span><span class="n">all</span><span class="p">())</span>
+
+    <span class="c1">#check that transforms work</span>
+    <span class="c1">#generate 3 data sets with the 3 different parameterizations</span>
+
+    <span class="n">effect_size</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span> <span class="mf">0.01</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">noise_scale</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.001</span><span class="p">,</span> <span class="mf">0.1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">noise</span> <span class="o">=</span> <span class="n">noise_scale</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+    <span class="n">beta</span> <span class="o">=</span> <span class="n">effect_size</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">7</span><span class="p">)</span>
+    <span class="n">ydata_full</span> <span class="o">=</span> <span class="p">(</span><span class="n">dd_full</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
+    <span class="n">ydata_dropl</span> <span class="o">=</span> <span class="p">(</span><span class="n">dd_dropl</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
+    <span class="n">ydata_dropf</span> <span class="o">=</span> <span class="p">(</span><span class="n">dd_dropf</span> <span class="o">*</span> <span class="n">beta</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">noise</span>
+
+    <span class="n">resols_full_full</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">ydata_full</span><span class="p">,</span> <span class="n">dd_full</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">resols_full_dropf</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">ydata_full</span><span class="p">,</span> <span class="n">dd_dropf</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">params_f_f</span> <span class="o">=</span> <span class="n">resols_full_full</span><span class="o">.</span><span class="n">params</span>
+    <span class="n">params_f_df</span> <span class="o">=</span> <span class="n">resols_full_dropf</span><span class="o">.</span><span class="n">params</span>
+
+    <span class="n">resols_dropf_full</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">ydata_dropf</span><span class="p">,</span> <span class="n">dd_full</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">resols_dropf_dropf</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">ydata_dropf</span><span class="p">,</span> <span class="n">dd_dropf</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+    <span class="n">params_df_f</span> <span class="o">=</span> <span class="n">resols_dropf_full</span><span class="o">.</span><span class="n">params</span>
+    <span class="n">params_df_df</span> <span class="o">=</span> <span class="n">resols_dropf_dropf</span><span class="o">.</span><span class="n">params</span>
+
+
+    <span class="n">tr_of</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">dd_dropf</span><span class="p">,</span> <span class="n">dd_full</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">tr_fo</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">dd_full</span><span class="p">,</span> <span class="n">dd_dropf</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">tr_fo</span><span class="p">,</span> <span class="n">params_df_df</span><span class="p">)</span> <span class="o">-</span> <span class="n">params_df_f</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">tr_of</span><span class="p">,</span> <span class="n">params_f_f</span><span class="p">)</span> <span class="o">-</span> <span class="n">params_f_df</span><span class="p">)</span>
+
+    <span class="n">transf_f_df</span> <span class="o">=</span> <span class="n">DummyTransform</span><span class="p">(</span><span class="n">dd_full</span><span class="p">,</span> <span class="n">dd_dropf</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">dd_full</span> <span class="o">-</span> <span class="n">transf_f_df</span><span class="o">.</span><span class="n">inv_dot_right</span><span class="p">(</span><span class="n">dd_dropf</span><span class="p">)))))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">dd_dropf</span> <span class="o">-</span> <span class="n">transf_f_df</span><span class="o">.</span><span class="n">dot_right</span><span class="p">(</span><span class="n">dd_full</span><span class="p">)))))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">params_df_df</span>
+                         <span class="o">-</span> <span class="n">transf_f_df</span><span class="o">.</span><span class="n">inv_dot_left</span><span class="p">(</span><span class="n">params_df_f</span><span class="p">)))))</span>
+    <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">params_f_df</span>
+                         <span class="o">-</span> <span class="n">transf_f_df</span><span class="o">.</span><span class="n">inv_dot_left</span><span class="p">(</span><span class="n">params_f_f</span><span class="p">))))</span>
+
+    <span class="n">prodlab</span><span class="p">,</span> <span class="n">C1</span><span class="p">,</span> <span class="n">C1lab</span><span class="p">,</span> <span class="n">C2</span><span class="p">,</span> <span class="n">C2lab</span><span class="p">,</span><span class="n">_</span> <span class="o">=</span> <span class="n">contrast_product</span><span class="p">(</span><span class="n">v1name</span><span class="p">,</span> <span class="n">v2name</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">tvalues for no effect of factor 1&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;each test is conditional on a level of factor 2&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">C1lab</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">resols_dropf_full</span><span class="o">.</span><span class="n">t_test</span><span class="p">(</span><span class="n">C1</span><span class="p">)</span><span class="o">.</span><span class="n">tvalue</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">tvalues for no effect of factor 2&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;each test is conditional on a level of factor 1&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">C2lab</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">resols_dropf_full</span><span class="o">.</span><span class="n">t_test</span><span class="p">(</span><span class="n">C2</span><span class="p">)</span><span class="o">.</span><span class="n">tvalue</span><span class="p">)</span>
+
+    <span class="c1">#covariance matrix of restrictions C2, note: orthogonal</span>
+    <span class="n">resols_dropf_full</span><span class="o">.</span><span class="n">cov_params</span><span class="p">(</span><span class="n">C2</span><span class="p">)</span>
+
+    <span class="c1">#testing for no interaction effect</span>
+    <span class="n">R_noint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">hstack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">2</span><span class="p">)))</span>
+    <span class="n">inter_direct</span> <span class="o">=</span> <span class="n">resols_full_dropf</span><span class="o">.</span><span class="n">tvalues</span><span class="p">[</span><span class="o">-</span><span class="mi">2</span><span class="p">:]</span>
+    <span class="n">inter_transf</span> <span class="o">=</span> <span class="n">resols_full_full</span><span class="o">.</span><span class="n">t_test</span><span class="p">(</span><span class="n">transf_f_df</span><span class="o">.</span><span class="n">inv_dot_right</span><span class="p">(</span><span class="n">R_noint</span><span class="p">))</span><span class="o">.</span><span class="n">tvalue</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">((</span><span class="n">inter_direct</span> <span class="o">-</span> <span class="n">inter_transf</span><span class="p">))))</span>
+
+    <span class="c1">#now with class version</span>
+    <span class="n">tw</span> <span class="o">=</span> <span class="n">TwoWay</span><span class="p">(</span><span class="n">ydata_dropf</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tw</span><span class="o">.</span><span class="n">ttest_interaction</span><span class="p">()</span><span class="o">.</span><span class="n">tvalue</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tw</span><span class="o">.</span><span class="n">ttest_interaction</span><span class="p">()</span><span class="o">.</span><span class="n">pvalue</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tw</span><span class="o">.</span><span class="n">ftest_interaction</span><span class="p">()</span><span class="o">.</span><span class="n">fvalue</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tw</span><span class="o">.</span><span class="n">ftest_interaction</span><span class="p">()</span><span class="o">.</span><span class="n">pvalue</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tw</span><span class="o">.</span><span class="n">ttest_conditional_effect</span><span class="p">(</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tvalue</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tw</span><span class="o">.</span><span class="n">ttest_conditional_effect</span><span class="p">(</span><span class="mi">2</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">tvalue</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">tw</span><span class="o">.</span><span class="n">summary_coeff</span><span class="p">())</span>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<span class="sd">&#39;&#39;&#39; documentation for early examples while developing - some have changed already</span>
+<span class="sd">&gt;&gt;&gt; y = np.arange(12)</span>
+<span class="sd">&gt;&gt;&gt; y</span>
+<span class="sd">array([ 0,  1,  2,  3,  4,  5,  6,  7,  8,  9, 10, 11])</span>
+<span class="sd">&gt;&gt;&gt; x1 = np.arange(12)//4</span>
+<span class="sd">&gt;&gt;&gt; x1</span>
+<span class="sd">array([0, 0, 0, 0, 1, 1, 1, 1, 2, 2, 2, 2])</span>
+<span class="sd">&gt;&gt;&gt; x2 = np.arange(12)//2%2</span>
+<span class="sd">&gt;&gt;&gt; x2</span>
+<span class="sd">array([0, 0, 1, 1, 0, 0, 1, 1, 0, 0, 1, 1])</span>
+
+<span class="sd">&gt;&gt;&gt; d1 = dummy_1d(x1)</span>
+<span class="sd">&gt;&gt;&gt; d1</span>
+<span class="sd">array([[1, 0, 0],</span>
+<span class="sd">       [1, 0, 0],</span>
+<span class="sd">       [1, 0, 0],</span>
+<span class="sd">       [1, 0, 0],</span>
+<span class="sd">       [0, 1, 0],</span>
+<span class="sd">       [0, 1, 0],</span>
+<span class="sd">       [0, 1, 0],</span>
+<span class="sd">       [0, 1, 0],</span>
+<span class="sd">       [0, 0, 1],</span>
+<span class="sd">       [0, 0, 1],</span>
+<span class="sd">       [0, 0, 1],</span>
+<span class="sd">       [0, 0, 1]])</span>
+
+<span class="sd">&gt;&gt;&gt; d2 = dummy_1d(x2)</span>
+<span class="sd">&gt;&gt;&gt; d2</span>
+<span class="sd">array([[1, 0],</span>
+<span class="sd">       [1, 0],</span>
+<span class="sd">       [0, 1],</span>
+<span class="sd">       [0, 1],</span>
+<span class="sd">       [1, 0],</span>
+<span class="sd">       [1, 0],</span>
+<span class="sd">       [0, 1],</span>
+<span class="sd">       [0, 1],</span>
+<span class="sd">       [1, 0],</span>
+<span class="sd">       [1, 0],</span>
+<span class="sd">       [0, 1],</span>
+<span class="sd">       [0, 1]])</span>
+
+<span class="sd">&gt;&gt;&gt; d12 = dummy_product(d1, d2)</span>
+<span class="sd">&gt;&gt;&gt; d12</span>
+<span class="sd">array([[1, 0, 0, 0, 0, 0],</span>
+<span class="sd">       [1, 0, 0, 0, 0, 0],</span>
+<span class="sd">       [0, 1, 0, 0, 0, 0],</span>
+<span class="sd">       [0, 1, 0, 0, 0, 0],</span>
+<span class="sd">       [0, 0, 1, 0, 0, 0],</span>
+<span class="sd">       [0, 0, 1, 0, 0, 0],</span>
+<span class="sd">       [0, 0, 0, 1, 0, 0],</span>
+<span class="sd">       [0, 0, 0, 1, 0, 0],</span>
+<span class="sd">       [0, 0, 0, 0, 1, 0],</span>
+<span class="sd">       [0, 0, 0, 0, 1, 0],</span>
+<span class="sd">       [0, 0, 0, 0, 0, 1],</span>
+<span class="sd">       [0, 0, 0, 0, 0, 1]])</span>
+
+
+<span class="sd">&gt;&gt;&gt; d12rl = dummy_product(d1[:,:-1], d2[:,:-1])</span>
+<span class="sd">&gt;&gt;&gt; np.column_stack((np.ones(d1.shape[0]), d1[:,:-1], d2[:,:-1],d12rl))</span>
+<span class="sd">array([[ 1.,  1.,  0.,  1.,  1.,  0.],</span>
+<span class="sd">       [ 1.,  1.,  0.,  1.,  1.,  0.],</span>
+<span class="sd">       [ 1.,  1.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  1.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  0.,  1.,  1.,  0.,  1.],</span>
+<span class="sd">       [ 1.,  0.,  1.,  1.,  0.,  1.],</span>
+<span class="sd">       [ 1.,  0.,  1.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  0.,  1.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  0.,  0.,  1.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  0.,  0.,  1.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  0.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  0.,  0.,  0.,  0.,  0.]])</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+
+
+<span class="c1">#nprod = [&#39;%s_%s&#39; % (i,j) for i in [&#39;a0&#39;, &#39;a1&#39;, &#39;a2&#39;] for j in [&#39;b0&#39;, &#39;b1&#39;]]</span>
+<span class="c1">#&gt;&gt;&gt; [&#39;&#39;.join([&#39;%s%s&#39; % (signstr(c),v) for c,v in zip(row, nprod) if c != 0])</span>
+<span class="c1">#     for row in np.kron(dd[1:], np.eye(2))]</span>
+
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">&gt;&gt;&gt; nprod = [&#39;%s_%s&#39; % (i,j) for i in [&#39;a0&#39;, &#39;a1&#39;, &#39;a2&#39;] for j in [&#39;b0&#39;, &#39;b1&#39;]]</span>
+<span class="sd">&gt;&gt;&gt; nprod</span>
+<span class="sd">[&#39;a0_b0&#39;, &#39;a0_b1&#39;, &#39;a1_b0&#39;, &#39;a1_b1&#39;, &#39;a2_b0&#39;, &#39;a2_b1&#39;]</span>
+<span class="sd">&gt;&gt;&gt; [&#39;&#39;.join([&#39;%s%s&#39; % (signstr(c),v) for c,v in zip(row, nprod) if c != 0]) for row in np.kron(dd[1:], np.eye(2))]</span>
+<span class="sd">[&#39;-a0b0+a1b0&#39;, &#39;-a0b1+a1b1&#39;, &#39;-a0b0+a2b0&#39;, &#39;-a0b1+a2b1&#39;]</span>
+<span class="sd">&gt;&gt;&gt; [&#39;&#39;.join([&#39;%s%s&#39; % (signstr(c),v) for c,v in zip(row, nprod)[::-1] if c != 0]) for row in np.kron(dd[1:], np.eye(2))]</span>
+<span class="sd">[&#39;+a1_b0-a0_b0&#39;, &#39;+a1_b1-a0_b1&#39;, &#39;+a2_b0-a0_b0&#39;, &#39;+a2_b1-a0_b1&#39;]</span>
+
+<span class="sd">&gt;&gt;&gt; np.r_[[[1,0,0,0,0]],contrast_all_one(5)]</span>
+<span class="sd">array([[ 1.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 1., -1.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  0., -1.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  0.,  0., -1.,  0.],</span>
+<span class="sd">       [ 1.,  0.,  0.,  0., -1.]])</span>
+
+<span class="sd">&gt;&gt;&gt; idxprod = [(i,j) for i in range(3) for j in range(2)]</span>
+<span class="sd">&gt;&gt;&gt; idxprod</span>
+<span class="sd">[(0, 0), (0, 1), (1, 0), (1, 1), (2, 0), (2, 1)]</span>
+<span class="sd">&gt;&gt;&gt; np.array(idxprod).reshape(2,3,2,order=&#39;F&#39;)[:,:,0]</span>
+<span class="sd">array([[0, 1, 2],</span>
+<span class="sd">       [0, 1, 2]])</span>
+<span class="sd">&gt;&gt;&gt; np.array(idxprod).reshape(2,3,2,order=&#39;F&#39;)[:,:,1]</span>
+<span class="sd">array([[0, 0, 0],</span>
+<span class="sd">       [1, 1, 1]])</span>
+<span class="sd">&gt;&gt;&gt; dd3_ = np.r_[[[0,0,0]],contrast_all_one(3)]</span>
+
+
+
+<span class="sd">pairwise contrasts and reparameterization</span>
+
+<span class="sd">dd = np.r_[[[1,0,0,0,0]],-contrast_all_one(5)]</span>
+<span class="sd">&gt;&gt;&gt; dd</span>
+<span class="sd">array([[ 1.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [-1.,  1.,  0.,  0.,  0.],</span>
+<span class="sd">       [-1.,  0.,  1.,  0.,  0.],</span>
+<span class="sd">       [-1.,  0.,  0.,  1.,  0.],</span>
+<span class="sd">       [-1.,  0.,  0.,  0.,  1.]])</span>
+<span class="sd">&gt;&gt;&gt; np.dot(dd.T, np.arange(5))</span>
+<span class="sd">array([-10.,   1.,   2.,   3.,   4.])</span>
+<span class="sd">&gt;&gt;&gt; np.round(np.linalg.inv(dd.T)).astype(int)</span>
+<span class="sd">array([[1, 1, 1, 1, 1],</span>
+<span class="sd">       [0, 1, 0, 0, 0],</span>
+<span class="sd">       [0, 0, 1, 0, 0],</span>
+<span class="sd">       [0, 0, 0, 1, 0],</span>
+<span class="sd">       [0, 0, 0, 0, 1]])</span>
+<span class="sd">&gt;&gt;&gt; np.round(np.linalg.inv(dd)).astype(int)</span>
+<span class="sd">array([[1, 0, 0, 0, 0],</span>
+<span class="sd">       [1, 1, 0, 0, 0],</span>
+<span class="sd">       [1, 0, 1, 0, 0],</span>
+<span class="sd">       [1, 0, 0, 1, 0],</span>
+<span class="sd">       [1, 0, 0, 0, 1]])</span>
+<span class="sd">&gt;&gt;&gt; dd</span>
+<span class="sd">array([[ 1.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [-1.,  1.,  0.,  0.,  0.],</span>
+<span class="sd">       [-1.,  0.,  1.,  0.,  0.],</span>
+<span class="sd">       [-1.,  0.,  0.,  1.,  0.],</span>
+<span class="sd">       [-1.,  0.,  0.,  0.,  1.]])</span>
+<span class="sd">&gt;&gt;&gt; ddinv=np.round(np.linalg.inv(dd.T)).astype(int)</span>
+<span class="sd">&gt;&gt;&gt; np.dot(ddinv, np.arange(5))</span>
+<span class="sd">array([10,  1,  2,  3,  4])</span>
+<span class="sd">&gt;&gt;&gt; np.dot(dd, np.arange(5))</span>
+<span class="sd">array([ 0.,  1.,  2.,  3.,  4.])</span>
+<span class="sd">&gt;&gt;&gt; np.dot(dd, 5+np.arange(5))</span>
+<span class="sd">array([ 5.,  1.,  2.,  3.,  4.])</span>
+<span class="sd">&gt;&gt;&gt; ddinv2 = np.round(np.linalg.inv(dd)).astype(int)</span>
+<span class="sd">&gt;&gt;&gt; np.dot(ddinv2, np.arange(5))</span>
+<span class="sd">array([0, 1, 2, 3, 4])</span>
+<span class="sd">&gt;&gt;&gt; np.dot(ddinv2, 5+np.arange(5))</span>
+<span class="sd">array([ 5, 11, 12, 13, 14])</span>
+<span class="sd">&gt;&gt;&gt; np.dot(ddinv2, [5, 0, 0 , 1, 2])</span>
+<span class="sd">array([5, 5, 5, 6, 7])</span>
+<span class="sd">&gt;&gt;&gt; np.dot(ddinv2, dd)</span>
+<span class="sd">array([[ 1.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 0.,  1.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 0.,  0.,  1.,  0.,  0.],</span>
+<span class="sd">       [ 0.,  0.,  0.,  1.,  0.],</span>
+<span class="sd">       [ 0.,  0.,  0.,  0.,  1.]])</span>
+
+
+
+<span class="sd">&gt;&gt;&gt; dd3 = -np.r_[[[1,0,0]],contrast_all_one(3)]</span>
+<span class="sd">&gt;&gt;&gt; dd2 = -np.r_[[[1,0]],contrast_all_one(2)]</span>
+<span class="sd">&gt;&gt;&gt; np.kron(np.eye(3), dd2)</span>
+<span class="sd">array([[-1.,  0.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [-1.,  1.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 0.,  0., -1.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 0.,  0., -1.,  1.,  0.,  0.],</span>
+<span class="sd">       [ 0.,  0.,  0.,  0., -1.,  0.],</span>
+<span class="sd">       [ 0.,  0.,  0.,  0., -1.,  1.]])</span>
+<span class="sd">&gt;&gt;&gt; dd2</span>
+<span class="sd">array([[-1.,  0.],</span>
+<span class="sd">       [-1.,  1.]])</span>
+<span class="sd">&gt;&gt;&gt; np.kron(np.eye(3), dd2[1:])</span>
+<span class="sd">array([[-1.,  1.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 0.,  0., -1.,  1.,  0.,  0.],</span>
+<span class="sd">       [ 0.,  0.,  0.,  0., -1.,  1.]])</span>
+<span class="sd">&gt;&gt;&gt; np.kron(dd[1:], np.eye(2))</span>
+<span class="sd">array([[-1.,  0.,  1.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 0., -1.,  0.,  1.,  0.,  0.],</span>
+<span class="sd">       [-1.,  0.,  0.,  0.,  1.,  0.],</span>
+<span class="sd">       [ 0., -1.,  0.,  0.,  0.,  1.]])</span>
+
+
+
+<span class="sd">d_ = np.r_[[[1,0,0,0,0]],contrast_all_one(5)]</span>
+<span class="sd">&gt;&gt;&gt; d_</span>
+<span class="sd">array([[ 1.,  0.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 1., -1.,  0.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  0., -1.,  0.,  0.],</span>
+<span class="sd">       [ 1.,  0.,  0., -1.,  0.],</span>
+<span class="sd">       [ 1.,  0.,  0.,  0., -1.]])</span>
+<span class="sd">&gt;&gt;&gt; np.round(np.linalg.pinv(d_)).astype(int)</span>
+<span class="sd">array([[ 1,  0,  0,  0,  0],</span>
+<span class="sd">       [ 1, -1,  0,  0,  0],</span>
+<span class="sd">       [ 1,  0, -1,  0,  0],</span>
+<span class="sd">       [ 1,  0,  0, -1,  0],</span>
+<span class="sd">       [ 1,  0,  0,  0, -1]])</span>
+<span class="sd">&gt;&gt;&gt; np.linalg.inv(d_).astype(int)</span>
+<span class="sd">array([[ 1,  0,  0,  0,  0],</span>
+<span class="sd">       [ 1, -1,  0,  0,  0],</span>
+<span class="sd">       [ 1,  0, -1,  0,  0],</span>
+<span class="sd">       [ 1,  0,  0, -1,  0],</span>
+<span class="sd">       [ 1,  0,  0,  0, -1]])</span>
+
+
+<span class="sd">group means</span>
+
+<span class="sd">&gt;&gt;&gt; sli = [slice(None)] + [None]*(3-2) + [slice(None)]</span>
+<span class="sd">&gt;&gt;&gt; (np.column_stack((y, x1, x2))[...,None] * d1[sli]).sum(0)*1./d1.sum(0)</span>
+<span class="sd">array([[ 1.5,  5.5,  9.5],</span>
+<span class="sd">       [ 0. ,  1. ,  2. ],</span>
+<span class="sd">       [ 0.5,  0.5,  0.5]])</span>
+
+<span class="sd">&gt;&gt;&gt; [(z[:,None] * d1).sum(0)*1./d1.sum(0) for z in np.column_stack((y, x1, x2)).T]</span>
+<span class="sd">[array([ 1.5,  5.5,  9.5]), array([ 0.,  1.,  2.]), array([ 0.5,  0.5,  0.5])]</span>
+<span class="sd">&gt;&gt;&gt;</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

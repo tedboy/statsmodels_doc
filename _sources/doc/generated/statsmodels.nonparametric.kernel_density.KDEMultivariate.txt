@@ -1,0 +1,26 @@
+statsmodels.nonparametric.kernel_density.KDEMultivariate
+========================================================
+
+.. currentmodule:: statsmodels.nonparametric.kernel_density
+
+.. autoclass:: KDEMultivariate
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~KDEMultivariate.__init__
+      ~KDEMultivariate.cdf
+      ~KDEMultivariate.imse
+      ~KDEMultivariate.loo_likelihood
+      ~KDEMultivariate.pdf
+   
+   
+
+   
+   
+   

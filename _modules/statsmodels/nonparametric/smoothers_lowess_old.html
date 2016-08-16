@@ -1,0 +1,576 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.nonparametric.smoothers_lowess_old &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.nonparametric.smoothers_lowess_old</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.nonparametric.smoothers_lowess_old</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Univariate lowess function, like in R.</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">Hastie, Tibshirani, Friedman. (2009) The Elements of Statistical Learning: Data Mining, Inference, and Prediction, Second Edition: Chapter 6.</span>
+
+<span class="sd">Cleveland, W.S. (1979) &quot;Robust Locally Weighted Regression and Smoothing Scatterplots&quot;. Journal of the American Statistical Association 74 (368): 829-836.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy.linalg</span> <span class="k">import</span> <span class="n">lstsq</span>
+
+
+<div class="viewcode-block" id="lowess"><a class="viewcode-back" href="../../../generated/statsmodels.nonparametric.smoothers_lowess_old.lowess.html#statsmodels.nonparametric.smoothers_lowess_old.lowess">[docs]</a><span class="k">def</span> <span class="nf">lowess</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">frac</span><span class="o">=</span><span class="mf">2.</span><span class="o">/</span><span class="mi">3</span><span class="p">,</span> <span class="n">it</span><span class="o">=</span><span class="mi">3</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    LOWESS (Locally Weighted Scatterplot Smoothing)</span>
+
+<span class="sd">    A lowess function that outs smoothed estimates of endog</span>
+<span class="sd">    at the given exog values from points (exog, endog)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    endog: 1-D numpy array</span>
+<span class="sd">        The y-values of the observed points</span>
+<span class="sd">    exog: 1-D numpy array</span>
+<span class="sd">        The x-values of the observed points</span>
+<span class="sd">    frac: float</span>
+<span class="sd">        Between 0 and 1. The fraction of the data used</span>
+<span class="sd">        when estimating each y-value.</span>
+<span class="sd">    it: int</span>
+<span class="sd">        The number of residual-based reweightings</span>
+<span class="sd">        to perform.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    out: numpy array</span>
+<span class="sd">        A numpy array with two columns. The first column</span>
+<span class="sd">        is the sorted x values and the second column the</span>
+<span class="sd">        associated estimated y-values.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This lowess function implements the algorithm given in the</span>
+<span class="sd">    reference below using local linear estimates.</span>
+
+<span class="sd">    Suppose the input data has N points. The algorithm works by</span>
+<span class="sd">    estimating the true ``y_i`` by taking the frac*N closest points</span>
+<span class="sd">    to ``(x_i,y_i)`` based on their x values and estimating ``y_i``</span>
+<span class="sd">    using a weighted linear regression. The weight for ``(x_j,y_j)``</span>
+<span class="sd">    is `_lowess_tricube` function applied to ``|x_i-x_j|``.</span>
+
+<span class="sd">    If ``iter &gt; 0``, then further weighted local linear regressions</span>
+<span class="sd">    are performed, where the weights are the same as above</span>
+<span class="sd">    times the `_lowess_bisquare` function of the residuals. Each iteration</span>
+<span class="sd">    takes approximately the same amount of time as the original fit,</span>
+<span class="sd">    so these iterations are expensive. They are most useful when</span>
+<span class="sd">    the noise has extremely heavy tails, such as Cauchy noise.</span>
+<span class="sd">    Noise with less heavy-tails, such as t-distributions with ``df &gt; 2``,</span>
+<span class="sd">    are less problematic. The weights downgrade the influence of</span>
+<span class="sd">    points with large residuals. In the extreme case, points whose</span>
+<span class="sd">    residuals are larger than 6 times the median absolute residual</span>
+<span class="sd">    are given weight 0.</span>
+
+<span class="sd">    Some experimentation is likely required to find a good</span>
+<span class="sd">    choice of frac and iter for a particular dataset.</span>
+
+<span class="sd">    References</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Cleveland, W.S. (1979) &quot;Robust Locally Weighted Regression</span>
+<span class="sd">    and Smoothing Scatterplots&quot;. Journal of the American Statistical</span>
+<span class="sd">    Association 74 (368): 829-836.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    The below allows a comparison between how different the fits from</span>
+<span class="sd">    `lowess` for different values of frac can be.</span>
+
+<span class="sd">    &gt;&gt;&gt; import numpy as np</span>
+<span class="sd">    &gt;&gt;&gt; import statsmodels.api as sm</span>
+<span class="sd">    &gt;&gt;&gt; lowess = sm.nonparametric.lowess</span>
+<span class="sd">    &gt;&gt;&gt; x = np.random.uniform(low=-2*np.pi, high=2*np.pi, size=500)</span>
+<span class="sd">    &gt;&gt;&gt; y = np.sin(x) + np.random.normal(size=len(x))</span>
+<span class="sd">    &gt;&gt;&gt; z = lowess(y, x)</span>
+<span class="sd">    &gt;&gt;&gt; w = lowess(y, x, frac=1./3)</span>
+
+<span class="sd">    This gives a similar comparison for when it is 0 vs not.</span>
+
+<span class="sd">    &gt;&gt;&gt; import scipy.stats as stats</span>
+<span class="sd">    &gt;&gt;&gt; x = np.random.uniform(low=-2*np.pi, high=2*np.pi, size=500)</span>
+<span class="sd">    &gt;&gt;&gt; y = np.sin(x) + stats.cauchy.rvs(size=len(x))</span>
+<span class="sd">    &gt;&gt;&gt; z = lowess(y, x, frac= 1./3, it=0)</span>
+<span class="sd">    &gt;&gt;&gt; w = lowess(y, x, frac=1./3)</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">exog</span>
+
+    <span class="k">if</span> <span class="n">exog</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;exog must be a vector&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">endog</span><span class="o">.</span><span class="n">ndim</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;endog must be a vector&#39;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">endog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;exog and endog must have same length&#39;</span><span class="p">)</span>
+
+    <span class="n">n</span> <span class="o">=</span> <span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">fitted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="n">k</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">frac</span> <span class="o">*</span> <span class="n">n</span><span class="p">)</span>
+
+    <span class="n">index_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">exog</span><span class="p">)</span>
+    <span class="n">x_copy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">exog</span><span class="p">[</span><span class="n">index_array</span><span class="p">])</span> <span class="c1">#, dtype =&#39;float32&#39;)</span>
+    <span class="n">y_copy</span> <span class="o">=</span> <span class="n">endog</span><span class="p">[</span><span class="n">index_array</span><span class="p">]</span>
+
+    <span class="n">fitted</span><span class="p">,</span> <span class="n">weights</span> <span class="o">=</span> <span class="n">_lowess_initial_fit</span><span class="p">(</span><span class="n">x_copy</span><span class="p">,</span> <span class="n">y_copy</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">it</span><span class="p">):</span>
+        <span class="n">_lowess_robustify_fit</span><span class="p">(</span><span class="n">x_copy</span><span class="p">,</span> <span class="n">y_copy</span><span class="p">,</span> <span class="n">fitted</span><span class="p">,</span>
+                              <span class="n">weights</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">)</span>
+
+    <span class="n">out</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">x_copy</span><span class="p">,</span> <span class="n">fitted</span><span class="p">])</span><span class="o">.</span><span class="n">T</span>
+    <span class="n">out</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">out</span></div>
+
+
+<span class="k">def</span> <span class="nf">_lowess_initial_fit</span><span class="p">(</span><span class="n">x_copy</span><span class="p">,</span> <span class="n">y_copy</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The initial weighted local linear regression for lowess.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x_copy : 1-d ndarray</span>
+<span class="sd">        The x-values/exogenous part of the data being smoothed</span>
+<span class="sd">    y_copy : 1-d ndarray</span>
+<span class="sd">        The y-values/ endogenous part of the data being smoothed</span>
+<span class="sd">   k : int</span>
+<span class="sd">        The number of data points which affect the linear fit for</span>
+<span class="sd">        each estimated point</span>
+<span class="sd">    n : int</span>
+<span class="sd">        The total number of points</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    fitted : 1-d ndarray</span>
+<span class="sd">        The fitted y-values</span>
+<span class="sd">    weights : 2-d ndarray</span>
+<span class="sd">        An n by k array. The contribution to the weights in the</span>
+<span class="sd">        local linear fit coming from the distances between the</span>
+<span class="sd">        x-values</span>
+
+<span class="sd">   &quot;&quot;&quot;</span>
+    <span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">),</span> <span class="n">dtype</span> <span class="o">=</span> <span class="n">x_copy</span><span class="o">.</span><span class="n">dtype</span><span class="p">)</span>
+    <span class="n">nn_indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">k</span><span class="p">]</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">k</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">fitted</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">)</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="c1">#note: all _lowess functions are inplace, no return</span>
+        <span class="n">left_width</span> <span class="o">=</span> <span class="n">x_copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_copy</span><span class="p">[</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+        <span class="n">right_width</span> <span class="o">=</span> <span class="n">x_copy</span><span class="p">[</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">x_copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="nb">max</span><span class="p">(</span><span class="n">left_width</span><span class="p">,</span> <span class="n">right_width</span><span class="p">)</span>
+        <span class="n">_lowess_wt_standardize</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">,:],</span>
+                                <span class="n">x_copy</span><span class="p">[</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]],</span>
+                            <span class="n">x_copy</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">width</span><span class="p">)</span>
+        <span class="n">_lowess_tricube</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">,:])</span>
+        <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">,:])</span>
+
+        <span class="n">X</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_copy</span><span class="p">[</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">y_i</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">y_copy</span><span class="p">[</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">lstsq</span><span class="p">(</span><span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">*</span> <span class="n">X</span><span class="p">,</span> <span class="n">y_i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">fitted</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">x_copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">_lowess_update_nn</span><span class="p">(</span><span class="n">x_copy</span><span class="p">,</span> <span class="n">nn_indices</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+
+    <span class="k">return</span> <span class="n">fitted</span><span class="p">,</span> <span class="n">weights</span>
+
+
+<span class="k">def</span> <span class="nf">_lowess_wt_standardize</span><span class="p">(</span><span class="n">weights</span><span class="p">,</span> <span class="n">new_entries</span><span class="p">,</span> <span class="n">x_copy_i</span><span class="p">,</span> <span class="n">width</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The initial phase of creating the weights.</span>
+<span class="sd">    Subtract the current x_i and divide by the width.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    weights : ndarray</span>
+<span class="sd">        The memory where (new_entries - x_copy_i)/width will be placed</span>
+<span class="sd">    new_entries : ndarray</span>
+<span class="sd">        The x-values of the k closest points to x[i]</span>
+<span class="sd">    x_copy_i : float</span>
+<span class="sd">        x[i], the i&#39;th point in the (sorted) x values</span>
+<span class="sd">    width : float</span>
+<span class="sd">        The maximum distance between x[i] and any point in new_entries</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Nothing. The modifications are made to weight in place.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">weights</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">new_entries</span>
+    <span class="n">weights</span> <span class="o">-=</span> <span class="n">x_copy_i</span>
+    <span class="n">weights</span> <span class="o">/=</span> <span class="n">width</span>
+
+
+<span class="k">def</span> <span class="nf">_lowess_robustify_fit</span><span class="p">(</span><span class="n">x_copy</span><span class="p">,</span> <span class="n">y_copy</span><span class="p">,</span> <span class="n">fitted</span><span class="p">,</span> <span class="n">weights</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Additional weighted local linear regressions, performed if</span>
+<span class="sd">    iter&gt;0. They take into account the sizes of the residuals,</span>
+<span class="sd">    to eliminate the effect of extreme outliers.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x_copy : 1-d ndarray</span>
+<span class="sd">        The x-values/exogenous part of the data being smoothed</span>
+<span class="sd">    y_copy : 1-d ndarray</span>
+<span class="sd">        The y-values/ endogenous part of the data being smoothed</span>
+<span class="sd">    fitted : 1-d ndarray</span>
+<span class="sd">        The fitted y-values from the previous iteration</span>
+<span class="sd">    weights : 2-d ndarray</span>
+<span class="sd">        An n by k array. The contribution to the weights in the</span>
+<span class="sd">        local linear fit coming from the distances between the</span>
+<span class="sd">        x-values</span>
+<span class="sd">    k : int</span>
+<span class="sd">        The number of data points which affect the linear fit for</span>
+<span class="sd">        each estimated point</span>
+<span class="sd">    n : int</span>
+<span class="sd">        The total number of points</span>
+
+<span class="sd">   Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Nothing. The fitted values are modified in place.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nn_indices</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="n">k</span><span class="p">]</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="n">k</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+
+    <span class="n">residual_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">copy</span><span class="p">(</span><span class="n">y_copy</span><span class="p">)</span>
+    <span class="n">residual_weights</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">n</span><span class="p">,)</span>
+    <span class="n">residual_weights</span> <span class="o">-=</span> <span class="n">fitted</span>
+    <span class="n">residual_weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">residual_weights</span><span class="p">)</span><span class="c1">#, out=residual_weights)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">median</span><span class="p">(</span><span class="n">residual_weights</span><span class="p">)</span>
+    <span class="n">residual_weights</span> <span class="o">/=</span> <span class="p">(</span><span class="mi">6</span><span class="o">*</span><span class="n">s</span><span class="p">)</span>
+    <span class="n">too_big</span> <span class="o">=</span> <span class="n">residual_weights</span><span class="o">&gt;=</span><span class="mi">1</span>
+    <span class="n">_lowess_bisquare</span><span class="p">(</span><span class="n">residual_weights</span><span class="p">)</span>
+    <span class="n">residual_weights</span><span class="p">[</span><span class="n">too_big</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+        <span class="n">total_weights</span> <span class="o">=</span> <span class="n">weights</span><span class="p">[</span><span class="n">i</span><span class="p">,:]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">residual_weights</span><span class="p">[</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                                                        <span class="n">nn_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]])</span>
+
+        <span class="n">X</span><span class="p">[:,</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">x_copy</span><span class="p">[</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">y_i</span> <span class="o">=</span> <span class="n">total_weights</span> <span class="o">*</span> <span class="n">y_copy</span><span class="p">[</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span><span class="n">nn_indices</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span>
+        <span class="n">total_weights</span><span class="o">.</span><span class="n">shape</span> <span class="o">=</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+
+        <span class="n">beta</span> <span class="o">=</span> <span class="n">lstsq</span><span class="p">(</span><span class="n">total_weights</span> <span class="o">*</span> <span class="n">X</span><span class="p">,</span> <span class="n">y_i</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+
+        <span class="n">fitted</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">beta</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">beta</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">*</span> <span class="n">x_copy</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+
+        <span class="n">_lowess_update_nn</span><span class="p">(</span><span class="n">x_copy</span><span class="p">,</span> <span class="n">nn_indices</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_lowess_update_nn</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">cur_nn</span><span class="p">,</span><span class="n">i</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Update the endpoints of the nearest neighbors to</span>
+<span class="sd">    the ith point.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x : iterable</span>
+<span class="sd">        The sorted points of x-values</span>
+<span class="sd">    cur_nn : list of length 2</span>
+<span class="sd">        The two current indices between which are the</span>
+<span class="sd">        k closest points to x[i]. (The actual value of</span>
+<span class="sd">        k is irrelevant for the algorithm.</span>
+<span class="sd">    i : int</span>
+<span class="sd">        The index of the current value in x for which</span>
+<span class="sd">        the k closest points are desired.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Nothing. It modifies cur_nn in place.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">while</span> <span class="kc">True</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">cur_nn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">&lt;</span><span class="n">x</span><span class="o">.</span><span class="n">size</span><span class="p">:</span>
+            <span class="n">left_dist</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">cur_nn</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span>
+            <span class="n">new_right_dist</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="n">cur_nn</span><span class="p">[</span><span class="mi">1</span><span class="p">]]</span> <span class="o">-</span> <span class="n">x</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">new_right_dist</span> <span class="o">&lt;</span> <span class="n">left_dist</span><span class="p">:</span>
+                <span class="n">cur_nn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">cur_nn</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+                <span class="n">cur_nn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">cur_nn</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">break</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">break</span>
+
+
+<span class="k">def</span> <span class="nf">_lowess_tricube</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The _tricube function applied to a numpy array.</span>
+<span class="sd">    The tricube function is (1-abs(t)**3)**3.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : ndarray</span>
+<span class="sd">        Array the tricube function is applied to elementwise and</span>
+<span class="sd">        in-place.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Nothing</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#t = (1-np.abs(t)**3)**3</span>
+    <span class="n">t</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">absolute</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="c1">#, out=t) #numpy version?</span>
+    <span class="n">_lowess_mycube</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+    <span class="n">t</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">negative</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="c1">#, out = t)</span>
+    <span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">_lowess_mycube</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+
+
+<span class="k">def</span> <span class="nf">_lowess_mycube</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Fast matrix cube</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : ndarray</span>
+<span class="sd">        Array that is cubed, elementwise and in-place</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Nothing</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#t **= 3</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">t</span><span class="o">*</span><span class="n">t</span>
+    <span class="n">t</span> <span class="o">*=</span> <span class="n">t2</span>
+
+
+<span class="k">def</span> <span class="nf">_lowess_bisquare</span><span class="p">(</span><span class="n">t</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The bisquare function applied to a numpy array.</span>
+<span class="sd">    The bisquare function is (1-t**2)**2.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    t : ndarray</span>
+<span class="sd">        array bisquare function is applied to, element-wise and in-place.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Nothing</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1">#t = (1-t**2)**2</span>
+    <span class="n">t</span> <span class="o">*=</span> <span class="n">t</span>
+    <span class="n">t</span><span class="p">[:]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">negative</span><span class="p">(</span><span class="n">t</span><span class="p">)</span> <span class="c1">#, out=t)</span>
+    <span class="n">t</span> <span class="o">+=</span> <span class="mi">1</span>
+    <span class="n">t</span> <span class="o">*=</span> <span class="n">t</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

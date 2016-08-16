@@ -1,0 +1,39 @@
+statsmodels.tsa.x13.Bunch
+=========================
+
+.. currentmodule:: statsmodels.tsa.x13
+.. autoclass:: Bunch
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Bunch.__init__
+   ~Bunch.clear
+   ~Bunch.copy
+   ~Bunch.fromkeys
+   ~Bunch.get
+   ~Bunch.has_key
+   ~Bunch.items
+   ~Bunch.iteritems
+   ~Bunch.iterkeys
+   ~Bunch.itervalues
+   ~Bunch.keys
+   ~Bunch.pop
+   ~Bunch.popitem
+   ~Bunch.setdefault
+   ~Bunch.update
+   ~Bunch.values
+   ~Bunch.viewitems
+   ~Bunch.viewkeys
+   ~Bunch.viewvalues
+
+
+
+
+

@@ -1,0 +1,43 @@
+statsmodels.regression.feasible_gls.GLSHet
+==========================================
+
+.. currentmodule:: statsmodels.regression.feasible_gls
+.. autoclass:: GLSHet
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GLSHet.__init__
+   ~GLSHet.fit
+   ~GLSHet.fit_regularized
+   ~GLSHet.from_formula
+   ~GLSHet.hessian
+   ~GLSHet.information
+   ~GLSHet.initialize
+   ~GLSHet.iterative_fit
+   ~GLSHet.loglike
+   ~GLSHet.predict
+   ~GLSHet.score
+   ~GLSHet.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~GLSHet.df_model
+   ~GLSHet.df_resid
+   ~GLSHet.endog_names
+   ~GLSHet.exog_names
+

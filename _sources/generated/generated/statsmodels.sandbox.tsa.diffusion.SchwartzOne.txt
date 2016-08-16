@@ -1,0 +1,28 @@
+statsmodels.sandbox.tsa.diffusion.SchwartzOne
+=============================================
+
+.. currentmodule:: statsmodels.sandbox.tsa.diffusion
+.. autoclass:: SchwartzOne
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~SchwartzOne.__init__
+   ~SchwartzOne.exactdist
+   ~SchwartzOne.exactprocess
+   ~SchwartzOne.expectedsim
+   ~SchwartzOne.fitls
+   ~SchwartzOne.sim
+   ~SchwartzOne.simEM
+   ~SchwartzOne.simulateW
+
+
+
+
+

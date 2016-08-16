@@ -1,0 +1,25 @@
+statsmodels.stats.multicomp.MultiComparison
+===========================================
+
+.. currentmodule:: statsmodels.stats.multicomp
+.. autoclass:: MultiComparison
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MultiComparison.__init__
+   ~MultiComparison.allpairtest
+   ~MultiComparison.getranks
+   ~MultiComparison.kruskal
+   ~MultiComparison.tukeyhsd
+
+
+
+
+

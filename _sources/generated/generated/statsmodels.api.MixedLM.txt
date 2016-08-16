@@ -1,0 +1,49 @@
+statsmodels.api.MixedLM
+=======================
+
+.. currentmodule:: statsmodels.api
+.. autoclass:: MixedLM
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MixedLM.EM
+   ~MixedLM.Estep
+   ~MixedLM.__init__
+   ~MixedLM.fit
+   ~MixedLM.fit_regularized
+   ~MixedLM.from_formula
+   ~MixedLM.get_scale
+   ~MixedLM.group_list
+   ~MixedLM.hessian
+   ~MixedLM.hessian_full
+   ~MixedLM.hessian_sqrt
+   ~MixedLM.information
+   ~MixedLM.initialize
+   ~MixedLM.loglike
+   ~MixedLM.predict
+   ~MixedLM.score
+   ~MixedLM.score_full
+   ~MixedLM.score_sqrt
+   ~MixedLM.starting_values
+   ~MixedLM.steepest_ascent
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~MixedLM.endog_names
+   ~MixedLM.exog_names
+

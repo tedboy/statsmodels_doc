@@ -1,0 +1,442 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.pca &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.pca</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.pca</h1><div class="highlight"><pre>
+<span></span><span class="c1">#Copyright (c) 2008 Erik Tollerud (etolleru@uci.edu)</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">zip</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">pi</span>
+
+<div class="viewcode-block" id="Pca"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.html#statsmodels.sandbox.pca.Pca">[docs]</a><span class="k">class</span> <span class="nc">Pca</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    A basic class for Principal Component Analysis (PCA).</span>
+
+<span class="sd">    p is the number of dimensions, while N is the number of data points</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">_colors</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;r&#39;</span><span class="p">,</span><span class="s1">&#39;g&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">,</span><span class="s1">&#39;c&#39;</span><span class="p">,</span><span class="s1">&#39;y&#39;</span><span class="p">,</span><span class="s1">&#39;m&#39;</span><span class="p">,</span><span class="s1">&#39;k&#39;</span><span class="p">)</span> <span class="c1">#defaults</span>
+
+    <span class="k">def</span> <span class="nf">__calc</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span>
+        <span class="n">M</span><span class="o">=</span><span class="n">A</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">A</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">N</span><span class="o">=</span><span class="n">M</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="n">M</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">M</span> <span class="o">=</span> <span class="n">M</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">N</span> <span class="o">=</span> <span class="n">N</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_eig</span> <span class="o">=</span> <span class="kc">None</span>
+
+<div class="viewcode-block" id="Pca.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.__init__.html#statsmodels.sandbox.pca.Pca.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">data</span><span class="p">,</span><span class="n">names</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        p X N matrix input</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">A</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">n</span><span class="p">,</span><span class="n">p</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">n</span><span class="p">,</span><span class="n">p</span>
+        <span class="k">if</span> <span class="n">p</span> <span class="o">&gt;</span> <span class="n">n</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">warnings</span> <span class="k">import</span> <span class="n">warn</span>
+            <span class="n">warn</span><span class="p">(</span><span class="s1">&#39;p &gt; n - intentional?&#39;</span><span class="p">,</span> <span class="ne">RuntimeWarning</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="n">A</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_origA</span><span class="o">=</span><span class="n">A</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">__calc</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">_colors</span><span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">tile</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_colors</span><span class="p">,</span><span class="nb">int</span><span class="p">((</span><span class="n">p</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_colors</span><span class="p">))</span><span class="o">+</span><span class="mi">1</span><span class="p">)[:</span><span class="n">p</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span> <span class="ow">and</span> <span class="nb">len</span><span class="p">(</span><span class="n">names</span><span class="p">)</span> <span class="o">!=</span> <span class="n">p</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;names must match data dimension&#39;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="o">=</span> <span class="kc">None</span> <span class="k">if</span> <span class="n">names</span> <span class="ow">is</span> <span class="kc">None</span> <span class="k">else</span> <span class="nb">tuple</span><span class="p">([</span><span class="nb">str</span><span class="p">(</span><span class="n">n</span><span class="p">)</span> <span class="k">for</span> <span class="n">n</span> <span class="ow">in</span> <span class="n">names</span><span class="p">])</span></div>
+
+
+<div class="viewcode-block" id="Pca.getCovarianceMatrix"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.getCovarianceMatrix.html#statsmodels.sandbox.pca.Pca.getCovarianceMatrix">[docs]</a>    <span class="k">def</span> <span class="nf">getCovarianceMatrix</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns the covariance matrix for the dataset</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">cov</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">.</span><span class="n">T</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pca.getEigensystem"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.getEigensystem.html#statsmodels.sandbox.pca.Pca.getEigensystem">[docs]</a>    <span class="k">def</span> <span class="nf">getEigensystem</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        returns a tuple of (eigenvalues,eigenvectors) for the data set.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eig</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eig</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getCovarianceMatrix</span><span class="p">())</span>
+            <span class="n">sorti</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">argsort</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">])[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="n">res</span><span class="o">=</span><span class="p">(</span><span class="n">res</span><span class="p">[</span><span class="mi">0</span><span class="p">][</span><span class="n">sorti</span><span class="p">],</span><span class="n">res</span><span class="p">[</span><span class="mi">1</span><span class="p">][:,</span><span class="n">sorti</span><span class="p">])</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_eig</span><span class="o">=</span><span class="n">res</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_eig</span></div>
+
+<div class="viewcode-block" id="Pca.getEigenvalues"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.getEigenvalues.html#statsmodels.sandbox.pca.Pca.getEigenvalues">[docs]</a>    <span class="k">def</span> <span class="nf">getEigenvalues</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getEigensystem</span><span class="p">()[</span><span class="mi">0</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Pca.getEigenvectors"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.getEigenvectors.html#statsmodels.sandbox.pca.Pca.getEigenvectors">[docs]</a>    <span class="k">def</span> <span class="nf">getEigenvectors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">getEigensystem</span><span class="p">()[</span><span class="mi">1</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Pca.getEnergies"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.getEnergies.html#statsmodels.sandbox.pca.Pca.getEnergies">[docs]</a>    <span class="k">def</span> <span class="nf">getEnergies</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        &quot;energies&quot; are just normalized eigenvectors</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">v</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getEigenvalues</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">v</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">v</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pca.plot2d"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.plot2d.html#statsmodels.sandbox.pca.Pca.plot2d">[docs]</a>    <span class="k">def</span> <span class="nf">plot2d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ix</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">iy</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">clf</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a 2-dimensional plot of the data set and principle components</span>
+<span class="sd">        using matplotlib.</span>
+
+<span class="sd">        ix specifies which p-dimension to put on the x-axis of the plot</span>
+<span class="sd">        and iy specifies which to put on the y-axis (0-indexed)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span><span class="n">ix</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span><span class="n">iy</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">clf</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">scatter</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">vals</span><span class="p">,</span><span class="n">evs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">getEigensystem</span><span class="p">()</span>
+        <span class="c1">#evx,evy=evs[:,ix],evs[:,iy]</span>
+        <span class="n">xl</span><span class="p">,</span><span class="n">xu</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">()</span>
+        <span class="n">yl</span><span class="p">,</span><span class="n">yu</span><span class="o">=</span><span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">()</span>
+        <span class="n">dx</span><span class="p">,</span><span class="n">dy</span><span class="o">=</span><span class="p">(</span><span class="n">xu</span><span class="o">-</span><span class="n">xl</span><span class="p">),(</span><span class="n">yu</span><span class="o">-</span><span class="n">yl</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">val</span><span class="p">,</span><span class="n">vec</span><span class="p">,</span><span class="n">c</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span><span class="n">evs</span><span class="o">.</span><span class="n">T</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">_colors</span><span class="p">):</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">arrow</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">val</span><span class="o">*</span><span class="n">vec</span><span class="p">[</span><span class="n">ix</span><span class="p">],</span><span class="n">val</span><span class="o">*</span><span class="n">vec</span><span class="p">[</span><span class="n">iy</span><span class="p">],</span><span class="n">head_width</span><span class="o">=</span><span class="mf">0.05</span><span class="o">*</span><span class="p">(</span><span class="n">dx</span><span class="o">*</span><span class="n">dy</span><span class="o">/</span><span class="mi">4</span><span class="p">)</span><span class="o">**</span><span class="mf">0.5</span><span class="p">,</span><span class="n">fc</span><span class="o">=</span><span class="n">c</span><span class="p">,</span><span class="n">ec</span><span class="o">=</span><span class="n">c</span><span class="p">)</span>
+        <span class="c1">#plt.arrow(0,0,vals[ix]*evs[ix,ix],vals[ix]*evs[iy,ix],head_width=0.05*(dx*dy/4)**0.5,fc=&#39;g&#39;,ec=&#39;g&#39;)</span>
+        <span class="c1">#plt.arrow(0,0,vals[iy]*evs[ix,iy],vals[iy]*evs[iy,iy],head_width=0.05*(dx*dy/4)**0.5,fc=&#39;r&#39;,ec=&#39;r&#39;)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/</span><span class="se">\\</span><span class="s1">sigma$&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;$&#39;</span><span class="o">+</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">iy</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/</span><span class="se">\\</span><span class="s1">sigma$&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pca.plot3d"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.plot3d.html#statsmodels.sandbox.pca.Pca.plot3d">[docs]</a>    <span class="k">def</span> <span class="nf">plot3d</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">ix</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span><span class="n">iy</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">iz</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">clf</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Generates a 3-dimensional plot of the data set and principle components</span>
+<span class="sd">        using mayavi.</span>
+
+<span class="sd">        ix, iy, and iz specify which of the input p-dimensions to place on each of</span>
+<span class="sd">        the x,y,z axes, respectively (0-indexed).</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="kn">import</span> <span class="nn">enthought.mayavi.mlab</span> <span class="k">as</span> <span class="nn">M</span>
+        <span class="k">if</span> <span class="n">clf</span><span class="p">:</span>
+            <span class="n">M</span><span class="o">.</span><span class="n">clf</span><span class="p">()</span>
+        <span class="n">z3</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span>
+        <span class="n">v</span><span class="o">=</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getEigenvectors</span><span class="p">()</span><span class="o">*</span><span class="bp">self</span><span class="o">.</span><span class="n">getEigenvalues</span><span class="p">())</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">quiver3d</span><span class="p">(</span><span class="n">z3</span><span class="p">,</span><span class="n">z3</span><span class="p">,</span><span class="n">z3</span><span class="p">,</span><span class="n">v</span><span class="p">[</span><span class="n">ix</span><span class="p">],</span><span class="n">v</span><span class="p">[</span><span class="n">iy</span><span class="p">],</span><span class="n">v</span><span class="p">[</span><span class="n">iz</span><span class="p">],</span><span class="n">scale_factor</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="n">M</span><span class="o">.</span><span class="n">points3d</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span><span class="n">ix</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span><span class="n">iy</span><span class="p">],</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">[:,</span><span class="n">iz</span><span class="p">],</span><span class="n">scale_factor</span><span class="o">=</span><span class="mf">0.3</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">:</span>
+            <span class="n">M</span><span class="o">.</span><span class="n">axes</span><span class="p">(</span><span class="n">xlabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">ix</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/sigma&#39;</span><span class="p">,</span><span class="n">ylabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">iy</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/sigma&#39;</span><span class="p">,</span><span class="n">zlabel</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">names</span><span class="p">[</span><span class="n">iz</span><span class="p">]</span><span class="o">+</span><span class="s1">&#39;/sigma&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">M</span><span class="o">.</span><span class="n">axes</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="Pca.sigclip"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.sigclip.html#statsmodels.sandbox.pca.Pca.sigclip">[docs]</a>    <span class="k">def</span> <span class="nf">sigclip</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">sigs</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        clips out all data points that are more than a certain number</span>
+<span class="sd">        of standard deviations from the mean.</span>
+
+<span class="sd">        sigs can be either a single value or a length-p sequence that</span>
+<span class="sd">        specifies the number of standard deviations along each of the</span>
+<span class="sd">        p dimensions.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">isscalar</span><span class="p">(</span><span class="n">sigs</span><span class="p">):</span>
+            <span class="n">sigs</span><span class="o">=</span><span class="n">sigs</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+        <span class="n">sigs</span> <span class="o">=</span> <span class="n">sigs</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">sigs</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">[</span><span class="n">m</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__calc</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">n</span><span class="o">-</span><span class="nb">sum</span><span class="p">(</span><span class="n">m</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Pca.reset"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.reset.html#statsmodels.sandbox.pca.Pca.reset">[docs]</a>    <span class="k">def</span> <span class="nf">reset</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">A</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_origA</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__calc</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="Pca.project"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.project.html#statsmodels.sandbox.pca.Pca.project">[docs]</a>    <span class="k">def</span> <span class="nf">project</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">vals</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">enthresh</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">nPCs</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span><span class="n">cumen</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        projects the normalized values onto the components</span>
+
+<span class="sd">        enthresh, nPCs, and cumen determine how many PCs to use</span>
+
+<span class="sd">        if vals is None, the normalized data vectors are the values to project.</span>
+<span class="sd">        Otherwise, it should be convertable to a p x N array</span>
+
+<span class="sd">        returns n,p(&gt;threshold) dimension array</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">nonnones</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">([</span><span class="n">e</span> <span class="o">!=</span> <span class="kc">None</span> <span class="k">for</span> <span class="n">e</span> <span class="ow">in</span> <span class="p">(</span><span class="n">enthresh</span><span class="p">,</span><span class="n">nPCs</span><span class="p">,</span><span class="n">cumen</span><span class="p">)])</span>
+        <span class="k">if</span> <span class="n">nonnones</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">m</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="n">nonnones</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;can&#39;t specify more than one threshold&quot;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">enthresh</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">()</span> <span class="o">&gt;</span> <span class="n">enthresh</span>
+            <span class="k">elif</span> <span class="n">nPCs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span><span class="n">nPCs</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">cumen</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">energies</span><span class="p">())</span> <span class="o">&lt;</span>  <span class="n">cumen</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Should be unreachable&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">vals</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">vals</span><span class="p">,</span><span class="n">copy</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">N</span><span class="o">.</span><span class="n">T</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">!=</span> <span class="n">vals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;shape for vals doesn&#39;t match&quot;</span><span class="p">)</span>
+        <span class="n">proj</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getEigenvectors</span><span class="p">())</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">vals</span>
+        <span class="k">return</span> <span class="n">proj</span><span class="p">[</span><span class="n">m</span><span class="p">]</span><span class="o">.</span><span class="n">T</span></div>
+
+<div class="viewcode-block" id="Pca.deproject"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.deproject.html#statsmodels.sandbox.pca.Pca.deproject">[docs]</a>    <span class="k">def</span> <span class="nf">deproject</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">A</span><span class="p">,</span><span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        input is an n X q array, where q &lt;= p</span>
+
+<span class="sd">        output is p X n</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">A</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">atleast_2d</span><span class="p">(</span><span class="n">A</span><span class="p">)</span>
+        <span class="n">n</span><span class="p">,</span><span class="n">q</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">shape</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="k">if</span> <span class="n">q</span> <span class="o">&gt;</span> <span class="n">p</span> <span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;q &gt; p&quot;</span><span class="p">)</span>
+
+        <span class="n">evinv</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">matrix</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">getEigenvectors</span><span class="p">())</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+
+        <span class="n">zs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n</span><span class="p">,</span><span class="n">p</span><span class="p">))</span>
+        <span class="n">zs</span><span class="p">[:,:</span><span class="n">q</span><span class="p">]</span><span class="o">=</span><span class="n">A</span>
+
+        <span class="n">proj</span> <span class="o">=</span> <span class="n">evinv</span><span class="o">*</span><span class="n">zs</span><span class="o">.</span><span class="n">T</span>
+
+        <span class="k">if</span> <span class="n">normed</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">proj</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">mns</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">sds</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+            <span class="k">return</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">proj</span><span class="o">.</span><span class="n">T</span><span class="p">)</span><span class="o">*</span><span class="n">sds</span><span class="o">+</span><span class="n">mns</span><span class="p">)</span><span class="o">.</span><span class="n">T</span></div>
+
+<div class="viewcode-block" id="Pca.subtractPC"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.pca.Pca.subtractPC.html#statsmodels.sandbox.pca.Pca.subtractPC">[docs]</a>    <span class="k">def</span> <span class="nf">subtractPC</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span><span class="n">pc</span><span class="p">,</span><span class="n">vals</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        pc can be a scalar or any sequence of pc indecies</span>
+
+<span class="sd">        if vals is None, the source data is self.A, else whatever is in vals</span>
+<span class="sd">        (which must be p x m)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">vals</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">vals</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">T</span>
+            <span class="k">if</span> <span class="n">vals</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">!=</span> <span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;vals don&#39;t have the correct number of components&quot;</span><span class="p">)</span>
+
+        <span class="n">pcs</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">project</span><span class="p">()</span>
+        <span class="n">zpcs</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">pcs</span><span class="p">)</span>
+        <span class="n">zpcs</span><span class="p">[:,</span><span class="n">pc</span><span class="p">]</span><span class="o">=</span><span class="n">pcs</span><span class="p">[:,</span><span class="n">pc</span><span class="p">]</span>
+        <span class="n">upc</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">deproject</span><span class="p">(</span><span class="n">zpcs</span><span class="p">,</span><span class="kc">False</span><span class="p">)</span>
+
+        <span class="n">A</span> <span class="o">=</span> <span class="n">vals</span><span class="o">.</span><span class="n">T</span><span class="o">-</span><span class="n">upc</span>
+        <span class="n">B</span> <span class="o">=</span> <span class="n">A</span><span class="o">.</span><span class="n">T</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">M</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">B</span><span class="o">+</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">A</span><span class="p">,</span><span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

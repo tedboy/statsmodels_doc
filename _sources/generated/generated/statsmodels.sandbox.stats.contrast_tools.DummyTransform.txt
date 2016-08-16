@@ -1,0 +1,25 @@
+statsmodels.sandbox.stats.contrast_tools.DummyTransform
+=======================================================
+
+.. currentmodule:: statsmodels.sandbox.stats.contrast_tools
+.. autoclass:: DummyTransform
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~DummyTransform.__init__
+   ~DummyTransform.dot_left
+   ~DummyTransform.dot_right
+   ~DummyTransform.inv_dot_left
+   ~DummyTransform.inv_dot_right
+
+
+
+
+

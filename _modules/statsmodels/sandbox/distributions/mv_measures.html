@@ -1,0 +1,412 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.distributions.mv_measures &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.distributions.mv_measures</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.distributions.mv_measures</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;using multivariate dependence and divergence measures</span>
+
+<span class="sd">The standard correlation coefficient measures only linear dependence between</span>
+<span class="sd">random variables.</span>
+<span class="sd">kendall&#39;s tau measures any monotonic relationship also non-linear.</span>
+
+<span class="sd">mutual information measures any kind of dependence, but does not distinguish</span>
+<span class="sd">between positive and negative relationship</span>
+
+
+<span class="sd">mutualinfo_kde and mutualinfo_binning follow Khan et al. 2007</span>
+
+<span class="sd">Shiraj Khan, Sharba Bandyopadhyay, Auroop R. Ganguly, Sunil Saigal,</span>
+<span class="sd">David J. Erickson, III, Vladimir Protopopescu, and George Ostrouchov,</span>
+<span class="sd">Relative performance of mutual information estimation methods for</span>
+<span class="sd">quantifying the dependence among short and noisy data,</span>
+<span class="sd">Phys. Rev. E 76, 026209 (2007)</span>
+<span class="sd">http://pre.aps.org/abstract/PRE/v76/i2/e026209</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">scipy.stats</span> <span class="k">import</span> <span class="n">gaussian_kde</span>
+
+<span class="kn">import</span> <span class="nn">statsmodels.sandbox.infotheo</span> <span class="k">as</span> <span class="nn">infotheo</span>
+
+
+<div class="viewcode-block" id="mutualinfo_kde"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.mv_measures.mutualinfo_kde.html#statsmodels.sandbox.distributions.mv_measures.mutualinfo_kde">[docs]</a><span class="k">def</span> <span class="nf">mutualinfo_kde</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;mutual information of two random variables estimated with kde</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">nobs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;both data arrays need to have the same size&#39;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="n">yx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">((</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
+    <span class="n">kde_x</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">kde_y</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">y</span><span class="p">)(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">kde_yx</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">yx</span><span class="p">)(</span><span class="n">yx</span><span class="p">)</span>
+
+    <span class="n">mi_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">kde_yx</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">kde_x</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">kde_y</span><span class="p">)</span>
+    <span class="n">mi</span> <span class="o">=</span> <span class="n">mi_obs</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">/</span> <span class="n">nobs</span>
+    <span class="k">if</span> <span class="n">normed</span><span class="p">:</span>
+        <span class="n">mi_normed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mi</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">mi_normed</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mi</span></div>
+
+<div class="viewcode-block" id="mutualinfo_kde_2sample"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.mv_measures.mutualinfo_kde_2sample.html#statsmodels.sandbox.distributions.mv_measures.mutualinfo_kde_2sample">[docs]</a><span class="k">def</span> <span class="nf">mutualinfo_kde_2sample</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;mutual information of two random variables estimated with kde</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="c1">#yx = np.vstack((y,x))</span>
+    <span class="n">kde_x</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">)(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="n">kde_y</span> <span class="o">=</span> <span class="n">gaussian_kde</span><span class="p">(</span><span class="n">y</span><span class="o">.</span><span class="n">T</span><span class="p">)(</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+    <span class="c1">#kde_yx = gaussian_kde(yx)(yx)</span>
+
+    <span class="n">mi_obs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">kde_x</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">kde_y</span><span class="p">)</span>
+    <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mi_obs</span><span class="p">)</span> <span class="o">!=</span> <span class="n">nobs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;Wrong number of observations&quot;</span><span class="p">)</span>
+    <span class="n">mi</span> <span class="o">=</span> <span class="n">mi_obs</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span>
+    <span class="k">if</span> <span class="n">normed</span><span class="p">:</span>
+        <span class="n">mi_normed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mi</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">mi_normed</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mi</span></div>
+
+<div class="viewcode-block" id="mutualinfo_binned"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.distributions.mv_measures.mutualinfo_binned.html#statsmodels.sandbox.distributions.mv_measures.mutualinfo_binned">[docs]</a><span class="k">def</span> <span class="nf">mutualinfo_binned</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;mutual information of two random variables estimated with kde</span>
+
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    bins=&#39;auto&#39; selects the number of bins so that approximately 5 observations</span>
+<span class="sd">    are expected to be in each bin under the assumption of independence. This</span>
+<span class="sd">    follows roughly the description in Kahn et al. 2007</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="nb">len</span><span class="p">(</span><span class="n">y</span><span class="p">)</span> <span class="o">==</span> <span class="n">nobs</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;both data arrays need to have the same size&#39;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="nb">float</span><span class="p">)</span>
+    <span class="c1">#yx = np.vstack((y,x))</span>
+
+
+<span class="c1">##    fyx, binsy, binsx = np.histogram2d(y, x, bins=bins)</span>
+<span class="c1">##    fx, binsx_ = np.histogram(x, bins=binsx)</span>
+<span class="c1">##    fy, binsy_ = np.histogram(y, bins=binsy)</span>
+
+    <span class="k">if</span> <span class="n">bins</span> <span class="o">==</span> <span class="s1">&#39;auto&#39;</span><span class="p">:</span>
+        <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="c1">#quantiles = np.array([0,0.25, 0.4, 0.6, 0.75, 1])</span>
+        <span class="n">qbin_sqr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">5.</span><span class="o">/</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="n">quantiles</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mf">1.</span><span class="o">/</span><span class="n">qbin_sqr</span><span class="p">)</span>
+        <span class="n">quantile_index</span> <span class="o">=</span> <span class="p">((</span><span class="n">nobs</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">quantiles</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="c1">#move edges so that they don&#39;t coincide with an observation</span>
+        <span class="n">shift</span> <span class="o">=</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">quantiles</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+        <span class="n">shift</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-=</span> <span class="mi">2</span><span class="o">*</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span>
+        <span class="n">binsy</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[</span><span class="n">quantile_index</span><span class="p">]</span> <span class="o">+</span> <span class="n">shift</span>
+        <span class="n">binsx</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[</span><span class="n">quantile_index</span><span class="p">]</span> <span class="o">+</span> <span class="n">shift</span>
+
+    <span class="k">elif</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">binsy</span> <span class="o">=</span> <span class="n">bins</span>
+        <span class="n">binsx</span> <span class="o">=</span> <span class="n">bins</span>
+    <span class="k">elif</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">bins</span><span class="p">)</span> <span class="o">==</span> <span class="mi">2</span><span class="p">):</span>
+        <span class="n">binsy</span><span class="p">,</span> <span class="n">binsx</span> <span class="o">=</span> <span class="n">bins</span>
+<span class="c1">##        if np.size(bins[0]) == 1:</span>
+<span class="c1">##            binsx = bins[0]</span>
+<span class="c1">##        if np.size(bins[1]) == 1:</span>
+<span class="c1">##            binsx = bins[1]</span>
+
+    <span class="n">fx</span><span class="p">,</span> <span class="n">binsx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">binsx</span><span class="p">)</span>
+    <span class="n">fy</span><span class="p">,</span> <span class="n">binsy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">binsy</span><span class="p">)</span>
+    <span class="n">fyx</span><span class="p">,</span> <span class="n">binsy</span><span class="p">,</span> <span class="n">binsx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram2d</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="p">(</span><span class="n">binsy</span><span class="p">,</span> <span class="n">binsx</span><span class="p">))</span>
+
+    <span class="n">pyx</span> <span class="o">=</span> <span class="n">fyx</span> <span class="o">*</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">nobs</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="n">fx</span> <span class="o">*</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">nobs</span>
+    <span class="n">py</span> <span class="o">=</span> <span class="n">fy</span> <span class="o">*</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">nobs</span>
+
+
+    <span class="n">mi_obs</span> <span class="o">=</span> <span class="n">pyx</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">pyx</span><span class="o">+</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">10</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">py</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">px</span><span class="p">))</span>
+    <span class="n">mi</span> <span class="o">=</span> <span class="n">mi_obs</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>
+
+    <span class="k">if</span> <span class="n">normed</span><span class="p">:</span>
+        <span class="n">mi_normed</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span> <span class="o">*</span> <span class="n">mi</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">mi_normed</span><span class="p">,</span> <span class="p">(</span><span class="n">pyx</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">px</span><span class="p">,</span> <span class="n">binsy</span><span class="p">,</span> <span class="n">binsx</span><span class="p">),</span> <span class="n">mi_obs</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">mi</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+
+    <span class="n">funtype</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;linear&#39;</span><span class="p">,</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">200</span>
+    <span class="n">sig</span> <span class="o">=</span> <span class="mi">2</span><span class="c1">#5.</span>
+    <span class="c1">#x = np.linspace(-3, 3, nobs) + np.random.randn(nobs)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="mi">3</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span><span class="p">))</span>
+    <span class="n">exog</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">add_constant</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">prepend</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="c1">#y = 0 + np.log(1+x**2) + sig * np.random.randn(nobs)</span>
+    <span class="k">if</span> <span class="n">funtype</span> <span class="o">==</span> <span class="s1">&#39;quadratic&#39;</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">+</span> <span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="n">sig</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">funtype</span> <span class="o">==</span> <span class="s1">&#39;linear&#39;</span><span class="p">:</span>
+        <span class="n">y</span> <span class="o">=</span> <span class="mi">0</span> <span class="o">+</span> <span class="n">x</span> <span class="o">+</span> <span class="n">sig</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;correlation&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">corrcoef</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;pearsonr&#39;</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">pearsonr</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;spearmanr&#39;</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">spearmanr</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;kendalltau&#39;</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">kendalltau</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
+
+    <span class="n">pxy</span><span class="p">,</span> <span class="n">binsx</span><span class="p">,</span> <span class="n">binsy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram2d</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+    <span class="n">px</span><span class="p">,</span> <span class="n">binsx_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">binsx</span><span class="p">)</span>
+    <span class="n">py</span><span class="p">,</span> <span class="n">binsy_</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">histogram</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="n">binsy</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mutualinfo&#39;</span><span class="p">,</span> <span class="n">infotheo</span><span class="o">.</span><span class="n">mutualinfo</span><span class="p">(</span><span class="n">px</span><span class="o">*</span><span class="mf">1.</span><span class="o">/</span><span class="n">nobs</span><span class="p">,</span> <span class="n">py</span><span class="o">*</span><span class="mf">1.</span><span class="o">/</span><span class="n">nobs</span><span class="p">,</span>
+                                            <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">15</span><span class="o">+</span><span class="n">pxy</span><span class="o">*</span><span class="mf">1.</span><span class="o">/</span><span class="n">nobs</span><span class="p">,</span> <span class="n">logbase</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">e</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mutualinfo_kde normed&#39;</span><span class="p">,</span> <span class="n">mutualinfo_kde</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mutualinfo_kde       &#39;</span><span class="p">,</span> <span class="n">mutualinfo_kde</span><span class="p">(</span><span class="n">y</span><span class="p">,</span><span class="n">x</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">False</span><span class="p">))</span>
+    <span class="n">mi_normed</span><span class="p">,</span> <span class="p">(</span><span class="n">pyx2</span><span class="p">,</span> <span class="n">py2</span><span class="p">,</span> <span class="n">px2</span><span class="p">,</span> <span class="n">binsy2</span><span class="p">,</span> <span class="n">binsx2</span><span class="p">),</span> <span class="n">mi_obs</span> <span class="o">=</span> \
+               <span class="n">mutualinfo_binned</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mutualinfo_binned normed&#39;</span><span class="p">,</span> <span class="n">mi_normed</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mutualinfo_binned       &#39;</span><span class="p">,</span> <span class="n">mi_obs</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+    <span class="n">mi_normed</span><span class="p">,</span> <span class="p">(</span><span class="n">pyx2</span><span class="p">,</span> <span class="n">py2</span><span class="p">,</span> <span class="n">px2</span><span class="p">,</span> <span class="n">binsy2</span><span class="p">,</span> <span class="n">binsx2</span><span class="p">),</span> <span class="n">mi_obs</span> <span class="o">=</span> \
+               <span class="n">mutualinfo_binned</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="s1">&#39;auto&#39;</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;auto&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mutualinfo_binned normed&#39;</span><span class="p">,</span> <span class="n">mi_normed</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mutualinfo_binned       &#39;</span><span class="p">,</span> <span class="n">mi_obs</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+    <span class="n">ys</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+    <span class="n">xs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sort</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">by</span> <span class="o">=</span> <span class="n">ys</span><span class="p">[((</span><span class="n">nobs</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span>
+    <span class="n">bx</span> <span class="o">=</span> <span class="n">xs</span><span class="p">[((</span><span class="n">nobs</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.25</span><span class="p">,</span> <span class="mf">0.4</span><span class="p">,</span> <span class="mf">0.6</span><span class="p">,</span> <span class="mf">0.75</span><span class="p">,</span> <span class="mi">1</span><span class="p">]))</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)]</span>
+    <span class="n">mi_normed</span><span class="p">,</span> <span class="p">(</span><span class="n">pyx2</span><span class="p">,</span> <span class="n">py2</span><span class="p">,</span> <span class="n">px2</span><span class="p">,</span> <span class="n">binsy2</span><span class="p">,</span> <span class="n">binsx2</span><span class="p">),</span> <span class="n">mi_obs</span> <span class="o">=</span> \
+               <span class="n">mutualinfo_binned</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="p">(</span><span class="n">by</span><span class="p">,</span><span class="n">bx</span><span class="p">),</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;quantiles&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mutualinfo_binned normed&#39;</span><span class="p">,</span> <span class="n">mi_normed</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;mutualinfo_binned       &#39;</span><span class="p">,</span> <span class="n">mi_obs</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+
+    <span class="n">doplot</span> <span class="o">=</span> <span class="mi">1</span><span class="c1">#False</span>
+    <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+        <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="s1">&#39;o&#39;</span><span class="p">)</span>
+        <span class="n">olsres</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">OLS</span><span class="p">(</span><span class="n">y</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">olsres</span><span class="o">.</span><span class="n">fittedvalues</span><span class="p">)</span>
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

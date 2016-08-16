@@ -1,0 +1,28 @@
+statsmodels.stats.tabledist.TableDist
+=====================================
+
+.. currentmodule:: statsmodels.stats.tabledist
+.. autoclass:: TableDist
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TableDist.__init__
+   ~TableDist.crit
+   ~TableDist.crit2
+   ~TableDist.crit3
+   ~TableDist.poly2d
+   ~TableDist.polyn
+   ~TableDist.polyrbf
+   ~TableDist.prob
+
+
+
+
+

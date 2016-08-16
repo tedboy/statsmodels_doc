@@ -1,0 +1,24 @@
+statsmodels.genmod.families.links.logit
+=======================================
+
+.. currentmodule:: statsmodels.genmod.families.links
+.. autoclass:: logit
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~logit.deriv
+   ~logit.deriv2
+   ~logit.inverse
+   ~logit.inverse_deriv
+
+
+
+
+

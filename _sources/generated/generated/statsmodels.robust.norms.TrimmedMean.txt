@@ -1,0 +1,25 @@
+statsmodels.robust.norms.TrimmedMean
+====================================
+
+.. currentmodule:: statsmodels.robust.norms
+.. autoclass:: TrimmedMean
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TrimmedMean.__init__
+   ~TrimmedMean.psi
+   ~TrimmedMean.psi_deriv
+   ~TrimmedMean.rho
+   ~TrimmedMean.weights
+
+
+
+
+

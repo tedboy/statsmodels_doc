@@ -1,0 +1,57 @@
+statsmodels.tsa.tests.test_arima.Test_Y_ARMA14_Const
+====================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: Test_Y_ARMA14_Const
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Test_Y_ARMA14_Const.setupClass
+   ~Test_Y_ARMA14_Const.test_aic
+   ~Test_Y_ARMA14_Const.test_arroots
+   ~Test_Y_ARMA14_Const.test_bic
+   ~Test_Y_ARMA14_Const.test_bse
+   ~Test_Y_ARMA14_Const.test_covparams
+   ~Test_Y_ARMA14_Const.test_fittedvalues
+   ~Test_Y_ARMA14_Const.test_hqic
+   ~Test_Y_ARMA14_Const.test_llf
+   ~Test_Y_ARMA14_Const.test_maroots
+   ~Test_Y_ARMA14_Const.test_params
+   ~Test_Y_ARMA14_Const.test_pvalues
+   ~Test_Y_ARMA14_Const.test_resid
+   ~Test_Y_ARMA14_Const.test_sigma2
+   ~Test_Y_ARMA14_Const.test_summary
+   ~Test_Y_ARMA14_Const.test_tvalues
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Test_Y_ARMA14_Const.decimal_aic
+   ~Test_Y_ARMA14_Const.decimal_arroots
+   ~Test_Y_ARMA14_Const.decimal_bic
+   ~Test_Y_ARMA14_Const.decimal_bse
+   ~Test_Y_ARMA14_Const.decimal_cov_params
+   ~Test_Y_ARMA14_Const.decimal_fittedvalues
+   ~Test_Y_ARMA14_Const.decimal_hqic
+   ~Test_Y_ARMA14_Const.decimal_llf
+   ~Test_Y_ARMA14_Const.decimal_maroots
+   ~Test_Y_ARMA14_Const.decimal_params
+   ~Test_Y_ARMA14_Const.decimal_pvalues
+   ~Test_Y_ARMA14_Const.decimal_resid
+   ~Test_Y_ARMA14_Const.decimal_sigma2
+   ~Test_Y_ARMA14_Const.decimal_t
+

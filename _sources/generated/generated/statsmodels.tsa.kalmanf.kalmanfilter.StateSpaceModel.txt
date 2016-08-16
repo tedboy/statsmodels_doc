@@ -1,0 +1,28 @@
+statsmodels.tsa.kalmanf.kalmanfilter.StateSpaceModel
+====================================================
+
+.. currentmodule:: statsmodels.tsa.kalmanf.kalmanfilter
+.. autoclass:: StateSpaceModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~StateSpaceModel.H
+   ~StateSpaceModel.Q
+   ~StateSpaceModel.R
+   ~StateSpaceModel.T
+   ~StateSpaceModel.Z
+   ~StateSpaceModel.__init__
+   ~StateSpaceModel.fit_kalman
+   ~StateSpaceModel.kalmanfilter
+
+
+
+
+

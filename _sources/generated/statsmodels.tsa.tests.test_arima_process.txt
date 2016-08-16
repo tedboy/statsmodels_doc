@@ -1,0 +1,53 @@
+statsmodels.tsa.tests.test_arima_process
+========================================
+
+.. automodule:: statsmodels.tsa.tests.test_arima_process
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      arma_acf
+      arma_acovf
+      arma_generate_sample
+      arma_impulse_response
+      lpol_fiar
+      lpol_fima
+      test_arma_acf
+      test_arma_acovf
+      test_arma_generate_sample
+      test_arma_impulse_response
+      test_armafft
+      test_fi
+      test_spectrum
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ArmaFft
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tsa.tests.test_arima_process.ArmaFft
+
+   
+   
+
+   
+   
+   

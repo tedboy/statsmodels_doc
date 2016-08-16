@@ -1,0 +1,23 @@
+statsmodels.base._constraints.TransformRestriction
+==================================================
+
+.. currentmodule:: statsmodels.base._constraints
+.. autoclass:: TransformRestriction
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TransformRestriction.__init__
+   ~TransformRestriction.expand
+   ~TransformRestriction.reduce
+
+
+
+
+

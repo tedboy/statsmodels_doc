@@ -1,0 +1,26 @@
+statsmodels.sandbox.tests.test_gam.AdditiveModel
+================================================
+
+.. currentmodule:: statsmodels.sandbox.tests.test_gam
+.. autoclass:: AdditiveModel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~AdditiveModel.__init__
+   ~AdditiveModel.cont
+   ~AdditiveModel.df_resid
+   ~AdditiveModel.estimate_scale
+   ~AdditiveModel.fit
+   ~AdditiveModel.next
+
+
+
+
+

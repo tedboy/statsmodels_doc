@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.datasets.star98.data &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.datasets.star98.data</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.datasets.star98.data</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;Star98 Educational Testing dataset.&quot;&quot;&quot;</span>
+
+<span class="n">__docformat__</span> <span class="o">=</span> <span class="s1">&#39;restructuredtext&#39;</span>
+
+<span class="n">COPYRIGHT</span>   <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Used with express permission from the original author,</span>
+<span class="s2">who retains all rights.&quot;&quot;&quot;</span>
+<span class="n">TITLE</span>       <span class="o">=</span> <span class="s2">&quot;Star98 Educational Dataset&quot;</span>
+<span class="n">SOURCE</span>      <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Jeff Gill&#39;s `Generalized Linear Models: A Unified Approach`</span>
+
+<span class="s2">http://jgill.wustl.edu/research/books.html</span>
+<span class="s2">&quot;&quot;&quot;</span>
+<span class="n">DESCRSHORT</span>  <span class="o">=</span> <span class="s2">&quot;&quot;&quot;Math scores for 303 student with 10 explanatory factors&quot;&quot;&quot;</span>
+
+<span class="n">DESCRLONG</span>   <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">This data is on the California education policy and outcomes (STAR program</span>
+<span class="s2">results for 1998.  The data measured standardized testing by the California</span>
+<span class="s2">Department of Education that required evaluation of 2nd - 11th grade students</span>
+<span class="s2">by the the Stanford 9 test on a variety of subjects.  This dataset is at</span>
+<span class="s2">the level of the unified school district and consists of 303 cases.  The</span>
+<span class="s2">binary response variable represents the number of 9th graders scoring</span>
+<span class="s2">over the national median value on the mathematics exam.</span>
+
+<span class="s2">The data used in this example is only a subset of the original source.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="n">NOTE</span>        <span class="o">=</span> <span class="s2">&quot;&quot;&quot;::</span>
+
+<span class="s2">    Number of Observations - 303 (counties in California).</span>
+
+<span class="s2">    Number of Variables - 13 and 8 interaction terms.</span>
+
+<span class="s2">    Definition of variables names::</span>
+
+<span class="s2">        NABOVE   - Total number of students above the national median for the</span>
+<span class="s2">                   math section.</span>
+<span class="s2">        NBELOW   - Total number of students below the national median for the</span>
+<span class="s2">                   math section.</span>
+<span class="s2">        LOWINC   - Percentage of low income students</span>
+<span class="s2">        PERASIAN - Percentage of Asian student</span>
+<span class="s2">        PERBLACK - Percentage of black students</span>
+<span class="s2">        PERHISP  - Percentage of Hispanic students</span>
+<span class="s2">        PERMINTE - Percentage of minority teachers</span>
+<span class="s2">        AVYRSEXP - Sum of teachers&#39; years in educational service divided by the</span>
+<span class="s2">                number of teachers.</span>
+<span class="s2">        AVSALK   - Total salary budget including benefits divided by the number</span>
+<span class="s2">                   of full-time teachers (in thousands)</span>
+<span class="s2">        PERSPENK - Per-pupil spending (in thousands)</span>
+<span class="s2">        PTRATIO  - Pupil-teacher ratio.</span>
+<span class="s2">        PCTAF    - Percentage of students taking UC/CSU prep courses</span>
+<span class="s2">        PCTCHRT  - Percentage of charter schools</span>
+<span class="s2">        PCTYRRND - Percentage of year-round schools</span>
+
+<span class="s2">        The below variables are interaction terms of the variables defined</span>
+<span class="s2">        above.</span>
+
+<span class="s2">        PERMINTE_AVYRSEXP</span>
+<span class="s2">        PEMINTE_AVSAL</span>
+<span class="s2">        AVYRSEXP_AVSAL</span>
+<span class="s2">        PERSPEN_PTRATIO</span>
+<span class="s2">        PERSPEN_PCTAF</span>
+<span class="s2">        PTRATIO_PCTAF</span>
+<span class="s2">        PERMINTE_AVTRSEXP_AVSAL</span>
+<span class="s2">        PERSPEN_PTRATIO_PCTAF</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">recfromtxt</span><span class="p">,</span> <span class="n">column_stack</span><span class="p">,</span> <span class="n">array</span>
+<span class="kn">from</span> <span class="nn">statsmodels.datasets</span> <span class="k">import</span> <span class="n">utils</span> <span class="k">as</span> <span class="n">du</span>
+<span class="kn">from</span> <span class="nn">os.path</span> <span class="k">import</span> <span class="n">dirname</span><span class="p">,</span> <span class="n">abspath</span>
+
+<div class="viewcode-block" id="load"><a class="viewcode-back" href="../../../../generated/statsmodels.datasets.star98.load.html#statsmodels.datasets.star98.load">[docs]</a><span class="k">def</span> <span class="nf">load</span><span class="p">():</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Load the star98 data and returns a Dataset class instance.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    Load instance:</span>
+<span class="sd">        a class of the data with array attrbutes &#39;endog&#39; and &#39;exog&#39;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_get_data</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">du</span><span class="o">.</span><span class="n">process_recarray</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">endog_idx</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="load_pandas"><a class="viewcode-back" href="../../../../generated/statsmodels.datasets.star98.load_pandas.html#statsmodels.datasets.star98.load_pandas">[docs]</a><span class="k">def</span> <span class="nf">load_pandas</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">_get_data</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">du</span><span class="o">.</span><span class="n">process_recarray_pandas</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">endog_idx</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;NABOVE&#39;</span><span class="p">,</span> <span class="s1">&#39;NBELOW&#39;</span><span class="p">],</span>
+                                      <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span></div>
+
+<span class="k">def</span> <span class="nf">_get_data</span><span class="p">():</span>
+    <span class="n">filepath</span> <span class="o">=</span> <span class="n">dirname</span><span class="p">(</span><span class="n">abspath</span><span class="p">(</span><span class="n">__file__</span><span class="p">))</span>
+<span class="c1">##### EDIT THE FOLLOWING TO POINT TO DatasetName.csv #####</span>
+    <span class="n">names</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NABOVE&quot;</span><span class="p">,</span><span class="s2">&quot;NBELOW&quot;</span><span class="p">,</span><span class="s2">&quot;LOWINC&quot;</span><span class="p">,</span><span class="s2">&quot;PERASIAN&quot;</span><span class="p">,</span><span class="s2">&quot;PERBLACK&quot;</span><span class="p">,</span><span class="s2">&quot;PERHISP&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PERMINTE&quot;</span><span class="p">,</span><span class="s2">&quot;AVYRSEXP&quot;</span><span class="p">,</span><span class="s2">&quot;AVSALK&quot;</span><span class="p">,</span><span class="s2">&quot;PERSPENK&quot;</span><span class="p">,</span><span class="s2">&quot;PTRATIO&quot;</span><span class="p">,</span><span class="s2">&quot;PCTAF&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PCTCHRT&quot;</span><span class="p">,</span><span class="s2">&quot;PCTYRRND&quot;</span><span class="p">,</span><span class="s2">&quot;PERMINTE_AVYRSEXP&quot;</span><span class="p">,</span><span class="s2">&quot;PERMINTE_AVSAL&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;AVYRSEXP_AVSAL&quot;</span><span class="p">,</span><span class="s2">&quot;PERSPEN_PTRATIO&quot;</span><span class="p">,</span><span class="s2">&quot;PERSPEN_PCTAF&quot;</span><span class="p">,</span><span class="s2">&quot;PTRATIO_PCTAF&quot;</span><span class="p">,</span>
+            <span class="s2">&quot;PERMINTE_AVYRSEXP_AVSAL&quot;</span><span class="p">,</span><span class="s2">&quot;PERSPEN_PTRATIO_PCTAF&quot;</span><span class="p">]</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">recfromtxt</span><span class="p">(</span><span class="nb">open</span><span class="p">(</span><span class="n">filepath</span> <span class="o">+</span> <span class="s1">&#39;/star98.csv&#39;</span><span class="p">,</span><span class="s2">&quot;rb&quot;</span><span class="p">),</span> <span class="n">delimiter</span><span class="o">=</span><span class="s2">&quot;,&quot;</span><span class="p">,</span>
+            <span class="n">names</span><span class="o">=</span><span class="n">names</span><span class="p">,</span> <span class="n">skip_header</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+
+    <span class="c1"># careful now</span>
+    <span class="n">nabove</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;NABOVE&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+    <span class="n">nbelow</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="s1">&#39;NBELOW&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">copy</span><span class="p">()</span>
+
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;NABOVE&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nbelow</span> <span class="c1"># successes</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;NBELOW&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nabove</span> <span class="o">-</span> <span class="n">nbelow</span> <span class="c1"># now failures</span>
+
+    <span class="k">return</span> <span class="n">data</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,37 @@
+statsmodels.base.model.LikelihoodModel
+======================================
+
+.. currentmodule:: statsmodels.base.model
+
+.. autoclass:: LikelihoodModel
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~LikelihoodModel.__init__
+      ~LikelihoodModel.fit
+      ~LikelihoodModel.from_formula
+      ~LikelihoodModel.hessian
+      ~LikelihoodModel.information
+      ~LikelihoodModel.initialize
+      ~LikelihoodModel.loglike
+      ~LikelihoodModel.predict
+      ~LikelihoodModel.score
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~LikelihoodModel.endog_names
+      ~LikelihoodModel.exog_names
+   
+   

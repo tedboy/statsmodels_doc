@@ -1,0 +1,785 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.nonparametric.densityorthopoly &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.nonparametric.densityorthopoly</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.nonparametric.densityorthopoly</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: cp1252 -*-</span>
+<span class="c1"># some cut and paste characters are not ASCII</span>
+<span class="sd">&#39;&#39;&#39;density estimation based on orthogonal polynomials</span>
+
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">Created: 2011-05017</span>
+<span class="sd">License: BSD</span>
+
+<span class="sd">2 versions work: based on Fourier, FPoly, and chebychev T, ChebyTPoly</span>
+<span class="sd">also hermite polynomials, HPoly, works</span>
+<span class="sd">other versions need normalization</span>
+
+
+<span class="sd">TODO:</span>
+
+<span class="sd">* check fourier case again:  base is orthonormal,</span>
+<span class="sd">  but needs offsetfact = 0 and doesn&#39;t integrate to 1, rescaled looks good</span>
+<span class="sd">* hermite: works but DensityOrthoPoly requires currently finite bounds</span>
+<span class="sd">  I use it with offsettfactor 0.5 in example</span>
+<span class="sd">* not implemented methods:</span>
+<span class="sd">  - add bonafide density correction</span>
+<span class="sd">  - add transformation to domain of polynomial base - DONE</span>
+<span class="sd">    possible problem: what is the behavior at the boundary,</span>
+<span class="sd">    offsetfact requires more work, check different cases, add as option</span>
+<span class="sd">    moved to polynomial class by default, as attribute</span>
+<span class="sd">* convert examples to test cases</span>
+<span class="sd">* need examples with large density on boundary, beta ?</span>
+<span class="sd">* organize poly classes in separate module, check new numpy.polynomials,</span>
+<span class="sd">  polyvander</span>
+<span class="sd">* MISE measures, order selection, ...</span>
+
+<span class="sd">enhancements:</span>
+<span class="sd">  * other polynomial bases: especially for open and half open support</span>
+<span class="sd">  * wavelets</span>
+<span class="sd">  * local or piecewise approximations</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">zip</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span><span class="p">,</span> <span class="n">integrate</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+
+<span class="n">sqr2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mf">2.</span><span class="p">)</span>
+
+<div class="viewcode-block" id="FPoly"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.FPoly.html#statsmodels.sandbox.nonparametric.densityorthopoly.FPoly">[docs]</a><span class="k">class</span> <span class="nc">FPoly</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Orthonormal (for weight=1) Fourier Polynomial on [0,1]</span>
+
+<span class="sd">    orthonormal polynomial but density needs corfactor that I don&#39;t see what</span>
+<span class="sd">    it is analytically</span>
+
+<span class="sd">    parameterization on [0,1] from</span>
+
+<span class="sd">    Sam Efromovich: Orthogonal series density estimation,</span>
+<span class="sd">    2010 John Wiley &amp; Sons, Inc. WIREs Comp Stat 2010 2 467–476</span>
+
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="FPoly.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.FPoly.__init__.html#statsmodels.sandbox.nonparametric.densityorthopoly.FPoly.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intdomain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span></div>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sqr2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="F2Poly"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.F2Poly.html#statsmodels.sandbox.nonparametric.densityorthopoly.F2Poly">[docs]</a><span class="k">class</span> <span class="nc">F2Poly</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Orthogonal (for weight=1) Fourier Polynomial on [0,pi]</span>
+
+<span class="sd">    is orthogonal but first component doesn&#39;t square-integrate to 1</span>
+<span class="sd">    final result seems to need a correction factor of sqrt(pi)</span>
+<span class="sd">    _corfactor = sqrt(pi) from integrating the density</span>
+
+<span class="sd">    Parameterization on [0, pi] from</span>
+
+<span class="sd">    Peter Hall, Cross-Validation and the Smoothing of Orthogonal Series Density</span>
+<span class="sd">    Estimators, JOURNAL OF MULTIVARIATE ANALYSIS 21, 189-206 (1987)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="F2Poly.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.F2Poly.__init__.html#statsmodels.sandbox.nonparametric.densityorthopoly.F2Poly.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intdomain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">domain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offsetfactor</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">sqr2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">cos</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">*</span> <span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ChebyTPoly"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.ChebyTPoly.html#statsmodels.sandbox.nonparametric.densityorthopoly.ChebyTPoly">[docs]</a><span class="k">class</span> <span class="nc">ChebyTPoly</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Orthonormal (for weight=1) Chebychev Polynomial on (-1,1)</span>
+
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    integration requires to stay away from boundary, offsetfactor &gt; 0</span>
+<span class="sd">    maybe this implies that we cannot use it for densities that are &gt; 0 at</span>
+<span class="sd">    boundary ???</span>
+
+<span class="sd">    or maybe there is a mistake close to the boundary, sometimes integration works.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ChebyTPoly.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.ChebyTPoly.__init__.html#statsmodels.sandbox.nonparametric.densityorthopoly.ChebyTPoly.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">chebyt</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poly</span> <span class="o">=</span> <span class="n">chebyt</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">intdomain</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">+</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">6</span><span class="p">)</span>
+        <span class="c1">#not sure if I need this, in integration nans are possible  on the boundary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offsetfactor</span> <span class="o">=</span> <span class="mf">0.01</span>  <span class="c1">#required for integration</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span> <span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mf">4.</span><span class="p">)</span> <span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span></div>
+
+
+
+<span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="k">import</span> <span class="n">factorial</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">special</span>
+
+<span class="n">logpi2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">/</span><span class="mi">2</span>
+
+<div class="viewcode-block" id="HPoly"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.HPoly.html#statsmodels.sandbox.nonparametric.densityorthopoly.HPoly">[docs]</a><span class="k">class</span> <span class="nc">HPoly</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Orthonormal (for weight=1) Hermite Polynomial, uses finite bounds</span>
+
+<span class="sd">    for current use with DensityOrthoPoly domain is defined as [-6,6]</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="HPoly.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.HPoly.__init__.html#statsmodels.sandbox.nonparametric.densityorthopoly.HPoly.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">order</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">order</span> <span class="o">=</span> <span class="n">order</span>
+        <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">hermite</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">poly</span> <span class="o">=</span> <span class="n">hermite</span><span class="p">(</span><span class="n">order</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">domain</span> <span class="o">=</span> <span class="p">(</span><span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="o">+</span><span class="mi">6</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">offsetfactor</span> <span class="o">=</span> <span class="mf">0.5</span>  <span class="c1"># note this is</span></div>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">order</span>
+
+        <span class="n">lnfact</span> <span class="o">=</span> <span class="o">-</span><span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">k</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mf">2.</span><span class="p">)</span> <span class="o">+</span> <span class="n">special</span><span class="o">.</span><span class="n">gammaln</span><span class="p">(</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span> <span class="o">+</span> <span class="n">logpi2</span><span class="p">)</span> <span class="o">-</span> <span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">fact</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">lnfact</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">poly</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">*</span> <span class="n">fact</span></div>
+
+<div class="viewcode-block" id="polyvander"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.nonparametric.densityorthopoly.polyvander.html#statsmodels.sandbox.nonparametric.densityorthopoly.polyvander">[docs]</a><span class="k">def</span> <span class="nf">polyvander</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">polybase</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+    <span class="n">polyarr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">([</span><span class="n">polybase</span><span class="p">(</span><span class="n">i</span><span class="p">)(</span><span class="n">x</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)])</span>
+    <span class="k">return</span> <span class="n">polyarr</span></div>
+
+<div class="viewcode-block" id="inner_cont"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.nonparametric.densityorthopoly.inner_cont.html#statsmodels.sandbox.nonparametric.densityorthopoly.inner_cont">[docs]</a><span class="k">def</span> <span class="nf">inner_cont</span><span class="p">(</span><span class="n">polys</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;inner product of continuous function (with weight=1)</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    polys : list of callables</span>
+<span class="sd">        polynomial instances</span>
+<span class="sd">    lower : float</span>
+<span class="sd">        lower integration limit</span>
+<span class="sd">    upper : float</span>
+<span class="sd">        upper integration limit</span>
+<span class="sd">    weight : callable or None</span>
+<span class="sd">        weighting function</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    innp : ndarray</span>
+<span class="sd">        symmetric 2d square array with innerproduct of all function pairs</span>
+<span class="sd">    err : ndarray</span>
+<span class="sd">        numerical error estimate from scipy.integrate.quad, same dimension as innp</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from scipy.special import chebyt</span>
+<span class="sd">    &gt;&gt;&gt; polys = [chebyt(i) for i in range(4)]</span>
+<span class="sd">    &gt;&gt;&gt; r, e = inner_cont(polys, -1, 1)</span>
+<span class="sd">    &gt;&gt;&gt; r</span>
+<span class="sd">    array([[ 2.        ,  0.        , -0.66666667,  0.        ],</span>
+<span class="sd">           [ 0.        ,  0.66666667,  0.        , -0.4       ],</span>
+<span class="sd">           [-0.66666667,  0.        ,  0.93333333,  0.        ],</span>
+<span class="sd">           [ 0.        , -0.4       ,  0.        ,  0.97142857]])</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">n_polys</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">polys</span><span class="p">)</span>
+    <span class="n">innerprod</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">empty</span><span class="p">((</span><span class="n">n_polys</span><span class="p">,</span> <span class="n">n_polys</span><span class="p">))</span>
+    <span class="n">innerprod</span><span class="o">.</span><span class="n">fill</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span>
+    <span class="n">interr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">n_polys</span><span class="p">,</span> <span class="n">n_polys</span><span class="p">))</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n_polys</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="n">polys</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">p2</span> <span class="o">=</span> <span class="n">polys</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">weight</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                <span class="n">innp</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">p1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">p2</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">weight</span><span class="p">(</span><span class="n">x</span><span class="p">),</span>
+                                       <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">innp</span><span class="p">,</span> <span class="n">err</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">p1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">p2</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)</span>
+            <span class="n">innerprod</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">innp</span>
+            <span class="n">interr</span><span class="p">[</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">err</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span> <span class="o">==</span> <span class="n">j</span><span class="p">:</span>
+                <span class="n">innerprod</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">innp</span>
+                <span class="n">interr</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">err</span>
+
+    <span class="k">return</span> <span class="n">innerprod</span><span class="p">,</span> <span class="n">interr</span></div>
+
+
+<div class="viewcode-block" id="is_orthonormal_cont"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.nonparametric.densityorthopoly.is_orthonormal_cont.html#statsmodels.sandbox.nonparametric.densityorthopoly.is_orthonormal_cont">[docs]</a><span class="k">def</span> <span class="nf">is_orthonormal_cont</span><span class="p">(</span><span class="n">polys</span><span class="p">,</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">08</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;check whether functions are orthonormal</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    polys : list of polynomials or function</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    is_orthonormal : bool</span>
+<span class="sd">        is False if the innerproducts are not close to 0 or 1</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    this stops as soon as the first deviation from orthonormality is found.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; from scipy.special import chebyt</span>
+<span class="sd">    &gt;&gt;&gt; polys = [chebyt(i) for i in range(4)]</span>
+<span class="sd">    &gt;&gt;&gt; r, e = inner_cont(polys, -1, 1)</span>
+<span class="sd">    &gt;&gt;&gt; r</span>
+<span class="sd">    array([[ 2.        ,  0.        , -0.66666667,  0.        ],</span>
+<span class="sd">           [ 0.        ,  0.66666667,  0.        , -0.4       ],</span>
+<span class="sd">           [-0.66666667,  0.        ,  0.93333333,  0.        ],</span>
+<span class="sd">           [ 0.        , -0.4       ,  0.        ,  0.97142857]])</span>
+<span class="sd">    &gt;&gt;&gt; is_orthonormal_cont(polys, -1, 1, atol=1e-6)</span>
+<span class="sd">    False</span>
+
+<span class="sd">    &gt;&gt;&gt; polys = [ChebyTPoly(i) for i in range(4)]</span>
+<span class="sd">    &gt;&gt;&gt; r, e = inner_cont(polys, -1, 1)</span>
+<span class="sd">    &gt;&gt;&gt; r</span>
+<span class="sd">    array([[  1.00000000e+00,   0.00000000e+00,  -9.31270888e-14,</span>
+<span class="sd">              0.00000000e+00],</span>
+<span class="sd">           [  0.00000000e+00,   1.00000000e+00,   0.00000000e+00,</span>
+<span class="sd">             -9.47850712e-15],</span>
+<span class="sd">           [ -9.31270888e-14,   0.00000000e+00,   1.00000000e+00,</span>
+<span class="sd">              0.00000000e+00],</span>
+<span class="sd">           [  0.00000000e+00,  -9.47850712e-15,   0.00000000e+00,</span>
+<span class="sd">              1.00000000e+00]])</span>
+<span class="sd">    &gt;&gt;&gt; is_orthonormal_cont(polys, -1, 1, atol=1e-6)</span>
+<span class="sd">    True</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">polys</span><span class="p">)):</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span>
+            <span class="n">p1</span> <span class="o">=</span> <span class="n">polys</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+            <span class="n">p2</span> <span class="o">=</span> <span class="n">polys</span><span class="p">[</span><span class="n">j</span><span class="p">]</span>
+            <span class="n">innerprod</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">p1</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">p2</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="n">lower</span><span class="p">,</span> <span class="n">upper</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+            <span class="c1">#print i,j, innerprod</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">innerprod</span><span class="p">,</span> <span class="n">i</span><span class="o">==</span><span class="n">j</span><span class="p">,</span> <span class="n">rtol</span><span class="o">=</span><span class="n">rtol</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">atol</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">return</span> <span class="kc">True</span></div>
+
+
+
+<span class="c1">#new versions</span>
+
+
+<div class="viewcode-block" id="DensityOrthoPoly"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.DensityOrthoPoly.html#statsmodels.sandbox.nonparametric.densityorthopoly.DensityOrthoPoly">[docs]</a><span class="k">class</span> <span class="nc">DensityOrthoPoly</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Univariate density estimation by orthonormal series expansion</span>
+
+
+<span class="sd">    Uses an orthonormal polynomial basis to approximate a univariate density.</span>
+
+
+<span class="sd">    currently all arguments can be given to fit, I might change it to requiring</span>
+<span class="sd">    arguments in __init__ instead.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="DensityOrthoPoly.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.DensityOrthoPoly.__init__.html#statsmodels.sandbox.nonparametric.densityorthopoly.DensityOrthoPoly.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">polybase</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">5</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">polybase</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polybase</span> <span class="o">=</span> <span class="n">polybase</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polys</span> <span class="o">=</span> <span class="n">polys</span> <span class="o">=</span> <span class="p">[</span><span class="n">polybase</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
+        <span class="c1">#try:</span>
+        <span class="c1">#self.offsetfac = 0.05</span>
+        <span class="c1">#self.offsetfac = polys[0].offsetfactor #polys maybe not defined yet</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_corfactor</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_corshift</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+<div class="viewcode-block" id="DensityOrthoPoly.fit"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.DensityOrthoPoly.fit.html#statsmodels.sandbox.nonparametric.densityorthopoly.DensityOrthoPoly.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">polybase</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">limits</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;estimate the orthogonal polynomial approximation to the density</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">polybase</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">polys</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polys</span><span class="p">[:</span><span class="n">order</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polybase</span> <span class="o">=</span> <span class="n">polybase</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">polys</span> <span class="o">=</span> <span class="n">polys</span> <span class="o">=</span> <span class="p">[</span><span class="n">polybase</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
+
+        <span class="c1">#move to init ?</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;offsetfac&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">offsetfac</span> <span class="o">=</span> <span class="n">polys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">offsetfactor</span>
+
+
+        <span class="n">xmin</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">limits</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">offset</span> <span class="o">=</span> <span class="n">offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span><span class="p">)</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">offsetfac</span>
+            <span class="n">limits</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limits</span> <span class="o">=</span> <span class="p">(</span><span class="n">xmin</span> <span class="o">-</span> <span class="n">offset</span><span class="p">,</span> <span class="n">xmax</span> <span class="o">+</span> <span class="n">offset</span><span class="p">)</span>
+
+        <span class="n">interval_length</span> <span class="o">=</span> <span class="n">limits</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">limits</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">xinterval</span> <span class="o">=</span> <span class="n">xmax</span> <span class="o">-</span> <span class="n">xmin</span>
+        <span class="c1"># need to cover (half-)open intervalls</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shrink</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">/</span> <span class="n">interval_length</span> <span class="c1">#xinterval/interval_length</span>
+        <span class="n">offset</span> <span class="o">=</span> <span class="p">(</span><span class="n">interval_length</span> <span class="o">-</span> <span class="n">xinterval</span> <span class="p">)</span> <span class="o">/</span> <span class="mf">2.</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">shift</span> <span class="o">=</span> <span class="n">xmin</span> <span class="o">-</span> <span class="n">offset</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="n">coeffs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">polys</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span> <span class="o">=</span> <span class="n">coeffs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">polys</span> <span class="o">=</span> <span class="n">polys</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_verify</span><span class="p">()</span>  <span class="c1">#verify that it is a proper density</span>
+
+        <span class="k">return</span> <span class="bp">self</span> <span class="c1">#coeffs, polys</span></div>
+
+<div class="viewcode-block" id="DensityOrthoPoly.evaluate"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.nonparametric.densityorthopoly.DensityOrthoPoly.evaluate.html#statsmodels.sandbox.nonparametric.densityorthopoly.DensityOrthoPoly.evaluate">[docs]</a>    <span class="k">def</span> <span class="nf">evaluate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xeval</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="n">xeval</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_transform</span><span class="p">(</span><span class="n">xeval</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">order</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">order</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">polys</span><span class="p">)</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">p</span><span class="p">(</span><span class="n">xeval</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">coeffs</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">polys</span><span class="p">)[:</span><span class="n">order</span><span class="p">])</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_correction</span><span class="p">(</span><span class="n">res</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">res</span></div>
+
+    <span class="k">def</span> <span class="nf">__call__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xeval</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;alias for evaluate, except no order argument&#39;&#39;&#39;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">(</span><span class="n">xeval</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_verify</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;check for bona fide density correction</span>
+
+<span class="sd">        currently only checks that density integrates to 1</span>
+
+<span class="sd">`       non-negativity - NotImplementedYet</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#watch out for circular/recursive usage</span>
+
+        <span class="c1">#evaluate uses domain of data, we stay offset away from bounds</span>
+        <span class="n">intdomain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">limits</span> <span class="c1">#self.polys[0].intdomain</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_corfactor</span> <span class="o">=</span> <span class="mf">1.</span><span class="o">/</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">evaluate</span><span class="p">,</span> <span class="o">*</span><span class="n">intdomain</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1">#self._corshift = 0</span>
+        <span class="c1">#self._corfactor</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_corfactor</span>
+
+
+
+    <span class="k">def</span> <span class="nf">_correction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;bona fide density correction</span>
+
+<span class="sd">        affine shift of density to make it into a proper density</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_corfactor</span> <span class="o">!=</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">*=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_corfactor</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">_corshift</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_corshift</span>
+
+        <span class="k">return</span> <span class="n">x</span>
+
+    <span class="k">def</span> <span class="nf">_transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span> <span class="c1"># limits=None):</span>
+        <span class="sd">&#39;&#39;&#39;transform observation to the domain of the density</span>
+
+
+<span class="sd">        uses shrink and shift attribute which are set in fit to stay</span>
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1">#use domain from first instance</span>
+        <span class="c1">#class doesn&#39;t have domain  self.polybase.domain[0] AttributeError</span>
+        <span class="n">domain</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">polys</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">domain</span>
+
+        <span class="n">ilen</span> <span class="o">=</span> <span class="p">(</span><span class="n">domain</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+        <span class="n">shift</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shift</span> <span class="o">-</span> <span class="n">domain</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">shrink</span><span class="o">/</span><span class="n">ilen</span>
+        <span class="n">shrink</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">shrink</span> <span class="o">*</span> <span class="n">ilen</span>
+
+        <span class="k">return</span> <span class="p">(</span><span class="n">x</span> <span class="o">-</span> <span class="n">shift</span><span class="p">)</span> <span class="o">*</span> <span class="n">shrink</span></div>
+
+
+<span class="c1">#old version as a simple function</span>
+<div class="viewcode-block" id="density_orthopoly"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.nonparametric.densityorthopoly.density_orthopoly.html#statsmodels.sandbox.nonparametric.densityorthopoly.density_orthopoly">[docs]</a><span class="k">def</span> <span class="nf">density_orthopoly</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">polybase</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">5</span><span class="p">,</span> <span class="n">xeval</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">legendre</span><span class="p">,</span> <span class="n">hermitenorm</span><span class="p">,</span> <span class="n">chebyt</span><span class="p">,</span> <span class="n">chebyu</span><span class="p">,</span> <span class="n">hermite</span>
+    <span class="c1">#polybase = legendre  #chebyt #hermitenorm#</span>
+    <span class="c1">#polybase = chebyt</span>
+    <span class="c1">#polybase = FPoly</span>
+    <span class="c1">#polybase = ChtPoly</span>
+    <span class="c1">#polybase = hermite</span>
+    <span class="c1">#polybase = HPoly</span>
+
+    <span class="k">if</span> <span class="n">xeval</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">xeval</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">x</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span><span class="n">x</span><span class="o">.</span><span class="n">max</span><span class="p">(),</span><span class="mi">50</span><span class="p">)</span>
+
+    <span class="c1">#polys = [legendre(i) for i in range(order)]</span>
+    <span class="n">polys</span> <span class="o">=</span> <span class="p">[</span><span class="n">polybase</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">order</span><span class="p">)]</span>
+    <span class="c1">#coeffs = [(p(x)*(1-x**2)**(-1/2.)).mean() for p in polys]</span>
+    <span class="c1">#coeffs = [(p(x)*np.exp(-x*x)).mean() for p in polys]</span>
+    <span class="n">coeffs</span> <span class="o">=</span> <span class="p">[(</span><span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">))</span><span class="o">.</span><span class="n">mean</span><span class="p">()</span> <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">polys</span><span class="p">]</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="n">c</span><span class="o">*</span><span class="n">p</span><span class="p">(</span><span class="n">xeval</span><span class="p">)</span> <span class="k">for</span> <span class="n">c</span><span class="p">,</span> <span class="n">p</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">coeffs</span><span class="p">,</span> <span class="n">polys</span><span class="p">))</span>
+    <span class="c1">#res *= (1-xeval**2)**(-1/2.)</span>
+    <span class="c1">#res *= np.exp(-xeval**2./2)</span>
+    <span class="k">return</span> <span class="n">res</span><span class="p">,</span> <span class="n">xeval</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">polys</span></div>
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+
+    <span class="n">examples</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;chebyt&#39;</span><span class="p">,</span> <span class="s1">&#39;fourier&#39;</span><span class="p">,</span> <span class="s1">&#39;hermite&#39;</span><span class="p">]</span><span class="c1">#[2]</span>
+
+    <span class="n">nobs</span> <span class="o">=</span> <span class="mi">10000</span>
+
+    <span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+    <span class="kn">from</span> <span class="nn">statsmodels.sandbox.distributions.mixture_rvs</span> <span class="k">import</span> <span class="p">(</span>
+                                                <span class="n">mixture_rvs</span><span class="p">,</span> <span class="n">MixtureDistribution</span><span class="p">)</span>
+
+    <span class="c1">#np.random.seed(12345)</span>
+<span class="c1">##    obs_dist = mixture_rvs([1/3.,2/3.], size=nobs, dist=[stats.norm, stats.norm],</span>
+<span class="c1">##                   kwargs = (dict(loc=-1,scale=.5),dict(loc=1,scale=.75)))</span>
+    <span class="n">mix_kwds</span> <span class="o">=</span> <span class="p">(</span><span class="nb">dict</span><span class="p">(</span><span class="n">loc</span><span class="o">=-</span><span class="mf">0.5</span><span class="p">,</span><span class="n">scale</span><span class="o">=.</span><span class="mi">5</span><span class="p">),</span><span class="nb">dict</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">scale</span><span class="o">=.</span><span class="mi">2</span><span class="p">))</span>
+    <span class="n">obs_dist</span> <span class="o">=</span> <span class="n">mixture_rvs</span><span class="p">([</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.</span><span class="p">],</span> <span class="n">size</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">dist</span><span class="o">=</span><span class="p">[</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">],</span>
+                   <span class="n">kwargs</span><span class="o">=</span><span class="n">mix_kwds</span><span class="p">)</span>
+    <span class="n">mix</span> <span class="o">=</span> <span class="n">MixtureDistribution</span><span class="p">()</span>
+
+    <span class="c1">#obs_dist = np.random.randn(nobs)/4. #np.sqrt(2)</span>
+
+
+    <span class="k">if</span> <span class="s2">&quot;chebyt_&quot;</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span> <span class="c1"># needed for Cheby example below</span>
+        <span class="c1">#obs_dist = np.clip(obs_dist, -2, 2)/2.01</span>
+        <span class="c1">#chebyt [0,1]</span>
+        <span class="n">obs_dist</span> <span class="o">=</span> <span class="n">obs_dist</span><span class="p">[(</span><span class="n">obs_dist</span><span class="o">&gt;-</span><span class="mi">2</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">obs_dist</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">)]</span><span class="o">/</span><span class="mf">2.0</span> <span class="c1">#/4. + 2/4.0</span>
+        <span class="c1">#fourier [0,1]</span>
+        <span class="c1">#obs_dist = obs_dist[(obs_dist&gt;-2) &amp; (obs_dist&lt;2)]/4. + 2/4.0</span>
+        <span class="n">f_hat</span><span class="p">,</span> <span class="n">grid</span><span class="p">,</span> <span class="n">coeffs</span><span class="p">,</span> <span class="n">polys</span> <span class="o">=</span> <span class="n">density_orthopoly</span><span class="p">(</span><span class="n">obs_dist</span><span class="p">,</span> <span class="n">ChebyTPoly</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">20</span><span class="p">,</span> <span class="n">xeval</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span>
+        <span class="c1">#f_hat /= f_hat.sum() * (grid.max() - grid.min())/len(grid)</span>
+        <span class="n">f_hat0</span> <span class="o">=</span> <span class="n">f_hat</span>
+        <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">integrate</span>
+        <span class="n">fint</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">f_hat</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span><span class="c1"># dx=(grid.max() - grid.min())/len(grid))</span>
+        <span class="c1">#f_hat -= fint/2.</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;f_hat.min()&#39;</span><span class="p">,</span> <span class="n">f_hat</span><span class="o">.</span><span class="n">min</span><span class="p">())</span>
+        <span class="n">f_hat</span> <span class="o">=</span> <span class="p">(</span><span class="n">f_hat</span> <span class="o">-</span> <span class="n">f_hat</span><span class="o">.</span><span class="n">min</span><span class="p">())</span> <span class="c1">#/ f_hat.max() - f_hat.min</span>
+        <span class="n">fint2</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">trapz</span><span class="p">(</span><span class="n">f_hat</span><span class="p">,</span> <span class="n">grid</span><span class="p">)</span><span class="c1"># dx=(grid.max() - grid.min())/len(grid))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;fint2&#39;</span><span class="p">,</span> <span class="n">fint</span><span class="p">,</span> <span class="n">fint2</span><span class="p">)</span>
+        <span class="n">f_hat</span> <span class="o">/=</span> <span class="n">fint2</span>
+
+        <span class="c1"># note that this uses a *huge* grid by default</span>
+        <span class="c1">#f_hat, grid = kdensityfft(emp_dist, kernel=&quot;gauss&quot;, bw=&quot;scott&quot;)</span>
+
+        <span class="c1"># check the plot</span>
+
+        <span class="n">doplot</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">obs_dist</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">f_hat</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">f_hat0</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;g&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span><span class="n">p</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">polys</span><span class="p">[:</span><span class="mi">5</span><span class="p">]):</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span><span class="n">p2</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">polys</span><span class="p">[:</span><span class="mi">5</span><span class="p">]):</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">i</span><span class="p">,</span><span class="n">j</span><span class="p">,</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">*</span><span class="n">p2</span><span class="p">(</span><span class="n">x</span><span class="p">),</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">])</span>
+
+        <span class="k">for</span> <span class="n">p</span> <span class="ow">in</span> <span class="n">polys</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="n">p</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+
+
+    <span class="c1">#examples using the new class</span>
+
+    <span class="k">if</span> <span class="s2">&quot;chebyt&quot;</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+        <span class="n">dop</span> <span class="o">=</span> <span class="n">DensityOrthoPoly</span><span class="p">()</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">obs_dist</span><span class="p">,</span> <span class="n">ChebyTPoly</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">obs_dist</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">obs_dist</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">xf</span> <span class="o">=</span> <span class="n">dop</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+        <span class="c1">#print(&#39;np.max(np.abs(xf - f_hat0))&#39;, np.max(np.abs(xf - f_hat0))</span>
+        <span class="n">dopint</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">dop</span><span class="p">,</span> <span class="o">*</span><span class="n">dop</span><span class="o">.</span><span class="n">limits</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dop F integral&#39;</span><span class="p">,</span> <span class="n">dopint</span><span class="p">)</span>
+        <span class="n">mpdf</span> <span class="o">=</span> <span class="n">mix</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.</span><span class="p">],</span> <span class="n">dist</span><span class="o">=</span><span class="p">[</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">],</span>
+                   <span class="n">kwargs</span><span class="o">=</span><span class="n">mix_kwds</span><span class="p">)</span>
+
+        <span class="n">doplot</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">obs_dist</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">xf</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">mpdf</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;using Chebychev polynomials&#39;</span><span class="p">)</span>
+            <span class="c1">#plt.show()</span>
+
+    <span class="k">if</span> <span class="s2">&quot;fourier&quot;</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+        <span class="n">dop</span> <span class="o">=</span> <span class="n">DensityOrthoPoly</span><span class="p">()</span>
+        <span class="n">dop</span><span class="o">.</span><span class="n">offsetfac</span> <span class="o">=</span> <span class="mf">0.5</span>
+        <span class="n">dop</span> <span class="o">=</span> <span class="n">dop</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">obs_dist</span><span class="p">,</span> <span class="n">F2Poly</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">30</span><span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">obs_dist</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">obs_dist</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">xf</span> <span class="o">=</span> <span class="n">dop</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+        <span class="c1">#print(np.max(np.abs(xf - f_hat0))</span>
+        <span class="n">dopint</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">dop</span><span class="p">,</span> <span class="o">*</span><span class="n">dop</span><span class="o">.</span><span class="n">limits</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dop F integral&#39;</span><span class="p">,</span> <span class="n">dopint</span><span class="p">)</span>
+        <span class="n">mpdf</span> <span class="o">=</span> <span class="n">mix</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.</span><span class="p">],</span> <span class="n">dist</span><span class="o">=</span><span class="p">[</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">],</span>
+                   <span class="n">kwargs</span><span class="o">=</span><span class="n">mix_kwds</span><span class="p">)</span>
+
+        <span class="n">doplot</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">obs_dist</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;using Fourier polynomials&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">xf</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">mpdf</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+            <span class="c1">#plt.show()</span>
+
+        <span class="c1">#check orthonormality:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">inner_cont</span><span class="p">(</span><span class="n">dop</span><span class="o">.</span><span class="n">polys</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">5</span><span class="p">))))</span>
+
+    <span class="k">if</span> <span class="s2">&quot;hermite&quot;</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+        <span class="n">dop</span> <span class="o">=</span> <span class="n">DensityOrthoPoly</span><span class="p">()</span>
+        <span class="n">dop</span><span class="o">.</span><span class="n">offsetfac</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="n">dop</span> <span class="o">=</span> <span class="n">dop</span><span class="o">.</span><span class="n">fit</span><span class="p">(</span><span class="n">obs_dist</span><span class="p">,</span> <span class="n">HPoly</span><span class="p">,</span> <span class="n">order</span><span class="o">=</span><span class="mi">20</span><span class="p">)</span>
+        <span class="n">grid</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">obs_dist</span><span class="o">.</span><span class="n">min</span><span class="p">(),</span> <span class="n">obs_dist</span><span class="o">.</span><span class="n">max</span><span class="p">())</span>
+        <span class="n">xf</span> <span class="o">=</span> <span class="n">dop</span><span class="p">(</span><span class="n">grid</span><span class="p">)</span>
+        <span class="c1">#print(np.max(np.abs(xf - f_hat0))</span>
+        <span class="n">dopint</span> <span class="o">=</span> <span class="n">integrate</span><span class="o">.</span><span class="n">quad</span><span class="p">(</span><span class="n">dop</span><span class="p">,</span> <span class="o">*</span><span class="n">dop</span><span class="o">.</span><span class="n">limits</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;dop F integral&#39;</span><span class="p">,</span> <span class="n">dopint</span><span class="p">)</span>
+
+        <span class="n">mpdf</span> <span class="o">=</span> <span class="n">mix</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span><span class="mi">2</span><span class="o">/</span><span class="mf">3.</span><span class="p">],</span> <span class="n">dist</span><span class="o">=</span><span class="p">[</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">],</span>
+                   <span class="n">kwargs</span><span class="o">=</span><span class="n">mix_kwds</span><span class="p">)</span>
+
+        <span class="n">doplot</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">hist</span><span class="p">(</span><span class="n">obs_dist</span><span class="p">,</span> <span class="n">bins</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">normed</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;red&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">xf</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;black&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">grid</span><span class="p">,</span> <span class="n">mpdf</span><span class="p">,</span> <span class="n">lw</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">color</span><span class="o">=</span><span class="s1">&#39;green&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;using Hermite polynomials&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span>
+
+        <span class="c1">#check orthonormality:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">inner_cont</span><span class="p">(</span><span class="n">dop</span><span class="o">.</span><span class="n">polys</span><span class="p">[:</span><span class="mi">5</span><span class="p">],</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">5</span><span class="p">))))</span>
+
+
+    <span class="c1">#check orthonormality</span>
+
+    <span class="n">hpolys</span> <span class="o">=</span> <span class="p">[</span><span class="n">HPoly</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+    <span class="n">inn</span> <span class="o">=</span> <span class="n">inner_cont</span><span class="p">(</span><span class="n">hpolys</span><span class="p">,</span> <span class="o">-</span><span class="mi">6</span><span class="p">,</span> <span class="mi">6</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">inn</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="mi">5</span><span class="p">))))</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">inn</span><span class="o">*</span><span class="mi">100000</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+
+    <span class="kn">from</span> <span class="nn">scipy.special</span> <span class="k">import</span> <span class="n">hermite</span><span class="p">,</span> <span class="n">chebyt</span>
+    <span class="n">htpolys</span> <span class="o">=</span> <span class="p">[</span><span class="n">hermite</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">)]</span>
+    <span class="n">innt</span> <span class="o">=</span> <span class="n">inner_cont</span><span class="p">(</span><span class="n">htpolys</span><span class="p">,</span> <span class="o">-</span><span class="mi">10</span><span class="p">,</span> <span class="mi">10</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">((</span><span class="n">innt</span><span class="o">*</span><span class="mi">100000</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">))</span>
+
+    <span class="n">polysc</span> <span class="o">=</span> <span class="p">[</span><span class="n">chebyt</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">4</span><span class="p">)]</span>
+    <span class="n">r</span><span class="p">,</span> <span class="n">e</span> <span class="o">=</span> <span class="n">inner_cont</span><span class="p">(</span><span class="n">polysc</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">weight</span><span class="o">=</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="o">*</span><span class="n">x</span><span class="p">)</span><span class="o">**</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">r</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">r</span><span class="p">)))))</span>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

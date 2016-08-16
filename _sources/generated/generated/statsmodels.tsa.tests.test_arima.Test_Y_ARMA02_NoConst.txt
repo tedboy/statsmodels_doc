@@ -1,0 +1,57 @@
+statsmodels.tsa.tests.test_arima.Test_Y_ARMA02_NoConst
+======================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: Test_Y_ARMA02_NoConst
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Test_Y_ARMA02_NoConst.setupClass
+   ~Test_Y_ARMA02_NoConst.test_aic
+   ~Test_Y_ARMA02_NoConst.test_arroots
+   ~Test_Y_ARMA02_NoConst.test_bic
+   ~Test_Y_ARMA02_NoConst.test_bse
+   ~Test_Y_ARMA02_NoConst.test_covparams
+   ~Test_Y_ARMA02_NoConst.test_fittedvalues
+   ~Test_Y_ARMA02_NoConst.test_hqic
+   ~Test_Y_ARMA02_NoConst.test_llf
+   ~Test_Y_ARMA02_NoConst.test_maroots
+   ~Test_Y_ARMA02_NoConst.test_params
+   ~Test_Y_ARMA02_NoConst.test_pvalues
+   ~Test_Y_ARMA02_NoConst.test_resid
+   ~Test_Y_ARMA02_NoConst.test_sigma2
+   ~Test_Y_ARMA02_NoConst.test_summary
+   ~Test_Y_ARMA02_NoConst.test_tvalues
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Test_Y_ARMA02_NoConst.decimal_aic
+   ~Test_Y_ARMA02_NoConst.decimal_arroots
+   ~Test_Y_ARMA02_NoConst.decimal_bic
+   ~Test_Y_ARMA02_NoConst.decimal_bse
+   ~Test_Y_ARMA02_NoConst.decimal_cov_params
+   ~Test_Y_ARMA02_NoConst.decimal_fittedvalues
+   ~Test_Y_ARMA02_NoConst.decimal_hqic
+   ~Test_Y_ARMA02_NoConst.decimal_llf
+   ~Test_Y_ARMA02_NoConst.decimal_maroots
+   ~Test_Y_ARMA02_NoConst.decimal_params
+   ~Test_Y_ARMA02_NoConst.decimal_pvalues
+   ~Test_Y_ARMA02_NoConst.decimal_resid
+   ~Test_Y_ARMA02_NoConst.decimal_sigma2
+   ~Test_Y_ARMA02_NoConst.decimal_t
+

@@ -1,0 +1,833 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6. statsmodel.sandbox2 &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="index.html"/>
+        <link rel="next" title="6.1.1. statsmodels.sandbox.archive.linalg_covmat" href="generated/statsmodels.sandbox.archive.linalg_covmat.html"/>
+        <link rel="prev" title="5.15.2.1.1.1. statsmodels.sandbox.utils_old.StepFunction.__init__" href="generated/generated/statsmodels.sandbox.utils_old.StepFunction.__init__.html"/> 
+
+  
+  <script src="_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">6. statsmodel.sandbox2</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.archive.linalg_covmat.html">6.1.1. statsmodels.sandbox.archive.linalg_covmat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.archive.linalg_decomp_1.html">6.1.2. statsmodels.sandbox.archive.linalg_decomp_1</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.archive.tsa.html">6.1.3. statsmodels.sandbox.archive.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.datarich.html">6.2.1. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.datarich.factormodels.html">6.2.2. statsmodels.sandbox.datarich.factormodels</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.html">6.3.1. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.copula.html">6.3.2. statsmodels.sandbox.distributions.copula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.estimators.html">6.3.3. statsmodels.sandbox.distributions.estimators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.html">6.3.4. statsmodels.sandbox.distributions.extras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.genpareto.html">6.3.5. statsmodels.sandbox.distributions.genpareto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.gof_new.html">6.3.6. statsmodels.sandbox.distributions.gof_new</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.multivariate.html">6.3.7. statsmodels.sandbox.distributions.multivariate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_measures.html">6.3.8. statsmodels.sandbox.distributions.mv_measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_normal.html">6.3.9. statsmodels.sandbox.distributions.mv_normal</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.otherdist.html">6.3.10. statsmodels.sandbox.distributions.otherdist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.quantize.html">6.3.11. statsmodels.sandbox.distributions.quantize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.sppatch.html">6.3.12. statsmodels.sandbox.distributions.sppatch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.transform_functions.html">6.3.13. statsmodels.sandbox.distributions.transform_functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.transformed.html">6.3.14. statsmodels.sandbox.distributions.transformed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.try_max.html">6.3.15. statsmodels.sandbox.distributions.try_max</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.try_pot.html">6.3.16. statsmodels.sandbox.distributions.try_pot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.mcevaluate.html">6.4.1. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.mcevaluate.arma.html">6.4.2. statsmodels.sandbox.mcevaluate.arma</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.densityorthopoly.html">6.5.1. statsmodels.sandbox.nonparametric.densityorthopoly</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.dgp_examples.html">6.5.2. statsmodels.sandbox.nonparametric.dgp_examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kde2.html">6.5.3. statsmodels.sandbox.nonparametric.kde2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kdecovclass.html">6.5.4. statsmodels.sandbox.nonparametric.kdecovclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kernel_extras.html">6.5.5. statsmodels.sandbox.nonparametric.kernel_extras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kernels.html">6.5.6. statsmodels.sandbox.nonparametric.kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.smoothers.html">6.5.7. statsmodels.sandbox.nonparametric.smoothers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.testdata.html">6.5.8. statsmodels.sandbox.nonparametric.testdata</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.panel.correlation_structures.html">6.6.1. statsmodels.sandbox.panel.correlation_structures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.panel.mixed.html">6.6.2. statsmodels.sandbox.panel.mixed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.panel.panel_short.html">6.6.3. statsmodels.sandbox.panel.panel_short</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.panel.random_panel.html">6.6.4. statsmodels.sandbox.panel.random_panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.panel.sandwich_covariance_generic.html">6.6.5. statsmodels.sandbox.panel.sandwich_covariance_generic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.panel.sandwich_covariance.html">6.6.6. statsmodels.sandbox.panel.sandwich_covariance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.anova_nistcertified.html">6.7.1. statsmodels.sandbox.regression.anova_nistcertified</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.ar_panel.html">6.7.2. statsmodels.sandbox.regression.ar_panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.example_kernridge.html">6.7.3. statsmodels.sandbox.regression.example_kernridge</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.kernridgeregress_class.html">6.7.5. statsmodels.sandbox.regression.kernridgeregress_class</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.onewaygls.html">6.7.6. statsmodels.sandbox.regression.onewaygls</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.penalized.html">6.7.7. statsmodels.sandbox.regression.penalized</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.predstd.html">6.7.8. statsmodels.sandbox.regression.predstd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.sympy_diff.html">6.7.9. statsmodels.sandbox.regression.sympy_diff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.tools.html">6.7.10. statsmodels.sandbox.regression.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.treewalkerclass.html">6.7.11. statsmodels.sandbox.regression.treewalkerclass</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.try_catdata.html">6.7.12. statsmodels.sandbox.regression.try_catdata</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.try_ols_anova.html">6.7.13. statsmodels.sandbox.regression.try_ols_anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.regression.try_treewalker.html">6.7.14. statsmodels.sandbox.regression.try_treewalker</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.stats.html">6.8.1. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.stats.contrast_tools.html">6.8.2. statsmodels.sandbox.stats.contrast_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.stats.diagnostic.html">6.8.3. statsmodels.sandbox.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.stats.ex_newtests.html">6.8.4. statsmodels.sandbox.stats.ex_newtests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.stats.multicomp.html">6.8.5. statsmodels.sandbox.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.stats.runs.html">6.8.6. statsmodels.sandbox.stats.runs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.stats.stats_dhuard.html">6.8.7. statsmodels.sandbox.stats.stats_dhuard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tests.html">6.9.1. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tests.datamlw.html">6.9.2. statsmodels.sandbox.tests.datamlw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tests.maketests_mlabwrap.html">6.9.3. statsmodels.sandbox.tests.maketests_mlabwrap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tests.model_results.html">6.9.4. statsmodels.sandbox.tests.model_results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tests.savervs.html">6.9.5. statsmodels.sandbox.tests.savervs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tests.test_formula.html">6.9.6. statsmodels.sandbox.tests.test_formula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tests.test_gam.html">6.9.7. statsmodels.sandbox.tests.test_gam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tests.test_pca.html">6.9.8. statsmodels.sandbox.tests.test_pca</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tools.html">6.10.1. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tools.cross_val.html">6.10.2. statsmodels.sandbox.tools.cross_val</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tools.mctools.html">6.10.3. statsmodels.sandbox.tools.mctools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tools.tools_pca.html">6.10.4. statsmodels.sandbox.tools.tools_pca</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tools.try_mctools.html">6.10.5. statsmodels.sandbox.tools.try_mctools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.html">6.11.1. statsmodels.sandbox.tsa</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion.html">6.11.2. statsmodels.sandbox.tsa.diffusion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion2.html">6.11.3. statsmodels.sandbox.tsa.diffusion2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.fftarma.html">6.11.4. statsmodels.sandbox.tsa.fftarma</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.movstat.html">6.11.5. statsmodels.sandbox.tsa.movstat</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.try_arma_more.html">6.11.6. statsmodels.sandbox.tsa.try_arma_more</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.try_fi.html">6.11.7. statsmodels.sandbox.tsa.try_fi</a></li>
+<li class="toctree-l3"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.varma.html">6.11.8. statsmodels.sandbox.tsa.varma</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html">Docs</a> &raquo;</li>
+        
+      <li>6. statsmodel.sandbox2</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/sandbox2.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodel-sandbox2">
+<h1>6. statsmodel.sandbox2<a class="headerlink" href="#statsmodel-sandbox2" title="Permalink to this headline">¶</a></h1>
+<p>More sandbox (in subfolders)</p>
+<div class="section" id="statsmodels-sandbox-archive">
+<h2>6.1. statsmodels.sandbox.archive<a class="headerlink" href="#statsmodels-sandbox-archive" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.archive.linalg_covmat.html">6.1.1. statsmodels.sandbox.archive.linalg_covmat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.archive.linalg_decomp_1.html">6.1.2. statsmodels.sandbox.archive.linalg_decomp_1</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.archive.tsa.html">6.1.3. statsmodels.sandbox.archive.tsa</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.archive.linalg_covmat.html#module-statsmodels.sandbox.archive.linalg_covmat" title="statsmodels.sandbox.archive.linalg_covmat"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.archive.linalg_covmat</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.archive.linalg_decomp_1.html#module-statsmodels.sandbox.archive.linalg_decomp_1" title="statsmodels.sandbox.archive.linalg_decomp_1"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.archive.linalg_decomp_1</span></code></a></td>
+<td>Recipes for more efficient work with linalg using classes</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.archive.tsa.html#module-statsmodels.sandbox.archive.tsa" title="statsmodels.sandbox.archive.tsa"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.archive.tsa</span></code></a></td>
+<td>Collection of alternative implementations for time series analysis</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-sandbox-datarich">
+<h2>6.2. statsmodels.sandbox.datarich<a class="headerlink" href="#statsmodels-sandbox-datarich" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.datarich.html">6.2.1. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.datarich.factormodels.html">6.2.2. statsmodels.sandbox.datarich.factormodels</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.datarich.html#module-statsmodels.sandbox.datarich" title="statsmodels.sandbox.datarich"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.datarich</span></code></a></td>
+<td>Econometrics for a Datarich Environment</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.datarich.factormodels.html#module-statsmodels.sandbox.datarich.factormodels" title="statsmodels.sandbox.datarich.factormodels"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.datarich.factormodels</span></code></a></td>
+<td>Created on Sun Nov 14 08:21:41 2010</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-sandbox-distributions">
+<h2>6.3. statsmodels.sandbox.distributions<a class="headerlink" href="#statsmodels-sandbox-distributions" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.html">6.3.1. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.copula.html">6.3.2. statsmodels.sandbox.distributions.copula</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.estimators.html">6.3.3. statsmodels.sandbox.distributions.estimators</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.html">6.3.4. statsmodels.sandbox.distributions.extras</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.genpareto.html">6.3.5. statsmodels.sandbox.distributions.genpareto</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.gof_new.html">6.3.6. statsmodels.sandbox.distributions.gof_new</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.multivariate.html">6.3.7. statsmodels.sandbox.distributions.multivariate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_measures.html">6.3.8. statsmodels.sandbox.distributions.mv_measures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_normal.html">6.3.9. statsmodels.sandbox.distributions.mv_normal</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.otherdist.html">6.3.10. statsmodels.sandbox.distributions.otherdist</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.quantize.html">6.3.11. statsmodels.sandbox.distributions.quantize</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.sppatch.html">6.3.12. statsmodels.sandbox.distributions.sppatch</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.transform_functions.html">6.3.13. statsmodels.sandbox.distributions.transform_functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.transformed.html">6.3.14. statsmodels.sandbox.distributions.transformed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.try_max.html">6.3.15. statsmodels.sandbox.distributions.try_max</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.distributions.try_pot.html">6.3.16. statsmodels.sandbox.distributions.try_pot</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.html#module-statsmodels.sandbox.distributions" title="statsmodels.sandbox.distributions"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions</span></code></a></td>
+<td>temporary location for enhancements to scipy.stats</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.copula.html#module-statsmodels.sandbox.distributions.copula" title="statsmodels.sandbox.distributions.copula"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.copula</span></code></a></td>
+<td>Which Archimedean is Best?</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.estimators.html#module-statsmodels.sandbox.distributions.estimators" title="statsmodels.sandbox.distributions.estimators"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.estimators</span></code></a></td>
+<td>estimate distribution parameters by various methods</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.extras.html#module-statsmodels.sandbox.distributions.extras" title="statsmodels.sandbox.distributions.extras"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.extras</span></code></a></td>
+<td>Various extensions to distributions</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.genpareto.html#module-statsmodels.sandbox.distributions.genpareto" title="statsmodels.sandbox.distributions.genpareto"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.genpareto</span></code></a></td>
+<td>Created on Thu Aug 12 14:59:03 2010</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.gof_new.html#module-statsmodels.sandbox.distributions.gof_new" title="statsmodels.sandbox.distributions.gof_new"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.gof_new</span></code></a></td>
+<td>More Goodness of fit tests</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.multivariate.html#module-statsmodels.sandbox.distributions.multivariate" title="statsmodels.sandbox.distributions.multivariate"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.multivariate</span></code></a></td>
+<td>Multivariate Distribution</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_measures.html#module-statsmodels.sandbox.distributions.mv_measures" title="statsmodels.sandbox.distributions.mv_measures"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.mv_measures</span></code></a></td>
+<td>using multivariate dependence and divergence measures</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_normal.html#module-statsmodels.sandbox.distributions.mv_normal" title="statsmodels.sandbox.distributions.mv_normal"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.mv_normal</span></code></a></td>
+<td>Multivariate Normal and t distributions</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.otherdist.html#module-statsmodels.sandbox.distributions.otherdist" title="statsmodels.sandbox.distributions.otherdist"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.otherdist</span></code></a></td>
+<td>Parametric Mixture Distributions</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.quantize.html#module-statsmodels.sandbox.distributions.quantize" title="statsmodels.sandbox.distributions.quantize"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.quantize</span></code></a></td>
+<td>Quantizing a continuous distribution in 2d</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.sppatch.html#module-statsmodels.sandbox.distributions.sppatch" title="statsmodels.sandbox.distributions.sppatch"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.sppatch</span></code></a></td>
+<td>patching scipy to fit distributions and expect method</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.transform_functions.html#module-statsmodels.sandbox.distributions.transform_functions" title="statsmodels.sandbox.distributions.transform_functions"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.transform_functions</span></code></a></td>
+<td>Nonlinear Transformation classes</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.transformed.html#module-statsmodels.sandbox.distributions.transformed" title="statsmodels.sandbox.distributions.transformed"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.transformed</span></code></a></td>
+<td>A class for the distribution of a non-linear monotonic transformation of a continuous random variable</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.try_max.html#module-statsmodels.sandbox.distributions.try_max" title="statsmodels.sandbox.distributions.try_max"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.try_max</span></code></a></td>
+<td>adjusted from Denis on pystatsmodels mailing list</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.try_pot.html#module-statsmodels.sandbox.distributions.try_pot" title="statsmodels.sandbox.distributions.try_pot"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.distributions.try_pot</span></code></a></td>
+<td>Created on Wed May 04 06:09:18 2011</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-sandbox-mcevaluate">
+<h2>6.4. statsmodels.sandbox.mcevaluate<a class="headerlink" href="#statsmodels-sandbox-mcevaluate" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.mcevaluate.html">6.4.1. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.mcevaluate.arma.html">6.4.2. statsmodels.sandbox.mcevaluate.arma</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.mcevaluate.html#module-statsmodels.sandbox.mcevaluate" title="statsmodels.sandbox.mcevaluate"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.mcevaluate</span></code></a></td>
+<td>Econometrics for a Datarich Environment</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.mcevaluate.arma.html#module-statsmodels.sandbox.mcevaluate.arma" title="statsmodels.sandbox.mcevaluate.arma"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.mcevaluate.arma</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-sandbox-nonparametric">
+<h2>6.5. statsmodels.sandbox.nonparametric<a class="headerlink" href="#statsmodels-sandbox-nonparametric" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.densityorthopoly.html">6.5.1. statsmodels.sandbox.nonparametric.densityorthopoly</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.dgp_examples.html">6.5.2. statsmodels.sandbox.nonparametric.dgp_examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kde2.html">6.5.3. statsmodels.sandbox.nonparametric.kde2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kdecovclass.html">6.5.4. statsmodels.sandbox.nonparametric.kdecovclass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kernel_extras.html">6.5.5. statsmodels.sandbox.nonparametric.kernel_extras</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kernels.html">6.5.6. statsmodels.sandbox.nonparametric.kernels</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.smoothers.html">6.5.7. statsmodels.sandbox.nonparametric.smoothers</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.testdata.html">6.5.8. statsmodels.sandbox.nonparametric.testdata</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.densityorthopoly.html#module-statsmodels.sandbox.nonparametric.densityorthopoly" title="statsmodels.sandbox.nonparametric.densityorthopoly"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.nonparametric.densityorthopoly</span></code></a></td>
+<td>density estimation based on orthogonal polynomials</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.dgp_examples.html#module-statsmodels.sandbox.nonparametric.dgp_examples" title="statsmodels.sandbox.nonparametric.dgp_examples"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.nonparametric.dgp_examples</span></code></a></td>
+<td>Examples of non-linear functions for non-parametric regression</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kde2.html#module-statsmodels.sandbox.nonparametric.kde2" title="statsmodels.sandbox.nonparametric.kde2"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.nonparametric.kde2</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kdecovclass.html#module-statsmodels.sandbox.nonparametric.kdecovclass" title="statsmodels.sandbox.nonparametric.kdecovclass"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.nonparametric.kdecovclass</span></code></a></td>
+<td>subclassing kde</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kernel_extras.html#module-statsmodels.sandbox.nonparametric.kernel_extras" title="statsmodels.sandbox.nonparametric.kernel_extras"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.nonparametric.kernel_extras</span></code></a></td>
+<td>Multivariate Conditional and Unconditional Kernel Density Estimation</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.kernels.html#module-statsmodels.sandbox.nonparametric.kernels" title="statsmodels.sandbox.nonparametric.kernels"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.nonparametric.kernels</span></code></a></td>
+<td>This models contains the Kernels for Kernel smoothing.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.smoothers.html#module-statsmodels.sandbox.nonparametric.smoothers" title="statsmodels.sandbox.nonparametric.smoothers"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.nonparametric.smoothers</span></code></a></td>
+<td>This module contains scatterplot smoothers, that is classes who generate a smooth fit of a set of (x,y) pairs.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.nonparametric.testdata.html#module-statsmodels.sandbox.nonparametric.testdata" title="statsmodels.sandbox.nonparametric.testdata"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.nonparametric.testdata</span></code></a></td>
+<td>Created on Fri Mar 04 07:36:28 2011</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-sandbox-panel">
+<h2>6.6. statsmodels.sandbox.panel<a class="headerlink" href="#statsmodels-sandbox-panel" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.panel.correlation_structures.html">6.6.1. statsmodels.sandbox.panel.correlation_structures</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.panel.mixed.html">6.6.2. statsmodels.sandbox.panel.mixed</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.panel.panel_short.html">6.6.3. statsmodels.sandbox.panel.panel_short</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.panel.random_panel.html">6.6.4. statsmodels.sandbox.panel.random_panel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.panel.sandwich_covariance_generic.html">6.6.5. statsmodels.sandbox.panel.sandwich_covariance_generic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.panel.sandwich_covariance.html">6.6.6. statsmodels.sandbox.panel.sandwich_covariance</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.correlation_structures.html#module-statsmodels.sandbox.panel.correlation_structures" title="statsmodels.sandbox.panel.correlation_structures"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.panel.correlation_structures</span></code></a></td>
+<td>Correlation and Covariance Structures</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.mixed.html#module-statsmodels.sandbox.panel.mixed" title="statsmodels.sandbox.panel.mixed"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.panel.mixed</span></code></a></td>
+<td>Mixed effects models</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.panel_short.html#module-statsmodels.sandbox.panel.panel_short" title="statsmodels.sandbox.panel.panel_short"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.panel.panel_short</span></code></a></td>
+<td>Panel data analysis for short T and large N</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.random_panel.html#module-statsmodels.sandbox.panel.random_panel" title="statsmodels.sandbox.panel.random_panel"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.panel.random_panel</span></code></a></td>
+<td>Generate a random process with panel structure</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.sandwich_covariance_generic.html#module-statsmodels.sandbox.panel.sandwich_covariance_generic" title="statsmodels.sandbox.panel.sandwich_covariance_generic"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.panel.sandwich_covariance_generic</span></code></a></td>
+<td>covariance with (nobs,nobs) loop and general kernel</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.sandwich_covariance.html#module-statsmodels.sandbox.panel.sandwich_covariance" title="statsmodels.sandbox.panel.sandwich_covariance"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.panel.sandwich_covariance</span></code></a></td>
+<td>temporary compatibility module</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-sandbox-regression">
+<h2>6.7. statsmodels.sandbox.regression<a class="headerlink" href="#statsmodels-sandbox-regression" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.anova_nistcertified.html">6.7.1. statsmodels.sandbox.regression.anova_nistcertified</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.ar_panel.html">6.7.2. statsmodels.sandbox.regression.ar_panel</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.example_kernridge.html">6.7.3. statsmodels.sandbox.regression.example_kernridge</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.gmm.html">6.7.4. statsmodels.sandbox.regression.gmm</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.kernridgeregress_class.html">6.7.5. statsmodels.sandbox.regression.kernridgeregress_class</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.onewaygls.html">6.7.6. statsmodels.sandbox.regression.onewaygls</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.penalized.html">6.7.7. statsmodels.sandbox.regression.penalized</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.predstd.html">6.7.8. statsmodels.sandbox.regression.predstd</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.sympy_diff.html">6.7.9. statsmodels.sandbox.regression.sympy_diff</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.tools.html">6.7.10. statsmodels.sandbox.regression.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.treewalkerclass.html">6.7.11. statsmodels.sandbox.regression.treewalkerclass</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.try_catdata.html">6.7.12. statsmodels.sandbox.regression.try_catdata</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.try_ols_anova.html">6.7.13. statsmodels.sandbox.regression.try_ols_anova</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.regression.try_treewalker.html">6.7.14. statsmodels.sandbox.regression.try_treewalker</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.anova_nistcertified.html#module-statsmodels.sandbox.regression.anova_nistcertified" title="statsmodels.sandbox.regression.anova_nistcertified"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.anova_nistcertified</span></code></a></td>
+<td>calculating anova and verifying with NIST test data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.ar_panel.html#module-statsmodels.sandbox.regression.ar_panel" title="statsmodels.sandbox.regression.ar_panel"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.ar_panel</span></code></a></td>
+<td>Paneldata model with fixed effect (constants) and AR(1) errors</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.example_kernridge.html#module-statsmodels.sandbox.regression.example_kernridge" title="statsmodels.sandbox.regression.example_kernridge"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.example_kernridge</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.gmm.html#module-statsmodels.sandbox.regression.gmm" title="statsmodels.sandbox.regression.gmm"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.gmm</span></code></a></td>
+<td>Generalized Method of Moments, GMM, and Two-Stage Least Squares for</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.kernridgeregress_class.html#module-statsmodels.sandbox.regression.kernridgeregress_class" title="statsmodels.sandbox.regression.kernridgeregress_class"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.kernridgeregress_class</span></code></a></td>
+<td>Kernel Ridge Regression for local non-parametric regression</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.onewaygls.html#module-statsmodels.sandbox.regression.onewaygls" title="statsmodels.sandbox.regression.onewaygls"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.onewaygls</span></code></a></td>
+<td>F test for null hypothesis that coefficients in several regressions are the same</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.penalized.html#module-statsmodels.sandbox.regression.penalized" title="statsmodels.sandbox.regression.penalized"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.penalized</span></code></a></td>
+<td>linear model with Theil prior probabilistic restrictions, generalized Ridge</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.predstd.html#module-statsmodels.sandbox.regression.predstd" title="statsmodels.sandbox.regression.predstd"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.predstd</span></code></a></td>
+<td>Additional functions</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.sympy_diff.html#module-statsmodels.sandbox.regression.sympy_diff" title="statsmodels.sandbox.regression.sympy_diff"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.sympy_diff</span></code></a></td>
+<td>Created on Sat Mar 13 07:56:22 2010</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.tools.html#module-statsmodels.sandbox.regression.tools" title="statsmodels.sandbox.regression.tools"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.tools</span></code></a></td>
+<td>gradient/Jacobian of normal and t loglikelihood</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.treewalkerclass.html#module-statsmodels.sandbox.regression.treewalkerclass" title="statsmodels.sandbox.regression.treewalkerclass"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.treewalkerclass</span></code></a></td>
+<td>Formulas</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.try_catdata.html#module-statsmodels.sandbox.regression.try_catdata" title="statsmodels.sandbox.regression.try_catdata"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.try_catdata</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.try_ols_anova.html#module-statsmodels.sandbox.regression.try_ols_anova" title="statsmodels.sandbox.regression.try_ols_anova"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.try_ols_anova</span></code></a></td>
+<td>convenience functions for ANOVA type analysis with OLS</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.regression.try_treewalker.html#module-statsmodels.sandbox.regression.try_treewalker" title="statsmodels.sandbox.regression.try_treewalker"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.regression.try_treewalker</span></code></a></td>
+<td>Trying out tree structure for nested logit</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-sandbox-stats">
+<h2>6.8. statsmodels.sandbox.stats<a class="headerlink" href="#statsmodels-sandbox-stats" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.stats.html">6.8.1. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.stats.contrast_tools.html">6.8.2. statsmodels.sandbox.stats.contrast_tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.stats.diagnostic.html">6.8.3. statsmodels.sandbox.stats.diagnostic</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.stats.ex_newtests.html">6.8.4. statsmodels.sandbox.stats.ex_newtests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.stats.multicomp.html">6.8.5. statsmodels.sandbox.stats.multicomp</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.stats.runs.html">6.8.6. statsmodels.sandbox.stats.runs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.stats.stats_dhuard.html">6.8.7. statsmodels.sandbox.stats.stats_dhuard</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.html#module-statsmodels.sandbox.stats" title="statsmodels.sandbox.stats"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.stats</span></code></a></td>
+<td>temporary location for enhancements to scipy.stats</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.contrast_tools.html#module-statsmodels.sandbox.stats.contrast_tools" title="statsmodels.sandbox.stats.contrast_tools"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.stats.contrast_tools</span></code></a></td>
+<td>functions to work with contrasts for multiple tests</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.diagnostic.html#module-statsmodels.sandbox.stats.diagnostic" title="statsmodels.sandbox.stats.diagnostic"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.stats.diagnostic</span></code></a></td>
+<td>Various Statistical Tests</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.ex_newtests.html#module-statsmodels.sandbox.stats.ex_newtests" title="statsmodels.sandbox.stats.ex_newtests"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.stats.ex_newtests</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.multicomp.html#module-statsmodels.sandbox.stats.multicomp" title="statsmodels.sandbox.stats.multicomp"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.stats.multicomp</span></code></a></td>
+<td>from pystatsmodels mailinglist 20100524</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.runs.html#module-statsmodels.sandbox.stats.runs" title="statsmodels.sandbox.stats.runs"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.stats.runs</span></code></a></td>
+<td>runstest</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.stats_dhuard.html#module-statsmodels.sandbox.stats.stats_dhuard" title="statsmodels.sandbox.stats.stats_dhuard"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.stats.stats_dhuard</span></code></a></td>
+<td>from David Huard&#8217;s scipy sandbox, also attached to a ticket and</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.stats.stats_mstats_short.py</span></code></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-sandbox-tests">
+<h2>6.9. statsmodels.sandbox.tests<a class="headerlink" href="#statsmodels-sandbox-tests" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tests.html">6.9.1. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tests.datamlw.html">6.9.2. statsmodels.sandbox.tests.datamlw</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tests.maketests_mlabwrap.html">6.9.3. statsmodels.sandbox.tests.maketests_mlabwrap</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tests.model_results.html">6.9.4. statsmodels.sandbox.tests.model_results</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tests.savervs.html">6.9.5. statsmodels.sandbox.tests.savervs</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tests.test_formula.html">6.9.6. statsmodels.sandbox.tests.test_formula</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tests.test_gam.html">6.9.7. statsmodels.sandbox.tests.test_gam</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tests.test_pca.html">6.9.8. statsmodels.sandbox.tests.test_pca</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tests.html#module-statsmodels.sandbox.tests" title="statsmodels.sandbox.tests"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tests</span></code></a></td>
+<td>Econometrics for a Datarich Environment</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tests.datamlw.html#module-statsmodels.sandbox.tests.datamlw" title="statsmodels.sandbox.tests.datamlw"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tests.datamlw</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tests.maketests_mlabwrap.html#module-statsmodels.sandbox.tests.maketests_mlabwrap" title="statsmodels.sandbox.tests.maketests_mlabwrap"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tests.maketests_mlabwrap</span></code></a></td>
+<td>generate py modules with test cases and results from mlabwrap</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tests.model_results.html#module-statsmodels.sandbox.tests.model_results" title="statsmodels.sandbox.tests.model_results"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tests.model_results</span></code></a></td>
+<td>This should be merged into statsmodels/tests/model_results.py when things move out of the sandbox.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tests.savervs.html#module-statsmodels.sandbox.tests.savervs" title="statsmodels.sandbox.tests.savervs"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tests.savervs</span></code></a></td>
+<td>generates some ARMA random samples and saves to python module file</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tests.test_formula.html#module-statsmodels.sandbox.tests.test_formula" title="statsmodels.sandbox.tests.test_formula"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tests.test_formula</span></code></a></td>
+<td>Test functions for models.formula</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tests.test_gam.html#module-statsmodels.sandbox.tests.test_gam" title="statsmodels.sandbox.tests.test_gam"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tests.test_gam</span></code></a></td>
+<td>Tests for gam.AdditiveModel and GAM with Polynomials compared to OLS and GLM</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tests.test_pca.html#module-statsmodels.sandbox.tests.test_pca" title="statsmodels.sandbox.tests.test_pca"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tests.test_pca</span></code></a></td>
+<td>tests for pca and arma to ar and ma representation</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-sandbox-tools">
+<h2>6.10. statsmodels.sandbox.tools<a class="headerlink" href="#statsmodels-sandbox-tools" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tools.html">6.10.1. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tools.cross_val.html">6.10.2. statsmodels.sandbox.tools.cross_val</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tools.mctools.html">6.10.3. statsmodels.sandbox.tools.mctools</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tools.tools_pca.html">6.10.4. statsmodels.sandbox.tools.tools_pca</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tools.try_mctools.html">6.10.5. statsmodels.sandbox.tools.try_mctools</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tools.html#module-statsmodels.sandbox.tools" title="statsmodels.sandbox.tools"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tools</span></code></a></td>
+<td>some helper function for principal component and time series analysis</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tools.cross_val.html#module-statsmodels.sandbox.tools.cross_val" title="statsmodels.sandbox.tools.cross_val"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tools.cross_val</span></code></a></td>
+<td>Utilities for cross validation.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tools.mctools.html#module-statsmodels.sandbox.tools.mctools" title="statsmodels.sandbox.tools.mctools"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tools.mctools</span></code></a></td>
+<td>Helper class for Monte Carlo Studies for (currently) statistical tests</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tools.tools_pca.html#module-statsmodels.sandbox.tools.tools_pca" title="statsmodels.sandbox.tools.tools_pca"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tools.tools_pca</span></code></a></td>
+<td>Principal Component Analysis</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tools.try_mctools.html#module-statsmodels.sandbox.tools.try_mctools" title="statsmodels.sandbox.tools.try_mctools"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tools.try_mctools</span></code></a></td>
+<td>Created on Fri Sep 30 15:20:45 2011</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="statsmodels-sandbox-tsa">
+<h2>6.11. statsmodels.sandbox.tsa<a class="headerlink" href="#statsmodels-sandbox-tsa" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.html">6.11.1. statsmodels.sandbox.tsa</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion.html">6.11.2. statsmodels.sandbox.tsa.diffusion</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion2.html">6.11.3. statsmodels.sandbox.tsa.diffusion2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.fftarma.html">6.11.4. statsmodels.sandbox.tsa.fftarma</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.movstat.html">6.11.5. statsmodels.sandbox.tsa.movstat</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.try_arma_more.html">6.11.6. statsmodels.sandbox.tsa.try_arma_more</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.try_fi.html">6.11.7. statsmodels.sandbox.tsa.try_fi</a></li>
+<li class="toctree-l1"><a class="reference internal" href="generated/statsmodels.sandbox.tsa.varma.html">6.11.8. statsmodels.sandbox.tsa.varma</a></li>
+</ul>
+</div>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.html#module-statsmodels.sandbox.tsa" title="statsmodels.sandbox.tsa"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa</span></code></a></td>
+<td>functions and classes time series analysis</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion.html#module-statsmodels.sandbox.tsa.diffusion" title="statsmodels.sandbox.tsa.diffusion"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa.diffusion</span></code></a></td>
+<td>getting started with diffusions, continuous time stochastic processes</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.diffusion2.html#module-statsmodels.sandbox.tsa.diffusion2" title="statsmodels.sandbox.tsa.diffusion2"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa.diffusion2</span></code></a></td>
+<td>Diffusion 2: jump diffusion, stochastic volatility, stochastic time</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa.example_arma</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.fftarma.html#module-statsmodels.sandbox.tsa.fftarma" title="statsmodels.sandbox.tsa.fftarma"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa.fftarma</span></code></a></td>
+<td>Created on Mon Dec 14 19:53:25 2009</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa.garch</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.movstat.html#module-statsmodels.sandbox.tsa.movstat" title="statsmodels.sandbox.tsa.movstat"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa.movstat</span></code></a></td>
+<td>using scipy signal and numpy correlate to calculate some time series</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.try_arma_more.html#module-statsmodels.sandbox.tsa.try_arma_more" title="statsmodels.sandbox.tsa.try_arma_more"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa.try_arma_more</span></code></a></td>
+<td>Periodograms for ARMA and time series</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.try_fi.html#module-statsmodels.sandbox.tsa.try_fi" title="statsmodels.sandbox.tsa.try_fi"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa.try_fi</span></code></a></td>
+<td>using lfilter to get fractional integration polynomial (1-L)^d, d&lt;1</td>
+</tr>
+<tr class="row-even"><td><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa.try_var_convolve</span></code></td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.tsa.varma.html#module-statsmodels.sandbox.tsa.varma" title="statsmodels.sandbox.tsa.varma"><code class="xref py py-obj docutils literal"><span class="pre">statsmodels.sandbox.tsa.varma</span></code></a></td>
+<td>VAR and VARMA process</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="generated/statsmodels.sandbox.archive.linalg_covmat.html" class="btn btn-neutral float-right" title="6.1.1. statsmodels.sandbox.archive.linalg_covmat" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/generated/statsmodels.sandbox.utils_old.StepFunction.__init__.html" class="btn btn-neutral" title="5.15.2.1.1.1. statsmodels.sandbox.utils_old.StepFunction.__init__" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,492 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.3.9. statsmodels.sandbox.distributions.mv_normal &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.3.9.5.1. statsmodels.sandbox.distributions.mv_normal.bivariate_normal" href="statsmodels.sandbox.distributions.mv_normal.bivariate_normal.html"/>
+        <link rel="prev" title="6.3.8.1.3. statsmodels.sandbox.distributions.mv_measures.mutualinfo_kde_2sample" href="statsmodels.sandbox.distributions.mv_measures.mutualinfo_kde_2sample.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.html">6.3.1. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.copula.html">6.3.2. statsmodels.sandbox.distributions.copula</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.estimators.html">6.3.3. statsmodels.sandbox.distributions.estimators</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.extras.html">6.3.4. statsmodels.sandbox.distributions.extras</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.genpareto.html">6.3.5. statsmodels.sandbox.distributions.genpareto</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.gof_new.html">6.3.6. statsmodels.sandbox.distributions.gof_new</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.multivariate.html">6.3.7. statsmodels.sandbox.distributions.multivariate</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.mv_measures.html">6.3.8. statsmodels.sandbox.distributions.mv_measures</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.3.9. statsmodels.sandbox.distributions.mv_normal</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#see-also">6.3.9.1. See Also</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#examples">6.3.9.2. Examples</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multivariate-normal-distribution">6.3.9.3. multivariate normal distribution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#multivariate-t-distribution">6.3.9.4. multivariate t distribution</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">6.3.9.5. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">6.3.9.6. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.otherdist.html">6.3.10. statsmodels.sandbox.distributions.otherdist</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.quantize.html">6.3.11. statsmodels.sandbox.distributions.quantize</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.sppatch.html">6.3.12. statsmodels.sandbox.distributions.sppatch</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.transform_functions.html">6.3.13. statsmodels.sandbox.distributions.transform_functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.transformed.html">6.3.14. statsmodels.sandbox.distributions.transformed</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.try_max.html">6.3.15. statsmodels.sandbox.distributions.try_max</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.distributions.try_pot.html">6.3.16. statsmodels.sandbox.distributions.try_pot</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.3.9. statsmodels.sandbox.distributions.mv_normal</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.distributions.mv_normal.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.distributions.mv_normal">
+<span id="statsmodels-sandbox-distributions-mv-normal"></span><h1>6.3.9. statsmodels.sandbox.distributions.mv_normal<a class="headerlink" href="#module-statsmodels.sandbox.distributions.mv_normal" title="Permalink to this headline">¶</a></h1>
+<p>Multivariate Normal and t distributions</p>
+<p>Created on Sat May 28 15:38:23 2011</p>
+<p>&#64;author: Josef Perktold</p>
+<p>TODO:
+* renaming,</p>
+<blockquote>
+<div><ul class="simple">
+<li>after adding t distribution, cov doesn&#8217;t make sense for Sigma    DONE</li>
+<li>should mean also be renamed to mu, if there will be distributions
+with mean != mu</li>
+</ul>
+</div></blockquote>
+<ul>
+<li><dl class="first docutils">
+<dt>not sure about corner cases</dt>
+<dd><ul class="first last simple">
+<li>behavior with (almost) singular sigma or transforms</li>
+<li>df &lt;= 2, is everything correct if variance is not finite or defined ?</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>check to return possibly univariate distribution for marginals or conditional</dt>
+<dd><p class="first last">distributions, does univariate special case work? seems ok for conditional</p>
+</dd>
+</dl>
+</li>
+<li><p class="first">are all the extra transformation methods useful outside of testing ?
+- looks like I have some mixup in definitions of standardize, normalize</p>
+</li>
+<li><p class="first">new methods marginal, conditional, ... just added, typos ?
+- largely tested for MVNormal, not yet for MVT   DONE</p>
+</li>
+<li><p class="first">conditional: reusing, vectorizing, should we reuse a projection matrix or
+allow for a vectorized, conditional_mean similar to OLS.predict</p>
+</li>
+<li><p class="first">add additional things similar to LikelihoodModelResults? quadratic forms,
+F distribution, and others ???</p>
+</li>
+<li><p class="first">add Delta method for nonlinear functions here, current function is hidden
+somewhere in miscmodels</p>
+</li>
+<li><p class="first">raise ValueErrors for wrong input shapes, currently only partially checked</p>
+</li>
+<li><p class="first">quantile method (ppf for equal bounds for multiple testing) is missing
+<a class="reference external" href="http://svitsrv25.epfl.ch/R-doc/library/mvtnorm/html/qmvt.html">http://svitsrv25.epfl.ch/R-doc/library/mvtnorm/html/qmvt.html</a> seems to use
+just a root finder for inversion of cdf</p>
+</li>
+<li><p class="first">normalize has ambiguous definition, and mixing it up in different versions
+std from sigma or std from cov ?
+I would like to get what I need for mvt-cdf, or not
+univariate standard t distribution has scale=1 but std&gt;1
+FIXED: add std_sigma, and normalize uses std_sigma</p>
+</li>
+<li><p class="first">more work: bivariate distributions,
+inherit from multivariate but overwrite some methods for better efficiency,
+e.g. cdf and expect</p>
+</li>
+</ul>
+<p>I kept the original MVNormal0 class as reference, can be deleted</p>
+<div class="section" id="see-also">
+<h2>6.3.9.1. See Also<a class="headerlink" href="#see-also" title="Permalink to this headline">¶</a></h2>
+<p>sandbox/examples/ex_mvelliptical.py</p>
+</div>
+<div class="section" id="examples">
+<h2>6.3.9.2. Examples<a class="headerlink" href="#examples" title="Permalink to this headline">¶</a></h2>
+<p>Note, several parts of these examples are random and the numbers will not be
+(exactly) the same.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">import</span> <span class="nn">statsmodels.sandbox.distributions.mv_normal</span> <span class="k">as</span> <span class="nn">mvd</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_array_almost_equal</span>
+<span class="go">&gt;&gt;&gt;</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cov3</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span> <span class="mf">1.</span>  <span class="p">,</span>  <span class="mf">0.5</span> <span class="p">,</span>  <span class="mf">0.75</span><span class="p">],</span>
+<span class="gp">... </span>                   <span class="p">[</span> <span class="mf">0.5</span> <span class="p">,</span>  <span class="mf">1.5</span> <span class="p">,</span>  <span class="mf">0.6</span> <span class="p">],</span>
+<span class="gp">... </span>                   <span class="p">[</span> <span class="mf">0.75</span><span class="p">,</span>  <span class="mf">0.6</span> <span class="p">,</span>  <span class="mf">2.</span>  <span class="p">]])</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mu</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mf">0.0</span><span class="p">,</span> <span class="mf">2.0</span><span class="p">])</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="multivariate-normal-distribution">
+<h2>6.3.9.3. multivariate normal distribution<a class="headerlink" href="#multivariate-normal-distribution" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mvn3</span> <span class="o">=</span> <span class="n">mvd</span><span class="o">.</span><span class="n">MVNormal</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">cov3</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mvn3</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+<span class="go">array([[-0.08559948, -1.0319881 ,  1.76073533],</span>
+<span class="go">       [ 0.30079522,  0.55859618,  4.16538667],</span>
+<span class="go">       [-1.36540091, -1.50152847,  3.87571161]])</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mvn3</span><span class="o">.</span><span class="n">std</span>
+<span class="go">array([ 1.        ,  1.22474487,  1.41421356])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="mf">0.0</span><span class="p">,</span> <span class="mf">1.0</span><span class="p">,</span> <span class="mf">1.5</span><span class="p">]</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mvn3</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">0.013867410439318712</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mvn3</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">0.31163181123730122</span>
+</pre></div>
+</div>
+<p>Monte Carlo integration</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mvn3</span><span class="o">.</span><span class="n">expect_mc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">100000</span><span class="p">)</span>
+<span class="go">0.30958999999999998</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mvn3</span><span class="o">.</span><span class="n">expect_mc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000000</span><span class="p">)</span>
+<span class="go">0.31197399999999997</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="multivariate-t-distribution">
+<h2>6.3.9.4. multivariate t distribution<a class="headerlink" href="#multivariate-t-distribution" title="Permalink to this headline">¶</a></h2>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mvt3</span> <span class="o">=</span> <span class="n">mvd</span><span class="o">.</span><span class="n">MVT</span><span class="p">(</span><span class="n">mu</span><span class="p">,</span> <span class="n">cov3</span><span class="p">,</span> <span class="mi">4</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mvt3</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="mi">4</span><span class="p">)</span>
+<span class="go">array([[-0.94185437,  0.3933273 ,  2.40005487],</span>
+<span class="go">       [ 0.07563648,  0.06655433,  7.90752238],</span>
+<span class="go">       [ 1.06596474,  0.32701158,  2.03482886],</span>
+<span class="go">       [ 3.80529746,  7.0192967 ,  8.41899229]])</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mvt3</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">0.010402959362646937</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mvt3</span><span class="o">.</span><span class="n">cdf</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+<span class="go">0.30269483623249821</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mvt3</span><span class="o">.</span><span class="n">expect_mc</span><span class="p">(</span><span class="k">lambda</span> <span class="n">x</span><span class="p">:</span> <span class="p">(</span><span class="n">x</span><span class="o">&lt;</span><span class="n">a</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span> <span class="n">size</span><span class="o">=</span><span class="mi">1000000</span><span class="p">)</span>
+<span class="go">0.30271199999999998</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mvt3</span><span class="o">.</span><span class="n">cov</span>
+<span class="go">array([[ 2. ,  1. ,  1.5],</span>
+<span class="go">       [ 1. ,  3. ,  1.2],</span>
+<span class="go">       [ 1.5,  1.2,  4. ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mvt3</span><span class="o">.</span><span class="n">corr</span>
+<span class="go">array([[ 1.        ,  0.40824829,  0.53033009],</span>
+<span class="go">       [ 0.40824829,  1.        ,  0.34641016],</span>
+<span class="go">       [ 0.53033009,  0.34641016,  1.        ]])</span>
+</pre></div>
+</div>
+<p>get normalized distribution</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">mvt3n</span> <span class="o">=</span> <span class="n">mvt3</span><span class="o">.</span><span class="n">normalized</span><span class="p">()</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mvt3n</span><span class="o">.</span><span class="n">sigma</span>
+<span class="go">array([[ 1.        ,  0.40824829,  0.53033009],</span>
+<span class="go">       [ 0.40824829,  1.        ,  0.34641016],</span>
+<span class="go">       [ 0.53033009,  0.34641016,  1.        ]])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">mvt3n</span><span class="o">.</span><span class="n">cov</span>
+<span class="go">array([[ 2.        ,  0.81649658,  1.06066017],</span>
+<span class="go">       [ 0.81649658,  2.        ,  0.69282032],</span>
+<span class="go">       [ 1.06066017,  0.69282032,  2.        ]])</span>
+</pre></div>
+</div>
+<p>What&#8217;s currently there?</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mvn3</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;_&#39;</span><span class="p">]</span>
+<span class="go">[&#39;affine_transformed&#39;, &#39;cdf&#39;, &#39;cholsigmainv&#39;, &#39;conditional&#39;, &#39;corr&#39;, &#39;cov&#39;,</span>
+<span class="go">&#39;expect_mc&#39;, &#39;extra_args&#39;, &#39;logdetsigma&#39;, &#39;logpdf&#39;, &#39;marginal&#39;, &#39;mean&#39;,</span>
+<span class="go">&#39;normalize&#39;, &#39;normalized&#39;, &#39;normalized2&#39;, &#39;nvars&#39;, &#39;pdf&#39;, &#39;rvs&#39;, &#39;sigma&#39;,</span>
+<span class="go">&#39;sigmainv&#39;, &#39;standardize&#39;, &#39;standardized&#39;, &#39;std&#39;, &#39;std_sigma&#39;, &#39;whiten&#39;]</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="p">[</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">dir</span><span class="p">(</span><span class="n">mvt3</span><span class="p">)</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">i</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">==</span><span class="s1">&#39;_&#39;</span><span class="p">]</span>
+<span class="go">[&#39;affine_transformed&#39;, &#39;cdf&#39;, &#39;cholsigmainv&#39;, &#39;corr&#39;, &#39;cov&#39;, &#39;df&#39;, &#39;expect_mc&#39;,</span>
+<span class="go">&#39;extra_args&#39;, &#39;logdetsigma&#39;, &#39;logpdf&#39;, &#39;marginal&#39;, &#39;mean&#39;, &#39;normalize&#39;,</span>
+<span class="go">&#39;normalized&#39;, &#39;normalized2&#39;, &#39;nvars&#39;, &#39;pdf&#39;, &#39;rvs&#39;, &#39;sigma&#39;, &#39;sigmainv&#39;,</span>
+<span class="go">&#39;standardize&#39;, &#39;standardized&#39;, &#39;std&#39;, &#39;std_sigma&#39;, &#39;whiten&#39;]</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="functions">
+<h2>6.3.9.5. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.bivariate_normal.html#statsmodels.sandbox.distributions.mv_normal.bivariate_normal" title="statsmodels.sandbox.distributions.mv_normal.bivariate_normal"><code class="xref py py-obj docutils literal"><span class="pre">bivariate_normal</span></code></a>(x,&nbsp;mu,&nbsp;cov)</td>
+<td>Bivariate Gaussian distribution for equal shape <em>X</em>, <em>Y</em>.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.expect_mc.html#statsmodels.sandbox.distributions.mv_normal.expect_mc" title="statsmodels.sandbox.distributions.mv_normal.expect_mc"><code class="xref py py-obj docutils literal"><span class="pre">expect_mc</span></code></a>(dist[,&nbsp;func,&nbsp;size])</td>
+<td>calculate expected value of function by Monte Carlo integration</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.expect_mc_bounds.html#statsmodels.sandbox.distributions.mv_normal.expect_mc_bounds" title="statsmodels.sandbox.distributions.mv_normal.expect_mc_bounds"><code class="xref py py-obj docutils literal"><span class="pre">expect_mc_bounds</span></code></a>(dist[,&nbsp;func,&nbsp;size,&nbsp;lower,&nbsp;...])</td>
+<td>calculate expected value of function by Monte Carlo integration</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.mvnormcdf.html#statsmodels.sandbox.distributions.mv_normal.mvnormcdf" title="statsmodels.sandbox.distributions.mv_normal.mvnormcdf"><code class="xref py py-obj docutils literal"><span class="pre">mvnormcdf</span></code></a>(upper,&nbsp;mu,&nbsp;cov[,&nbsp;lower])</td>
+<td>multivariate normal cumulative distribution function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.mvstdnormcdf.html#statsmodels.sandbox.distributions.mv_normal.mvstdnormcdf" title="statsmodels.sandbox.distributions.mv_normal.mvstdnormcdf"><code class="xref py py-obj docutils literal"><span class="pre">mvstdnormcdf</span></code></a>(lower,&nbsp;upper,&nbsp;corrcoef,&nbsp;**kwds)</td>
+<td>standardized multivariate normal cumulative distribution function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.mvstdtprob.html#statsmodels.sandbox.distributions.mv_normal.mvstdtprob" title="statsmodels.sandbox.distributions.mv_normal.mvstdtprob"><code class="xref py py-obj docutils literal"><span class="pre">mvstdtprob</span></code></a>(a,&nbsp;b,&nbsp;R,&nbsp;df[,&nbsp;ieps,&nbsp;quadkwds,&nbsp;...])</td>
+<td>probability of rectangular area of standard t distribution</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.distributions.mv_normal.quad2d.html#statsmodels.sandbox.distributions.mv_normal.quad2d" title="statsmodels.sandbox.distributions.mv_normal.quad2d"><code class="xref py py-obj docutils literal"><span class="pre">quad2d</span></code></a>([func,&nbsp;lower,&nbsp;upper])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>6.3.9.6. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_normal.BivariateNormal.html#statsmodels.sandbox.distributions.mv_normal.BivariateNormal" title="statsmodels.sandbox.distributions.mv_normal.BivariateNormal"><code class="xref py py-obj docutils literal"><span class="pre">BivariateNormal</span></code></a>(mean,&nbsp;cov)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_normal.MVElliptical.html#statsmodels.sandbox.distributions.mv_normal.MVElliptical" title="statsmodels.sandbox.distributions.mv_normal.MVElliptical"><code class="xref py py-obj docutils literal"><span class="pre">MVElliptical</span></code></a>(mean,&nbsp;sigma,&nbsp;*args,&nbsp;**kwds)</td>
+<td>Base Class for multivariate elliptical distributions, normal and t</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_normal.MVNormal.html#statsmodels.sandbox.distributions.mv_normal.MVNormal" title="statsmodels.sandbox.distributions.mv_normal.MVNormal"><code class="xref py py-obj docutils literal"><span class="pre">MVNormal</span></code></a>(mean,&nbsp;sigma,&nbsp;*args,&nbsp;**kwds)</td>
+<td>Class for Multivariate Normal Distribution</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_normal.MVNormal0.html#statsmodels.sandbox.distributions.mv_normal.MVNormal0" title="statsmodels.sandbox.distributions.mv_normal.MVNormal0"><code class="xref py py-obj docutils literal"><span class="pre">MVNormal0</span></code></a>(mean,&nbsp;cov)</td>
+<td>Class for Multivariate Normal Distribution</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.distributions.mv_normal.MVT.html#statsmodels.sandbox.distributions.mv_normal.MVT" title="statsmodels.sandbox.distributions.mv_normal.MVT"><code class="xref py py-obj docutils literal"><span class="pre">MVT</span></code></a>(mean,&nbsp;sigma,&nbsp;df)</td>
+<td>initialize instance</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.distributions.mv_normal.bivariate_normal.html" class="btn btn-neutral float-right" title="6.3.9.5.1. statsmodels.sandbox.distributions.mv_normal.bivariate_normal" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.distributions.mv_measures.mutualinfo_kde_2sample.html" class="btn btn-neutral" title="6.3.8.1.3. statsmodels.sandbox.distributions.mv_measures.mutualinfo_kde_2sample" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

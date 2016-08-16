@@ -1,0 +1,353 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tsa.tests.test_arima_process &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tsa.tests.test_arima_process</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tsa.tests.test_arima_process</h1><div class="highlight"><pre>
+<span></span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="p">(</span><span class="n">assert_array_almost_equal</span><span class="p">,</span> <span class="n">assert_almost_equal</span><span class="p">,</span>
+                           <span class="n">assert_equal</span><span class="p">)</span>
+
+
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.arima_process</span> <span class="k">import</span> <span class="p">(</span><span class="n">arma_generate_sample</span><span class="p">,</span> <span class="n">arma_acovf</span><span class="p">,</span>
+                        <span class="n">arma_acf</span><span class="p">,</span> <span class="n">arma_impulse_response</span><span class="p">,</span> <span class="n">lpol_fiar</span><span class="p">,</span> <span class="n">lpol_fima</span><span class="p">)</span>
+<span class="kn">from</span> <span class="nn">statsmodels.sandbox.tsa.fftarma</span> <span class="k">import</span> <span class="n">ArmaFft</span>
+
+<span class="kn">from</span> <span class="nn">.results.results_process</span> <span class="k">import</span> <span class="n">armarep</span>  <span class="c1">#benchmarkdata</span>
+
+<span class="n">arlist</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9</span><span class="p">],</span>  <span class="c1">#ma representation will need many terms to get high precision</span>
+          <span class="p">[</span><span class="mi">1</span><span class="p">,</span>  <span class="mf">0.9</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9</span><span class="p">,</span> <span class="mf">0.3</span><span class="p">]]</span>
+
+<span class="n">malist</span> <span class="o">=</span> <span class="p">[[</span><span class="mf">1.</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">1</span><span class="p">,</span>  <span class="mf">0.9</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.9</span><span class="p">],</span>
+          <span class="p">[</span><span class="mi">1</span><span class="p">,</span>  <span class="mf">0.9</span><span class="p">,</span> <span class="o">-</span><span class="mf">0.3</span><span class="p">]]</span>
+
+
+<div class="viewcode-block" id="test_arma_acovf"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_arima_process.test_arma_acovf.html#statsmodels.tsa.tests.test_arima_process.test_arma_acovf">[docs]</a><span class="k">def</span> <span class="nf">test_arma_acovf</span><span class="p">():</span>
+    <span class="c1"># Check for specific AR(1)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">;</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="c1"># rep 1: from module function</span>
+    <span class="n">rep1</span> <span class="o">=</span> <span class="n">arma_acovf</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">phi</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">N</span><span class="p">);</span>
+    <span class="c1"># rep 2: manually</span>
+    <span class="n">rep2</span> <span class="o">=</span> <span class="p">[</span><span class="mf">1.</span><span class="o">*</span><span class="n">sigma</span><span class="o">*</span><span class="n">phi</span><span class="o">**</span><span class="n">i</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">phi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)];</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">rep1</span><span class="p">,</span> <span class="n">rep2</span><span class="p">,</span> <span class="mi">7</span><span class="p">);</span> <span class="c1"># 7 is max precision here</span></div>
+
+
+<div class="viewcode-block" id="test_arma_acf"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_arima_process.test_arma_acf.html#statsmodels.tsa.tests.test_arima_process.test_arma_acf">[docs]</a><span class="k">def</span> <span class="nf">test_arma_acf</span><span class="p">():</span>
+    <span class="c1"># Check for specific AR(1)</span>
+    <span class="n">N</span> <span class="o">=</span> <span class="mi">20</span><span class="p">;</span>
+    <span class="n">phi</span> <span class="o">=</span> <span class="mf">0.9</span><span class="p">;</span>
+    <span class="n">sigma</span> <span class="o">=</span> <span class="mi">1</span><span class="p">;</span>
+    <span class="c1"># rep 1: from module function</span>
+    <span class="n">rep1</span> <span class="o">=</span> <span class="n">arma_acf</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="n">phi</span><span class="p">],</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">N</span><span class="p">);</span>
+    <span class="c1"># rep 2: manually</span>
+    <span class="n">acovf</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">1.</span><span class="o">*</span><span class="n">sigma</span><span class="o">*</span><span class="n">phi</span><span class="o">**</span><span class="n">i</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">phi</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">N</span><span class="p">)])</span>
+    <span class="n">rep2</span> <span class="o">=</span> <span class="n">acovf</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">phi</span><span class="o">**</span><span class="mi">2</span><span class="p">));</span>
+    <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">rep1</span><span class="p">,</span> <span class="n">rep2</span><span class="p">,</span> <span class="mi">8</span><span class="p">);</span> <span class="c1"># 8 is max precision here</span></div>
+
+
+<span class="k">def</span> <span class="nf">_manual_arma_generate_sample</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">,</span> <span class="n">eta</span><span class="p">):</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">eta</span><span class="p">);</span>
+    <span class="n">ar</span> <span class="o">=</span> <span class="n">ar</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">ma</span> <span class="o">=</span> <span class="n">ma</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">p</span><span class="p">,</span><span class="n">q</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">ar</span><span class="p">),</span> <span class="nb">len</span><span class="p">(</span><span class="n">ma</span><span class="p">);</span>
+    <span class="n">rep2</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="nb">max</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">);</span> <span class="c1"># initialize with zeroes</span>
+    <span class="k">for</span> <span class="n">t</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">T</span><span class="p">):</span>
+        <span class="n">yt</span> <span class="o">=</span> <span class="n">eta</span><span class="p">[</span><span class="n">t</span><span class="p">];</span>
+        <span class="k">if</span> <span class="n">p</span><span class="p">:</span>
+            <span class="n">yt</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">rep2</span><span class="p">[</span><span class="o">-</span><span class="n">p</span><span class="p">:],</span> <span class="n">ar</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">q</span><span class="p">:</span>
+            <span class="c1"># left pad shocks with zeros</span>
+            <span class="n">yt</span> <span class="o">+=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">q</span><span class="o">-</span><span class="n">t</span><span class="p">)</span> <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">eta</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="n">t</span><span class="o">-</span><span class="n">q</span><span class="p">):</span><span class="n">t</span><span class="p">]),</span> <span class="n">ma</span><span class="p">);</span>
+        <span class="n">rep2</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">yt</span><span class="p">);</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">rep2</span><span class="p">[</span><span class="nb">max</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">):]);</span>
+
+<div class="viewcode-block" id="test_arma_generate_sample"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_arima_process.test_arma_generate_sample.html#statsmodels.tsa.tests.test_arima_process.test_arma_generate_sample">[docs]</a><span class="k">def</span> <span class="nf">test_arma_generate_sample</span><span class="p">():</span>
+    <span class="c1"># Test that this generates a true ARMA process</span>
+    <span class="c1"># (amounts to just a test that scipy.signal.lfilter does what we want)</span>
+    <span class="n">T</span> <span class="o">=</span> <span class="mi">100</span><span class="p">;</span>
+    <span class="n">dists</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">dist</span> <span class="ow">in</span> <span class="n">dists</span><span class="p">:</span>
+        <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">);</span>
+        <span class="n">eta</span> <span class="o">=</span> <span class="n">dist</span><span class="p">(</span><span class="n">T</span><span class="p">);</span>
+        <span class="k">for</span> <span class="n">ar</span> <span class="ow">in</span> <span class="n">arlist</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">ma</span> <span class="ow">in</span> <span class="n">malist</span><span class="p">:</span>
+                <span class="c1"># rep1: from module function</span>
+                <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="mi">1234</span><span class="p">);</span>
+                <span class="n">rep1</span> <span class="o">=</span> <span class="n">arma_generate_sample</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">,</span> <span class="n">T</span><span class="p">,</span> <span class="n">distrvs</span><span class="o">=</span><span class="n">dist</span><span class="p">);</span>
+                <span class="c1"># rep2: &quot;manually&quot; create the ARMA process</span>
+                <span class="n">ar_params</span> <span class="o">=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ar</span><span class="p">[</span><span class="mi">1</span><span class="p">:]);</span>
+                <span class="n">ma_params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">ma</span><span class="p">[</span><span class="mi">1</span><span class="p">:]);</span>
+                <span class="n">rep2</span> <span class="o">=</span> <span class="n">_manual_arma_generate_sample</span><span class="p">(</span><span class="n">ar_params</span><span class="p">,</span> <span class="n">ma_params</span><span class="p">,</span> <span class="n">eta</span><span class="p">)</span>
+                <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">rep1</span><span class="p">,</span> <span class="n">rep2</span><span class="p">,</span> <span class="mi">13</span><span class="p">);</span></div>
+
+
+<div class="viewcode-block" id="test_fi"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_arima_process.test_fi.html#statsmodels.tsa.tests.test_arima_process.test_fi">[docs]</a><span class="k">def</span> <span class="nf">test_fi</span><span class="p">():</span>
+    <span class="c1">#test identity of ma and ar representation of fi lag polynomial</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mi">100</span>
+    <span class="n">mafromar</span> <span class="o">=</span> <span class="n">arma_impulse_response</span><span class="p">(</span><span class="n">lpol_fiar</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">n</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mafromar</span><span class="p">,</span> <span class="n">lpol_fima</span><span class="p">(</span><span class="mf">0.4</span><span class="p">,</span> <span class="n">n</span><span class="o">=</span><span class="n">n</span><span class="p">),</span> <span class="mi">13</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_arma_impulse_response"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_arima_process.test_arma_impulse_response.html#statsmodels.tsa.tests.test_arima_process.test_arma_impulse_response">[docs]</a><span class="k">def</span> <span class="nf">test_arma_impulse_response</span><span class="p">():</span>
+    <span class="n">arrep</span> <span class="o">=</span> <span class="n">arma_impulse_response</span><span class="p">(</span><span class="n">armarep</span><span class="o">.</span><span class="n">ma</span><span class="p">,</span> <span class="n">armarep</span><span class="o">.</span><span class="n">ar</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">21</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">marep</span> <span class="o">=</span> <span class="n">arma_impulse_response</span><span class="p">(</span><span class="n">armarep</span><span class="o">.</span><span class="n">ar</span><span class="p">,</span> <span class="n">armarep</span><span class="o">.</span><span class="n">ma</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">21</span><span class="p">)[</span><span class="mi">1</span><span class="p">:]</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">armarep</span><span class="o">.</span><span class="n">marep</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">marep</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span>
+    <span class="c1">#difference in sign convention to matlab for AR term</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="o">-</span><span class="n">armarep</span><span class="o">.</span><span class="n">arrep</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">arrep</span><span class="p">,</span> <span class="mi">14</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_spectrum"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_arima_process.test_spectrum.html#statsmodels.tsa.tests.test_arima_process.test_spectrum">[docs]</a><span class="k">def</span> <span class="nf">test_spectrum</span><span class="p">():</span>
+    <span class="n">nfreq</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">nfreq</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ar</span> <span class="ow">in</span> <span class="n">arlist</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ma</span> <span class="ow">in</span> <span class="n">malist</span><span class="p">:</span>
+            <span class="n">arma</span> <span class="o">=</span> <span class="n">ArmaFft</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+            <span class="n">spdr</span><span class="p">,</span> <span class="n">wr</span> <span class="o">=</span> <span class="n">arma</span><span class="o">.</span><span class="n">spdroots</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+            <span class="n">spdp</span><span class="p">,</span> <span class="n">wp</span> <span class="o">=</span> <span class="n">arma</span><span class="o">.</span><span class="n">spdpoly</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="mi">200</span><span class="p">)</span>
+            <span class="n">spdd</span><span class="p">,</span> <span class="n">wd</span> <span class="o">=</span> <span class="n">arma</span><span class="o">.</span><span class="n">spddirect</span><span class="p">(</span><span class="n">nfreq</span><span class="o">*</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">assert_equal</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">wr</span><span class="p">)</span>
+            <span class="n">assert_equal</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">wp</span><span class="p">)</span>
+            <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">wd</span><span class="p">[:</span><span class="n">nfreq</span><span class="p">],</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">14</span><span class="p">)</span>
+            <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">spdr</span><span class="p">,</span> <span class="n">spdp</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+                                <span class="n">err_msg</span><span class="o">=</span><span class="s1">&#39;spdr spdp not equal for </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">))</span>
+            <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">spdr</span><span class="p">,</span> <span class="n">spdd</span><span class="p">[:</span><span class="n">nfreq</span><span class="p">],</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+                                <span class="n">err_msg</span><span class="o">=</span><span class="s1">&#39;spdr spdd not equal for </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="test_armafft"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_arima_process.test_armafft.html#statsmodels.tsa.tests.test_arima_process.test_armafft">[docs]</a><span class="k">def</span> <span class="nf">test_armafft</span><span class="p">():</span>
+    <span class="c1">#test other methods</span>
+    <span class="n">nfreq</span> <span class="o">=</span> <span class="mi">20</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">,</span> <span class="n">nfreq</span><span class="p">,</span> <span class="n">endpoint</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">for</span> <span class="n">ar</span> <span class="ow">in</span> <span class="n">arlist</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">ma</span> <span class="ow">in</span> <span class="n">malist</span><span class="p">:</span>
+            <span class="n">arma</span> <span class="o">=</span> <span class="n">ArmaFft</span><span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+            <span class="n">ac1</span> <span class="o">=</span> <span class="n">arma</span><span class="o">.</span><span class="n">invpowerspd</span><span class="p">(</span><span class="mi">1024</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span>
+            <span class="n">ac2</span> <span class="o">=</span> <span class="n">arma</span><span class="o">.</span><span class="n">acovf</span><span class="p">(</span><span class="mi">10</span><span class="p">)[:</span><span class="mi">10</span><span class="p">]</span>
+            <span class="n">assert_almost_equal</span><span class="p">(</span><span class="n">ac1</span><span class="p">,</span> <span class="n">ac2</span><span class="p">,</span> <span class="n">decimal</span><span class="o">=</span><span class="mi">7</span><span class="p">,</span>
+                                <span class="n">err_msg</span><span class="o">=</span><span class="s1">&#39;acovf not equal for </span><span class="si">%s</span><span class="s1">, </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">ar</span><span class="p">,</span> <span class="n">ma</span><span class="p">))</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">test_arma_acovf</span><span class="p">()</span>
+    <span class="n">test_arma_acf</span><span class="p">()</span>
+    <span class="n">test_arma_generate_sample</span><span class="p">()</span>
+    <span class="n">test_fi</span><span class="p">()</span>
+    <span class="n">test_arma_impulse_response</span><span class="p">()</span>
+    <span class="n">test_spectrum</span><span class="p">()</span>
+    <span class="n">test_armafft</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

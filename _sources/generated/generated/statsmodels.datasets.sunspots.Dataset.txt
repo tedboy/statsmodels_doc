@@ -1,0 +1,39 @@
+statsmodels.datasets.sunspots.Dataset
+=====================================
+
+.. currentmodule:: statsmodels.datasets.sunspots
+.. autoclass:: Dataset
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Dataset.__init__
+   ~Dataset.clear
+   ~Dataset.copy
+   ~Dataset.fromkeys
+   ~Dataset.get
+   ~Dataset.has_key
+   ~Dataset.items
+   ~Dataset.iteritems
+   ~Dataset.iterkeys
+   ~Dataset.itervalues
+   ~Dataset.keys
+   ~Dataset.pop
+   ~Dataset.popitem
+   ~Dataset.setdefault
+   ~Dataset.update
+   ~Dataset.values
+   ~Dataset.viewitems
+   ~Dataset.viewkeys
+   ~Dataset.viewvalues
+
+
+
+
+

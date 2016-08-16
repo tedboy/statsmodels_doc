@@ -1,0 +1,44 @@
+statsmodels.tsa.base.tsa_model.TimeSeriesModelResults
+=====================================================
+
+.. currentmodule:: statsmodels.tsa.base.tsa_model
+.. autoclass:: TimeSeriesModelResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TimeSeriesModelResults.__init__
+   ~TimeSeriesModelResults.bse
+   ~TimeSeriesModelResults.conf_int
+   ~TimeSeriesModelResults.cov_params
+   ~TimeSeriesModelResults.f_test
+   ~TimeSeriesModelResults.initialize
+   ~TimeSeriesModelResults.llf
+   ~TimeSeriesModelResults.load
+   ~TimeSeriesModelResults.normalized_cov_params
+   ~TimeSeriesModelResults.predict
+   ~TimeSeriesModelResults.pvalues
+   ~TimeSeriesModelResults.remove_data
+   ~TimeSeriesModelResults.save
+   ~TimeSeriesModelResults.t_test
+   ~TimeSeriesModelResults.tvalues
+   ~TimeSeriesModelResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TimeSeriesModelResults.use_t
+

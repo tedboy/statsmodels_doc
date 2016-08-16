@@ -1,0 +1,50 @@
+statsmodels.sandbox.stats.runs
+==============================
+
+.. automodule:: statsmodels.sandbox.stats.runs
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      cochrans_q
+      mcnemar
+      median_test_ksample
+      runstest_1samp
+      runstest_2samp
+      symmetry_bowker
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Runs
+      RunsProb
+      TotalRunsProb
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.stats.runs.Runs
+       generated/statsmodels.sandbox.stats.runs.RunsProb
+       generated/statsmodels.sandbox.stats.runs.TotalRunsProb
+
+   
+   
+
+   
+   
+   

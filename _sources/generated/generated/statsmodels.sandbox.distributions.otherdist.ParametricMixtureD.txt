@@ -1,0 +1,24 @@
+statsmodels.sandbox.distributions.otherdist.ParametricMixtureD
+==============================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.otherdist
+.. autoclass:: ParametricMixtureD
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ParametricMixtureD.__init__
+   ~ParametricMixtureD.cdf
+   ~ParametricMixtureD.pdf
+   ~ParametricMixtureD.rvs
+
+
+
+
+

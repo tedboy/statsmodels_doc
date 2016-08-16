@@ -1,0 +1,48 @@
+statsmodels.iolib.table
+=======================
+
+.. automodule:: statsmodels.iolib.table
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      csv2st
+      get_output_format
+      iteritems
+      pad
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Cell
+      Row
+      SimpleTable
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.iolib.table.Cell
+       generated/statsmodels.iolib.table.Row
+       generated/statsmodels.iolib.table.SimpleTable
+
+   
+   
+
+   
+   
+   

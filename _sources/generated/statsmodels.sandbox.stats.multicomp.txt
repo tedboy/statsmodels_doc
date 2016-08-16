@@ -1,0 +1,82 @@
+statsmodels.sandbox.stats.multicomp
+===================================
+
+.. automodule:: statsmodels.sandbox.stats.multicomp
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      Tukeythreegene
+      Tukeythreegene2
+      catstack
+      compare_ordered
+      contrast_all_one
+      contrast_allpairs
+      contrast_diff_mean
+      distance_st_range
+      ecdf
+      fdrcorrection0
+      fdrcorrection_bak
+      fdrcorrection_twostage
+      get_tukeyQcrit
+      get_tukeyQcrit2
+      homogeneous_subsets
+      maxzero
+      maxzerodown
+      mcfdr
+      multicontrast_pvalues
+      multipletests
+      randmvn
+      rankdata
+      rejectionline
+      set_partition
+      set_remove_subs
+      simultaneous_ci
+      test_tukey_pvalues
+      tiecorrect
+      tukey_pvalues
+      tukeyhsd
+      varcorrection_pairs_unbalanced
+      varcorrection_pairs_unequal
+      varcorrection_unbalanced
+      varcorrection_unequal
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      GroupsStats
+      MultiComparison
+      SimpleTable
+      StepDown
+      TukeyHSDResults
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.stats.multicomp.GroupsStats
+       generated/statsmodels.sandbox.stats.multicomp.MultiComparison
+       generated/statsmodels.sandbox.stats.multicomp.SimpleTable
+       generated/statsmodels.sandbox.stats.multicomp.StepDown
+       generated/statsmodels.sandbox.stats.multicomp.TukeyHSDResults
+
+   
+   
+
+   
+   
+   

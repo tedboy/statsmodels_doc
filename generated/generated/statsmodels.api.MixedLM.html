@@ -1,0 +1,403 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>1.1.2.7. statsmodels.api.MixedLM &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="1.1. statsmodels.api" href="../statsmodels.api.html"/>
+        <link rel="next" title="1.1.2.7.1.1. statsmodels.api.MixedLM.EM" href="statsmodels.api.MixedLM.EM.html"/>
+        <link rel="prev" title="1.1.2.6.2.2. statsmodels.api.MNLogit.exog_names" href="statsmodels.api.MNLogit.exog_names.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1 current"><a class="reference internal" href="../../main_api.html">1. Main API</a><ul class="current">
+<li class="toctree-l2 current"><a class="reference internal" href="../statsmodels.api.html">1.1. statsmodels.api</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.api.html#functions">1.1.1. Functions</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.api.html#classes">1.1.2. Classes</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.GEE.html">1.1.2.1. statsmodels.api.GEE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.GLM.html">1.1.2.2. statsmodels.api.GLM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.GLS.html">1.1.2.3. statsmodels.api.GLS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.GLSAR.html">1.1.2.4. statsmodels.api.GLSAR</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.Logit.html">1.1.2.5. statsmodels.api.Logit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.MNLogit.html">1.1.2.6. statsmodels.api.MNLogit</a></li>
+<li class="toctree-l4 current"><a class="current reference internal" href="#">1.1.2.7. statsmodels.api.MixedLM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.NegativeBinomial.html">1.1.2.8. statsmodels.api.NegativeBinomial</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.NominalGEE.html">1.1.2.9. statsmodels.api.NominalGEE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.OLS.html">1.1.2.10. statsmodels.api.OLS</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.OrdinalGEE.html">1.1.2.11. statsmodels.api.OrdinalGEE</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.PHReg.html">1.1.2.12. statsmodels.api.PHReg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.Poisson.html">1.1.2.13. statsmodels.api.Poisson</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.ProbPlot.html">1.1.2.14. statsmodels.api.ProbPlot</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.Probit.html">1.1.2.15. statsmodels.api.Probit</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.QuantReg.html">1.1.2.16. statsmodels.api.QuantReg</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.RLM.html">1.1.2.17. statsmodels.api.RLM</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.api.WLS.html">1.1.2.18. statsmodels.api.WLS</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../main_api.html">1. Main API</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.api.html">1.1. statsmodels.api</a> &raquo;</li>
+        
+      <li>1.1.2.7. statsmodels.api.MixedLM</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.api.MixedLM.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-api-mixedlm">
+<h1>1.1.2.7. statsmodels.api.MixedLM<a class="headerlink" href="#statsmodels-api-mixedlm" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.api.MixedLM">
+<em class="property">class </em><code class="descclassname">statsmodels.api.</code><code class="descname">MixedLM</code><span class="sig-paren">(</span><em>endog</em>, <em>exog</em>, <em>groups</em>, <em>exog_re=None</em>, <em>use_sqrt=True</em>, <em>missing='none'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/regression/mixed_linear_model.html#MixedLM"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.api.MixedLM" title="Permalink to this definition">¶</a></dt>
+<dd><p>An object specifying a linear mixed effects model.  Use the <cite>fit</cite>
+method to fit the model and obtain a results object.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>endog</strong> : 1d array-like</p>
+<blockquote>
+<div><p>The dependent variable</p>
+</div></blockquote>
+<p><strong>exog</strong> : 2d array-like</p>
+<blockquote>
+<div><p>A matrix of covariates used to determine the
+mean structure (the &#8220;fixed effects&#8221; covariates).</p>
+</div></blockquote>
+<p><strong>groups</strong> : 1d array-like</p>
+<blockquote>
+<div><p>A vector of labels determining the groups &#8211; data from
+different groups are independent</p>
+</div></blockquote>
+<p><strong>exog_re</strong> : 2d array-like</p>
+<blockquote>
+<div><p>A matrix of covariates used to determine the variance and
+covariance structure (the &#8220;random effects&#8221; covariates).  If
+None, defaults to a random intercept for each group.</p>
+</div></blockquote>
+<p><strong>use_sqrt</strong> : bool</p>
+<blockquote>
+<div><p>If True, optimization is carried out using the lower
+triangle of the square root of the random effects
+covariance matrix, otherwise it is carried out using the
+lower triangle of the random effects covariance matrix.</p>
+</div></blockquote>
+<p><strong>missing</strong> : string</p>
+<blockquote class="last">
+<div><p>The approach to missing data handling</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>The covariates in <cite>exog</cite> and <cite>exog_re</cite> may (but need not)
+partially or wholly overlap.</p>
+<p><cite>use_sqrt</cite> should almost always be set to True.  The main use case
+for use_sqrt=False is when complicated patterns of fixed values in
+the covariance structure are set (using the <cite>free</cite> argument to
+<cite>fit</cite>) that cannot be expressed in terms of the Cholesky factor L.</p>
+<dl class="method">
+<dt id="statsmodels.api.MixedLM.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>endog</em>, <em>exog</em>, <em>groups</em>, <em>exog_re=None</em>, <em>use_sqrt=True</em>, <em>missing='none'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/regression/mixed_linear_model.html#MixedLM.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.api.MixedLM.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>1.1.2.7.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.EM.html#statsmodels.api.MixedLM.EM" title="statsmodels.api.MixedLM.EM"><code class="xref py py-obj docutils literal"><span class="pre">EM</span></code></a>(fe_params,&nbsp;cov_re,&nbsp;scale[,&nbsp;niter_em,&nbsp;hist])</td>
+<td>Run the EM algorithm from a given starting point.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.Estep.html#statsmodels.api.MixedLM.Estep" title="statsmodels.api.MixedLM.Estep"><code class="xref py py-obj docutils literal"><span class="pre">Estep</span></code></a>(fe_params,&nbsp;cov_re,&nbsp;scale)</td>
+<td>The E-step of the EM algorithm.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.__init__.html#statsmodels.api.MixedLM.__init__" title="statsmodels.api.MixedLM.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(endog,&nbsp;exog,&nbsp;groups[,&nbsp;exog_re,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.fit.html#statsmodels.api.MixedLM.fit" title="statsmodels.api.MixedLM.fit"><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code></a>([start_params,&nbsp;reml,&nbsp;niter_em,&nbsp;...])</td>
+<td>Fit a linear mixed model to the data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.fit_regularized.html#statsmodels.api.MixedLM.fit_regularized" title="statsmodels.api.MixedLM.fit_regularized"><code class="xref py py-obj docutils literal"><span class="pre">fit_regularized</span></code></a>([start_params,&nbsp;method,&nbsp;...])</td>
+<td>Fit a model in which the fixed effects parameters are penalized.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.from_formula.html#statsmodels.api.MixedLM.from_formula" title="statsmodels.api.MixedLM.from_formula"><code class="xref py py-obj docutils literal"><span class="pre">from_formula</span></code></a>(formula,&nbsp;data[,&nbsp;re_formula,&nbsp;subset])</td>
+<td>Create a Model from a formula and dataframe.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.get_scale.html#statsmodels.api.MixedLM.get_scale" title="statsmodels.api.MixedLM.get_scale"><code class="xref py py-obj docutils literal"><span class="pre">get_scale</span></code></a>(fe_params,&nbsp;cov_re)</td>
+<td>Returns the estimated error variance based on given estimates of the slopes and random effects covariance matrix.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.group_list.html#statsmodels.api.MixedLM.group_list" title="statsmodels.api.MixedLM.group_list"><code class="xref py py-obj docutils literal"><span class="pre">group_list</span></code></a>(array)</td>
+<td>Returns <cite>array</cite> split into subarrays corresponding to the grouping structure.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.hessian.html#statsmodels.api.MixedLM.hessian" title="statsmodels.api.MixedLM.hessian"><code class="xref py py-obj docutils literal"><span class="pre">hessian</span></code></a>(params)</td>
+<td>Returns the Hessian matrix of the profile log-likelihood.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.hessian_full.html#statsmodels.api.MixedLM.hessian_full" title="statsmodels.api.MixedLM.hessian_full"><code class="xref py py-obj docutils literal"><span class="pre">hessian_full</span></code></a>(params)</td>
+<td>Calculates the Hessian matrix for the mixed effects model with respect to the parameterization in which the covariance matrix is represented directly (without square-root transformation).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.hessian_sqrt.html#statsmodels.api.MixedLM.hessian_sqrt" title="statsmodels.api.MixedLM.hessian_sqrt"><code class="xref py py-obj docutils literal"><span class="pre">hessian_sqrt</span></code></a>(params)</td>
+<td>Returns the Hessian matrix of the log-likelihood evaluated at a given point, calculated with respect to the parameterization in which the random effects covariance matrix is represented through its Cholesky square root.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.information.html#statsmodels.api.MixedLM.information" title="statsmodels.api.MixedLM.information"><code class="xref py py-obj docutils literal"><span class="pre">information</span></code></a>(params)</td>
+<td>Fisher information matrix of model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.initialize.html#statsmodels.api.MixedLM.initialize" title="statsmodels.api.MixedLM.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
+<td>Initialize (possibly re-initialize) a Model instance.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.loglike.html#statsmodels.api.MixedLM.loglike" title="statsmodels.api.MixedLM.loglike"><code class="xref py py-obj docutils literal"><span class="pre">loglike</span></code></a>(params)</td>
+<td>Evaluate the (profile) log-likelihood of the linear mixed effects model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.predict.html#statsmodels.api.MixedLM.predict" title="statsmodels.api.MixedLM.predict"><code class="xref py py-obj docutils literal"><span class="pre">predict</span></code></a>(params[,&nbsp;exog])</td>
+<td>After a model has been fit predict returns the fitted values.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.score.html#statsmodels.api.MixedLM.score" title="statsmodels.api.MixedLM.score"><code class="xref py py-obj docutils literal"><span class="pre">score</span></code></a>(params)</td>
+<td>Returns the score vector of the profile log-likelihood.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.score_full.html#statsmodels.api.MixedLM.score_full" title="statsmodels.api.MixedLM.score_full"><code class="xref py py-obj docutils literal"><span class="pre">score_full</span></code></a>(params)</td>
+<td>Calculates the score vector for the profiled log-likelihood of the mixed effects model with respect to the parameterization in which the random effects covariance matrix is represented in its full form (not using the Cholesky factor).</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.score_sqrt.html#statsmodels.api.MixedLM.score_sqrt" title="statsmodels.api.MixedLM.score_sqrt"><code class="xref py py-obj docutils literal"><span class="pre">score_sqrt</span></code></a>(params)</td>
+<td>Returns the score vector with respect to the parameterization in which the random effects covariance matrix is represented through its Cholesky square root.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.starting_values.html#statsmodels.api.MixedLM.starting_values" title="statsmodels.api.MixedLM.starting_values"><code class="xref py py-obj docutils literal"><span class="pre">starting_values</span></code></a>(start_params)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.steepest_ascent.html#statsmodels.api.MixedLM.steepest_ascent" title="statsmodels.api.MixedLM.steepest_ascent"><code class="xref py py-obj docutils literal"><span class="pre">steepest_ascent</span></code></a>(params,&nbsp;n_iter)</td>
+<td>Take steepest ascent steps to increase the log-likelihood function.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>1.1.2.7.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.api.MixedLM.endog_names.html#statsmodels.api.MixedLM.endog_names" title="statsmodels.api.MixedLM.endog_names"><code class="xref py py-obj docutils literal"><span class="pre">endog_names</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.api.MixedLM.exog_names.html#statsmodels.api.MixedLM.exog_names" title="statsmodels.api.MixedLM.exog_names"><code class="xref py py-obj docutils literal"><span class="pre">exog_names</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.api.MixedLM.EM.html" class="btn btn-neutral float-right" title="1.1.2.7.1.1. statsmodels.api.MixedLM.EM" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.api.MNLogit.exog_names.html" class="btn btn-neutral" title="1.1.2.6.2.2. statsmodels.api.MNLogit.exog_names" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

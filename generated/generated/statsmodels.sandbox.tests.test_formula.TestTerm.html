@@ -1,0 +1,487 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.9.6.2.2. statsmodels.sandbox.tests.test_formula.TestTerm &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.9.6. statsmodels.sandbox.tests.test_formula" href="../statsmodels.sandbox.tests.test_formula.html"/>
+        <link rel="next" title="6.9.6.2.2.1.1. statsmodels.sandbox.tests.test_formula.TestTerm.__init__" href="statsmodels.sandbox.tests.test_formula.TestTerm.__init__.html"/>
+        <link rel="prev" title="6.9.6.2.1.2.2. statsmodels.sandbox.tests.test_formula.TestFormula.maxDiff" href="statsmodels.sandbox.tests.test_formula.TestFormula.maxDiff.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tests.html">6.9.1. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tests.datamlw.html">6.9.2. statsmodels.sandbox.tests.datamlw</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tests.maketests_mlabwrap.html">6.9.3. statsmodels.sandbox.tests.maketests_mlabwrap</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tests.model_results.html">6.9.4. statsmodels.sandbox.tests.model_results</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tests.savervs.html">6.9.5. statsmodels.sandbox.tests.savervs</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.tests.test_formula.html">6.9.6. statsmodels.sandbox.tests.test_formula</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.tests.test_formula.html#functions">6.9.6.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.tests.test_formula.html#classes">6.9.6.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tests.test_gam.html">6.9.7. statsmodels.sandbox.tests.test_gam</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tests.test_pca.html">6.9.8. statsmodels.sandbox.tests.test_pca</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.tests.test_formula.html">6.9.6. statsmodels.sandbox.tests.test_formula</a> &raquo;</li>
+        
+      <li>6.9.6.2.2. statsmodels.sandbox.tests.test_formula.TestTerm</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.tests.test_formula.TestTerm.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-tests-test-formula-testterm">
+<h1>6.9.6.2.2. statsmodels.sandbox.tests.test_formula.TestTerm<a class="headerlink" href="#statsmodels-sandbox-tests-test-formula-testterm" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.sandbox.tests.test_formula.TestTerm">
+<em class="property">class </em><code class="descclassname">statsmodels.sandbox.tests.test_formula.</code><code class="descname">TestTerm</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/tests/test_formula.html#TestTerm"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.tests.test_formula.TestTerm" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p>
+<dl class="method">
+<dt id="statsmodels.sandbox.tests.test_formula.TestTerm.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>methodName='runTest'</em><span class="sig-paren">)</span><a class="headerlink" href="#statsmodels.sandbox.tests.test_formula.TestTerm.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Create an instance of the class that will use the named test
+method when executed. Raises a ValueError if the instance does
+not have a method with the specified name.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>6.9.6.2.2.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.__init__.html#statsmodels.sandbox.tests.test_formula.TestTerm.__init__" title="statsmodels.sandbox.tests.test_formula.TestTerm.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>([methodName])</td>
+<td>Create an instance of the class that will use the named test method when executed.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.addCleanup.html#statsmodels.sandbox.tests.test_formula.TestTerm.addCleanup" title="statsmodels.sandbox.tests.test_formula.TestTerm.addCleanup"><code class="xref py py-obj docutils literal"><span class="pre">addCleanup</span></code></a>(function,&nbsp;*args,&nbsp;**kwargs)</td>
+<td>Add a function, with arguments, to be called when the test is completed.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.addTypeEqualityFunc.html#statsmodels.sandbox.tests.test_formula.TestTerm.addTypeEqualityFunc" title="statsmodels.sandbox.tests.test_formula.TestTerm.addTypeEqualityFunc"><code class="xref py py-obj docutils literal"><span class="pre">addTypeEqualityFunc</span></code></a>(typeobj,&nbsp;function)</td>
+<td>Add a type specific assertEqual style function to compare a type.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertAlmostEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertAlmostEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertAlmostEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertAlmostEqual</span></code></a>(first,&nbsp;second[,&nbsp;places,&nbsp;...])</td>
+<td>Fail if the two objects are unequal as determined by their difference rounded to the given number of decimal places (default 7) and comparing to zero, or by comparing that the between the two objects is more than the given delta.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertAlmostEquals.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertAlmostEquals" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertAlmostEquals"><code class="xref py py-obj docutils literal"><span class="pre">assertAlmostEquals</span></code></a>(first,&nbsp;second[,&nbsp;places,&nbsp;...])</td>
+<td>Fail if the two objects are unequal as determined by their difference rounded to the given number of decimal places (default 7) and comparing to zero, or by comparing that the between the two objects is more than the given delta.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertDictContainsSubset.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertDictContainsSubset" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertDictContainsSubset"><code class="xref py py-obj docutils literal"><span class="pre">assertDictContainsSubset</span></code></a>(expected,&nbsp;actual[,&nbsp;msg])</td>
+<td>Checks whether actual is a superset of expected.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertDictEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertDictEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertDictEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertDictEqual</span></code></a>(d1,&nbsp;d2[,&nbsp;msg])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertEqual</span></code></a>(first,&nbsp;second[,&nbsp;msg])</td>
+<td>Fail if the two objects are unequal as determined by the &#8216;==&#8217; operator.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertEquals.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertEquals" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertEquals"><code class="xref py py-obj docutils literal"><span class="pre">assertEquals</span></code></a>(first,&nbsp;second[,&nbsp;msg])</td>
+<td>Fail if the two objects are unequal as determined by the &#8216;==&#8217; operator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertFalse.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertFalse" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertFalse"><code class="xref py py-obj docutils literal"><span class="pre">assertFalse</span></code></a>(expr[,&nbsp;msg])</td>
+<td>Check that the expression is false.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertGreater.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertGreater" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertGreater"><code class="xref py py-obj docutils literal"><span class="pre">assertGreater</span></code></a>(a,&nbsp;b[,&nbsp;msg])</td>
+<td>Just like self.assertTrue(a &gt; b), but with a nicer default message.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertGreaterEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertGreaterEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertGreaterEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertGreaterEqual</span></code></a>(a,&nbsp;b[,&nbsp;msg])</td>
+<td>Just like self.assertTrue(a &gt;= b), but with a nicer default message.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertIn.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertIn" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertIn"><code class="xref py py-obj docutils literal"><span class="pre">assertIn</span></code></a>(member,&nbsp;container[,&nbsp;msg])</td>
+<td>Just like self.assertTrue(a in b), but with a nicer default message.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertIs.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertIs" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertIs"><code class="xref py py-obj docutils literal"><span class="pre">assertIs</span></code></a>(expr1,&nbsp;expr2[,&nbsp;msg])</td>
+<td>Just like self.assertTrue(a is b), but with a nicer default message.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertIsInstance.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertIsInstance" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertIsInstance"><code class="xref py py-obj docutils literal"><span class="pre">assertIsInstance</span></code></a>(obj,&nbsp;cls[,&nbsp;msg])</td>
+<td>Same as self.assertTrue(isinstance(obj, cls)), with a nicer default message.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertIsNone.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertIsNone" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertIsNone"><code class="xref py py-obj docutils literal"><span class="pre">assertIsNone</span></code></a>(obj[,&nbsp;msg])</td>
+<td>Same as self.assertTrue(obj is None), with a nicer default message.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertIsNot.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertIsNot" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertIsNot"><code class="xref py py-obj docutils literal"><span class="pre">assertIsNot</span></code></a>(expr1,&nbsp;expr2[,&nbsp;msg])</td>
+<td>Just like self.assertTrue(a is not b), but with a nicer default message.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertIsNotNone.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertIsNotNone" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertIsNotNone"><code class="xref py py-obj docutils literal"><span class="pre">assertIsNotNone</span></code></a>(obj[,&nbsp;msg])</td>
+<td>Included for symmetry with assertIsNone.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertItemsEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertItemsEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertItemsEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertItemsEqual</span></code></a>(expected_seq,&nbsp;actual_seq[,&nbsp;msg])</td>
+<td>An unordered sequence specific comparison.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertLess.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertLess" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertLess"><code class="xref py py-obj docutils literal"><span class="pre">assertLess</span></code></a>(a,&nbsp;b[,&nbsp;msg])</td>
+<td>Just like self.assertTrue(a &lt; b), but with a nicer default message.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertLessEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertLessEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertLessEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertLessEqual</span></code></a>(a,&nbsp;b[,&nbsp;msg])</td>
+<td>Just like self.assertTrue(a &lt;= b), but with a nicer default message.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertListEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertListEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertListEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertListEqual</span></code></a>(list1,&nbsp;list2[,&nbsp;msg])</td>
+<td>A list-specific equality assertion.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertMultiLineEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertMultiLineEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertMultiLineEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertMultiLineEqual</span></code></a>(first,&nbsp;second[,&nbsp;msg])</td>
+<td>Assert that two multi-line strings are equal.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotAlmostEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertNotAlmostEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotAlmostEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertNotAlmostEqual</span></code></a>(first,&nbsp;second[,&nbsp;...])</td>
+<td>Fail if the two objects are equal as determined by their difference rounded to the given number of decimal places (default 7) and comparing to zero, or by comparing that the between the two objects is less than the given delta.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotAlmostEquals.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertNotAlmostEquals" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotAlmostEquals"><code class="xref py py-obj docutils literal"><span class="pre">assertNotAlmostEquals</span></code></a>(first,&nbsp;second[,&nbsp;...])</td>
+<td>Fail if the two objects are equal as determined by their difference rounded to the given number of decimal places (default 7) and comparing to zero, or by comparing that the between the two objects is less than the given delta.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertNotEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertNotEqual</span></code></a>(first,&nbsp;second[,&nbsp;msg])</td>
+<td>Fail if the two objects are equal as determined by the &#8216;!=&#8217; operator.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotEquals.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertNotEquals" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotEquals"><code class="xref py py-obj docutils literal"><span class="pre">assertNotEquals</span></code></a>(first,&nbsp;second[,&nbsp;msg])</td>
+<td>Fail if the two objects are equal as determined by the &#8216;!=&#8217; operator.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotIn.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertNotIn" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotIn"><code class="xref py py-obj docutils literal"><span class="pre">assertNotIn</span></code></a>(member,&nbsp;container[,&nbsp;msg])</td>
+<td>Just like self.assertTrue(a not in b), but with a nicer default message.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotIsInstance.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertNotIsInstance" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotIsInstance"><code class="xref py py-obj docutils literal"><span class="pre">assertNotIsInstance</span></code></a>(obj,&nbsp;cls[,&nbsp;msg])</td>
+<td>Included for symmetry with assertIsInstance.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotRegexpMatches.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertNotRegexpMatches" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertNotRegexpMatches"><code class="xref py py-obj docutils literal"><span class="pre">assertNotRegexpMatches</span></code></a>(text,&nbsp;unexpected_regexp)</td>
+<td>Fail the test if the text matches the regular expression.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertRaises.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertRaises" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertRaises"><code class="xref py py-obj docutils literal"><span class="pre">assertRaises</span></code></a>(excClass[,&nbsp;callableObj])</td>
+<td>Fail unless an exception of class excClass is raised by callableObj when invoked with arguments args and keyword arguments kwargs.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertRaisesRegexp.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertRaisesRegexp" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertRaisesRegexp"><code class="xref py py-obj docutils literal"><span class="pre">assertRaisesRegexp</span></code></a>(expected_exception,&nbsp;...)</td>
+<td>Asserts that the message in a raised exception matches a regexp.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertRegexpMatches.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertRegexpMatches" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertRegexpMatches"><code class="xref py py-obj docutils literal"><span class="pre">assertRegexpMatches</span></code></a>(text,&nbsp;expected_regexp[,&nbsp;msg])</td>
+<td>Fail the test unless the text matches the regular expression.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertSequenceEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertSequenceEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertSequenceEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertSequenceEqual</span></code></a>(seq1,&nbsp;seq2[,&nbsp;msg,&nbsp;seq_type])</td>
+<td>An equality assertion for ordered sequences (like lists and tuples).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertSetEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertSetEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertSetEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertSetEqual</span></code></a>(set1,&nbsp;set2[,&nbsp;msg])</td>
+<td>A set-specific equality assertion.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertTrue.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertTrue" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertTrue"><code class="xref py py-obj docutils literal"><span class="pre">assertTrue</span></code></a>(expr[,&nbsp;msg])</td>
+<td>Check that the expression is true.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assertTupleEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.assertTupleEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.assertTupleEqual"><code class="xref py py-obj docutils literal"><span class="pre">assertTupleEqual</span></code></a>(tuple1,&nbsp;tuple2[,&nbsp;msg])</td>
+<td>A tuple-specific equality assertion.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.assert_.html#statsmodels.sandbox.tests.test_formula.TestTerm.assert_" title="statsmodels.sandbox.tests.test_formula.TestTerm.assert_"><code class="xref py py-obj docutils literal"><span class="pre">assert_</span></code></a>(expr[,&nbsp;msg])</td>
+<td>Check that the expression is true.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.countTestCases.html#statsmodels.sandbox.tests.test_formula.TestTerm.countTestCases" title="statsmodels.sandbox.tests.test_formula.TestTerm.countTestCases"><code class="xref py py-obj docutils literal"><span class="pre">countTestCases</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.debug.html#statsmodels.sandbox.tests.test_formula.TestTerm.debug" title="statsmodels.sandbox.tests.test_formula.TestTerm.debug"><code class="xref py py-obj docutils literal"><span class="pre">debug</span></code></a>()</td>
+<td>Run the test without collecting errors in a TestResult</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.defaultTestResult.html#statsmodels.sandbox.tests.test_formula.TestTerm.defaultTestResult" title="statsmodels.sandbox.tests.test_formula.TestTerm.defaultTestResult"><code class="xref py py-obj docutils literal"><span class="pre">defaultTestResult</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.doCleanups.html#statsmodels.sandbox.tests.test_formula.TestTerm.doCleanups" title="statsmodels.sandbox.tests.test_formula.TestTerm.doCleanups"><code class="xref py py-obj docutils literal"><span class="pre">doCleanups</span></code></a>()</td>
+<td>Execute all cleanup functions.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.fail.html#statsmodels.sandbox.tests.test_formula.TestTerm.fail" title="statsmodels.sandbox.tests.test_formula.TestTerm.fail"><code class="xref py py-obj docutils literal"><span class="pre">fail</span></code></a>([msg])</td>
+<td>Fail immediately, with the given message.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.failIf.html#statsmodels.sandbox.tests.test_formula.TestTerm.failIf" title="statsmodels.sandbox.tests.test_formula.TestTerm.failIf"><code class="xref py py-obj docutils literal"><span class="pre">failIf</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.failIfAlmostEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.failIfAlmostEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.failIfAlmostEqual"><code class="xref py py-obj docutils literal"><span class="pre">failIfAlmostEqual</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.failIfEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.failIfEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.failIfEqual"><code class="xref py py-obj docutils literal"><span class="pre">failIfEqual</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.failUnless.html#statsmodels.sandbox.tests.test_formula.TestTerm.failUnless" title="statsmodels.sandbox.tests.test_formula.TestTerm.failUnless"><code class="xref py py-obj docutils literal"><span class="pre">failUnless</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.failUnlessAlmostEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.failUnlessAlmostEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.failUnlessAlmostEqual"><code class="xref py py-obj docutils literal"><span class="pre">failUnlessAlmostEqual</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.failUnlessEqual.html#statsmodels.sandbox.tests.test_formula.TestTerm.failUnlessEqual" title="statsmodels.sandbox.tests.test_formula.TestTerm.failUnlessEqual"><code class="xref py py-obj docutils literal"><span class="pre">failUnlessEqual</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.failUnlessRaises.html#statsmodels.sandbox.tests.test_formula.TestTerm.failUnlessRaises" title="statsmodels.sandbox.tests.test_formula.TestTerm.failUnlessRaises"><code class="xref py py-obj docutils literal"><span class="pre">failUnlessRaises</span></code></a>(*args,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.id.html#statsmodels.sandbox.tests.test_formula.TestTerm.id" title="statsmodels.sandbox.tests.test_formula.TestTerm.id"><code class="xref py py-obj docutils literal"><span class="pre">id</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.run.html#statsmodels.sandbox.tests.test_formula.TestTerm.run" title="statsmodels.sandbox.tests.test_formula.TestTerm.run"><code class="xref py py-obj docutils literal"><span class="pre">run</span></code></a>([result])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.setUp.html#statsmodels.sandbox.tests.test_formula.TestTerm.setUp" title="statsmodels.sandbox.tests.test_formula.TestTerm.setUp"><code class="xref py py-obj docutils literal"><span class="pre">setUp</span></code></a>()</td>
+<td>Hook method for setting up the test fixture before exercising it.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.setUpClass.html#statsmodels.sandbox.tests.test_formula.TestTerm.setUpClass" title="statsmodels.sandbox.tests.test_formula.TestTerm.setUpClass"><code class="xref py py-obj docutils literal"><span class="pre">setUpClass</span></code></a>()</td>
+<td>Hook method for setting up class fixture before running tests in the class.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.shortDescription.html#statsmodels.sandbox.tests.test_formula.TestTerm.shortDescription" title="statsmodels.sandbox.tests.test_formula.TestTerm.shortDescription"><code class="xref py py-obj docutils literal"><span class="pre">shortDescription</span></code></a>()</td>
+<td>Returns a one-line description of the test, or None if no description has been provided.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.skipTest.html#statsmodels.sandbox.tests.test_formula.TestTerm.skipTest" title="statsmodels.sandbox.tests.test_formula.TestTerm.skipTest"><code class="xref py py-obj docutils literal"><span class="pre">skipTest</span></code></a>(reason)</td>
+<td>Skip this test.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.tearDown.html#statsmodels.sandbox.tests.test_formula.TestTerm.tearDown" title="statsmodels.sandbox.tests.test_formula.TestTerm.tearDown"><code class="xref py py-obj docutils literal"><span class="pre">tearDown</span></code></a>()</td>
+<td>Hook method for deconstructing the test fixture after testing it.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.tearDownClass.html#statsmodels.sandbox.tests.test_formula.TestTerm.tearDownClass" title="statsmodels.sandbox.tests.test_formula.TestTerm.tearDownClass"><code class="xref py py-obj docutils literal"><span class="pre">tearDownClass</span></code></a>()</td>
+<td>Hook method for deconstructing the class fixture after running all tests in the class.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.test_add.html#statsmodels.sandbox.tests.test_formula.TestTerm.test_add" title="statsmodels.sandbox.tests.test_formula.TestTerm.test_add"><code class="xref py py-obj docutils literal"><span class="pre">test_add</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.test_init.html#statsmodels.sandbox.tests.test_formula.TestTerm.test_init" title="statsmodels.sandbox.tests.test_formula.TestTerm.test_init"><code class="xref py py-obj docutils literal"><span class="pre">test_init</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.test_mul.html#statsmodels.sandbox.tests.test_formula.TestTerm.test_mul" title="statsmodels.sandbox.tests.test_formula.TestTerm.test_mul"><code class="xref py py-obj docutils literal"><span class="pre">test_mul</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.test_str.html#statsmodels.sandbox.tests.test_formula.TestTerm.test_str" title="statsmodels.sandbox.tests.test_formula.TestTerm.test_str"><code class="xref py py-obj docutils literal"><span class="pre">test_str</span></code></a>()</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>6.9.6.2.2.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.longMessage.html#statsmodels.sandbox.tests.test_formula.TestTerm.longMessage" title="statsmodels.sandbox.tests.test_formula.TestTerm.longMessage"><code class="xref py py-obj docutils literal"><span class="pre">longMessage</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tests.test_formula.TestTerm.maxDiff.html#statsmodels.sandbox.tests.test_formula.TestTerm.maxDiff" title="statsmodels.sandbox.tests.test_formula.TestTerm.maxDiff"><code class="xref py py-obj docutils literal"><span class="pre">maxDiff</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.tests.test_formula.TestTerm.__init__.html" class="btn btn-neutral float-right" title="6.9.6.2.2.1.1. statsmodels.sandbox.tests.test_formula.TestTerm.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.tests.test_formula.TestFormula.maxDiff.html" class="btn btn-neutral" title="6.9.6.2.1.2.2. statsmodels.sandbox.tests.test_formula.TestFormula.maxDiff" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

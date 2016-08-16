@@ -1,0 +1,475 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>patsy.missing &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="Module code" href="../index.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>patsy.missing</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for patsy.missing</h1><div class="highlight"><pre>
+<span></span><span class="c1"># This file is part of Patsy</span>
+<span class="c1"># Copyright (C) 2013 Nathaniel Smith &lt;njs@pobox.com&gt;</span>
+<span class="c1"># See file LICENSE.txt for license information.</span>
+
+<span class="c1"># Missing data detection/handling</span>
+
+<span class="c1"># First, how do we represent missing data? (i.e., which values count as</span>
+<span class="c1"># &quot;missing&quot;?) In the long run, we want to use numpy&#39;s NA support... but that</span>
+<span class="c1"># doesn&#39;t exist yet. Until then, people use various sorts of ad-hoc</span>
+<span class="c1"># things. Some things that might be considered NA:</span>
+<span class="c1">#   NA (eventually)</span>
+<span class="c1">#   NaN  (in float or object arrays)</span>
+<span class="c1">#   None (in object arrays)</span>
+<span class="c1">#   np.ma.masked (in numpy.ma masked arrays)</span>
+<span class="c1"># Pandas compatibility considerations:</span>
+<span class="c1">#   For numeric arrays, None is unconditionally converted to NaN.</span>
+<span class="c1">#   For object arrays (including string arrays!), None and NaN are preserved,</span>
+<span class="c1">#     but pandas.isnull() returns True for both.</span>
+<span class="c1"># np.ma compatibility considerations:</span>
+<span class="c1">#   Preserving array subtypes is a huge pain, because it means that we can&#39;t</span>
+<span class="c1">#   just call &#39;asarray&#39; and be done... we already jump through tons of hoops</span>
+<span class="c1">#   to write code that can handle both ndarray&#39;s and pandas objects, and</span>
+<span class="c1">#   just thinking about adding another item to this list makes me tired. So</span>
+<span class="c1">#   for now we don&#39;t support np.ma missing values. Use pandas!</span>
+
+<span class="c1"># Next, what should be done once we find missing data? R&#39;s options:</span>
+<span class="c1">#   -- throw away those rows (from all aligned matrices)</span>
+<span class="c1">#      -- with or without preserving information on which rows were discarded</span>
+<span class="c1">#   -- error out</span>
+<span class="c1">#   -- carry on</span>
+<span class="c1"># The &#39;carry on&#39; option requires that we have some way to represent NA in our</span>
+<span class="c1"># output array. To avoid further solidifying the use of NaN for this purpose,</span>
+<span class="c1"># we&#39;ll leave this option out for now, until real NA support is</span>
+<span class="c1"># available. Also, we always preserve information on which rows were</span>
+<span class="c1"># discarded, using the pandas index functionality (currently this is only</span>
+<span class="c1"># returned to the original caller if they used return_type=&quot;dataframe&quot;,</span>
+<span class="c1"># though).</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">patsy</span> <span class="k">import</span> <span class="n">PatsyError</span>
+<span class="kn">from</span> <span class="nn">patsy.util</span> <span class="k">import</span> <span class="p">(</span><span class="n">safe_isnan</span><span class="p">,</span> <span class="n">safe_scalar_isnan</span><span class="p">,</span>
+                        <span class="n">no_pickling</span><span class="p">,</span> <span class="n">assert_no_pickling</span><span class="p">)</span>
+
+<span class="c1"># These are made available in the patsy.* namespace</span>
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;NAAction&quot;</span><span class="p">]</span>
+
+<span class="n">_valid_NA_types</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;NaN&quot;</span><span class="p">]</span>
+<span class="n">_valid_NA_responses</span> <span class="o">=</span> <span class="p">[</span><span class="s2">&quot;raise&quot;</span><span class="p">,</span> <span class="s2">&quot;drop&quot;</span><span class="p">]</span>
+<span class="k">def</span> <span class="nf">_desc_options</span><span class="p">(</span><span class="n">options</span><span class="p">):</span>
+    <span class="k">return</span> <span class="s2">&quot;, &quot;</span><span class="o">.</span><span class="n">join</span><span class="p">([</span><span class="nb">repr</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span> <span class="k">for</span> <span class="n">opt</span> <span class="ow">in</span> <span class="n">options</span><span class="p">])</span>
+
+<span class="k">class</span> <span class="nc">NAAction</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;An :class:`NAAction` object defines a strategy for handling missing</span>
+<span class="sd">    data.</span>
+
+<span class="sd">    &quot;NA&quot; is short for &quot;Not Available&quot;, and is used to refer to any value which</span>
+<span class="sd">    is somehow unmeasured or unavailable. In the long run, it is devoutly</span>
+<span class="sd">    hoped that numpy will gain first-class missing value support. Until then,</span>
+<span class="sd">    we work around this lack as best we&#39;re able.</span>
+
+<span class="sd">    There are two parts to this: First, we have to determine what counts as</span>
+<span class="sd">    missing data. For numerical data, the default is to treat NaN values</span>
+<span class="sd">    (e.g., ``numpy.nan``) as missing. For categorical data, the default is to</span>
+<span class="sd">    treat NaN values, and also the Python object None, as missing. (This is</span>
+<span class="sd">    consistent with how pandas does things, so if you&#39;re already using</span>
+<span class="sd">    None/NaN to mark missing data in your pandas DataFrames, you&#39;re good to</span>
+<span class="sd">    go.)</span>
+
+<span class="sd">    Second, we have to decide what to do with any missing data when we</span>
+<span class="sd">    encounter it. One option is to simply discard any rows which contain</span>
+<span class="sd">    missing data from our design matrices (``drop``). Another option is to</span>
+<span class="sd">    raise an error (``raise``). A third option would be to simply let the</span>
+<span class="sd">    missing values pass through into the returned design matrices. However,</span>
+<span class="sd">    this last option is not yet implemented, because of the lack of any</span>
+<span class="sd">    standard way to represent missing values in arbitrary numpy matrices;</span>
+<span class="sd">    we&#39;re hoping numpy will get this sorted out before we standardize on</span>
+<span class="sd">    anything ourselves.</span>
+
+<span class="sd">    You can control how patsy handles missing data through the ``NA_action=``</span>
+<span class="sd">    argument to functions like :func:`build_design_matrices` and</span>
+<span class="sd">    :func:`dmatrix`. If all you want to do is to choose between ``drop`` and</span>
+<span class="sd">    ``raise`` behaviour, you can pass one of those strings as the</span>
+<span class="sd">    ``NA_action=`` argument directly. If you want more fine-grained control</span>
+<span class="sd">    over how missing values are detected and handled, then you can create an</span>
+<span class="sd">    instance of this class, or your own object that implements the same</span>
+<span class="sd">    interface, and pass that as the ``NA_action=`` argument instead.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<div class="viewcode-block" id="NAAction.__init__"><a class="viewcode-back" href="../../generated/generated/statsmodels.formula.formulatools.NAAction.__init__.html#statsmodels.formula.formulatools.NAAction.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">on_NA</span><span class="o">=</span><span class="s2">&quot;drop&quot;</span><span class="p">,</span> <span class="n">NA_types</span><span class="o">=</span><span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">,</span> <span class="s2">&quot;NaN&quot;</span><span class="p">]):</span>
+        <span class="sd">&quot;&quot;&quot;The :class:`NAAction` constructor takes the following arguments:</span>
+
+<span class="sd">        :arg on_NA: How to handle missing values. The default is ``&quot;drop&quot;``,</span>
+<span class="sd">          which removes all rows from all matrices which contain any missing</span>
+<span class="sd">          values. Also available is ``&quot;raise&quot;``, which raises an exception</span>
+<span class="sd">          when any missing values are encountered.</span>
+<span class="sd">        :arg NA_types: Which rules are used to identify missing values, as a</span>
+<span class="sd">          list of strings. Allowed values are:</span>
+
+<span class="sd">          * ``&quot;None&quot;``: treat the ``None`` object as missing in categorical</span>
+<span class="sd">            data.</span>
+<span class="sd">          * ``&quot;NaN&quot;``: treat floating point NaN values as missing in</span>
+<span class="sd">            categorical and numerical data.</span>
+
+<span class="sd">        .. versionadded:: 0.2.0</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">on_NA</span> <span class="o">=</span> <span class="n">on_NA</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_NA</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_valid_NA_responses</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid on_NA action </span><span class="si">%r</span><span class="s2"> &quot;</span>
+                             <span class="s2">&quot;(should be one of </span><span class="si">%s</span><span class="s2">)&quot;</span>
+                             <span class="o">%</span> <span class="p">(</span><span class="n">on_NA</span><span class="p">,</span> <span class="n">_desc_options</span><span class="p">(</span><span class="n">_valid_NA_responses</span><span class="p">)))</span>
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">NA_types</span><span class="p">,</span> <span class="nb">str</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;NA_types should be a list of strings&quot;</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">NA_types</span> <span class="o">=</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">NA_types</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">NA_type</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">NA_types</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">NA_type</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">_valid_NA_types</span><span class="p">:</span>
+                <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;invalid NA_type </span><span class="si">%r</span><span class="s2"> &quot;</span>
+                                 <span class="s2">&quot;(should be one of </span><span class="si">%s</span><span class="s2">)&quot;</span>
+                                 <span class="o">%</span> <span class="p">(</span><span class="n">NA_type</span><span class="p">,</span> <span class="n">_desc_options</span><span class="p">(</span><span class="n">_valid_NA_types</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="NAAction.is_categorical_NA"><a class="viewcode-back" href="../../generated/generated/statsmodels.formula.formulatools.NAAction.is_categorical_NA.html#statsmodels.formula.formulatools.NAAction.is_categorical_NA">[docs]</a>    <span class="k">def</span> <span class="nf">is_categorical_NA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">obj</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Return True if `obj` is a categorical NA value.</span>
+
+<span class="sd">        Note that here `obj` is a single scalar value.&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="s2">&quot;NaN&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">NA_types</span> <span class="ow">and</span> <span class="n">safe_scalar_isnan</span><span class="p">(</span><span class="n">obj</span><span class="p">):</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">if</span> <span class="s2">&quot;None&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">NA_types</span> <span class="ow">and</span> <span class="n">obj</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">True</span>
+        <span class="k">return</span> <span class="kc">False</span></div>
+
+<div class="viewcode-block" id="NAAction.is_numerical_NA"><a class="viewcode-back" href="../../generated/generated/statsmodels.formula.formulatools.NAAction.is_numerical_NA.html#statsmodels.formula.formulatools.NAAction.is_numerical_NA">[docs]</a>    <span class="k">def</span> <span class="nf">is_numerical_NA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">arr</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Returns a 1-d mask array indicating which rows in an array of</span>
+<span class="sd">        numerical values contain at least one NA value.</span>
+
+<span class="sd">        Note that here `arr` is a numpy array or pandas DataFrame.&quot;&quot;&quot;</span>
+        <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">if</span> <span class="s2">&quot;NaN&quot;</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">NA_types</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">|=</span> <span class="n">np</span><span class="o">.</span><span class="n">isnan</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">mask</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">mask</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mask</span></div>
+
+<div class="viewcode-block" id="NAAction.handle_NA"><a class="viewcode-back" href="../../generated/generated/statsmodels.formula.formulatools.NAAction.handle_NA.html#statsmodels.formula.formulatools.NAAction.handle_NA">[docs]</a>    <span class="k">def</span> <span class="nf">handle_NA</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">is_NAs</span><span class="p">,</span> <span class="n">origins</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Takes a set of factor values that may have NAs, and handles them</span>
+<span class="sd">        appropriately.</span>
+
+<span class="sd">        :arg values: A list of `ndarray` objects representing the data.</span>
+<span class="sd">          These may be 1- or 2-dimensional, and may be of varying dtype. All</span>
+<span class="sd">          will have the same number of rows (or entries, for 1-d arrays).</span>
+<span class="sd">        :arg is_NAs: A list with the same number of entries as `values`,</span>
+<span class="sd">          containing boolean `ndarray` objects that indicate which rows</span>
+<span class="sd">          contain NAs in the corresponding entry in `values`.</span>
+<span class="sd">        :arg origins: A list with the same number of entries as</span>
+<span class="sd">          `values`, containing information on the origin of each</span>
+<span class="sd">          value. If we encounter a problem with some particular value, we use</span>
+<span class="sd">          the corresponding entry in `origins` as the origin argument when</span>
+<span class="sd">          raising a :class:`PatsyError`.</span>
+<span class="sd">        :returns: A list of new values (which may have a differing number of</span>
+<span class="sd">          rows.)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">is_NAs</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">origins</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">values</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_NA</span> <span class="o">==</span> <span class="s2">&quot;raise&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_NA_raise</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">is_NAs</span><span class="p">,</span> <span class="n">origins</span><span class="p">)</span>
+        <span class="k">elif</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_NA</span> <span class="o">==</span> <span class="s2">&quot;drop&quot;</span><span class="p">:</span>
+            <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_handle_NA_drop</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">is_NAs</span><span class="p">,</span> <span class="n">origins</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span> <span class="c1"># pragma: no cover</span>
+            <span class="k">assert</span> <span class="kc">False</span></div>
+
+    <span class="k">def</span> <span class="nf">_handle_NA_raise</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">is_NAs</span><span class="p">,</span> <span class="n">origins</span><span class="p">):</span>
+        <span class="k">for</span> <span class="n">is_NA</span><span class="p">,</span> <span class="n">origin</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">is_NAs</span><span class="p">,</span> <span class="n">origins</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">is_NA</span><span class="p">):</span>
+                <span class="k">raise</span> <span class="n">PatsyError</span><span class="p">(</span><span class="s2">&quot;factor contains missing values&quot;</span><span class="p">,</span> <span class="n">origin</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">values</span>
+
+    <span class="k">def</span> <span class="nf">_handle_NA_drop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">is_NAs</span><span class="p">,</span> <span class="n">origins</span><span class="p">):</span>
+        <span class="n">total_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">is_NAs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">is_NA</span> <span class="ow">in</span> <span class="n">is_NAs</span><span class="p">:</span>
+            <span class="n">total_mask</span> <span class="o">|=</span> <span class="n">is_NA</span>
+        <span class="n">good_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">total_mask</span>
+        <span class="c1"># &quot;...&quot; to handle 1- versus 2-dim indexing</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="n">good_mask</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span>
+
+    <span class="n">__getstate__</span> <span class="o">=</span> <span class="n">no_pickling</span>
+
+<span class="k">def</span> <span class="nf">test_NAAction_basic</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">nose.tools</span> <span class="k">import</span> <span class="n">assert_raises</span>
+    <span class="n">assert_raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">NAAction</span><span class="p">,</span> <span class="n">on_NA</span><span class="o">=</span><span class="s2">&quot;pord&quot;</span><span class="p">)</span>
+    <span class="n">assert_raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">NAAction</span><span class="p">,</span> <span class="n">NA_types</span><span class="o">=</span><span class="p">(</span><span class="s2">&quot;NaN&quot;</span><span class="p">,</span> <span class="s2">&quot;asdf&quot;</span><span class="p">))</span>
+    <span class="n">assert_raises</span><span class="p">(</span><span class="ne">ValueError</span><span class="p">,</span> <span class="n">NAAction</span><span class="p">,</span> <span class="n">NA_types</span><span class="o">=</span><span class="s2">&quot;NaN&quot;</span><span class="p">)</span>
+
+    <span class="n">assert_no_pickling</span><span class="p">(</span><span class="n">NAAction</span><span class="p">())</span>
+
+<span class="k">def</span> <span class="nf">test_NAAction_NA_types_numerical</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">NA_types</span> <span class="ow">in</span> <span class="p">[[],</span> <span class="p">[</span><span class="s2">&quot;NaN&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;NaN&quot;</span><span class="p">,</span> <span class="s2">&quot;None&quot;</span><span class="p">]]:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">NAAction</span><span class="p">(</span><span class="n">NA_types</span><span class="o">=</span><span class="n">NA_types</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">extra_shape</span> <span class="ow">in</span> <span class="p">[(),</span> <span class="p">(</span><span class="mi">1</span><span class="p">,),</span> <span class="p">(</span><span class="mi">2</span><span class="p">,)]:</span>
+            <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">((</span><span class="mi">4</span><span class="p">,)</span> <span class="o">+</span> <span class="n">extra_shape</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">float</span><span class="p">)</span>
+            <span class="n">nan_rows</span> <span class="o">=</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">2</span><span class="p">]</span>
+            <span class="k">if</span> <span class="n">arr</span><span class="o">.</span><span class="n">ndim</span> <span class="o">&gt;</span> <span class="mi">1</span> <span class="ow">and</span> <span class="n">arr</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">arr</span><span class="p">[</span><span class="n">nan_rows</span><span class="p">,</span> <span class="p">[</span><span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">arr</span><span class="p">[</span><span class="n">nan_rows</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span>
+            <span class="n">exp_NA_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+            <span class="k">if</span> <span class="s2">&quot;NaN&quot;</span> <span class="ow">in</span> <span class="n">NA_types</span><span class="p">:</span>
+                <span class="n">exp_NA_mask</span><span class="p">[</span><span class="n">nan_rows</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">got_NA_mask</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">is_numerical_NA</span><span class="p">(</span><span class="n">arr</span><span class="p">)</span>
+            <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">got_NA_mask</span><span class="p">,</span> <span class="n">exp_NA_mask</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_NAAction_NA_types_categorical</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">NA_types</span> <span class="ow">in</span> <span class="p">[[],</span> <span class="p">[</span><span class="s2">&quot;NaN&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;None&quot;</span><span class="p">],</span> <span class="p">[</span><span class="s2">&quot;NaN&quot;</span><span class="p">,</span> <span class="s2">&quot;None&quot;</span><span class="p">]]:</span>
+        <span class="n">action</span> <span class="o">=</span> <span class="n">NAAction</span><span class="p">(</span><span class="n">NA_types</span><span class="o">=</span><span class="n">NA_types</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">action</span><span class="o">.</span><span class="n">is_categorical_NA</span><span class="p">(</span><span class="s2">&quot;a&quot;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="ow">not</span> <span class="n">action</span><span class="o">.</span><span class="n">is_categorical_NA</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">action</span><span class="o">.</span><span class="n">is_categorical_NA</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">&quot;None&quot;</span> <span class="ow">in</span> <span class="n">NA_types</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">action</span><span class="o">.</span><span class="n">is_categorical_NA</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">)</span> <span class="o">==</span> <span class="p">(</span><span class="s2">&quot;NaN&quot;</span> <span class="ow">in</span> <span class="n">NA_types</span><span class="p">)</span>
+
+<span class="k">def</span> <span class="nf">test_NAAction_drop</span><span class="p">():</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">NAAction</span><span class="p">(</span><span class="s2">&quot;drop&quot;</span><span class="p">)</span>
+    <span class="n">in_values</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">]),</span>
+                 <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">20.0</span><span class="p">,</span> <span class="mf">30.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">,</span> <span class="mf">50.0</span><span class="p">]),</span>
+                 <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([[</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">],</span>
+                             <span class="p">[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span>
+                             <span class="p">[</span><span class="mf">10.0</span><span class="p">,</span> <span class="mf">5.0</span><span class="p">],</span>
+                             <span class="p">[</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">],</span>
+                             <span class="p">[</span><span class="mf">8.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">]]),</span>
+                 <span class="p">]</span>
+    <span class="n">is_NAs</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]),</span>
+              <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">),</span>
+              <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="kc">True</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">]),</span>
+              <span class="p">]</span>
+    <span class="n">out_values</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">handle_NA</span><span class="p">(</span><span class="n">in_values</span><span class="p">,</span> <span class="n">is_NAs</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">]</span> <span class="o">*</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">assert</span> <span class="nb">len</span><span class="p">(</span><span class="n">out_values</span><span class="p">)</span> <span class="o">==</span> <span class="mi">3</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">out_values</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="p">[</span><span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">out_values</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="mf">20.0</span><span class="p">,</span> <span class="mf">40.0</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">out_values</span><span class="p">[</span><span class="mi">2</span><span class="p">],</span> <span class="p">[[</span><span class="mf">3.0</span><span class="p">,</span> <span class="mf">4.0</span><span class="p">],</span> <span class="p">[</span><span class="mf">6.0</span><span class="p">,</span> <span class="mf">7.0</span><span class="p">]])</span>
+    
+<span class="k">def</span> <span class="nf">test_NAAction_raise</span><span class="p">():</span>
+    <span class="n">action</span> <span class="o">=</span> <span class="n">NAAction</span><span class="p">(</span><span class="n">on_NA</span><span class="o">=</span><span class="s2">&quot;raise&quot;</span><span class="p">)</span>
+
+    <span class="c1"># no-NA just passes through:</span>
+    <span class="n">in_arrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]),</span>
+               <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">])]</span>
+    <span class="n">is_NAs</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">])]</span> <span class="o">*</span> <span class="mi">2</span>
+    <span class="n">got_arrs</span> <span class="o">=</span> <span class="n">action</span><span class="o">.</span><span class="n">handle_NA</span><span class="p">(</span><span class="n">in_arrs</span><span class="p">,</span> <span class="n">is_NAs</span><span class="p">,</span> <span class="p">[</span><span class="kc">None</span><span class="p">,</span> <span class="kc">None</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">got_arrs</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">in_arrs</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">got_arrs</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">in_arrs</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+
+    <span class="kn">from</span> <span class="nn">patsy.origin</span> <span class="k">import</span> <span class="n">Origin</span>
+    <span class="n">o1</span> <span class="o">=</span> <span class="n">Origin</span><span class="p">(</span><span class="s2">&quot;asdf&quot;</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">o2</span> <span class="o">=</span> <span class="n">Origin</span><span class="p">(</span><span class="s2">&quot;asdf&quot;</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+
+    <span class="c1"># NA raises an error with a correct origin</span>
+    <span class="n">in_idx</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">in_arrs</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mf">1.1</span><span class="p">,</span> <span class="mf">1.2</span><span class="p">]),</span>
+               <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="mf">1.0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">])]</span>
+    <span class="n">is_NAs</span> <span class="o">=</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">False</span><span class="p">]),</span>
+              <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">([</span><span class="kc">False</span><span class="p">,</span> <span class="kc">True</span><span class="p">])]</span>
+    <span class="k">try</span><span class="p">:</span>
+        <span class="n">action</span><span class="o">.</span><span class="n">handle_NA</span><span class="p">(</span><span class="n">in_arrs</span><span class="p">,</span> <span class="n">is_NAs</span><span class="p">,</span> <span class="p">[</span><span class="n">o1</span><span class="p">,</span> <span class="n">o2</span><span class="p">])</span>
+        <span class="k">assert</span> <span class="kc">False</span>
+    <span class="k">except</span> <span class="n">PatsyError</span> <span class="k">as</span> <span class="n">e</span><span class="p">:</span>
+        <span class="k">assert</span> <span class="n">e</span><span class="o">.</span><span class="n">origin</span> <span class="ow">is</span> <span class="n">o2</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

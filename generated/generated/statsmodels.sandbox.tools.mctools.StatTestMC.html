@@ -1,0 +1,373 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.10.3.2.2. statsmodels.sandbox.tools.mctools.StatTestMC &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.10.3. statsmodels.sandbox.tools.mctools" href="../statsmodels.sandbox.tools.mctools.html"/>
+        <link rel="next" title="6.10.3.2.2.1.1. statsmodels.sandbox.tools.mctools.StatTestMC.__init__" href="statsmodels.sandbox.tools.mctools.StatTestMC.__init__.html"/>
+        <link rel="prev" title="6.10.3.2.1.2.1. statsmodels.sandbox.tools.mctools.SimpleTable.data" href="statsmodels.sandbox.tools.mctools.SimpleTable.data.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tools.html">6.10.1. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tools.cross_val.html">6.10.2. statsmodels.sandbox.tools.cross_val</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.tools.mctools.html">6.10.3. statsmodels.sandbox.tools.mctools</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.tools.mctools.html#todos-design">6.10.3.1. TODOs, Design</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.tools.mctools.html#classes">6.10.3.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tools.tools_pca.html">6.10.4. statsmodels.sandbox.tools.tools_pca</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.tools.try_mctools.html">6.10.5. statsmodels.sandbox.tools.try_mctools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.tools.mctools.html">6.10.3. statsmodels.sandbox.tools.mctools</a> &raquo;</li>
+        
+      <li>6.10.3.2.2. statsmodels.sandbox.tools.mctools.StatTestMC</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.tools.mctools.StatTestMC.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-tools-mctools-stattestmc">
+<h1>6.10.3.2.2. statsmodels.sandbox.tools.mctools.StatTestMC<a class="headerlink" href="#statsmodels-sandbox-tools-mctools-stattestmc" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.sandbox.tools.mctools.StatTestMC">
+<em class="property">class </em><code class="descclassname">statsmodels.sandbox.tools.mctools.</code><code class="descname">StatTestMC</code><span class="sig-paren">(</span><em>dgp</em>, <em>statistic</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/tools/mctools.html#StatTestMC"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.tools.mctools.StatTestMC" title="Permalink to this definition">¶</a></dt>
+<dd><p>class to run Monte Carlo study on a statistical test&#8217;&#8216;&#8217;</p>
+<p>TODO
+print(summary, for quantiles and for histogram
+draft in trying out script log</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>dgp</strong> : callable</p>
+<blockquote>
+<div><p>Function that generates the data to be used in Monte Carlo that should
+return a new sample with each call</p>
+</div></blockquote>
+<p><strong>statistic</strong> : callable</p>
+<blockquote class="last">
+<div><p>Function that calculates the test statistic, which can return either
+a single statistic or a 1d array_like (tuple, list, ndarray).
+see also statindices in description of run</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">This is (currently) designed for a single call to run. If run is
+called a second time with different arguments, then some attributes might
+not be updated, and, therefore, not correspond to the same run.</p>
+</div>
+<div class="admonition warning">
+<p class="first admonition-title">Warning</p>
+<p class="last">Under Construction, don&#8217;t expect stability in Api or implementation</p>
+</div>
+<p class="rubric">Examples</p>
+<p>Define a function that defines our test statistic:</p>
+<dl class="docutils">
+<dt>def lb(x):</dt>
+<dd>s,p = acorr_ljungbox(x, lags=4)
+return np.r_[s, p]</dd>
+</dl>
+<p>Note lb returns eight values.</p>
+<p>Define a random sample generator, for example 500 independently, normal
+distributed observations in a sample:</p>
+<dl class="docutils">
+<dt>def normalnoisesim(nobs=500, loc=0.0):</dt>
+<dd>return (loc+np.random.randn(nobs))</dd>
+</dl>
+<p>Create instance and run Monte Carlo. Using statindices=list(range(4)) means that
+only the first for values of the return of the statistic (lb) are stored
+in the Monte Carlo results.</p>
+<p>mc1 = StatTestMC(normalnoisesim, lb)
+mc1.run(5000, statindices=list(range(4)))</p>
+<p>Most of the other methods take an idx which indicates for which columns
+the results should be presented, e.g.</p>
+<p>print(mc1.cdf(crit, [1,2,3])[1]</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>many methods store intermediate results</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td>self.mcres</td>
+<td>(ndarray (nrepl, nreturns) or (nrepl, len(statindices))) Monte Carlo results stored by run</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="statsmodels.sandbox.tools.mctools.StatTestMC.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>dgp</em>, <em>statistic</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/tools/mctools.html#StatTestMC.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.tools.mctools.StatTestMC.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>6.10.3.2.2.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tools.mctools.StatTestMC.__init__.html#statsmodels.sandbox.tools.mctools.StatTestMC.__init__" title="statsmodels.sandbox.tools.mctools.StatTestMC.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(dgp,&nbsp;statistic)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tools.mctools.StatTestMC.cdf.html#statsmodels.sandbox.tools.mctools.StatTestMC.cdf" title="statsmodels.sandbox.tools.mctools.StatTestMC.cdf"><code class="xref py py-obj docutils literal"><span class="pre">cdf</span></code></a>(x[,&nbsp;idx])</td>
+<td>calculate cumulative probabilities of Monte Carlo results</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tools.mctools.StatTestMC.get_mc_sorted.html#statsmodels.sandbox.tools.mctools.StatTestMC.get_mc_sorted" title="statsmodels.sandbox.tools.mctools.StatTestMC.get_mc_sorted"><code class="xref py py-obj docutils literal"><span class="pre">get_mc_sorted</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tools.mctools.StatTestMC.histogram.html#statsmodels.sandbox.tools.mctools.StatTestMC.histogram" title="statsmodels.sandbox.tools.mctools.StatTestMC.histogram"><code class="xref py py-obj docutils literal"><span class="pre">histogram</span></code></a>([idx,&nbsp;critval])</td>
+<td>calculate histogram values</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tools.mctools.StatTestMC.plot_hist.html#statsmodels.sandbox.tools.mctools.StatTestMC.plot_hist" title="statsmodels.sandbox.tools.mctools.StatTestMC.plot_hist"><code class="xref py py-obj docutils literal"><span class="pre">plot_hist</span></code></a>(idx[,&nbsp;distpdf,&nbsp;bins,&nbsp;ax,&nbsp;kwds])</td>
+<td>plot the histogram against a reference distribution</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tools.mctools.StatTestMC.quantiles.html#statsmodels.sandbox.tools.mctools.StatTestMC.quantiles" title="statsmodels.sandbox.tools.mctools.StatTestMC.quantiles"><code class="xref py py-obj docutils literal"><span class="pre">quantiles</span></code></a>([idx,&nbsp;frac])</td>
+<td>calculate quantiles of Monte Carlo results</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tools.mctools.StatTestMC.run.html#statsmodels.sandbox.tools.mctools.StatTestMC.run" title="statsmodels.sandbox.tools.mctools.StatTestMC.run"><code class="xref py py-obj docutils literal"><span class="pre">run</span></code></a>(nrepl[,&nbsp;statindices,&nbsp;dgpargs,&nbsp;statsargs])</td>
+<td>run the actual Monte Carlo and save results</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.tools.mctools.StatTestMC.summary_cdf.html#statsmodels.sandbox.tools.mctools.StatTestMC.summary_cdf" title="statsmodels.sandbox.tools.mctools.StatTestMC.summary_cdf"><code class="xref py py-obj docutils literal"><span class="pre">summary_cdf</span></code></a>(idx,&nbsp;frac,&nbsp;crit[,&nbsp;varnames,&nbsp;title])</td>
+<td>summary table for cumulative density function</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.tools.mctools.StatTestMC.summary_quantiles.html#statsmodels.sandbox.tools.mctools.StatTestMC.summary_quantiles" title="statsmodels.sandbox.tools.mctools.StatTestMC.summary_quantiles"><code class="xref py py-obj docutils literal"><span class="pre">summary_quantiles</span></code></a>(idx,&nbsp;distppf[,&nbsp;frac,&nbsp;...])</td>
+<td>summary table for quantiles (critical values)</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.tools.mctools.StatTestMC.__init__.html" class="btn btn-neutral float-right" title="6.10.3.2.2.1.1. statsmodels.sandbox.tools.mctools.StatTestMC.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.tools.mctools.SimpleTable.data.html" class="btn btn-neutral" title="6.10.3.2.1.2.1. statsmodels.sandbox.tools.mctools.SimpleTable.data" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

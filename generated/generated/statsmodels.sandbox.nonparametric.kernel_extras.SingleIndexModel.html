@@ -1,0 +1,362 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.5.5.3.5. statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.5.5. statsmodels.sandbox.nonparametric.kernel_extras" href="../statsmodels.sandbox.nonparametric.kernel_extras.html"/>
+        <link rel="next" title="6.5.5.3.5.1.1. statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.__init__" href="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.__init__.html"/>
+        <link rel="prev" title="6.5.5.3.4.1.7. statsmodels.sandbox.nonparametric.kernel_extras.SemiLinear.sig_test" href="statsmodels.sandbox.nonparametric.kernel_extras.SemiLinear.sig_test.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.densityorthopoly.html">6.5.1. statsmodels.sandbox.nonparametric.densityorthopoly</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.dgp_examples.html">6.5.2. statsmodels.sandbox.nonparametric.dgp_examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kde2.html">6.5.3. statsmodels.sandbox.nonparametric.kde2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kdecovclass.html">6.5.4. statsmodels.sandbox.nonparametric.kdecovclass</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kernel_extras.html">6.5.5. statsmodels.sandbox.nonparametric.kernel_extras</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kernel_extras.html#references">6.5.5.1. References</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kernel_extras.html#functions">6.5.5.2. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kernel_extras.html#classes">6.5.5.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.kernels.html">6.5.6. statsmodels.sandbox.nonparametric.kernels</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.smoothers.html">6.5.7. statsmodels.sandbox.nonparametric.smoothers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.nonparametric.testdata.html">6.5.8. statsmodels.sandbox.nonparametric.testdata</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.nonparametric.kernel_extras.html">6.5.5. statsmodels.sandbox.nonparametric.kernel_extras</a> &raquo;</li>
+        
+      <li>6.5.5.3.5. statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-nonparametric-kernel-extras-singleindexmodel">
+<h1>6.5.5.3.5. statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel<a class="headerlink" href="#statsmodels-sandbox-nonparametric-kernel-extras-singleindexmodel" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel">
+<em class="property">class </em><code class="descclassname">statsmodels.sandbox.nonparametric.kernel_extras.</code><code class="descname">SingleIndexModel</code><span class="sig-paren">(</span><em>endog</em>, <em>exog</em>, <em>var_type</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/nonparametric/kernel_extras.html#SingleIndexModel"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel" title="Permalink to this definition">¶</a></dt>
+<dd><p>Single index semiparametric model <code class="docutils literal"><span class="pre">y</span> <span class="pre">=</span> <span class="pre">g(X</span> <span class="pre">*</span> <span class="pre">b)</span> <span class="pre">+</span> <span class="pre">e</span></code>.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>endog: array_like</strong></p>
+<blockquote>
+<div><p>The dependent variable</p>
+</div></blockquote>
+<p><strong>exog: array_like</strong></p>
+<blockquote>
+<div><p>The independent variable(s)</p>
+</div></blockquote>
+<p><strong>var_type: str</strong></p>
+<blockquote class="last">
+<div><p>The type of variables in X:</p>
+<blockquote>
+<div><ul class="simple">
+<li>c: continuous</li>
+<li>o: ordered</li>
+<li>u: unordered</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Notes</p>
+<p>This model resembles the binary choice models. The user knows
+that X and b interact linearly, but <code class="docutils literal"><span class="pre">g(X</span> <span class="pre">*</span> <span class="pre">b)</span></code> is unknown.
+In the parametric binary choice models the user usually assumes
+some distribution of g() such as normal or logistic.</p>
+<p class="rubric">References</p>
+<p>See chapter on semiparametric models in [1]</p>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="30%" />
+<col width="70%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>b: array_like</td>
+<td>The linear coefficients b (betas)</td>
+</tr>
+<tr class="row-even"><td>bw: array_like</td>
+<td>Bandwidths</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Methods</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="61%" />
+<col width="39%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>fit(): Computes the fitted values <code class="docutils literal"><span class="pre">E[Y|X]</span> <span class="pre">=</span> <span class="pre">g(X</span> <span class="pre">*</span> <span class="pre">b)</span></code></td>
+<td>and the marginal effects <code class="docutils literal"><span class="pre">dY/dX</span></code>.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>endog</em>, <em>exog</em>, <em>var_type</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/nonparametric/kernel_extras.html#SingleIndexModel.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>6.5.5.3.5.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.__init__.html#statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.__init__" title="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(endog,&nbsp;exog,&nbsp;var_type)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.aic_hurvich.html#statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.aic_hurvich" title="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.aic_hurvich"><code class="xref py py-obj docutils literal"><span class="pre">aic_hurvich</span></code></a>(bw[,&nbsp;func])</td>
+<td>Computes the AIC Hurvich criteria for the estimation of the bandwidth.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.cv_loo.html#statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.cv_loo" title="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.cv_loo"><code class="xref py py-obj docutils literal"><span class="pre">cv_loo</span></code></a>(params)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.fit.html#statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.fit" title="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.fit"><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code></a>([data_predict])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.loo_likelihood.html#statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.loo_likelihood" title="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.loo_likelihood"><code class="xref py py-obj docutils literal"><span class="pre">loo_likelihood</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.r_squared.html#statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.r_squared" title="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.r_squared"><code class="xref py py-obj docutils literal"><span class="pre">r_squared</span></code></a>()</td>
+<td>Returns the R-Squared for the nonparametric regression.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.sig_test.html#statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.sig_test" title="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.sig_test"><code class="xref py py-obj docutils literal"><span class="pre">sig_test</span></code></a>(var_pos[,&nbsp;nboot,&nbsp;nested_res,&nbsp;pivot])</td>
+<td>Significance test for the variables in the regression.</td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.__init__.html" class="btn btn-neutral float-right" title="6.5.5.3.5.1.1. statsmodels.sandbox.nonparametric.kernel_extras.SingleIndexModel.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.nonparametric.kernel_extras.SemiLinear.sig_test.html" class="btn btn-neutral" title="6.5.5.3.4.1.7. statsmodels.sandbox.nonparametric.kernel_extras.SemiLinear.sig_test" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

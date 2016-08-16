@@ -1,0 +1,38 @@
+statsmodels.tsa.vector_ar.var_model.VAR
+=======================================
+
+.. currentmodule:: statsmodels.tsa.vector_ar.var_model
+
+.. autoclass:: VAR
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~VAR.__init__
+      ~VAR.fit
+      ~VAR.from_formula
+      ~VAR.hessian
+      ~VAR.information
+      ~VAR.initialize
+      ~VAR.loglike
+      ~VAR.predict
+      ~VAR.score
+      ~VAR.select_order
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~VAR.endog_names
+      ~VAR.exog_names
+   
+   

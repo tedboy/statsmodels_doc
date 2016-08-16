@@ -1,0 +1,54 @@
+statsmodels.sandbox.distributions.try_max.MaxDist
+=================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.try_max
+.. autoclass:: MaxDist
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MaxDist.__init__
+   ~MaxDist.cdf
+   ~MaxDist.entropy
+   ~MaxDist.est_loc_scale
+   ~MaxDist.expect
+   ~MaxDist.fit
+   ~MaxDist.fit_fr
+   ~MaxDist.fit_loc_scale
+   ~MaxDist.freeze
+   ~MaxDist.interval
+   ~MaxDist.isf
+   ~MaxDist.logcdf
+   ~MaxDist.logpdf
+   ~MaxDist.logsf
+   ~MaxDist.mean
+   ~MaxDist.median
+   ~MaxDist.moment
+   ~MaxDist.nnlf
+   ~MaxDist.nnlf_fr
+   ~MaxDist.pdf
+   ~MaxDist.ppf
+   ~MaxDist.rvs
+   ~MaxDist.sf
+   ~MaxDist.stats
+   ~MaxDist.std
+   ~MaxDist.var
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~MaxDist.random_state
+

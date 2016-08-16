@@ -1,0 +1,28 @@
+statsmodels.sandbox.stats.multicomp.StepDown
+============================================
+
+.. currentmodule:: statsmodels.sandbox.stats.multicomp
+
+.. autoclass:: StepDown
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~StepDown.__init__
+      ~StepDown.check_set
+      ~StepDown.get_crit
+      ~StepDown.get_distance_matrix
+      ~StepDown.iter_subsets
+      ~StepDown.run
+      ~StepDown.stepdown
+   
+   
+
+   
+   
+   

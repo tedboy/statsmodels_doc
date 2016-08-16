@@ -1,0 +1,52 @@
+statsmodels.sandbox.nonparametric.densityorthopoly
+==================================================
+
+.. automodule:: statsmodels.sandbox.nonparametric.densityorthopoly
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      density_orthopoly
+      inner_cont
+      is_orthonormal_cont
+      polyvander
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ChebyTPoly
+      DensityOrthoPoly
+      F2Poly
+      FPoly
+      HPoly
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.nonparametric.densityorthopoly.ChebyTPoly
+       generated/statsmodels.sandbox.nonparametric.densityorthopoly.DensityOrthoPoly
+       generated/statsmodels.sandbox.nonparametric.densityorthopoly.F2Poly
+       generated/statsmodels.sandbox.nonparametric.densityorthopoly.FPoly
+       generated/statsmodels.sandbox.nonparametric.densityorthopoly.HPoly
+
+   
+   
+
+   
+   
+   

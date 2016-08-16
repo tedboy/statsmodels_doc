@@ -1,0 +1,376 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.5.7.3.2. statsmodels.iolib.table.Row &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="4.5.7. statsmodels.iolib.table" href="../statsmodels.iolib.table.html"/>
+        <link rel="next" title="4.5.7.3.2.1.1. statsmodels.iolib.table.Row.__init__" href="statsmodels.iolib.table.Row.__init__.html"/>
+        <link rel="prev" title="4.5.7.3.1.2.1. statsmodels.iolib.table.Cell.datatype" href="statsmodels.iolib.table.Cell.datatype.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.api.html">4.5.1. statsmodels.iolib.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.foreign.html">4.5.2. statsmodels.iolib.foreign</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.smpickle.html">4.5.3. statsmodels.iolib.smpickle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.stata_summary_examples.html">4.5.4. statsmodels.iolib.stata_summary_examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.summary.html">4.5.5. statsmodels.iolib.summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.summary2.html">4.5.6. statsmodels.iolib.summary2</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.iolib.table.html">4.5.7. statsmodels.iolib.table</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.iolib.table.html#potential-problems-for-python-3">4.5.7.1. Potential problems for Python 3</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.iolib.table.html#functions">4.5.7.2. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.iolib.table.html#classes">4.5.7.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.tableformatting.html">4.5.8. statsmodels.iolib.tableformatting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.iolib.table.html">4.5.7. statsmodels.iolib.table</a> &raquo;</li>
+        
+      <li>4.5.7.3.2. statsmodels.iolib.table.Row</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.iolib.table.Row.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-iolib-table-row">
+<h1>4.5.7.3.2. statsmodels.iolib.table.Row<a class="headerlink" href="#statsmodels-iolib-table-row" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.iolib.table.Row">
+<em class="property">class </em><code class="descclassname">statsmodels.iolib.table.</code><code class="descname">Row</code><span class="sig-paren">(</span><em>seq</em>, <em>datatype='data'</em>, <em>table=None</em>, <em>celltype=None</em>, <em>dec_below='row_dec_below'</em>, <em>**fmt_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/iolib/table.html#Row"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.iolib.table.Row" title="Permalink to this definition">¶</a></dt>
+<dd><p>Provides a table row as a list of cells.
+A row can belong to a SimpleTable, but does not have to.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>seq</strong> : sequence of data or cells</p>
+<p><strong>table</strong> : SimpleTable</p>
+<p><strong>datatype</strong> : str (&#8216;data&#8217; or &#8216;header&#8217;)</p>
+<p><strong>dec_below</strong> : str</p>
+<blockquote class="last">
+<div><p>(e.g., &#8216;header_dec_below&#8217; or &#8216;row_dec_below&#8217;)
+decoration tag, identifies the decoration to go below the row.
+(Decoration is repeated as needed for text formats.)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="statsmodels.iolib.table.Row.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>seq</em>, <em>datatype='data'</em>, <em>table=None</em>, <em>celltype=None</em>, <em>dec_below='row_dec_below'</em>, <em>**fmt_dict</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/iolib/table.html#Row.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.iolib.table.Row.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>seq</strong> : sequence of data or cells</p>
+<p><strong>table</strong> : SimpleTable</p>
+<p><strong>datatype</strong> : str (&#8216;data&#8217; or &#8216;header&#8217;)</p>
+<p><strong>dec_below</strong> : str</p>
+<blockquote class="last">
+<div><p>(e.g., &#8216;header_dec_below&#8217; or &#8216;row_dec_below&#8217;)
+decoration tag, identifies the decoration to go below the row.
+(Decoration is repeated as needed for text formats.)</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>4.5.7.3.2.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.table.Row.__init__.html#statsmodels.iolib.table.Row.__init__" title="statsmodels.iolib.table.Row.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(seq[,&nbsp;datatype,&nbsp;table,&nbsp;celltype,&nbsp;...])</td>
+<td><table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"></td>
+</tr>
+</tbody>
+</table>
+</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.table.Row.add_format.html#statsmodels.iolib.table.Row.add_format" title="statsmodels.iolib.table.Row.add_format"><code class="xref py py-obj docutils literal"><span class="pre">add_format</span></code></a>(output_format,&nbsp;**fmt_dict)</td>
+<td>Return None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.table.Row.append.html#statsmodels.iolib.table.Row.append" title="statsmodels.iolib.table.Row.append"><code class="xref py py-obj docutils literal"><span class="pre">append</span></code></a></td>
+<td>L.append(object) &#8211; append object to end</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.table.Row.as_string.html#statsmodels.iolib.table.Row.as_string" title="statsmodels.iolib.table.Row.as_string"><code class="xref py py-obj docutils literal"><span class="pre">as_string</span></code></a>([output_format])</td>
+<td>Return string: the formatted row.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.table.Row.count.html#statsmodels.iolib.table.Row.count" title="statsmodels.iolib.table.Row.count"><code class="xref py py-obj docutils literal"><span class="pre">count</span></code></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.table.Row.extend.html#statsmodels.iolib.table.Row.extend" title="statsmodels.iolib.table.Row.extend"><code class="xref py py-obj docutils literal"><span class="pre">extend</span></code></a></td>
+<td>L.extend(iterable) &#8211; extend list by appending elements from the iterable</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.table.Row.get_aligns.html#statsmodels.iolib.table.Row.get_aligns" title="statsmodels.iolib.table.Row.get_aligns"><code class="xref py py-obj docutils literal"><span class="pre">get_aligns</span></code></a>(output_format,&nbsp;**fmt_dict)</td>
+<td>Return string, sequence of column alignments.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.table.Row.index.html#statsmodels.iolib.table.Row.index" title="statsmodels.iolib.table.Row.index"><code class="xref py py-obj docutils literal"><span class="pre">index</span></code></a>((value,&nbsp;[start,&nbsp;...)</td>
+<td>Raises ValueError if the value is not present.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.table.Row.insert.html#statsmodels.iolib.table.Row.insert" title="statsmodels.iolib.table.Row.insert"><code class="xref py py-obj docutils literal"><span class="pre">insert</span></code></a></td>
+<td>L.insert(index, object) &#8211; insert object before index</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.table.Row.insert_stub.html#statsmodels.iolib.table.Row.insert_stub" title="statsmodels.iolib.table.Row.insert_stub"><code class="xref py py-obj docutils literal"><span class="pre">insert_stub</span></code></a>(loc,&nbsp;stub)</td>
+<td>Return None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.table.Row.pop.html#statsmodels.iolib.table.Row.pop" title="statsmodels.iolib.table.Row.pop"><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code></a>(...)</td>
+<td>Raises IndexError if list is empty or index is out of range.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.table.Row.remove.html#statsmodels.iolib.table.Row.remove" title="statsmodels.iolib.table.Row.remove"><code class="xref py py-obj docutils literal"><span class="pre">remove</span></code></a></td>
+<td>L.remove(value) &#8211; remove first occurrence of value.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.table.Row.reverse.html#statsmodels.iolib.table.Row.reverse" title="statsmodels.iolib.table.Row.reverse"><code class="xref py py-obj docutils literal"><span class="pre">reverse</span></code></a></td>
+<td>L.reverse() &#8211; reverse <em>IN PLACE</em></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.table.Row.sort.html#statsmodels.iolib.table.Row.sort" title="statsmodels.iolib.table.Row.sort"><code class="xref py py-obj docutils literal"><span class="pre">sort</span></code></a></td>
+<td>L.sort(cmp=None, key=None, reverse=False) &#8211; stable sort <em>IN PLACE</em>;</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>4.5.7.3.2.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.table.Row.data.html#statsmodels.iolib.table.Row.data" title="statsmodels.iolib.table.Row.data"><code class="xref py py-obj docutils literal"><span class="pre">data</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.iolib.table.Row.__init__.html" class="btn btn-neutral float-right" title="4.5.7.3.2.1.1. statsmodels.iolib.table.Row.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.iolib.table.Cell.datatype.html" class="btn btn-neutral" title="4.5.7.3.1.2.1. statsmodels.iolib.table.Cell.datatype" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

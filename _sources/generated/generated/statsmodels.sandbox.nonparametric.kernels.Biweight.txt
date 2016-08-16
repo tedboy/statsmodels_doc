@@ -1,0 +1,45 @@
+statsmodels.sandbox.nonparametric.kernels.Biweight
+==================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernels
+.. autoclass:: Biweight
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Biweight.__init__
+   ~Biweight.density
+   ~Biweight.density_confint
+   ~Biweight.density_var
+   ~Biweight.geth
+   ~Biweight.in_domain
+   ~Biweight.moments
+   ~Biweight.seth
+   ~Biweight.smooth
+   ~Biweight.smoothconf
+   ~Biweight.smoothconf_
+   ~Biweight.smoothvar
+   ~Biweight.weight
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Biweight.L2Norm
+   ~Biweight.h
+   ~Biweight.kernel_var
+   ~Biweight.norm_const
+   ~Biweight.normal_reference_constant
+

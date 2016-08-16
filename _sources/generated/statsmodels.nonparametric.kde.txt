@@ -1,0 +1,48 @@
+statsmodels.nonparametric.kde
+=============================
+
+.. automodule:: statsmodels.nonparametric.kde
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      counts
+      forrt
+      kdensity
+      kdensityfft
+      revrt
+      silverman_transform
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      KDEUnivariate
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.nonparametric.kde.KDEUnivariate
+       generated/statsmodels.nonparametric.kde.resettable_cache
+
+   
+   
+
+   
+   
+   

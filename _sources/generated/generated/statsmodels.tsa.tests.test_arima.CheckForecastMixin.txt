@@ -1,0 +1,31 @@
+statsmodels.tsa.tests.test_arima.CheckForecastMixin
+===================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: CheckForecastMixin
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CheckForecastMixin.test_forecast
+   ~CheckForecastMixin.test_forecasterr
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~CheckForecastMixin.decimal_forecast
+   ~CheckForecastMixin.decimal_forecasterr
+

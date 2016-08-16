@@ -1,0 +1,48 @@
+statsmodels.sandbox.utils_old
+=============================
+
+.. automodule:: statsmodels.sandbox.utils_old
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      ECDF
+      clean0
+      fullrank
+      mad
+      monotone_fn_inverter
+      rank
+      recipr
+      recipr0
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      StepFunction
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.utils_old.StepFunction
+
+   
+   
+
+   
+   
+   

@@ -1,0 +1,24 @@
+statsmodels.sandbox.distributions.transform_functions.BoxCoxNonzeroFunc
+=======================================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.transform_functions
+.. autoclass:: BoxCoxNonzeroFunc
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~BoxCoxNonzeroFunc.__init__
+   ~BoxCoxNonzeroFunc.deriv
+   ~BoxCoxNonzeroFunc.func
+   ~BoxCoxNonzeroFunc.inverse
+
+
+
+
+

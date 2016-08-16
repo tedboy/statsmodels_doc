@@ -1,0 +1,313 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5.15. statsmodels.sandbox.utils_old &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="5. statsmodel.sandbox" href="../sandbox.html"/>
+        <link rel="next" title="5.15.1.1. statsmodels.sandbox.utils_old.ECDF" href="statsmodels.sandbox.utils_old.ECDF.html"/>
+        <link rel="prev" title="5.14.2.5.2.1. statsmodels.sandbox.sysreg.SysResults.use_t" href="generated/statsmodels.sandbox.sysreg.SysResults.use_t.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.contrast_old.html">5.1. statsmodels.sandbox.contrast_old</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.cox.html">5.2. statsmodels.sandbox.cox</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.descstats.html">5.3. statsmodels.sandbox.descstats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.formula.html">5.4. statsmodels.sandbox.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.gam.html">5.5. statsmodels.sandbox.gam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.infotheo.html">5.6. statsmodels.sandbox.infotheo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.km_class.html">5.7. statsmodels.sandbox.km_class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.mle.html">5.8. statsmodels.sandbox.mle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.multilinear.html">5.9. statsmodels.sandbox.multilinear</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.pca.html">5.10. statsmodels.sandbox.pca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.rls.html">5.11. statsmodels.sandbox.rls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.survival.html">5.12. statsmodels.sandbox.survival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.survival2.html">5.13. statsmodels.sandbox.survival2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="statsmodels.sandbox.sysreg.html">5.14. statsmodels.sandbox.sysreg</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">5.15. statsmodels.sandbox.utils_old</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#functions">5.15.1. Functions</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.utils_old.ECDF.html">5.15.1.1. statsmodels.sandbox.utils_old.ECDF</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.utils_old.clean0.html">5.15.1.2. statsmodels.sandbox.utils_old.clean0</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.utils_old.fullrank.html">5.15.1.3. statsmodels.sandbox.utils_old.fullrank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.utils_old.mad.html">5.15.1.4. statsmodels.sandbox.utils_old.mad</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.utils_old.monotone_fn_inverter.html">5.15.1.5. statsmodels.sandbox.utils_old.monotone_fn_inverter</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.utils_old.rank.html">5.15.1.6. statsmodels.sandbox.utils_old.rank</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.utils_old.recipr.html">5.15.1.7. statsmodels.sandbox.utils_old.recipr</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.utils_old.recipr0.html">5.15.1.8. statsmodels.sandbox.utils_old.recipr0</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="#classes">5.15.2. Classes</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="generated/statsmodels.sandbox.utils_old.StepFunction.html">5.15.2.1. statsmodels.sandbox.utils_old.StepFunction</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox.html">5. statsmodel.sandbox</a> &raquo;</li>
+        
+      <li>5.15. statsmodels.sandbox.utils_old</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.utils_old.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.utils_old">
+<span id="statsmodels-sandbox-utils-old"></span><h1>5.15. statsmodels.sandbox.utils_old<a class="headerlink" href="#module-statsmodels.sandbox.utils_old" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functions">
+<h2>5.15.1. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.utils_old.ECDF.html#statsmodels.sandbox.utils_old.ECDF" title="statsmodels.sandbox.utils_old.ECDF"><code class="xref py py-obj docutils literal"><span class="pre">ECDF</span></code></a>(values)</td>
+<td>Return the ECDF of an array as a step function.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.utils_old.clean0.html#statsmodels.sandbox.utils_old.clean0" title="statsmodels.sandbox.utils_old.clean0"><code class="xref py py-obj docutils literal"><span class="pre">clean0</span></code></a>(matrix)</td>
+<td>Erase columns of zeros: can save some time in pseudoinverse.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.utils_old.fullrank.html#statsmodels.sandbox.utils_old.fullrank" title="statsmodels.sandbox.utils_old.fullrank"><code class="xref py py-obj docutils literal"><span class="pre">fullrank</span></code></a>(X[,&nbsp;r])</td>
+<td>Return a matrix whose column span is the same as X.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.utils_old.mad.html#statsmodels.sandbox.utils_old.mad" title="statsmodels.sandbox.utils_old.mad"><code class="xref py py-obj docutils literal"><span class="pre">mad</span></code></a>(a[,&nbsp;c,&nbsp;axis])</td>
+<td>Median Absolute Deviation:</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.utils_old.monotone_fn_inverter.html#statsmodels.sandbox.utils_old.monotone_fn_inverter" title="statsmodels.sandbox.utils_old.monotone_fn_inverter"><code class="xref py py-obj docutils literal"><span class="pre">monotone_fn_inverter</span></code></a>(fn,&nbsp;x[,&nbsp;vectorized])</td>
+<td>Given a monotone function x (no checking is done to verify monotonicity) and a set of x values, return an linearly interpolated approximation to its inverse from its values on x.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.utils_old.rank.html#statsmodels.sandbox.utils_old.rank" title="statsmodels.sandbox.utils_old.rank"><code class="xref py py-obj docutils literal"><span class="pre">rank</span></code></a>(X[,&nbsp;cond])</td>
+<td>Return the rank of a matrix X based on its generalized inverse, not the SVD.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.utils_old.recipr.html#statsmodels.sandbox.utils_old.recipr" title="statsmodels.sandbox.utils_old.recipr"><code class="xref py py-obj docutils literal"><span class="pre">recipr</span></code></a>(X)</td>
+<td>Return the reciprocal of an array, setting all entries less than or equal to 0 to 0.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.utils_old.recipr0.html#statsmodels.sandbox.utils_old.recipr0" title="statsmodels.sandbox.utils_old.recipr0"><code class="xref py py-obj docutils literal"><span class="pre">recipr0</span></code></a>(X)</td>
+<td>Return the reciprocal of an array, setting all entries equal to 0 as 0.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>5.15.2. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.utils_old.StepFunction.html#statsmodels.sandbox.utils_old.StepFunction" title="statsmodels.sandbox.utils_old.StepFunction"><code class="xref py py-obj docutils literal"><span class="pre">StepFunction</span></code></a>(x,&nbsp;y[,&nbsp;ival,&nbsp;sorted])</td>
+<td>A basic step function: values at the ends are handled in the simplest way possible: everything to the left of x[0] is set to ival; everything to the right of x[-1] is set to y[-1].</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.utils_old.ECDF.html" class="btn btn-neutral float-right" title="5.15.1.1. statsmodels.sandbox.utils_old.ECDF" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.sandbox.sysreg.SysResults.use_t.html" class="btn btn-neutral" title="5.14.2.5.2.1. statsmodels.sandbox.sysreg.SysResults.use_t" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

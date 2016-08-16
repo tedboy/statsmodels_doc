@@ -1,0 +1,62 @@
+statsmodels.genmod.cov_struct
+=============================
+
+.. automodule:: statsmodels.genmod.cov_struct
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      cov_nearest
+      iterkeys
+      itervalues
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Autoregressive
+      CovStruct
+      Exchangeable
+      GlobalOddsRatio
+      Independence
+      Nested
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.genmod.cov_struct.Autoregressive
+       generated/statsmodels.genmod.cov_struct.CovStruct
+       generated/statsmodels.genmod.cov_struct.Exchangeable
+       generated/statsmodels.genmod.cov_struct.GlobalOddsRatio
+       generated/statsmodels.genmod.cov_struct.Independence
+       generated/statsmodels.genmod.cov_struct.Nested
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      ConvergenceWarning
+      IterationLimitWarning
+   
+   

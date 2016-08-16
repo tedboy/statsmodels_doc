@@ -1,0 +1,35 @@
+statsmodels.tsa.tests.test_stattools.TestACF
+============================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_stattools
+.. autoclass:: TestACF
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestACF.__init__
+   ~TestACF.test_acf
+   ~TestACF.test_confint
+   ~TestACF.test_qstat
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TestACF.data
+   ~TestACF.filename
+   ~TestACF.results
+   ~TestACF.x
+

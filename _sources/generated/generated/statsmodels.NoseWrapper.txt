@@ -1,0 +1,32 @@
+statsmodels.NoseWrapper
+=======================
+
+.. currentmodule:: statsmodels
+.. autoclass:: NoseWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NoseWrapper.__init__
+   ~NoseWrapper.bench
+   ~NoseWrapper.prepare_test_args
+   ~NoseWrapper.test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~NoseWrapper.excludes
+

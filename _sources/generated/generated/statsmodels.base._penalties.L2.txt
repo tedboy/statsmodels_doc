@@ -1,0 +1,23 @@
+statsmodels.base._penalties.L2
+==============================
+
+.. currentmodule:: statsmodels.base._penalties
+.. autoclass:: L2
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~L2.__init__
+   ~L2.func
+   ~L2.grad
+
+
+
+
+

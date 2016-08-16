@@ -1,0 +1,49 @@
+statsmodels.iolib.api
+=====================
+
+.. automodule:: statsmodels.iolib.api
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      csv2st
+      genfromdta
+      load_pickle
+      save_pickle
+      savetxt
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      SimpleTable
+      StataReader
+      StataWriter
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.iolib.api.SimpleTable
+       generated/statsmodels.iolib.api.StataReader
+       generated/statsmodels.iolib.api.StataWriter
+
+   
+   
+
+   
+   
+   

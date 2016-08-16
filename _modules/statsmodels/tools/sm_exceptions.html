@@ -1,0 +1,288 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tools.sm_exceptions &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tools.sm_exceptions</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tools.sm_exceptions</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Contains custom errors and warnings.</span>
+
+<span class="sd">Errors should derive from Exception or another custom error. Custom errors are</span>
+<span class="sd">only needed it standard errors, for example ValueError or TypeError, are not</span>
+<span class="sd">accurate descriptions of the reason for the error.</span>
+
+<span class="sd">Warnings should derive from either an existing warning or another custom</span>
+<span class="sd">warning, and should usually be accompanied by a sting using the format</span>
+<span class="sd">warning_name_doc that services as a generic message to use when the warning is</span>
+<span class="sd">raised.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="c1"># Errors</span>
+<div class="viewcode-block" id="PerfectSeparationError"><a class="viewcode-back" href="../../../generated/statsmodels.tools.sm_exceptions.PerfectSeparationError.html#statsmodels.PerfectSeparationError">[docs]</a><span class="k">class</span> <span class="nc">PerfectSeparationError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="MissingDataError"><a class="viewcode-back" href="../../../generated/statsmodels.tools.sm_exceptions.MissingDataError.html#statsmodels.MissingDataError">[docs]</a><span class="k">class</span> <span class="nc">MissingDataError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="X13NotFoundError"><a class="viewcode-back" href="../../../generated/statsmodels.tsa.x13.X13NotFoundError.html#statsmodels.X13NotFoundError">[docs]</a><span class="k">class</span> <span class="nc">X13NotFoundError</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="X13Error"><a class="viewcode-back" href="../../../generated/statsmodels.tsa.x13.X13Error.html#statsmodels.X13Error">[docs]</a><span class="k">class</span> <span class="nc">X13Error</span><span class="p">(</span><span class="ne">Exception</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="c1"># Warning</span>
+
+<div class="viewcode-block" id="X13Warning"><a class="viewcode-back" href="../../../generated/statsmodels.tsa.x13.X13Warning.html#statsmodels.X13Warning">[docs]</a><span class="k">class</span> <span class="nc">X13Warning</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="IOWarning"><a class="viewcode-back" href="../../../generated/statsmodels.tsa.x13.IOWarning.html#statsmodels.IOWarning">[docs]</a><span class="k">class</span> <span class="nc">IOWarning</span><span class="p">(</span><span class="ne">RuntimeWarning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="ModuleUnavailableWarning"><a class="viewcode-back" href="../../../generated/statsmodels.tools.sm_exceptions.ModuleUnavailableWarning.html#statsmodels.ModuleUnavailableWarning">[docs]</a><span class="k">class</span> <span class="nc">ModuleUnavailableWarning</span><span class="p">(</span><span class="ne">Warning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">module_unavailable_doc</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">The module </span><span class="si">{0}</span><span class="s2"> is not available. Cannot run in parallel.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+
+<div class="viewcode-block" id="ConvergenceWarning"><a class="viewcode-back" href="../../../generated/statsmodels.tools.sm_exceptions.ConvergenceWarning.html#statsmodels.ConvergenceWarning">[docs]</a><span class="k">class</span> <span class="nc">ConvergenceWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">convergence_doc</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Failed to converge on a solution.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="CacheWriteWarning"><a class="viewcode-back" href="../../../generated/statsmodels.tools.sm_exceptions.CacheWriteWarning.html#statsmodels.CacheWriteWarning">[docs]</a><span class="k">class</span> <span class="nc">CacheWriteWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<div class="viewcode-block" id="IterationLimitWarning"><a class="viewcode-back" href="../../../generated/statsmodels.tools.sm_exceptions.IterationLimitWarning.html#statsmodels.IterationLimitWarning">[docs]</a><span class="k">class</span> <span class="nc">IterationLimitWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+
+
+<span class="n">iteration_limit_doc</span> <span class="o">=</span> <span class="s2">&quot;&quot;&quot;</span>
+<span class="s2">Maximum iteration reached.</span>
+<span class="s2">&quot;&quot;&quot;</span>
+
+
+<div class="viewcode-block" id="InvalidTestWarning"><a class="viewcode-back" href="../../../generated/statsmodels.tools.sm_exceptions.InvalidTestWarning.html#statsmodels.InvalidTestWarning">[docs]</a><span class="k">class</span> <span class="nc">InvalidTestWarning</span><span class="p">(</span><span class="ne">UserWarning</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

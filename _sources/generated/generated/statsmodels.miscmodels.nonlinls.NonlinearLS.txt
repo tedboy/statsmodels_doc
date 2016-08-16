@@ -1,0 +1,39 @@
+statsmodels.miscmodels.nonlinls.NonlinearLS
+===========================================
+
+.. currentmodule:: statsmodels.miscmodels.nonlinls
+.. autoclass:: NonlinearLS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~NonlinearLS.__init__
+   ~NonlinearLS.errorsumsquares
+   ~NonlinearLS.fit
+   ~NonlinearLS.fit_minimal
+   ~NonlinearLS.fit_random
+   ~NonlinearLS.from_formula
+   ~NonlinearLS.geterrors
+   ~NonlinearLS.jac_predict
+   ~NonlinearLS.predict
+   ~NonlinearLS.start_value
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~NonlinearLS.endog_names
+   ~NonlinearLS.exog_names
+

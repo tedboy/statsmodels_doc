@@ -1,0 +1,27 @@
+statsmodels.sandbox.stats.multicomp.GroupsStats
+===============================================
+
+.. currentmodule:: statsmodels.sandbox.stats.multicomp
+
+.. autoclass:: GroupsStats
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~GroupsStats.__init__
+      ~GroupsStats.groupdemean
+      ~GroupsStats.groupsswithin
+      ~GroupsStats.groupvarwithin
+      ~GroupsStats.runbasic
+      ~GroupsStats.runbasic_old
+   
+   
+
+   
+   
+   

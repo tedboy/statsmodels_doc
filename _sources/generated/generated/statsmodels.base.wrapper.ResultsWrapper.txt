@@ -1,0 +1,23 @@
+statsmodels.base.wrapper.ResultsWrapper
+=======================================
+
+.. currentmodule:: statsmodels.base.wrapper
+.. autoclass:: ResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ResultsWrapper.__init__
+   ~ResultsWrapper.load
+   ~ResultsWrapper.save
+
+
+
+
+

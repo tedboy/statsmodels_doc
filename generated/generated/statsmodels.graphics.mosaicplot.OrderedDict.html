@@ -1,0 +1,349 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.6.8.2.1. statsmodels.graphics.mosaicplot.OrderedDict &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="3.6.8. statsmodels.graphics.mosaicplot" href="../statsmodels.graphics.mosaicplot.html"/>
+        <link rel="next" title="3.6.8.2.1.1.1. statsmodels.graphics.mosaicplot.OrderedDict.__init__" href="statsmodels.graphics.mosaicplot.OrderedDict.__init__.html"/>
+        <link rel="prev" title="3.6.8.1.4. statsmodels.graphics.mosaicplot.mosaic" href="../statsmodels.graphics.mosaicplot.mosaic.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.api.html">3.6.1. statsmodels.graphics.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.api.html">3.6.1. statsmodels.graphics.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.boxplots.html">3.6.2. statsmodels.graphics.boxplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.correlation.html">3.6.3. statsmodels.graphics.correlation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.dotplots.html">3.6.4. statsmodels.graphics.dotplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.factorplots.html">3.6.5. statsmodels.graphics.factorplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.functional.html">3.6.6. statsmodels.graphics.functional</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.gofplots.html">3.6.7. statsmodels.graphics.gofplots</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.graphics.mosaicplot.html">3.6.8. statsmodels.graphics.mosaicplot</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.graphics.mosaicplot.html#functions">3.6.8.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.graphics.mosaicplot.html#classes">3.6.8.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.plot_grids.html">3.6.9. statsmodels.graphics.plot_grids</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.plottools.html">3.6.10. statsmodels.graphics.plottools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.regressionplots.html">3.6.11. statsmodels.graphics.regressionplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.tsaplots.html">3.6.12. statsmodels.graphics.tsaplots</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.tukeyplot.html">3.6.13. statsmodels.graphics.tukeyplot</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.graphics.utils.html">3.6.14. statsmodels.graphics.utils</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../main.html#statsmodel-stats">3.11. statsmodel.stats</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.graphics.mosaicplot.html">3.6.8. statsmodels.graphics.mosaicplot</a> &raquo;</li>
+        
+      <li>3.6.8.2.1. statsmodels.graphics.mosaicplot.OrderedDict</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.graphics.mosaicplot.OrderedDict.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-graphics-mosaicplot-ordereddict">
+<h1>3.6.8.2.1. statsmodels.graphics.mosaicplot.OrderedDict<a class="headerlink" href="#statsmodels-graphics-mosaicplot-ordereddict" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.graphics.mosaicplot.OrderedDict">
+<em class="property">class </em><code class="descclassname">statsmodels.graphics.mosaicplot.</code><code class="descname">OrderedDict</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/compat/ordereddict.html#OrderedDict"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.graphics.mosaicplot.OrderedDict" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary that remembers insertion order</p>
+<p>Initialize an ordered dictionary.  Signature is the same as for
+regular dictionaries, but keyword arguments are not recommended
+because their insertion order is arbitrary.</p>
+<dl class="method">
+<dt id="statsmodels.graphics.mosaicplot.OrderedDict.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>*args</em>, <em>**kwds</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/compat/ordereddict.html#OrderedDict.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.graphics.mosaicplot.OrderedDict.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize an ordered dictionary.  Signature is the same as for
+regular dictionaries, but keyword arguments are not recommended
+because their insertion order is arbitrary.</p>
+</dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>3.6.8.2.1.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.__init__.html#statsmodels.graphics.mosaicplot.OrderedDict.__init__" title="statsmodels.graphics.mosaicplot.OrderedDict.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(*args,&nbsp;**kwds)</td>
+<td>Initialize an ordered dictionary.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.clear.html#statsmodels.graphics.mosaicplot.OrderedDict.clear" title="statsmodels.graphics.mosaicplot.OrderedDict.clear"><code class="xref py py-obj docutils literal"><span class="pre">clear</span></code></a>(()&nbsp;-&gt;&nbsp;None.&nbsp;&nbsp;Remove&nbsp;all&nbsp;items&nbsp;from&nbsp;od.)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.copy.html#statsmodels.graphics.mosaicplot.OrderedDict.copy" title="statsmodels.graphics.mosaicplot.OrderedDict.copy"><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code></a>(()&nbsp;-&gt;&nbsp;a&nbsp;shallow&nbsp;copy&nbsp;of&nbsp;od)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.fromkeys.html#statsmodels.graphics.mosaicplot.OrderedDict.fromkeys" title="statsmodels.graphics.mosaicplot.OrderedDict.fromkeys"><code class="xref py py-obj docutils literal"><span class="pre">fromkeys</span></code></a>((S[,&nbsp;...)</td>
+<td>and values equal to v (which defaults to None).</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.get.html#statsmodels.graphics.mosaicplot.OrderedDict.get" title="statsmodels.graphics.mosaicplot.OrderedDict.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D[k]&nbsp;if&nbsp;k&nbsp;in&nbsp;D,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.has_key.html#statsmodels.graphics.mosaicplot.OrderedDict.has_key" title="statsmodels.graphics.mosaicplot.OrderedDict.has_key"><code class="xref py py-obj docutils literal"><span class="pre">has_key</span></code></a>((k)&nbsp;-&gt;&nbsp;True&nbsp;if&nbsp;D&nbsp;has&nbsp;a&nbsp;key&nbsp;k,&nbsp;else&nbsp;False)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.items.html#statsmodels.graphics.mosaicplot.OrderedDict.items" title="statsmodels.graphics.mosaicplot.OrderedDict.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;(key,&nbsp;value)&nbsp;pairs&nbsp;in&nbsp;od)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.iteritems.html#statsmodels.graphics.mosaicplot.OrderedDict.iteritems" title="statsmodels.graphics.mosaicplot.OrderedDict.iteritems"><code class="xref py py-obj docutils literal"><span class="pre">iteritems</span></code></a>()</td>
+<td>od.iteritems -&gt; an iterator over the (key, value) items in od</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.iterkeys.html#statsmodels.graphics.mosaicplot.OrderedDict.iterkeys" title="statsmodels.graphics.mosaicplot.OrderedDict.iterkeys"><code class="xref py py-obj docutils literal"><span class="pre">iterkeys</span></code></a>(()&nbsp;-&gt;&nbsp;an&nbsp;iterator&nbsp;over&nbsp;the&nbsp;keys&nbsp;in&nbsp;od)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.itervalues.html#statsmodels.graphics.mosaicplot.OrderedDict.itervalues" title="statsmodels.graphics.mosaicplot.OrderedDict.itervalues"><code class="xref py py-obj docutils literal"><span class="pre">itervalues</span></code></a>()</td>
+<td>od.itervalues -&gt; an iterator over the values in od</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.keys.html#statsmodels.graphics.mosaicplot.OrderedDict.keys" title="statsmodels.graphics.mosaicplot.OrderedDict.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;keys&nbsp;in&nbsp;od)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.pop.html#statsmodels.graphics.mosaicplot.OrderedDict.pop" title="statsmodels.graphics.mosaicplot.OrderedDict.pop"><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;v,&nbsp;...)</td>
+<td>If key is not found, d is returned if given, otherwise KeyError is raised.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.popitem.html#statsmodels.graphics.mosaicplot.OrderedDict.popitem" title="statsmodels.graphics.mosaicplot.OrderedDict.popitem"><code class="xref py py-obj docutils literal"><span class="pre">popitem</span></code></a>(()&nbsp;-&gt;&nbsp;(k,&nbsp;v),&nbsp;...)</td>
+<td>Pairs are returned in LIFO order if last is true or FIFO order if false.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.setdefault.html#statsmodels.graphics.mosaicplot.OrderedDict.setdefault" title="statsmodels.graphics.mosaicplot.OrderedDict.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;od.get(k,d),&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.update.html#statsmodels.graphics.mosaicplot.OrderedDict.update" title="statsmodels.graphics.mosaicplot.OrderedDict.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>((E,&nbsp;...)</td>
+<td>If E is a dict instance, does:           for k in E: od[k] = E[k]</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.values.html#statsmodels.graphics.mosaicplot.OrderedDict.values" title="statsmodels.graphics.mosaicplot.OrderedDict.values"><code class="xref py py-obj docutils literal"><span class="pre">values</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;values&nbsp;in&nbsp;od)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.viewitems.html#statsmodels.graphics.mosaicplot.OrderedDict.viewitems" title="statsmodels.graphics.mosaicplot.OrderedDict.viewitems"><code class="xref py py-obj docutils literal"><span class="pre">viewitems</span></code></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.viewkeys.html#statsmodels.graphics.mosaicplot.OrderedDict.viewkeys" title="statsmodels.graphics.mosaicplot.OrderedDict.viewkeys"><code class="xref py py-obj docutils literal"><span class="pre">viewkeys</span></code></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.graphics.mosaicplot.OrderedDict.viewvalues.html#statsmodels.graphics.mosaicplot.OrderedDict.viewvalues" title="statsmodels.graphics.mosaicplot.OrderedDict.viewvalues"><code class="xref py py-obj docutils literal"><span class="pre">viewvalues</span></code></a>(...)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.graphics.mosaicplot.OrderedDict.__init__.html" class="btn btn-neutral float-right" title="3.6.8.2.1.1.1. statsmodels.graphics.mosaicplot.OrderedDict.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../statsmodels.graphics.mosaicplot.mosaic.html" class="btn btn-neutral" title="3.6.8.1.4. statsmodels.graphics.mosaicplot.mosaic" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

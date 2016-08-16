@@ -1,0 +1,25 @@
+statsmodels.sandbox.stats.runs.TotalRunsProb
+============================================
+
+.. currentmodule:: statsmodels.sandbox.stats.runs
+.. autoclass:: TotalRunsProb
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TotalRunsProb.__init__
+   ~TotalRunsProb.cdf
+   ~TotalRunsProb.pdf
+   ~TotalRunsProb.runs_prob_even
+   ~TotalRunsProb.runs_prob_odd
+
+
+
+
+

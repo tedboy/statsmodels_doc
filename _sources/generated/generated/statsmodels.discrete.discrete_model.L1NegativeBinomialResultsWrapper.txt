@@ -1,0 +1,25 @@
+statsmodels.discrete.discrete_model.L1NegativeBinomialResultsWrapper
+====================================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: L1NegativeBinomialResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~L1NegativeBinomialResultsWrapper.__init__
+   ~L1NegativeBinomialResultsWrapper.conf_int
+   ~L1NegativeBinomialResultsWrapper.cov_params
+   ~L1NegativeBinomialResultsWrapper.load
+   ~L1NegativeBinomialResultsWrapper.save
+
+
+
+
+

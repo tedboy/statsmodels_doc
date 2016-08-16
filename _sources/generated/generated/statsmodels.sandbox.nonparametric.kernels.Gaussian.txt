@@ -1,0 +1,44 @@
+statsmodels.sandbox.nonparametric.kernels.Gaussian
+==================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernels
+.. autoclass:: Gaussian
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Gaussian.__init__
+   ~Gaussian.density
+   ~Gaussian.density_confint
+   ~Gaussian.density_var
+   ~Gaussian.geth
+   ~Gaussian.in_domain
+   ~Gaussian.moments
+   ~Gaussian.seth
+   ~Gaussian.smooth
+   ~Gaussian.smoothconf
+   ~Gaussian.smoothvar
+   ~Gaussian.weight
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Gaussian.L2Norm
+   ~Gaussian.h
+   ~Gaussian.kernel_var
+   ~Gaussian.norm_const
+   ~Gaussian.normal_reference_constant
+

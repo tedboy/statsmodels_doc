@@ -1,0 +1,26 @@
+statsmodels.tsa.kalmanf.kalmanfilter.KalmanFilter
+=================================================
+
+.. currentmodule:: statsmodels.tsa.kalmanf.kalmanfilter
+
+.. autoclass:: KalmanFilter
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~KalmanFilter.R
+      ~KalmanFilter.T
+      ~KalmanFilter.Z
+      ~KalmanFilter.geterrors
+      ~KalmanFilter.loglike
+   
+   
+
+   
+   
+   

@@ -1,0 +1,53 @@
+statsmodels.nonparametric.kernel_regression
+===========================================
+
+.. automodule:: statsmodels.nonparametric.kernel_regression
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      gpke
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      EstimatorSettings
+      GenericKDE
+      KernelCensoredReg
+      KernelReg
+      LeaveOneOut
+      TestRegCoefC
+      TestRegCoefD
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.nonparametric.kernel_regression.EstimatorSettings
+       generated/statsmodels.nonparametric.kernel_regression.GenericKDE
+       generated/statsmodels.nonparametric.kernel_regression.KernelCensoredReg
+       generated/statsmodels.nonparametric.kernel_regression.KernelReg
+       generated/statsmodels.nonparametric.kernel_regression.LeaveOneOut
+       generated/statsmodels.nonparametric.kernel_regression.TestRegCoefC
+       generated/statsmodels.nonparametric.kernel_regression.TestRegCoefD
+
+   
+   
+
+   
+   
+   

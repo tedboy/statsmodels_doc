@@ -1,0 +1,25 @@
+statsmodels.sandbox.distributions.transform_functions.SquareFunc
+================================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.transform_functions
+.. autoclass:: SquareFunc
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~SquareFunc.derivminus
+   ~SquareFunc.derivplus
+   ~SquareFunc.func
+   ~SquareFunc.inverseminus
+   ~SquareFunc.inverseplus
+
+
+
+
+

@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.regression.treewalkerclass &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.regression.treewalkerclass</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.regression.treewalkerclass</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">Formulas</span>
+<span class="sd">--------</span>
+
+<span class="sd">This follows mostly Greene notation (in slides)</span>
+<span class="sd">partially ignoring factors tau or mu for now, ADDED</span>
+<span class="sd">(if all tau==1, then runmnl==clogit)</span>
+
+<span class="sd">leaf k probability :</span>
+
+<span class="sd">Prob(k|j) = exp(b_k * X_k / mu_j)/ sum_{i in L(j)} (exp(b_i * X_i / mu_j)</span>
+
+<span class="sd">branch j probabilities :</span>
+
+<span class="sd">Prob(j) = exp(b_j * X_j + mu*IV_j )/ sum_{i in NB(j)} (exp(b_i * X_i + mu_i*IV_i)</span>
+
+<span class="sd">inclusive value of branch j :</span>
+
+<span class="sd">IV_j = log( sum_{i in L(j)} (exp(b_i * X_i / mu_j) )</span>
+
+<span class="sd">this is the log of the denominator of the leaf probabilities</span>
+
+<span class="sd">L(j) : leaves at branch j, where k is child of j</span>
+<span class="sd">NB(j) : set of j and it&#39;s siblings</span>
+
+<span class="sd">Design</span>
+<span class="sd">------</span>
+
+<span class="sd">* splitting calculation transmission between returns and changes to</span>
+<span class="sd">  instance.probs</span>
+<span class="sd">  - probability for each leaf is in instance.probs</span>
+<span class="sd">  - inclusive values and contribution of exog on branch level need to be</span>
+<span class="sd">    added separately. handed up the tree through returns</span>
+<span class="sd">* question: should params array be accessed directly through</span>
+<span class="sd">  `self.recursionparams[self.parinddict[name]]` or should the dictionary</span>
+<span class="sd">  return the values of the params, e.g. `self.params_node_dict[name]`.</span>
+<span class="sd">  The second would be easier for fixing tau=1 for degenerate branches.</span>
+<span class="sd">  The easiest might be to do the latter only for the taus and default to 1 if</span>
+<span class="sd">  the key (&#39;tau_&#39;+branchname) is not found. I also need to exclude tau for</span>
+<span class="sd">  degenerate branches from params, but then I cannot change them from the</span>
+<span class="sd">  outside for testing and experimentation. (?)</span>
+<span class="sd">* SAS manual describes restrictions on tau (though their model is a bit</span>
+<span class="sd">  different), e.g. equal tau across sibling branches, fixed tau. The also</span>
+<span class="sd">  allow linear and non-linear (? not sure) restriction on params, the</span>
+<span class="sd">  regression coefficients. Related to previous issue, callback without access</span>
+<span class="sd">  to the underlying array, where params_node_dict returns the actual params</span>
+<span class="sd">  value would provide more flexibility to impose different kinds of restrictions.</span>
+
+
+
+<span class="sd">bugs/problems</span>
+<span class="sd">-------------</span>
+
+<span class="sd">* singleton branches return zero to `top`, not a value</span>
+<span class="sd">  I&#39;m not sure what they are supposed to return, given the split between returns</span>
+<span class="sd">  and instance.probs DONE</span>
+<span class="sd">* Why does &#39;Air&#39; (singleton branch) get probability exactly 0.5 ? DONE</span>
+
+<span class="sd">TODO</span>
+<span class="sd">----</span>
+<span class="sd">* add tau, normalization for nested logit, currently tau is 1 (clogit)</span>
+<span class="sd">  taus also needs to become part of params MOSTLY DONE</span>
+<span class="sd">* add effect of branch level explanatory variables DONE</span>
+<span class="sd">* write a generic multinomial logit that takes arbitrary probabilities, this</span>
+<span class="sd">  would be the same for MNL, clogit and runmnl,</span>
+<span class="sd">  delegate calculation of probabilities</span>
+<span class="sd">* test on actual data,</span>
+<span class="sd">  - tau=1 replicate clogit numbers,</span>
+<span class="sd">  - transport example from Greene tests 1-level tree and degenerate sub-trees</span>
+<span class="sd">  - test example for multi-level trees ???</span>
+<span class="sd">* starting values: Greene mentiones that the starting values for the nested</span>
+<span class="sd">  version come from the (non-nested) MNL version. SPSS uses constant equal</span>
+<span class="sd">  (? check transformation) to sample frequencies and zeros for slope</span>
+<span class="sd">  coefficient as starting values for (non-nested) MNL</span>
+<span class="sd">* associated test statistics</span>
+<span class="sd">  - (I don&#39;t think I will fight with the gradient or hessian of the log-like.)</span>
+<span class="sd">  - basic MLE statistics can be generic</span>
+<span class="sd">  - tests specific to the model (?)</span>
+<span class="sd">* nice printouts since I&#39;m currently collecting a lot of information in the tree</span>
+<span class="sd">  recursion and everything has names</span>
+
+<span class="sd">The only parts that are really necessary to get a functional nested logit are</span>
+<span class="sd">adding the taus (DONE) and the MLE wrapper class. The rest are enhancements.</span>
+
+<span class="sd">I added fake tau, one fixed tau for all branches. (OBSOLETE)</span>
+<span class="sd">It&#39;s not clear where the tau for leaf should be added either at</span>
+<span class="sd">original assignment of self.probs, or as part of the one-step-down</span>
+<span class="sd">probability correction in the bottom branches. The second would be</span>
+<span class="sd">cleaner (would make treatment of leaves and branches more symmetric,</span>
+<span class="sd">but requires that initial assignment in the leaf only does</span>
+<span class="sd">initialization. e.g self.probs = 1.  ???</span>
+
+<span class="sd">DONE added taus</span>
+
+<span class="sd">still todo:</span>
+<span class="sd">- tau for degenerate branches are not identified, set to 1 for MLE</span>
+<span class="sd">- rename parinddict to paramsinddict</span>
+
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License : BSD (3-clause)</span>
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">lzip</span><span class="p">,</span> <span class="n">iteritems</span><span class="p">,</span> <span class="n">itervalues</span><span class="p">,</span> <span class="n">lrange</span><span class="p">,</span> <span class="nb">zip</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">pprint</span> <span class="k">import</span> <span class="n">pprint</span>
+
+<div class="viewcode-block" id="randintw"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.treewalkerclass.randintw.html#statsmodels.sandbox.regression.treewalkerclass.randintw">[docs]</a><span class="k">def</span> <span class="nf">randintw</span><span class="p">(</span><span class="n">w</span><span class="p">,</span> <span class="n">size</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;generate integer random variables given probabilties</span>
+
+<span class="sd">    useful because it can be used as index into any array or sequence type</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    w : 1d array_like</span>
+<span class="sd">        sequence of weights, probabilites. The weights are normalized to add</span>
+<span class="sd">        to one.</span>
+<span class="sd">    size : int or tuple of ints</span>
+<span class="sd">        shape of output array</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    rvs : array of shape given by size</span>
+<span class="sd">        random variables each distributed according to the same discrete</span>
+<span class="sd">        distribution defined by (normalized) w.</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &gt;&gt;&gt; np.random.seed(0)</span>
+<span class="sd">    &gt;&gt;&gt; randintw([0.4, 0.4, 0.2], size=(2,6))</span>
+<span class="sd">    array([[1, 1, 1, 1, 1, 1],</span>
+<span class="sd">           [1, 2, 2, 0, 1, 1]])</span>
+
+<span class="sd">    &gt;&gt;&gt; np.bincount(randintw([0.6, 0.4, 0.0], size=3000))/3000.</span>
+<span class="sd">    array([ 0.59566667,  0.40433333])</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#from Charles Harris, numpy mailing list</span>
+    <span class="kn">from</span> <span class="nn">numpy.random</span> <span class="k">import</span> <span class="n">random</span>
+    <span class="n">p</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">rvs</span> <span class="o">=</span> <span class="n">p</span><span class="o">.</span><span class="n">searchsorted</span><span class="p">(</span><span class="n">random</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">prod</span><span class="p">(</span><span class="n">size</span><span class="p">)))</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">size</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">rvs</span></div>
+
+<div class="viewcode-block" id="getbranches"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.treewalkerclass.getbranches.html#statsmodels.sandbox.regression.treewalkerclass.getbranches">[docs]</a><span class="k">def</span> <span class="nf">getbranches</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    walk tree to get list of branches</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tree : list of tuples</span>
+<span class="sd">        tree as defined for RU2NMNL</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    branch : list</span>
+<span class="sd">        list of all branch names</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">subtree</span> <span class="o">=</span> <span class="n">tree</span>
+        <span class="n">a</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">subtree</span><span class="p">:</span>
+            <span class="n">a</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">getbranches</span><span class="p">(</span><span class="n">st</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">a</span>
+    <span class="k">return</span> <span class="p">[]</span></div>
+
+<div class="viewcode-block" id="getnodes"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.regression.treewalkerclass.getnodes.html#statsmodels.sandbox.regression.treewalkerclass.getnodes">[docs]</a><span class="k">def</span> <span class="nf">getnodes</span><span class="p">(</span><span class="n">tree</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    walk tree to get list of branches and list of leaves</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    tree : list of tuples</span>
+<span class="sd">        tree as defined for RU2NMNL</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    branch : list</span>
+<span class="sd">        list of all branch names</span>
+<span class="sd">    leaves : list</span>
+<span class="sd">        list of all leaves names</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>
+        <span class="n">name</span><span class="p">,</span> <span class="n">subtree</span> <span class="o">=</span> <span class="n">tree</span>
+        <span class="n">ab</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="n">al</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1">#degenerate branches</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">subtree</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">adeg</span> <span class="o">=</span> <span class="p">[</span><span class="n">name</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">adeg</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">st</span> <span class="ow">in</span> <span class="n">subtree</span><span class="p">:</span>
+            <span class="n">b</span><span class="p">,</span> <span class="n">l</span><span class="p">,</span> <span class="n">d</span> <span class="o">=</span> <span class="n">getnodes</span><span class="p">(</span><span class="n">st</span><span class="p">)</span>
+            <span class="n">ab</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+            <span class="n">al</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">l</span><span class="p">)</span>
+            <span class="n">adeg</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">d</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">ab</span><span class="p">,</span> <span class="n">al</span><span class="p">,</span> <span class="n">adeg</span>
+    <span class="k">return</span> <span class="p">[],</span> <span class="p">[</span><span class="n">tree</span><span class="p">],</span> <span class="p">[]</span></div>
+
+
+<span class="n">testxb</span> <span class="o">=</span> <span class="mi">2</span> <span class="c1">#global to class to return strings instead of numbers</span>
+
+<div class="viewcode-block" id="RU2NMNL"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.treewalkerclass.RU2NMNL.html#statsmodels.sandbox.regression.treewalkerclass.RU2NMNL">[docs]</a><span class="k">class</span> <span class="nc">RU2NMNL</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Nested Multinomial Logit with Random Utility 2 parameterization</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    endog : array</span>
+<span class="sd">        not used in this part</span>
+<span class="sd">    exog : dict_like</span>
+<span class="sd">        dictionary access to data where keys correspond to branch and leaf</span>
+<span class="sd">        names. The values are the data arrays for the exog in that node.</span>
+<span class="sd">    tree : nested tuples and lists</span>
+<span class="sd">        each branch, tree or subtree, is defined by a tuple</span>
+<span class="sd">        (branch_name, [subtree1, subtree2, ..., subtreek])</span>
+<span class="sd">        Bottom branches have as subtrees the list of leaf names.</span>
+<span class="sd">    paramsind : dictionary</span>
+<span class="sd">        dictionary that maps branch and leaf names to the names of parameters,</span>
+<span class="sd">        the coefficients for exogs)</span>
+
+<span class="sd">    Methods</span>
+<span class="sd">    -------</span>
+<span class="sd">    get_probs</span>
+
+<span class="sd">    Attributes</span>
+<span class="sd">    ----------</span>
+<span class="sd">    branches</span>
+<span class="sd">    leaves</span>
+<span class="sd">    paramsnames</span>
+<span class="sd">    parinddict</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    endog needs to be encoded so it is consistent with self.leaves, which</span>
+<span class="sd">    defines the columns for the probability array. The ordering in leaves is</span>
+<span class="sd">    determined by the ordering of the tree.</span>
+<span class="sd">    In the dummy encoding of endog, the columns of endog need to have the</span>
+<span class="sd">    same order as self.leaves. In the integer encoding, the integer for a</span>
+<span class="sd">    choice has to correspond to the index in self.leaves.</span>
+<span class="sd">    (This could be made more robust, by handling the endog encoding internally</span>
+<span class="sd">    by leaf names, if endog is defined as categorical variable with</span>
+<span class="sd">    associated category level names.)</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="RU2NMNL.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.treewalkerclass.RU2NMNL.__init__.html#statsmodels.sandbox.regression.treewalkerclass.RU2NMNL.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">paramsind</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">=</span> <span class="n">endog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">datadict</span> <span class="o">=</span> <span class="n">exog</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tree</span> <span class="o">=</span> <span class="n">tree</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paramsind</span> <span class="o">=</span> <span class="n">paramsind</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">branchsum</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">probstxt</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branchleaves</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branchvalues</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1">#just to keep track of returns by branches</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branchsums</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bprobs</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">branches_degenerate</span>  <span class="o">=</span> <span class="n">getnodes</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nbranches</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">)</span>
+
+        <span class="c1">#copied over but not quite sure yet</span>
+        <span class="c1">#unique, parameter array names,</span>
+        <span class="c1">#sorted alphabetically, order is/should be only internal</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">paramsnames</span> <span class="o">=</span> <span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">itervalues</span><span class="p">(</span><span class="n">paramsind</span><span class="p">)</span>
+                                       <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">j</span><span class="p">]))</span> <span class="o">+</span>
+                            <span class="p">[</span><span class="s1">&#39;tau_</span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="n">bname</span> <span class="k">for</span> <span class="n">bname</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branches</span><span class="p">])</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nparams</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsnames</span><span class="p">)</span>
+
+        <span class="c1">#mapping coefficient names to indices to unique/parameter array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">paramsidx</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">name</span><span class="p">,</span> <span class="n">idx</span><span class="p">)</span> <span class="k">for</span> <span class="p">(</span><span class="n">idx</span><span class="p">,</span><span class="n">name</span><span class="p">)</span> <span class="ow">in</span>
+                              <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsnames</span><span class="p">))</span>
+
+        <span class="c1">#mapping branch and leaf names to index in parameter array</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">parinddict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">((</span><span class="n">k</span><span class="p">,</span> <span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsidx</span><span class="p">[</span><span class="n">j</span><span class="p">]</span> <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">v</span><span class="p">])</span>
+                               <span class="k">for</span> <span class="n">k</span><span class="p">,</span><span class="n">v</span> <span class="ow">in</span> <span class="n">iteritems</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsind</span><span class="p">))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">recursionparams</span> <span class="o">=</span> <span class="mf">1.</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsnames</span><span class="p">))</span>
+        <span class="c1">#for testing that individual parameters are used in the right place</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recursionparams</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsnames</span><span class="p">))</span>
+        <span class="c1">#self.recursionparams[2] = 1</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recursionparams</span><span class="p">[</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">nbranches</span><span class="p">:]</span> <span class="o">=</span> <span class="mi">1</span>  <span class="c1">#values for tau&#39;s</span></div>
+        <span class="c1">#self.recursionparams[-2] = 2</span>
+
+
+<div class="viewcode-block" id="RU2NMNL.get_probs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.treewalkerclass.RU2NMNL.get_probs.html#statsmodels.sandbox.regression.treewalkerclass.RU2NMNL.get_probs">[docs]</a>    <span class="k">def</span> <span class="nf">get_probs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        obtain the probability array given an array of parameters</span>
+
+<span class="sd">        This is the function that can be called by loglike or other methods</span>
+<span class="sd">        that need the probabilities as function of the params.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        params : 1d array, (nparams,)</span>
+<span class="sd">            coefficients and tau that parameterize the model. The required</span>
+<span class="sd">            length can be obtained by nparams. (and will depend on the number</span>
+<span class="sd">            of degenerate leaves - not yet)</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        probs : array, (nobs, nchoices)</span>
+<span class="sd">            probabilites for all choices for each observation. The order</span>
+<span class="sd">            is available by attribute leaves. See note in docstring of class</span>
+
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">recursionparams</span> <span class="o">=</span> <span class="n">params</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">calc_prob</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+        <span class="n">probs_array</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">leaf</span><span class="p">]</span> <span class="k">for</span> <span class="n">leaf</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">leaves</span><span class="p">])</span>
+        <span class="k">return</span> <span class="n">probs_array</span></div>
+        <span class="c1">#what&#39;s the ordering? Should be the same as sequence in tree.</span>
+        <span class="c1">#TODO: need a check/assert that this sequence is the same as the</span>
+        <span class="c1">#      encoding in endog</span>
+
+
+<div class="viewcode-block" id="RU2NMNL.calc_prob"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.treewalkerclass.RU2NMNL.calc_prob.html#statsmodels.sandbox.regression.treewalkerclass.RU2NMNL.calc_prob">[docs]</a>    <span class="k">def</span> <span class="nf">calc_prob</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">parent</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;walking a tree bottom-up based on dictionary</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+
+        <span class="c1">#0.5#2 #placeholder for now</span>
+        <span class="c1">#should be tau=self.taus[name] but as part of params for optimization</span>
+        <span class="n">endog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">endog</span>
+        <span class="n">datadict</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">datadict</span>
+        <span class="n">paramsind</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">paramsind</span>
+        <span class="n">branchsum</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">branchsum</span>
+
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">tree</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">):</span>   <span class="c1">#assumes leaves are int for choice index</span>
+
+            <span class="n">name</span><span class="p">,</span> <span class="n">subtree</span> <span class="o">=</span> <span class="n">tree</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">branchleaves</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>  <span class="c1">#register branch in dictionary</span>
+
+            <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recursionparams</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsidx</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">name</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;----------- starting next branch-----------&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="n">datadict</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="s1">&#39;tau=&#39;</span><span class="p">,</span> <span class="n">tau</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;subtree&#39;</span><span class="p">,</span> <span class="n">subtree</span><span class="p">)</span>
+            <span class="n">branchvalue</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">if</span> <span class="n">testxb</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="n">branchsum</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="k">elif</span> <span class="n">testxb</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">branchsum</span> <span class="o">=</span> <span class="n">datadict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">branchsum</span> <span class="o">=</span> <span class="n">name</span>
+            <span class="k">for</span> <span class="n">b</span> <span class="ow">in</span> <span class="n">subtree</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">b</span><span class="p">)</span>
+                <span class="n">bv</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">calc_prob</span><span class="p">(</span><span class="n">b</span><span class="p">,</span> <span class="n">name</span><span class="p">)</span>
+                <span class="n">bv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">bv</span><span class="o">/</span><span class="n">tau</span><span class="p">)</span>  <span class="c1">#this shouldn&#39;t be here, when adding branch data</span>
+                <span class="n">branchvalue</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bv</span><span class="p">)</span>
+                <span class="n">branchsum</span> <span class="o">=</span> <span class="n">branchsum</span> <span class="o">+</span> <span class="n">bv</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">branchvalues</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">branchvalue</span> <span class="c1">#keep track what was returned</span>
+
+            <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;----------- returning to branch-----------&#39;</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;branchsum in branch&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">,</span> <span class="n">branchsum</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="n">parent</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">branchleaves</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branchleaves</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+            <span class="k">if</span> <span class="mi">0</span><span class="p">:</span>  <span class="c1">#not name == &#39;top&#39;:  # not used anymore !!! ???</span>
+            <span class="c1">#if not name == &#39;top&#39;:</span>
+                <span class="c1">#TODO: do I need this only on the lowest branches ?</span>
+                <span class="n">tmpsum</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branchleaves</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+                    <span class="c1">#similar to this is now also in return branch values</span>
+                    <span class="c1">#depends on what will be returned</span>
+                    <span class="n">tmpsum</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span>
+                    <span class="n">iv</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">tmpsum</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branchleaves</span><span class="p">[</span><span class="n">name</span><span class="p">]:</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">probstxt</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">probstxt</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span> <span class="o">+</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;-prob&#39;</span> <span class="o">+</span>
+                                    <span class="s1">&#39;(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsind</span><span class="p">[</span><span class="n">name</span><span class="p">])]</span>
+
+                    <span class="c1">#TODO: does this use the denominator twice now</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">/</span> <span class="n">tmpsum</span>
+                    <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datadict</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                        <span class="c1">#not used yet, might have to move one indentation level</span>
+                        <span class="c1">#self.probs[k] = self.probs[k] / tmpsum</span>
+<span class="c1">##                            np.exp(-self.datadict[name] *</span>
+<span class="c1">##                             np.sum(self.recursionparams[self.parinddict[name]]))</span>
+                        <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;self.datadict[name], self.probs[k]&#39;</span><span class="p">)</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datadict</span><span class="p">[</span><span class="n">name</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">k</span><span class="p">])</span>
+                    <span class="c1">#if not name == &#39;top&#39;:</span>
+                    <span class="c1">#    self.probs[k] = self.probs[k] * np.exp( iv)</span>
+
+            <span class="c1">#walk one level down again to add branch probs to instance.probs</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">bprobs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">bidx</span><span class="p">,</span> <span class="n">b</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">subtree</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;repr(b)&#39;</span><span class="p">,</span> <span class="nb">repr</span><span class="p">(</span><span class="n">b</span><span class="p">),</span> <span class="n">bidx</span><span class="p">)</span>
+                <span class="c1">#if len(b) == 1: #TODO: skip leaves, check this</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">b</span><span class="p">,</span>  <span class="nb">tuple</span><span class="p">):</span> <span class="c1"># isinstance(b, str):</span>
+                    <span class="c1">#TODO: replace this with a check for branch (tuple) instead</span>
+                    <span class="c1">#this implies name is a bottom branch,</span>
+                    <span class="c1">#possible to add special things here</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">bprobs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">b</span><span class="p">])</span>
+                    <span class="c1">#TODO: need tau possibly here</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">b</span><span class="p">]</span> <span class="o">/</span> <span class="n">branchsum</span>
+                    <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;*********** branchsum at bottom branch&#39;</span><span class="p">,</span> <span class="n">branchsum</span><span class="p">)</span>
+                    <span class="c1">#self.bprobs[name].append(self.probs[b])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">bname</span> <span class="o">=</span> <span class="n">b</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+                    <span class="n">branchsum2</span> <span class="o">=</span> <span class="nb">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">branchvalues</span><span class="p">[</span><span class="n">name</span><span class="p">])</span>
+                    <span class="k">assert</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">branchsum</span> <span class="o">-</span> <span class="n">branchsum2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">&lt;</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">8</span>
+                    <span class="n">bprob</span> <span class="o">=</span> <span class="n">branchvalue</span><span class="p">[</span><span class="n">bidx</span><span class="p">]</span><span class="o">/</span><span class="n">branchsum</span>
+                    <span class="bp">self</span><span class="o">.</span><span class="n">bprobs</span><span class="p">[</span><span class="n">name</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">bprob</span><span class="p">)</span>
+
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">branchleaves</span><span class="p">[</span><span class="n">bname</span><span class="p">]:</span>
+
+                        <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;branchprob&#39;</span><span class="p">,</span> <span class="n">bname</span><span class="p">,</span> <span class="n">k</span><span class="p">,</span> <span class="n">bprob</span><span class="p">,</span> <span class="n">branchsum</span><span class="p">)</span>
+                        <span class="c1">#temporary hack with maximum to avoid zeros</span>
+                        <span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">k</span><span class="p">]</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">maximum</span><span class="p">(</span><span class="n">bprob</span><span class="p">,</span> <span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">4</span><span class="p">)</span>
+
+
+            <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;working on branch&#39;</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="n">branchsum</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">testxb</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">branchsum</span>
+            <span class="k">else</span><span class="p">:</span> <span class="c1">#this is the relevant part</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">branchsums</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">branchsum</span>
+                <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">size</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datadict</span><span class="p">[</span><span class="n">name</span><span class="p">])</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">:</span>
+                    <span class="n">branchxb</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datadict</span><span class="p">[</span><span class="n">name</span><span class="p">]</span> <span class="o">*</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">recursionparams</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parinddict</span><span class="p">[</span><span class="n">name</span><span class="p">]])</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">branchxb</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">name</span><span class="o">==</span><span class="s1">&#39;top&#39;</span><span class="p">:</span>
+                    <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recursionparams</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsidx</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">name</span><span class="p">]]</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">tau</span> <span class="o">=</span> <span class="mi">1</span>
+                <span class="n">iv</span> <span class="o">=</span> <span class="n">branchxb</span> <span class="o">+</span> <span class="n">tau</span> <span class="o">*</span> <span class="n">branchsum</span> <span class="c1">#which tau: name or parent???</span>
+                <span class="k">return</span> <span class="n">branchxb</span> <span class="o">+</span> <span class="n">tau</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">branchsum</span><span class="p">)</span> <span class="c1">#iv</span>
+                <span class="c1">#branchsum is now IV, TODO: add effect of branch variables</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">tau</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">recursionparams</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsidx</span><span class="p">[</span><span class="s1">&#39;tau_&#39;</span><span class="o">+</span><span class="n">parent</span><span class="p">]]</span>
+            <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;parent&#39;</span><span class="p">,</span> <span class="n">parent</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">branchleaves</span><span class="p">[</span><span class="n">parent</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span> <span class="c1"># register leave with parent</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">probstxt</span><span class="p">[</span><span class="n">tree</span><span class="p">]</span> <span class="o">=</span> <span class="p">[</span><span class="n">tree</span> <span class="o">+</span> <span class="s1">&#39;-prob&#39;</span> <span class="o">+</span>
+                                <span class="s1">&#39;(</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="s1">&#39;, &#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">paramsind</span><span class="p">[</span><span class="n">tree</span><span class="p">])]</span>
+            <span class="c1">#this is not yet a prob, not normalized to 1, it is exp(x*b)</span>
+            <span class="n">leafprob</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">datadict</span><span class="p">[</span><span class="n">tree</span><span class="p">]</span> <span class="o">*</span>
+                                  <span class="bp">self</span><span class="o">.</span><span class="n">recursionparams</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">parinddict</span><span class="p">[</span><span class="n">tree</span><span class="p">]])</span>
+                              <span class="o">/</span> <span class="n">tau</span><span class="p">)</span>   <span class="c1"># fake tau for now, wrong spot ???</span>
+            <span class="c1">#it seems I get the same answer with and without tau here</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">probs</span><span class="p">[</span><span class="n">tree</span><span class="p">]</span> <span class="o">=</span> <span class="n">leafprob</span>  <span class="c1">#= 1 #try initialization only</span>
+            <span class="c1">#TODO: where  should I add tau in the leaves</span>
+
+            <span class="k">if</span> <span class="n">testxb</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+                <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">leafprob</span><span class="p">)</span>
+            <span class="k">elif</span> <span class="n">testxb</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">leavessum</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">datadict</span><span class="p">[</span><span class="n">tree</span><span class="p">])</span> <span class="c1"># sum((datadict[bi] for bi in datadict[tree]))</span>
+                <span class="k">if</span> <span class="n">DEBUG</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;final branch with&#39;</span><span class="p">,</span> <span class="n">tree</span><span class="p">,</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tree</span><span class="p">),</span> <span class="n">leavessum</span><span class="p">)</span> <span class="c1">#sum(tree)</span>
+                <span class="k">return</span> <span class="n">leavessum</span>  <span class="c1">#sum(xb[tree])</span>
+            <span class="k">elif</span> <span class="n">testxb</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">return</span> <span class="s1">&#39;&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">tree</span><span class="p">)</span> <span class="c1">#sum(tree)</span></div></div>
+
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">DEBUG</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">endog</span> <span class="o">=</span> <span class="mi">5</span> <span class="c1"># dummy place holder</span>
+
+
+    <span class="c1">##############  Example similar to Greene</span>
+
+    <span class="c1">#get pickled data</span>
+    <span class="c1">#endog3, xifloat3 = cPickle.load(open(&#39;xifloat2.pickle&#39;,&#39;rb&#39;))</span>
+
+
+    <span class="n">tree0</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;top&#39;</span><span class="p">,</span>
+                <span class="p">[(</span><span class="s1">&#39;Fly&#39;</span><span class="p">,[</span><span class="s1">&#39;Air&#39;</span><span class="p">]),</span>
+                 <span class="p">(</span><span class="s1">&#39;Ground&#39;</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;Train&#39;</span><span class="p">,</span> <span class="s1">&#39;Car&#39;</span><span class="p">,</span> <span class="s1">&#39;Bus&#39;</span><span class="p">])</span>
+                 <span class="p">]</span>
+            <span class="p">)</span>
+
+    <span class="sd">&#39;&#39;&#39; this is with real data from Greene&#39;s clogit example</span>
+<span class="sd">    datadict = dict(zip([&#39;Air&#39;, &#39;Train&#39;, &#39;Bus&#39;, &#39;Car&#39;],</span>
+<span class="sd">                        [xifloat[i]for i in range(4)]))</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="c1">#for testing only (mock that returns it&#39;s own name</span>
+    <span class="n">datadict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s1">&#39;Air&#39;</span><span class="p">,</span> <span class="s1">&#39;Train&#39;</span><span class="p">,</span> <span class="s1">&#39;Bus&#39;</span><span class="p">,</span> <span class="s1">&#39;Car&#39;</span><span class="p">],</span>
+                        <span class="p">[</span><span class="s1">&#39;Airdata&#39;</span><span class="p">,</span> <span class="s1">&#39;Traindata&#39;</span><span class="p">,</span> <span class="s1">&#39;Busdata&#39;</span><span class="p">,</span> <span class="s1">&#39;Cardata&#39;</span><span class="p">]))</span>
+
+    <span class="k">if</span> <span class="n">testxb</span><span class="p">:</span>
+        <span class="n">datadict</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="nb">zip</span><span class="p">([</span><span class="s1">&#39;Air&#39;</span><span class="p">,</span> <span class="s1">&#39;Train&#39;</span><span class="p">,</span> <span class="s1">&#39;Bus&#39;</span><span class="p">,</span> <span class="s1">&#39;Car&#39;</span><span class="p">],</span>
+                        <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">4</span><span class="p">)))</span>
+
+    <span class="n">datadict</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;top&#39;</span> <span class="p">:</span>   <span class="p">[],</span>
+                     <span class="s1">&#39;Fly&#39;</span> <span class="p">:</span>   <span class="p">[],</span>
+                     <span class="s1">&#39;Ground&#39;</span><span class="p">:</span> <span class="p">[]})</span>
+
+    <span class="n">paramsind</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;top&#39;</span> <span class="p">:</span>   <span class="p">[],</span>
+                 <span class="s1">&#39;Fly&#39;</span> <span class="p">:</span>   <span class="p">[],</span>
+                 <span class="s1">&#39;Ground&#39;</span><span class="p">:</span> <span class="p">[],</span>
+                 <span class="s1">&#39;Air&#39;</span> <span class="p">:</span>   <span class="p">[</span><span class="s1">&#39;GC&#39;</span><span class="p">,</span> <span class="s1">&#39;Ttme&#39;</span><span class="p">,</span> <span class="s1">&#39;ConstA&#39;</span><span class="p">,</span> <span class="s1">&#39;Hinc&#39;</span><span class="p">],</span>
+                 <span class="s1">&#39;Train&#39;</span> <span class="p">:</span> <span class="p">[</span><span class="s1">&#39;GC&#39;</span><span class="p">,</span> <span class="s1">&#39;Ttme&#39;</span><span class="p">,</span> <span class="s1">&#39;ConstT&#39;</span><span class="p">],</span>
+                 <span class="s1">&#39;Bus&#39;</span> <span class="p">:</span>   <span class="p">[</span><span class="s1">&#39;GC&#39;</span><span class="p">,</span> <span class="s1">&#39;Ttme&#39;</span><span class="p">,</span> <span class="s1">&#39;ConstB&#39;</span><span class="p">],</span>
+                 <span class="s1">&#39;Car&#39;</span> <span class="p">:</span>   <span class="p">[</span><span class="s1">&#39;GC&#39;</span><span class="p">,</span> <span class="s1">&#39;Ttme&#39;</span><span class="p">]</span>
+                 <span class="p">}</span>
+
+    <span class="n">modru</span> <span class="o">=</span> <span class="n">RU2NMNL</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">datadict</span><span class="p">,</span> <span class="n">tree0</span><span class="p">,</span> <span class="n">paramsind</span><span class="p">)</span>
+    <span class="n">modru</span><span class="o">.</span><span class="n">recursionparams</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">modru</span><span class="o">.</span><span class="n">recursionparams</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Example 1&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---------</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">modru</span><span class="o">.</span><span class="n">calc_prob</span><span class="p">(</span><span class="n">modru</span><span class="o">.</span><span class="n">tree</span><span class="p">))</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tree&#39;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="n">modru</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">modru.probs&#39;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="n">modru</span><span class="o">.</span><span class="n">probs</span><span class="p">)</span>
+
+
+
+    <span class="c1">##############  example with many layers</span>
+
+    <span class="n">tree2</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;top&#39;</span><span class="p">,</span>
+                <span class="p">[(</span><span class="s1">&#39;B1&#39;</span><span class="p">,[</span><span class="s1">&#39;a&#39;</span><span class="p">,</span><span class="s1">&#39;b&#39;</span><span class="p">]),</span>
+                 <span class="p">(</span><span class="s1">&#39;B2&#39;</span><span class="p">,</span>
+                       <span class="p">[(</span><span class="s1">&#39;B21&#39;</span><span class="p">,[</span><span class="s1">&#39;c&#39;</span><span class="p">,</span> <span class="s1">&#39;d&#39;</span><span class="p">]),</span>
+                        <span class="p">(</span><span class="s1">&#39;B22&#39;</span><span class="p">,[</span><span class="s1">&#39;e&#39;</span><span class="p">,</span> <span class="s1">&#39;f&#39;</span><span class="p">,</span> <span class="s1">&#39;g&#39;</span><span class="p">])</span>
+                        <span class="p">]</span>
+                  <span class="p">),</span>
+                 <span class="p">(</span><span class="s1">&#39;B3&#39;</span><span class="p">,[</span><span class="s1">&#39;h&#39;</span><span class="p">])</span>
+                <span class="p">]</span>
+             <span class="p">)</span>
+
+    <span class="c1">#Note: dict looses ordering</span>
+    <span class="n">paramsind2</span> <span class="o">=</span> <span class="p">{</span>
+     <span class="s1">&#39;B1&#39;</span><span class="p">:</span> <span class="p">[],</span>
+     <span class="s1">&#39;a&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;consta&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;b&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;constb&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;B2&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;const2&#39;</span><span class="p">,</span> <span class="s1">&#39;x2&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;B21&#39;</span><span class="p">:</span> <span class="p">[],</span>
+     <span class="s1">&#39;c&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;constc&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;d&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;constd&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;time&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;B22&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;x22&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;e&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;conste&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;hince&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;f&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;constf&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;hincf&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;g&#39;</span><span class="p">:</span> <span class="p">[</span>          <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;hincg&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;B3&#39;</span><span class="p">:</span> <span class="p">[],</span>
+     <span class="s1">&#39;h&#39;</span><span class="p">:</span> <span class="p">[</span><span class="s1">&#39;consth&#39;</span><span class="p">,</span> <span class="s1">&#39;p&#39;</span><span class="p">,</span> <span class="s1">&#39;h&#39;</span><span class="p">],</span>
+     <span class="s1">&#39;top&#39;</span><span class="p">:</span> <span class="p">[]}</span>
+
+
+    <span class="n">datadict2</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">([</span><span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="s1">&#39;abcdefgh&#39;</span><span class="p">,</span><span class="n">lrange</span><span class="p">(</span><span class="mi">8</span><span class="p">))])</span>
+    <span class="n">datadict2</span><span class="o">.</span><span class="n">update</span><span class="p">({</span><span class="s1">&#39;top&#39;</span><span class="p">:</span><span class="mi">1000</span><span class="p">,</span> <span class="s1">&#39;B1&#39;</span><span class="p">:</span><span class="mi">100</span><span class="p">,</span> <span class="s1">&#39;B2&#39;</span><span class="p">:</span><span class="mi">200</span><span class="p">,</span> <span class="s1">&#39;B21&#39;</span><span class="p">:</span><span class="mi">21</span><span class="p">,</span><span class="s1">&#39;B22&#39;</span><span class="p">:</span><span class="mi">22</span><span class="p">,</span> <span class="s1">&#39;B3&#39;</span><span class="p">:</span><span class="mi">300</span><span class="p">})</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    &gt;&gt;&gt; pprint(datadict2)</span>
+<span class="sd">    {&#39;B1&#39;: 100,</span>
+<span class="sd">     &#39;B2&#39;: 200,</span>
+<span class="sd">     &#39;B21&#39;: 21,</span>
+<span class="sd">     &#39;B22&#39;: 22,</span>
+<span class="sd">     &#39;B3&#39;: 300,</span>
+<span class="sd">     &#39;a&#39;: 0.5,</span>
+<span class="sd">     &#39;b&#39;: 1,</span>
+<span class="sd">     &#39;c&#39;: 2,</span>
+<span class="sd">     &#39;d&#39;: 3,</span>
+<span class="sd">     &#39;e&#39;: 4,</span>
+<span class="sd">     &#39;f&#39;: 5,</span>
+<span class="sd">     &#39;g&#39;: 6,</span>
+<span class="sd">     &#39;h&#39;: 7,</span>
+<span class="sd">     &#39;top&#39;: 1000}</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+
+    <span class="n">modru2</span> <span class="o">=</span> <span class="n">RU2NMNL</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">datadict2</span><span class="p">,</span> <span class="n">tree2</span><span class="p">,</span> <span class="n">paramsind2</span><span class="p">)</span>
+    <span class="n">modru2</span><span class="o">.</span><span class="n">recursionparams</span><span class="p">[</span><span class="o">-</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+    <span class="n">modru2</span><span class="o">.</span><span class="n">recursionparams</span><span class="p">[</span><span class="mi">3</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n\n</span><span class="s1">Example 2&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;---------</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">modru2</span><span class="o">.</span><span class="n">calc_prob</span><span class="p">(</span><span class="n">modru2</span><span class="o">.</span><span class="n">tree</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Tree&#39;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="n">modru2</span><span class="o">.</span><span class="n">tree</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;</span><span class="se">\n</span><span class="s1">modru.probs&#39;</span><span class="p">)</span>
+    <span class="n">pprint</span><span class="p">(</span><span class="n">modru2</span><span class="o">.</span><span class="n">probs</span><span class="p">)</span>
+
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;sum of probs&#39;</span><span class="p">,</span> <span class="nb">sum</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">itervalues</span><span class="p">(</span><span class="n">modru2</span><span class="o">.</span><span class="n">probs</span><span class="p">))))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;branchvalues&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">modru2</span><span class="o">.</span><span class="n">branchvalues</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">modru</span><span class="o">.</span><span class="n">branchvalues</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;branch probabilities&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">modru</span><span class="o">.</span><span class="n">bprobs</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;degenerate branches&#39;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">modru</span><span class="o">.</span><span class="n">branches_degenerate</span><span class="p">)</span>
+
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    &gt;&gt;&gt; modru.bprobs</span>
+<span class="sd">    {&#39;Fly&#39;: [], &#39;top&#39;: [0.0016714179077931082, 0.99832858209220687], &#39;Ground&#39;: []}</span>
+<span class="sd">    &gt;&gt;&gt; modru2.bprobs</span>
+<span class="sd">    {&#39;top&#39;: [0.25000000000000006, 0.62499999999999989, 0.12500000000000003], &#39;B22&#39;: [], &#39;B21&#39;: [], &#39;B1&#39;: [], &#39;B2&#39;: [0.40000000000000008, 0.59999999999999998], &#39;B3&#39;: []}</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">params1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">modru</span><span class="o">.</span><span class="n">get_probs</span><span class="p">(</span><span class="n">params1</span><span class="p">))</span>
+    <span class="n">params2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span> <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>
+                         <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">0.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">2.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">,</span>  <span class="mf">1.</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">modru2</span><span class="o">.</span><span class="n">get_probs</span><span class="p">(</span><span class="n">params2</span><span class="p">))</span> <span class="c1">#raises IndexError</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

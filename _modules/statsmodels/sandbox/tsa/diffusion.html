@@ -1,0 +1,806 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.tsa.diffusion &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.tsa.diffusion</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.tsa.diffusion</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;getting started with diffusions, continuous time stochastic processes</span>
+
+<span class="sd">Author: josef-pktd</span>
+<span class="sd">License: BSD</span>
+
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+
+<span class="sd">An Algorithmic Introduction to Numerical Simulation of Stochastic Differential</span>
+<span class="sd">Equations</span>
+<span class="sd">Author(s): Desmond J. Higham</span>
+<span class="sd">Source: SIAM Review, Vol. 43, No. 3 (Sep., 2001), pp. 525-546</span>
+<span class="sd">Published by: Society for Industrial and Applied Mathematics</span>
+<span class="sd">Stable URL: http://www.jstor.org/stable/3649798</span>
+
+<span class="sd">http://www.sitmo.com/  especially the formula collection</span>
+
+
+<span class="sd">Notes</span>
+<span class="sd">-----</span>
+
+<span class="sd">OU process: use same trick for ARMA with constant (non-zero mean) and drift</span>
+<span class="sd">some of the processes have easy multivariate extensions</span>
+
+<span class="sd">*Open Issues*</span>
+
+<span class="sd">include xzero in returned sample or not? currently not</span>
+
+<span class="sd">*TODOS*</span>
+
+<span class="sd">* Milstein from Higham paper, for which processes does it apply</span>
+<span class="sd">* Maximum Likelihood estimation</span>
+<span class="sd">* more statistical properties (useful for tests)</span>
+<span class="sd">* helper functions for display and MonteCarlo summaries (also for testing/checking)</span>
+<span class="sd">* more processes for the menagerie (e.g. from empirical papers)</span>
+<span class="sd">* characteristic functions</span>
+<span class="sd">* transformations, non-linear e.g. log</span>
+<span class="sd">* special estimators, e.g. Ait Sahalia, empirical characteristic functions</span>
+<span class="sd">* fft examples</span>
+<span class="sd">* check naming of methods, &quot;simulate&quot;, &quot;sample&quot;, &quot;simexact&quot;, ... ?</span>
+
+
+
+<span class="sd">stochastic volatility models: estimation unclear</span>
+
+<span class="sd">finance applications ? option pricing, interest rate models</span>
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span><span class="p">,</span> <span class="n">signal</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<span class="c1">#np.random.seed(987656789)</span>
+
+<div class="viewcode-block" id="Diffusion"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.Diffusion.html#statsmodels.sandbox.tsa.diffusion.Diffusion">[docs]</a><span class="k">class</span> <span class="nc">Diffusion</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Wiener Process, Brownian Motion with mu=0 and sigma=1</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="Diffusion.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.Diffusion.__init__.html#statsmodels.sandbox.tsa.diffusion.Diffusion.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="Diffusion.simulateW"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.Diffusion.simulateW.html#statsmodels.sandbox.tsa.diffusion.Diffusion.simulateW">[docs]</a>    <span class="k">def</span> <span class="nf">simulateW</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;generate sample of Wiener Process</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">T</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="n">nobs</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+        <span class="n">dW</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dt</span><span class="p">)</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nrepl</span><span class="p">,</span> <span class="n">nobs</span><span class="p">))</span>
+        <span class="n">W</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dW</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dW</span> <span class="o">=</span> <span class="n">dW</span>
+        <span class="k">return</span> <span class="n">W</span><span class="p">,</span> <span class="n">t</span></div>
+
+<div class="viewcode-block" id="Diffusion.expectedsim"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.Diffusion.expectedsim.html#statsmodels.sandbox.tsa.diffusion.Diffusion.expectedsim">[docs]</a>    <span class="k">def</span> <span class="nf">expectedsim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">func</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;get expectation of a function of a Wiener Process by simulation</span>
+
+<span class="sd">        initially test example from</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">W</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulateW</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="n">nrepl</span><span class="p">)</span>
+        <span class="n">U</span> <span class="o">=</span> <span class="n">func</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">W</span><span class="p">)</span>
+        <span class="n">Umean</span> <span class="o">=</span> <span class="n">U</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">U</span><span class="p">,</span> <span class="n">Umean</span><span class="p">,</span> <span class="n">t</span></div></div>
+
+<div class="viewcode-block" id="AffineDiffusion"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.AffineDiffusion.html#statsmodels.sandbox.tsa.diffusion.AffineDiffusion">[docs]</a><span class="k">class</span> <span class="nc">AffineDiffusion</span><span class="p">(</span><span class="n">Diffusion</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">    differential equation:</span>
+
+<span class="sd">    :math::</span>
+<span class="sd">    dx_t = f(t,x)dt + \sigma(t,x)dW_t</span>
+
+<span class="sd">    integral:</span>
+
+<span class="sd">    :math::</span>
+<span class="sd">    x_T = x_0 + \\int_{0}^{T}f(t,S)dt + \\int_0^T  \\sigma(t,S)dW_t</span>
+
+<span class="sd">    TODO: check definition, affine, what about jump diffusion?</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="AffineDiffusion.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.AffineDiffusion.__init__.html#statsmodels.sandbox.tsa.diffusion.AffineDiffusion.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="AffineDiffusion.sim"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.AffineDiffusion.sim.html#statsmodels.sandbox.tsa.diffusion.AffineDiffusion.sim">[docs]</a>    <span class="k">def</span> <span class="nf">sim</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="c1"># this doesn&#39;t look correct if drift or sig depend on x</span>
+        <span class="c1"># see arithmetic BM</span>
+        <span class="n">W</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulateW</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="n">nrepl</span><span class="p">)</span>
+        <span class="n">dx</span> <span class="o">=</span>  <span class="bp">self</span><span class="o">.</span><span class="n">_drift</span><span class="p">()</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sig</span><span class="p">()</span> <span class="o">*</span> <span class="n">W</span>
+        <span class="n">x</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">dx</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">xmean</span> <span class="o">=</span> <span class="n">x</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">xmean</span><span class="p">,</span> <span class="n">t</span></div>
+
+<div class="viewcode-block" id="AffineDiffusion.simEM"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.AffineDiffusion.simEM.html#statsmodels.sandbox.tsa.diffusion.AffineDiffusion.simEM">[docs]</a>    <span class="k">def</span> <span class="nf">simEM</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">Tratio</span><span class="o">=</span><span class="mi">4</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">        from Higham 2001</span>
+
+<span class="sd">        TODO: reverse parameterization to start with final nobs and DT</span>
+<span class="sd">        TODO: check if I can skip the loop using my way from exactprocess</span>
+<span class="sd">              problem might be Winc (reshape into 3d and sum)</span>
+<span class="sd">        TODO: (later) check memory efficiency for large simulations</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1">#TODO: reverse parameterization to start with final nobs and DT</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="n">nobs</span> <span class="o">*</span> <span class="n">Tratio</span>  <span class="c1"># simple way to change parameter</span>
+        <span class="c1"># maybe wrong parameterization,</span>
+        <span class="c1"># drift too large, variance too small ? which dt/Dt</span>
+        <span class="c1"># _drift, _sig independent of dt is wrong</span>
+        <span class="k">if</span> <span class="n">xzero</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xzero</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xzero</span>
+        <span class="k">if</span> <span class="n">dt</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">dt</span> <span class="o">=</span> <span class="n">T</span><span class="o">*</span><span class="mf">1.0</span><span class="o">/</span><span class="n">nobs</span>
+        <span class="n">W</span><span class="p">,</span> <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">simulateW</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="p">,</span> <span class="n">T</span><span class="o">=</span><span class="n">T</span><span class="p">,</span> <span class="n">dt</span><span class="o">=</span><span class="n">dt</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="n">nrepl</span><span class="p">)</span>
+        <span class="n">dW</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">dW</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+        <span class="n">Dt</span> <span class="o">=</span> <span class="n">Tratio</span><span class="o">*</span><span class="n">dt</span><span class="p">;</span>
+        <span class="n">L</span> <span class="o">=</span> <span class="n">nobs</span><span class="o">/</span><span class="n">Tratio</span><span class="p">;</span>        <span class="c1"># L EM steps of size Dt = R*dt</span>
+        <span class="n">Xem</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrepl</span><span class="p">,</span><span class="n">L</span><span class="p">));</span>    <span class="c1"># preallocate for efficiency</span>
+        <span class="n">Xtemp</span> <span class="o">=</span> <span class="n">xzero</span>
+        <span class="n">Xem</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">xzero</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">L</span><span class="p">):</span>
+           <span class="c1">#Winc = np.sum(dW[:,Tratio*(j-1)+1:Tratio*j],1)</span>
+           <span class="n">Winc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">dW</span><span class="p">[:,</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">Tratio</span><span class="o">*</span><span class="p">(</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">Tratio</span><span class="o">*</span><span class="n">j</span><span class="p">)],</span><span class="mi">1</span><span class="p">)</span>
+           <span class="c1">#Xtemp = Xtemp + Dt*lamda*Xtemp + mu*Xtemp*Winc;</span>
+           <span class="n">Xtemp</span> <span class="o">=</span> <span class="n">Xtemp</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drift</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Xtemp</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sig</span><span class="p">(</span><span class="n">x</span><span class="o">=</span><span class="n">Xtemp</span><span class="p">)</span> <span class="o">*</span> <span class="n">Winc</span>
+           <span class="c1">#Dt*lamda*Xtemp + mu*Xtemp*Winc;</span>
+           <span class="n">Xem</span><span class="p">[:,</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">Xtemp</span>
+        <span class="k">return</span> <span class="n">Xem</span></div></div>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    R = 4; Dt = R*dt; L = N/R;        % L EM steps of size Dt = R*dt</span>
+<span class="sd">    Xem = zeros(1,L);                 % preallocate for efficiency</span>
+<span class="sd">    Xtemp = Xzero;</span>
+<span class="sd">    for j = 1:L</span>
+<span class="sd">       Winc = sum(dW(R*(j-1)+1:R*j));</span>
+<span class="sd">       Xtemp = Xtemp + Dt*lambda*Xtemp + mu*Xtemp*Winc;</span>
+<span class="sd">       Xem(j) = Xtemp;</span>
+<span class="sd">    end</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ExactDiffusion"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.ExactDiffusion.html#statsmodels.sandbox.tsa.diffusion.ExactDiffusion">[docs]</a><span class="k">class</span> <span class="nc">ExactDiffusion</span><span class="p">(</span><span class="n">AffineDiffusion</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Diffusion that has an exact integral representation</span>
+
+<span class="sd">    this is currently mainly for geometric, log processes</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ExactDiffusion.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.ExactDiffusion.__init__.html#statsmodels.sandbox.tsa.diffusion.ExactDiffusion.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="ExactDiffusion.exactprocess"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.ExactDiffusion.exactprocess.html#statsmodels.sandbox.tsa.diffusion.ExactDiffusion.exactprocess">[docs]</a>    <span class="k">def</span> <span class="nf">exactprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;ddt : discrete delta t</span>
+
+
+
+<span class="sd">        should be the same as an AR(1)</span>
+<span class="sd">        not tested yet</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">ddt</span><span class="p">,</span> <span class="n">nobs</span><span class="o">*</span><span class="n">ddt</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+        <span class="c1">#expnt = np.exp(-self.lambd * t)</span>
+        <span class="n">expddt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">*</span> <span class="n">ddt</span><span class="p">)</span>
+        <span class="n">normrvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nrepl</span><span class="p">,</span><span class="n">nobs</span><span class="p">))</span>
+        <span class="c1">#do I need lfilter here AR(1) ? if mean reverting lag-coeff&lt;1</span>
+        <span class="c1">#lfilter doesn&#39;t handle 2d arrays, it does?</span>
+        <span class="n">inc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exactconst</span><span class="p">(</span><span class="n">expddt</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exactstd</span><span class="p">(</span><span class="n">expddt</span><span class="p">)</span> <span class="o">*</span> <span class="n">normrvs</span>
+        <span class="k">return</span> <span class="n">signal</span><span class="o">.</span><span class="n">lfilter</span><span class="p">([</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span><span class="o">-</span><span class="n">expddt</span><span class="p">],</span> <span class="n">inc</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ExactDiffusion.exactdist"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.ExactDiffusion.exactdist.html#statsmodels.sandbox.tsa.diffusion.ExactDiffusion.exactdist">[docs]</a>    <span class="k">def</span> <span class="nf">exactdist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="n">expnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">meant</span> <span class="o">=</span> <span class="n">xzero</span> <span class="o">*</span> <span class="n">expnt</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exactconst</span><span class="p">(</span><span class="n">expnt</span><span class="p">)</span>
+        <span class="n">stdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exactstd</span><span class="p">(</span><span class="n">expnt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">meant</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">stdt</span><span class="p">)</span></div></div>
+
+<div class="viewcode-block" id="ArithmeticBrownian"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.ArithmeticBrownian.html#statsmodels.sandbox.tsa.diffusion.ArithmeticBrownian">[docs]</a><span class="k">class</span> <span class="nc">ArithmeticBrownian</span><span class="p">(</span><span class="n">AffineDiffusion</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    :math::</span>
+<span class="sd">    dx_t &amp;= \\mu dt + \\sigma dW_t</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="ArithmeticBrownian.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.ArithmeticBrownian.__init__.html#statsmodels.sandbox.tsa.diffusion.ArithmeticBrownian.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xzero</span> <span class="o">=</span> <span class="n">xzero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span></div>
+
+    <span class="k">def</span> <span class="nf">_drift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span>
+    <span class="k">def</span> <span class="nf">_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span>
+<div class="viewcode-block" id="ArithmeticBrownian.exactprocess"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.ArithmeticBrownian.exactprocess.html#statsmodels.sandbox.tsa.diffusion.ArithmeticBrownian.exactprocess">[docs]</a>    <span class="k">def</span> <span class="nf">exactprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">xzero</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;ddt : discrete delta t</span>
+
+<span class="sd">        not tested yet</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="n">xzero</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">xzero</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">xzero</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">ddt</span><span class="p">,</span> <span class="n">nobs</span><span class="o">*</span><span class="n">ddt</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+        <span class="n">normrvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nrepl</span><span class="p">,</span><span class="n">nobs</span><span class="p">))</span>
+        <span class="n">inc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drift</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">ddt</span><span class="p">)</span> <span class="o">*</span> <span class="n">normrvs</span>
+        <span class="c1">#return signal.lfilter([1.], [1.,-1], inc)</span>
+        <span class="k">return</span> <span class="n">xzero</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="n">inc</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ArithmeticBrownian.exactdist"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.ArithmeticBrownian.exactdist.html#statsmodels.sandbox.tsa.diffusion.ArithmeticBrownian.exactdist">[docs]</a>    <span class="k">def</span> <span class="nf">exactdist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="n">expnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">meant</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_drift</span> <span class="o">*</span> <span class="n">t</span>
+        <span class="n">stdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">meant</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">stdt</span><span class="p">)</span></div></div>
+
+
+<div class="viewcode-block" id="GeometricBrownian"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.GeometricBrownian.html#statsmodels.sandbox.tsa.diffusion.GeometricBrownian">[docs]</a><span class="k">class</span> <span class="nc">GeometricBrownian</span><span class="p">(</span><span class="n">AffineDiffusion</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Geometric Brownian Motion</span>
+
+<span class="sd">    :math::</span>
+<span class="sd">    dx_t &amp;= \\mu x_t dt + \\sigma x_t dW_t</span>
+
+<span class="sd">    $x_t $ stochastic process of Geometric Brownian motion,</span>
+<span class="sd">    $\mu $ is the drift,</span>
+<span class="sd">    $\sigma $ is the Volatility,</span>
+<span class="sd">    $W$ is the Wiener process (Brownian motion).</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="GeometricBrownian.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.GeometricBrownian.__init__.html#statsmodels.sandbox.tsa.diffusion.GeometricBrownian.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xzero</span> <span class="o">=</span> <span class="n">xzero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span></div>
+
+    <span class="k">def</span> <span class="nf">_drift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="n">x</span>
+    <span class="k">def</span> <span class="nf">_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">x</span></div>
+
+
+<div class="viewcode-block" id="OUprocess"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.OUprocess.html#statsmodels.sandbox.tsa.diffusion.OUprocess">[docs]</a><span class="k">class</span> <span class="nc">OUprocess</span><span class="p">(</span><span class="n">AffineDiffusion</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Ornstein-Uhlenbeck</span>
+
+<span class="sd">    :math::</span>
+<span class="sd">      dx_t&amp;=\\lambda(\\mu - x_t)dt+\\sigma dW_t</span>
+
+<span class="sd">    mean reverting process</span>
+
+
+
+<span class="sd">    TODO: move exact higher up in class hierarchy</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="OUprocess.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.OUprocess.__init__.html#statsmodels.sandbox.tsa.diffusion.OUprocess.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">lambd</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xzero</span> <span class="o">=</span> <span class="n">xzero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">=</span> <span class="n">lambd</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span></div>
+
+    <span class="k">def</span> <span class="nf">_drift</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">-</span> <span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_sig</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;x&#39;</span><span class="p">]</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">x</span>
+<div class="viewcode-block" id="OUprocess.exact"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.OUprocess.exact.html#statsmodels.sandbox.tsa.diffusion.OUprocess.exact">[docs]</a>    <span class="k">def</span> <span class="nf">exact</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">normrvs</span><span class="p">):</span>
+        <span class="c1">#TODO: aggregate over time for process with observations for all t</span>
+        <span class="c1">#      i.e. exact conditional distribution for discrete time increment</span>
+        <span class="c1">#      -&gt; exactprocess</span>
+        <span class="c1">#TODO: for single t, return stats.norm -&gt; exactdist</span>
+        <span class="n">expnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">(</span><span class="n">xzero</span> <span class="o">*</span> <span class="n">expnt</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">expnt</span><span class="p">)</span> <span class="o">+</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">expnt</span><span class="o">*</span><span class="n">expnt</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span><span class="p">)</span> <span class="o">*</span> <span class="n">normrvs</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OUprocess.exactprocess"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.OUprocess.exactprocess.html#statsmodels.sandbox.tsa.diffusion.OUprocess.exactprocess">[docs]</a>    <span class="k">def</span> <span class="nf">exactprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;ddt : discrete delta t</span>
+
+<span class="sd">        should be the same as an AR(1)</span>
+<span class="sd">        not tested yet</span>
+<span class="sd">        # after writing this I saw the same use of lfilter in sitmo</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">ddt</span><span class="p">,</span> <span class="n">nobs</span><span class="o">*</span><span class="n">ddt</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+        <span class="n">expnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">expddt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">*</span> <span class="n">ddt</span><span class="p">)</span>
+        <span class="n">normrvs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nrepl</span><span class="p">,</span><span class="n">nobs</span><span class="p">))</span>
+        <span class="c1">#do I need lfilter here AR(1) ? lfilter doesn&#39;t handle 2d arrays, it does?</span>
+        <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">signal</span>
+        <span class="c1">#xzero * expnt</span>
+        <span class="n">inc</span> <span class="o">=</span> <span class="p">(</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">expddt</span><span class="p">)</span> <span class="o">+</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">expddt</span><span class="o">*</span><span class="n">expddt</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span><span class="p">)</span> <span class="o">*</span> <span class="n">normrvs</span> <span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">signal</span><span class="o">.</span><span class="n">lfilter</span><span class="p">([</span><span class="mf">1.</span><span class="p">],</span> <span class="p">[</span><span class="mf">1.</span><span class="p">,</span><span class="o">-</span><span class="n">expddt</span><span class="p">],</span> <span class="n">inc</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OUprocess.exactdist"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.OUprocess.exactdist.html#statsmodels.sandbox.tsa.diffusion.OUprocess.exactdist">[docs]</a>    <span class="k">def</span> <span class="nf">exactdist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="c1">#TODO: aggregate over time for process with observations for all t</span>
+        <span class="c1">#TODO: for single t, return stats.norm</span>
+        <span class="n">expnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+        <span class="n">meant</span> <span class="o">=</span> <span class="n">xzero</span> <span class="o">*</span> <span class="n">expnt</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">*</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">expnt</span><span class="p">)</span>
+        <span class="n">stdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">expnt</span><span class="o">*</span><span class="n">expnt</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span><span class="p">)</span>
+        <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">meant</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">stdt</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OUprocess.fitls"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.OUprocess.fitls.html#statsmodels.sandbox.tsa.diffusion.OUprocess.fitls">[docs]</a>    <span class="k">def</span> <span class="nf">fitls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;assumes data is 1d, univariate time series</span>
+<span class="sd">        formula from sitmo</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># brute force, no parameter estimation errors</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+        <span class="n">exog</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nobs</span><span class="p">),</span> <span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="n">parest</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">sing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">exog</span><span class="p">,</span> <span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:])</span>
+        <span class="n">const</span><span class="p">,</span> <span class="n">slope</span> <span class="o">=</span> <span class="n">parest</span>
+        <span class="n">errvar</span> <span class="o">=</span> <span class="n">res</span><span class="o">/</span><span class="p">(</span><span class="n">nobs</span><span class="o">-</span><span class="mf">2.</span><span class="p">)</span>
+        <span class="n">lambd</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span><span class="o">/</span><span class="n">dt</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="o">-</span><span class="n">errvar</span> <span class="o">*</span> <span class="mf">2.</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span><span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">slope</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">dt</span><span class="p">)</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">const</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">slope</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">mu</span><span class="p">,</span> <span class="n">lambd</span><span class="p">,</span> <span class="n">sigma</span></div></div>
+
+
+<div class="viewcode-block" id="SchwartzOne"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.SchwartzOne.html#statsmodels.sandbox.tsa.diffusion.SchwartzOne">[docs]</a><span class="k">class</span> <span class="nc">SchwartzOne</span><span class="p">(</span><span class="n">ExactDiffusion</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;the Schwartz type 1 stochastic process</span>
+
+<span class="sd">    :math::</span>
+<span class="sd">    dx_t = \\kappa (\\mu - \\ln x_t) x_t dt + \\sigma x_tdW \\</span>
+
+<span class="sd">    The Schwartz type 1 process is a log of the Ornstein-Uhlenbeck stochastic</span>
+<span class="sd">    process.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="SchwartzOne.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.SchwartzOne.__init__.html#statsmodels.sandbox.tsa.diffusion.SchwartzOne.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">mu</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">xzero</span> <span class="o">=</span> <span class="n">xzero</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kappa</span> <span class="o">=</span> <span class="n">kappa</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">=</span> <span class="n">kappa</span> <span class="c1">#alias until I fix exact</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span></div>
+
+    <span class="k">def</span> <span class="nf">_exactconst</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expnt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">expnt</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">mu</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span><span class="o">**</span><span class="mi">2</span> <span class="o">/</span> <span class="mf">2.</span> <span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">_exactstd</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">expnt</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">expnt</span><span class="o">*</span><span class="n">expnt</span><span class="p">)</span><span class="o">/</span><span class="mf">2.</span><span class="o">/</span><span class="bp">self</span><span class="o">.</span><span class="n">kappa</span><span class="p">)</span>
+
+<div class="viewcode-block" id="SchwartzOne.exactprocess"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.SchwartzOne.exactprocess.html#statsmodels.sandbox.tsa.diffusion.SchwartzOne.exactprocess">[docs]</a>    <span class="k">def</span> <span class="nf">exactprocess</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;uses exact solution for log of process</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">lnxzero</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xzero</span><span class="p">)</span>
+        <span class="n">lnx</span> <span class="o">=</span> <span class="nb">super</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">,</span> <span class="bp">self</span><span class="p">)</span><span class="o">.</span><span class="n">exactprocess</span><span class="p">(</span><span class="n">xzero</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="n">ddt</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="n">nrepl</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">lnx</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SchwartzOne.exactdist"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.SchwartzOne.exactdist.html#statsmodels.sandbox.tsa.diffusion.SchwartzOne.exactdist">[docs]</a>    <span class="k">def</span> <span class="nf">exactdist</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">xzero</span><span class="p">,</span> <span class="n">t</span><span class="p">):</span>
+        <span class="n">expnt</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">*</span> <span class="n">t</span><span class="p">)</span>
+        <span class="c1">#TODO: check this is still wrong, just guessing</span>
+        <span class="n">meant</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">xzero</span><span class="p">)</span> <span class="o">*</span> <span class="n">expnt</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exactconst</span><span class="p">(</span><span class="n">expnt</span><span class="p">)</span>
+        <span class="n">stdt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_exactstd</span><span class="p">(</span><span class="n">expnt</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">stats</span><span class="o">.</span><span class="n">lognorm</span><span class="p">(</span><span class="n">loc</span><span class="o">=</span><span class="n">meant</span><span class="p">,</span> <span class="n">scale</span><span class="o">=</span><span class="n">stdt</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="SchwartzOne.fitls"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.SchwartzOne.fitls.html#statsmodels.sandbox.tsa.diffusion.SchwartzOne.fitls">[docs]</a>    <span class="k">def</span> <span class="nf">fitls</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">dt</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;assumes data is 1d, univariate time series</span>
+<span class="sd">        formula from sitmo</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="c1"># brute force, no parameter estimation errors</span>
+        <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">data</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span>
+        <span class="n">exog</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">ones</span><span class="p">(</span><span class="n">nobs</span><span class="p">),</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">])))</span>
+        <span class="n">parest</span><span class="p">,</span> <span class="n">res</span><span class="p">,</span> <span class="n">rank</span><span class="p">,</span> <span class="n">sing</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">lstsq</span><span class="p">(</span><span class="n">exog</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">data</span><span class="p">[</span><span class="mi">1</span><span class="p">:]))</span>
+        <span class="n">const</span><span class="p">,</span> <span class="n">slope</span> <span class="o">=</span> <span class="n">parest</span>
+        <span class="n">errvar</span> <span class="o">=</span> <span class="n">res</span><span class="o">/</span><span class="p">(</span><span class="n">nobs</span><span class="o">-</span><span class="mf">2.</span><span class="p">)</span>  <span class="c1">#check denominator estimate, of sigma too low</span>
+        <span class="n">kappa</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">slope</span><span class="p">)</span><span class="o">/</span><span class="n">dt</span>
+        <span class="n">sigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">errvar</span> <span class="o">*</span> <span class="n">kappa</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">kappa</span><span class="o">*</span><span class="n">dt</span><span class="p">)))</span>
+        <span class="n">mu</span> <span class="o">=</span> <span class="n">const</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">kappa</span><span class="o">*</span><span class="n">dt</span><span class="p">))</span> <span class="o">+</span> <span class="n">sigma</span><span class="o">**</span><span class="mi">2</span><span class="o">/</span><span class="mf">2.</span><span class="o">/</span><span class="n">kappa</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">mu</span><span class="p">)</span><span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,):</span> <span class="n">mu</span> <span class="o">=</span> <span class="n">mu</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>   <span class="c1"># how to remove scalar array ?</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">shape</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span><span class="o">==</span> <span class="p">(</span><span class="mi">1</span><span class="p">,):</span> <span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="c1">#mu, kappa are good, sigma too small</span>
+        <span class="k">return</span> <span class="n">mu</span><span class="p">,</span> <span class="n">kappa</span><span class="p">,</span> <span class="n">sigma</span></div></div>
+
+
+
+<div class="viewcode-block" id="BrownianBridge"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.BrownianBridge.html#statsmodels.sandbox.tsa.diffusion.BrownianBridge">[docs]</a><span class="k">class</span> <span class="nc">BrownianBridge</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="BrownianBridge.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.BrownianBridge.__init__.html#statsmodels.sandbox.tsa.diffusion.BrownianBridge.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="BrownianBridge.simulate"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.BrownianBridge.simulate.html#statsmodels.sandbox.tsa.diffusion.BrownianBridge.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x0</span><span class="p">,</span> <span class="n">x1</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">1.</span><span class="p">):</span>
+        <span class="n">nobs</span><span class="o">=</span><span class="n">nobs</span><span class="o">+</span><span class="mi">1</span>
+        <span class="n">dt</span> <span class="o">=</span> <span class="n">ddt</span><span class="o">*</span><span class="mf">1.</span><span class="o">/</span><span class="n">nobs</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">ddt</span><span class="o">-</span><span class="n">dt</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+        <span class="n">t</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="n">dt</span><span class="p">,</span> <span class="n">ddt</span><span class="p">,</span> <span class="n">nobs</span><span class="p">)</span>
+        <span class="n">wm</span> <span class="o">=</span> <span class="p">[</span><span class="n">t</span><span class="o">/</span><span class="n">ddt</span><span class="p">,</span> <span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="o">/</span><span class="n">ddt</span><span class="p">]</span>
+        <span class="c1">#wmi = wm[1]</span>
+        <span class="c1">#wm1 = x1*wm[0]</span>
+        <span class="n">wmi</span> <span class="o">=</span> <span class="mi">1</span><span class="o">-</span><span class="n">dt</span><span class="o">/</span><span class="p">(</span><span class="n">ddt</span><span class="o">-</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">wm1</span> <span class="o">=</span> <span class="n">x1</span><span class="o">*</span><span class="p">(</span><span class="n">dt</span><span class="o">/</span><span class="p">(</span><span class="n">ddt</span><span class="o">-</span><span class="n">t</span><span class="p">))</span>
+        <span class="n">su</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">t</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">t</span><span class="p">)</span><span class="o">/</span><span class="n">ddt</span><span class="p">)</span>
+        <span class="n">s</span> <span class="o">=</span> <span class="n">sigma</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">dt</span><span class="o">*</span><span class="p">(</span><span class="n">ddt</span><span class="o">-</span><span class="n">t</span><span class="o">-</span><span class="n">dt</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">ddt</span><span class="o">-</span><span class="n">t</span><span class="p">))</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrepl</span><span class="p">,</span> <span class="n">nobs</span><span class="p">))</span>
+        <span class="n">x</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">x0</span>
+        <span class="n">rvs</span> <span class="o">=</span> <span class="n">s</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nrepl</span><span class="p">,</span><span class="n">nobs</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nobs</span><span class="p">):</span>
+            <span class="n">x</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[:,</span><span class="n">i</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">wmi</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">wm1</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">+</span> <span class="n">rvs</span><span class="p">[:,</span><span class="n">i</span><span class="p">]</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">su</span></div></div>
+
+
+<div class="viewcode-block" id="CompoundPoisson"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.CompoundPoisson.html#statsmodels.sandbox.tsa.diffusion.CompoundPoisson">[docs]</a><span class="k">class</span> <span class="nc">CompoundPoisson</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;nobs iid compound poisson distributions, not a process in time</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="CompoundPoisson.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.CompoundPoisson.__init__.html#statsmodels.sandbox.tsa.diffusion.CompoundPoisson.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lambd</span><span class="p">,</span> <span class="n">randfn</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">lambd</span><span class="p">)</span> <span class="o">!=</span> <span class="nb">len</span><span class="p">(</span><span class="n">randfn</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;lambd and randfn need to have the same number of elements&#39;</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">nobj</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">lambd</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">randfn</span> <span class="o">=</span> <span class="n">randfn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lambd</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">lambd</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="CompoundPoisson.simulate"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tsa.diffusion.CompoundPoisson.simulate.html#statsmodels.sandbox.tsa.diffusion.CompoundPoisson.simulate">[docs]</a>    <span class="k">def</span> <span class="nf">simulate</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="n">nobj</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">nobj</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nrepl</span><span class="p">,</span> <span class="n">nobs</span><span class="p">,</span> <span class="n">nobj</span><span class="p">))</span>
+        <span class="n">N</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">poisson</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">lambd</span><span class="p">[</span><span class="kc">None</span><span class="p">,</span><span class="kc">None</span><span class="p">,:],</span> <span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nrepl</span><span class="p">,</span><span class="n">nobs</span><span class="p">,</span><span class="n">nobj</span><span class="p">))</span>
+        <span class="k">for</span> <span class="n">io</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">nobj</span><span class="p">):</span>
+            <span class="n">randfnc</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">randfn</span><span class="p">[</span><span class="n">io</span><span class="p">]</span>
+
+            <span class="n">nc</span> <span class="o">=</span> <span class="n">N</span><span class="p">[:,:,</span><span class="n">io</span><span class="p">]</span>
+            <span class="c1">#print nrepl,nobs,nc</span>
+            <span class="c1">#xio = randfnc(size=(nrepl,nobs,np.max(nc))).cumsum(-1)[np.arange(nrepl)[:,None],np.arange(nobs),nc-1]</span>
+            <span class="n">rvs</span> <span class="o">=</span> <span class="n">randfnc</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">nrepl</span><span class="p">,</span><span class="n">nobs</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">nc</span><span class="p">)))</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;rvs.sum()&#39;</span><span class="p">,</span> <span class="n">rvs</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="n">rvs</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+            <span class="n">xio</span> <span class="o">=</span> <span class="n">rvs</span><span class="o">.</span><span class="n">cumsum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)[</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nrepl</span><span class="p">)[:,</span><span class="kc">None</span><span class="p">],</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nobs</span><span class="p">),</span><span class="n">nc</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+            <span class="c1">#print xio.shape</span>
+            <span class="n">x</span><span class="p">[:,:,</span><span class="n">io</span><span class="p">]</span> <span class="o">=</span> <span class="n">xio</span>
+        <span class="n">x</span><span class="p">[</span><span class="n">N</span><span class="o">==</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+        <span class="k">return</span> <span class="n">x</span><span class="p">,</span> <span class="n">N</span></div></div>
+
+
+
+
+
+
+
+
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">randn(&#39;state&#39;,100)                                % set the state of randn</span>
+<span class="sd">T = 1; N = 500; dt = T/N; t = [dt:dt:1];</span>
+
+<span class="sd">M = 1000;                                         % M paths simultaneously</span>
+<span class="sd">dW = sqrt(dt)*randn(M,N);                         % increments</span>
+<span class="sd">W = cumsum(dW,2);                                 % cumulative sum</span>
+<span class="sd">U = exp(repmat(t,[M 1]) + 0.5*W);</span>
+<span class="sd">Umean = mean(U);</span>
+<span class="sd">plot([0,t],[1,Umean],&#39;b-&#39;), hold on               % plot mean over M paths</span>
+<span class="sd">plot([0,t],[ones(5,1),U(1:5,:)],&#39;r--&#39;), hold off  % plot 5 individual paths</span>
+<span class="sd">xlabel(&#39;t&#39;,&#39;FontSize&#39;,16)</span>
+<span class="sd">ylabel(&#39;U(t)&#39;,&#39;FontSize&#39;,16,&#39;Rotation&#39;,0,&#39;HorizontalAlignment&#39;,&#39;right&#39;)</span>
+<span class="sd">legend(&#39;mean of 1000 paths&#39;,&#39;5 individual paths&#39;,2)</span>
+
+<span class="sd">averr = norm((Umean - exp(9*t/8)),&#39;inf&#39;)          % sample error</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="n">doplot</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">nrepl</span> <span class="o">=</span> <span class="mi">1000</span>
+    <span class="n">examples</span> <span class="o">=</span> <span class="p">[]</span><span class="c1">#[&#39;all&#39;]</span>
+
+    <span class="k">if</span> <span class="s1">&#39;all&#39;</span> <span class="ow">in</span> <span class="n">examples</span><span class="p">:</span>
+        <span class="n">w</span> <span class="o">=</span> <span class="n">Diffusion</span><span class="p">()</span>
+
+        <span class="c1"># Wiener Process</span>
+        <span class="c1"># ^^^^^^^^^^^^^^</span>
+
+        <span class="n">ws</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">simulateW</span><span class="p">(</span><span class="mi">1000</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="n">nrepl</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ws</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">ws</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Standard Brownian Motion (Wiener Process)&#39;</span><span class="p">)</span>
+
+        <span class="n">func</span> <span class="o">=</span> <span class="k">lambda</span> <span class="n">t</span><span class="p">,</span> <span class="n">W</span><span class="p">:</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">t</span> <span class="o">+</span> <span class="mf">0.5</span><span class="o">*</span><span class="n">W</span><span class="p">)</span>
+        <span class="n">us</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">expectedsim</span><span class="p">(</span><span class="n">func</span><span class="p">,</span> <span class="n">nobs</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="n">nrepl</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">us</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">us</span><span class="p">[</span><span class="mi">1</span><span class="p">],</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Brownian Motion - exp&#39;</span><span class="p">)</span>
+        <span class="c1">#plt.show()</span>
+        <span class="n">averr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">us</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="mi">9</span><span class="o">*</span><span class="n">us</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span><span class="o">/</span><span class="mf">8.</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">averr</span><span class="p">)</span>
+        <span class="c1">#print us[1][:10]</span>
+        <span class="c1">#print np.exp(9.*us[2][:10]/8.)</span>
+
+        <span class="c1"># Geometric Brownian</span>
+        <span class="c1"># ^^^^^^^^^^^^^^^^^^</span>
+
+        <span class="n">gb</span> <span class="o">=</span> <span class="n">GeometricBrownian</span><span class="p">(</span><span class="n">xzero</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">0.01</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.5</span><span class="p">)</span>
+        <span class="n">gbs</span> <span class="o">=</span> <span class="n">gb</span><span class="o">.</span><span class="n">simEM</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gbs</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">gbs</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Geometric Brownian&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gbs</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">gbs</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Geometric Brownian - log-transformed&#39;</span><span class="p">)</span>
+
+        <span class="n">ab</span> <span class="o">=</span> <span class="n">ArithmeticBrownian</span><span class="p">(</span><span class="n">xzero</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mf">0.05</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mi">1</span><span class="p">)</span>
+        <span class="nb">abs</span> <span class="o">=</span> <span class="n">ab</span><span class="o">.</span><span class="n">simEM</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">abs</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="nb">abs</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Arithmetic Brownian&#39;</span><span class="p">)</span>
+
+        <span class="c1"># Ornstein-Uhlenbeck</span>
+        <span class="c1"># ^^^^^^^^^^^^^^^^^^</span>
+
+        <span class="n">ou</span> <span class="o">=</span> <span class="n">OUprocess</span><span class="p">(</span><span class="n">xzero</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">lambd</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">ous</span> <span class="o">=</span> <span class="n">ou</span><span class="o">.</span><span class="n">simEM</span><span class="p">()</span>
+        <span class="n">oue</span> <span class="o">=</span> <span class="n">ou</span><span class="o">.</span><span class="n">exact</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="mi">5</span><span class="p">,</span><span class="mi">10</span><span class="p">)))</span>
+        <span class="n">ou</span><span class="o">.</span><span class="n">exact</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">10</span><span class="o">/</span><span class="mf">0.1</span><span class="p">),</span> <span class="mi">0</span><span class="p">)</span>
+        <span class="n">ou</span><span class="o">.</span><span class="n">exactprocess</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">ou</span><span class="o">.</span><span class="n">exactprocess</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="n">nrepl</span><span class="o">=</span><span class="mi">10</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="c1">#the following looks good, approaches mu</span>
+        <span class="n">oues</span> <span class="o">=</span> <span class="n">ou</span><span class="o">.</span><span class="n">exactprocess</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">100</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="n">nrepl</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">oues</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">oues</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Ornstein-Uhlenbeck&#39;</span><span class="p">)</span>
+
+        <span class="c1"># SchwartsOne</span>
+        <span class="c1"># ^^^^^^^^^^^</span>
+
+        <span class="n">so</span> <span class="o">=</span> <span class="n">SchwartzOne</span><span class="p">(</span><span class="n">xzero</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">mu</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">kappa</span><span class="o">=</span><span class="mf">0.5</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="n">sos</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">exactprocess</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">50</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="n">nrepl</span><span class="o">=</span><span class="mi">100</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">sos</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sos</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">)))</span>
+        <span class="n">doplot</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sos</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">sos</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Schwartz One&#39;</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">so</span><span class="o">.</span><span class="n">fitls</span><span class="p">(</span><span class="n">sos</span><span class="p">[</span><span class="mi">0</span><span class="p">,:],</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span>
+        <span class="n">sos2</span> <span class="o">=</span> <span class="n">so</span><span class="o">.</span><span class="n">exactprocess</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">500</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="mf">0.1</span><span class="p">,</span><span class="n">nrepl</span><span class="o">=</span><span class="mi">5</span><span class="p">)</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;true: mu=1, kappa=0.5, sigma=0.1&#39;</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">5</span><span class="p">):</span>
+            <span class="nb">print</span><span class="p">(</span><span class="n">so</span><span class="o">.</span><span class="n">fitls</span><span class="p">(</span><span class="n">sos2</span><span class="p">[</span><span class="n">i</span><span class="p">],</span><span class="n">dt</span><span class="o">=</span><span class="mf">0.1</span><span class="p">))</span>
+
+
+
+        <span class="c1"># Brownian Bridge</span>
+        <span class="c1"># ^^^^^^^^^^^^^^^</span>
+
+        <span class="n">bb</span> <span class="o">=</span> <span class="n">BrownianBridge</span><span class="p">()</span>
+        <span class="c1">#bbs = bb.sample(x0, x1, nobs, nrepl=1, ddt=1., sigma=1.)</span>
+        <span class="n">bbs</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">wm</span> <span class="o">=</span> <span class="n">bb</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span> <span class="mf">0.5</span><span class="p">,</span> <span class="mi">99</span><span class="p">,</span> <span class="n">nrepl</span><span class="o">=</span><span class="mi">500</span><span class="p">,</span> <span class="n">ddt</span><span class="o">=</span><span class="mf">1.</span><span class="p">,</span> <span class="n">sigma</span><span class="o">=</span><span class="mf">0.1</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">doplot</span><span class="p">:</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bbs</span><span class="o">.</span><span class="n">T</span><span class="p">)</span>
+            <span class="n">tmp</span> <span class="o">=</span> <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bbs</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">linewidth</span><span class="o">=</span><span class="mi">2</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Brownian Bridge&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">figure</span><span class="p">()</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">wm</span><span class="p">,</span><span class="s1">&#39;r&#39;</span><span class="p">,</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;theoretical&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">bbs</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">0</span><span class="p">),</span> <span class="n">label</span><span class="o">=</span><span class="s1">&#39;simulated&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">title</span><span class="p">(</span><span class="s1">&#39;Brownian Bridge - Variance&#39;</span><span class="p">)</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">legend</span><span class="p">()</span>
+
+    <span class="c1"># Compound Poisson</span>
+    <span class="c1"># ^^^^^^^^^^^^^^^^</span>
+    <span class="n">cp</span> <span class="o">=</span> <span class="n">CompoundPoisson</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">],</span> <span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">])</span>
+    <span class="n">cps</span> <span class="o">=</span> <span class="n">cp</span><span class="o">.</span><span class="n">simulate</span><span class="p">(</span><span class="n">nobs</span><span class="o">=</span><span class="mi">20000</span><span class="p">,</span><span class="n">nrepl</span><span class="o">=</span><span class="mi">3</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cps</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">mean</span><span class="p">())</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cps</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">size</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">cps</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    <span class="c1">#Note Y = sum^{N} X is compound poisson of iid x, then</span>
+    <span class="c1">#E(Y) = E(N)*E(X)   eg. eq. (6.37) page 385 in http://ee.stanford.edu/~gray/sp.html</span>
+
+
+    <span class="c1">#plt.show()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,466 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.stats.multivariate_tools &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.stats.multivariate_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.stats.multivariate_tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;Tools for multivariate analysis</span>
+
+
+<span class="sd">Author : Josef Perktold</span>
+<span class="sd">License : BSD-3</span>
+
+
+
+<span class="sd">TODO:</span>
+
+<span class="sd">- names of functions, currently just &quot;working titles&quot;</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># temporarily here, used in return</span>
+<div class="viewcode-block" id="Bunch"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.multivariate_tools.Bunch.html#statsmodels.stats.multivariate_tools.Bunch">[docs]</a><span class="k">class</span> <span class="nc">Bunch</span><span class="p">(</span><span class="nb">dict</span><span class="p">):</span>
+<div class="viewcode-block" id="Bunch.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.stats.multivariate_tools.Bunch.__init__.html#statsmodels.stats.multivariate_tools.Bunch.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="o">**</span><span class="n">kw</span><span class="p">):</span>
+        <span class="nb">dict</span><span class="o">.</span><span class="n">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">kw</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">__dict__</span>  <span class="o">=</span> <span class="bp">self</span></div></div>
+
+
+<div class="viewcode-block" id="partial_project"><a class="viewcode-back" href="../../../generated/statsmodels.stats.multivariate_tools.partial_project.html#statsmodels.stats.multivariate_tools.partial_project">[docs]</a><span class="k">def</span> <span class="nf">partial_project</span><span class="p">(</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;helper function to get linear projection or partialling out of variables</span>
+
+<span class="sd">    endog variables are projected on exog variables</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    endog : ndarray</span>
+<span class="sd">        array of variables where the effect of exog is partialled out.</span>
+<span class="sd">    exog : ndarray</span>
+<span class="sd">        array of variables on which the endog variables are projected.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : instance of Bunch with</span>
+
+<span class="sd">        - params : OLS parameter estimates from projection of endog on exog</span>
+<span class="sd">        - fittedvalues : predicted values of endog given exog</span>
+<span class="sd">        - resid : residual of the regression, values of endog with effect of</span>
+<span class="sd">          exog partialled out</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This is no-frills mainly for internal calculations, no error checking or</span>
+<span class="sd">    array conversion is performed, at least for now.</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">x1</span><span class="p">,</span> <span class="n">x2</span> <span class="o">=</span> <span class="n">endog</span><span class="p">,</span> <span class="n">exog</span>
+    <span class="n">params</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+    <span class="n">predicted</span> <span class="o">=</span> <span class="n">x2</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+    <span class="n">residual</span> <span class="o">=</span> <span class="n">x1</span> <span class="o">-</span> <span class="n">predicted</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="n">Bunch</span><span class="p">(</span><span class="n">params</span><span class="o">=</span><span class="n">params</span><span class="p">,</span>
+                <span class="n">fittedvalues</span><span class="o">=</span><span class="n">predicted</span><span class="p">,</span>
+                <span class="n">resid</span><span class="o">=</span><span class="n">residual</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+
+
+
+<div class="viewcode-block" id="cancorr"><a class="viewcode-back" href="../../../generated/statsmodels.stats.multivariate_tools.cancorr.html#statsmodels.stats.multivariate_tools.cancorr">[docs]</a><span class="k">def</span> <span class="nf">cancorr</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">standardize</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;canonical correlation coefficient beween 2 arrays</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x1, x2 : ndarrays, 2_D</span>
+<span class="sd">        two 2-dimensional data arrays, observations in rows, variables in columns</span>
+<span class="sd">    demean : bool</span>
+<span class="sd">         If demean is true, then the mean is subtracted from each variable</span>
+<span class="sd">    standardize : bool</span>
+<span class="sd">         If standardize is true, then each variable is demeaned and divided by</span>
+<span class="sd">         its standard deviation. Rescaling does not change the canonical</span>
+<span class="sd">         correlation coefficients.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    ccorr : ndarray, 1d</span>
+<span class="sd">        canonical correlation coefficients, sorted from largest to smallest.</span>
+<span class="sd">        Note, that these are the square root of the eigenvalues.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This is a helper function for other statistical functions. It only</span>
+<span class="sd">    calculates the canonical correlation coefficients and does not do a full</span>
+<span class="sd">    canoncial correlation analysis</span>
+
+<span class="sd">    The canonical correlation coefficient is calculated with the generalized</span>
+<span class="sd">    matrix inverse and does not raise an exception if one of the data arrays</span>
+<span class="sd">    have less than full column rank.</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    cc_ranktest</span>
+<span class="sd">    cc_stats</span>
+<span class="sd">    CCA not yet</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#x, y = x1, x2</span>
+    <span class="k">if</span> <span class="n">demean</span> <span class="ow">or</span> <span class="n">standardize</span><span class="p">:</span>
+        <span class="n">x1</span> <span class="o">=</span> <span class="p">(</span><span class="n">x1</span> <span class="o">-</span> <span class="n">x1</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">x2</span> <span class="o">=</span> <span class="p">(</span><span class="n">x2</span> <span class="o">-</span> <span class="n">x2</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="mi">0</span><span class="p">))</span>
+
+    <span class="k">if</span> <span class="n">standardize</span><span class="p">:</span>
+        <span class="c1">#std doesn&#39;t make a difference to canonical correlation coefficients</span>
+        <span class="n">x1</span> <span class="o">/=</span> <span class="n">x1</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">x2</span> <span class="o">/=</span> <span class="n">x2</span><span class="o">.</span><span class="n">std</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+
+    <span class="n">t1</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span>
+    <span class="n">t2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">pinv</span><span class="p">(</span><span class="n">x2</span><span class="p">)</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x1</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">t1</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">t2</span><span class="p">)</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">eigvals</span><span class="p">(</span><span class="n">m</span><span class="p">))</span>
+    <span class="n">cc</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+    <span class="k">return</span> <span class="n">cc</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="cc_ranktest"><a class="viewcode-back" href="../../../generated/statsmodels.stats.multivariate_tools.cc_ranktest.html#statsmodels.stats.multivariate_tools.cc_ranktest">[docs]</a><span class="k">def</span> <span class="nf">cc_ranktest</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">fullrank</span><span class="o">=</span><span class="kc">False</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;rank tests based on smallest canonical correlation coefficients</span>
+
+<span class="sd">    Anderson canonical correlations test (LM test) and</span>
+<span class="sd">    Cragg-Donald test (Wald test)</span>
+<span class="sd">    Assumes homoskedasticity and independent observations, overrejects if</span>
+<span class="sd">    there is heteroscedasticity or autocorrelation.</span>
+
+<span class="sd">    The Null Hypothesis is that the rank is k - 1, the alternative hypothesis</span>
+<span class="sd">    is that the rank is at least k.</span>
+
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x1, x2 : ndarrays, 2_D</span>
+<span class="sd">        two 2-dimensional data arrays, observations in rows, variables in columns</span>
+<span class="sd">    demean : bool</span>
+<span class="sd">         If demean is true, then the mean is subtracted from each variable.</span>
+<span class="sd">    fullrank : bool</span>
+<span class="sd">         If true, then only the test that the matrix has full rank is returned.</span>
+<span class="sd">         If false, the test for all possible ranks are returned. However, no</span>
+<span class="sd">         the p-values are not corrected for the multiplicity of tests.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    value : float</span>
+<span class="sd">        value of the test statistic</span>
+<span class="sd">    p-value : float</span>
+<span class="sd">        p-value for the test Null Hypothesis tha the smallest canonical</span>
+<span class="sd">        correlation coefficient is zero. based on chi-square distribution</span>
+<span class="sd">    df : int</span>
+<span class="sd">        degrees of freedom for thechi-square distribution in the hypothesis test</span>
+<span class="sd">    ccorr : ndarray, 1d</span>
+<span class="sd">        All canonical correlation coefficients sorted from largest to smallest.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Degrees of freedom for the distribution of the test statistic are based on</span>
+<span class="sd">    number of columns of x1 and x2 and not on their matrix rank.</span>
+<span class="sd">    (I&#39;m not sure yet what the interpretation of the test is if x1 or x2 are of</span>
+<span class="sd">    reduced rank.)</span>
+
+<span class="sd">    See Also</span>
+<span class="sd">    --------</span>
+<span class="sd">    cancorr</span>
+<span class="sd">    cc_stats</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+
+    <span class="n">nobs1</span><span class="p">,</span> <span class="n">k1</span> <span class="o">=</span> <span class="n">x1</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">nobs2</span><span class="p">,</span> <span class="n">k2</span> <span class="o">=</span> <span class="n">x2</span><span class="o">.</span><span class="n">shape</span>
+
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">cancorr</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="n">demean</span><span class="p">)</span>
+    <span class="n">cc2</span> <span class="o">=</span> <span class="n">cc</span> <span class="o">*</span> <span class="n">cc</span>
+    <span class="k">if</span> <span class="n">fullrank</span><span class="p">:</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">k1</span> <span class="o">-</span> <span class="n">k2</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">value</span> <span class="o">=</span> <span class="n">nobs1</span> <span class="o">*</span> <span class="n">cc2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">w_value</span> <span class="o">=</span> <span class="n">nobs1</span> <span class="o">*</span> <span class="p">(</span><span class="n">cc2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">cc2</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+        <span class="k">return</span> <span class="n">value</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">df</span><span class="p">),</span> <span class="n">df</span><span class="p">,</span> <span class="n">cc</span><span class="p">,</span> <span class="n">w_value</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">w_value</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="n">r</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">min</span><span class="p">(</span><span class="n">k1</span><span class="p">,</span> <span class="n">k2</span><span class="p">))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">df</span> <span class="o">=</span> <span class="p">(</span><span class="n">k1</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span> <span class="o">*</span> <span class="p">(</span><span class="n">k2</span> <span class="o">-</span> <span class="n">r</span><span class="p">)</span>
+        <span class="n">values</span> <span class="o">=</span> <span class="n">nobs1</span> <span class="o">*</span> <span class="n">cc2</span><span class="p">[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+        <span class="n">w_values</span> <span class="o">=</span> <span class="n">nobs1</span> <span class="o">*</span> <span class="p">(</span><span class="n">cc2</span> <span class="o">/</span> <span class="p">(</span><span class="mf">1.</span> <span class="o">-</span> <span class="n">cc2</span><span class="p">))[::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">cumsum</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">values</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">df</span><span class="p">),</span> <span class="n">df</span><span class="p">,</span> <span class="n">cc</span><span class="p">,</span> <span class="n">w_values</span><span class="p">,</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">w_values</span><span class="p">,</span> <span class="n">df</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="cc_stats"><a class="viewcode-back" href="../../../generated/statsmodels.stats.multivariate_tools.cc_stats.html#statsmodels.stats.multivariate_tools.cc_stats">[docs]</a><span class="k">def</span> <span class="nf">cc_stats</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;MANOVA statistics based on canonical correlation coefficient</span>
+
+<span class="sd">    Calculates Pillai&#39;s Trace, Wilk&#39;s Lambda, Hotelling&#39;s Trace and</span>
+<span class="sd">    Roy&#39;s Largest Root.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    x1, x2 : ndarrays, 2_D</span>
+<span class="sd">        two 2-dimensional data arrays, observations in rows, variables in columns</span>
+<span class="sd">    demean : bool</span>
+<span class="sd">         If demean is true, then the mean is subtracted from each variable.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    res : dict</span>
+<span class="sd">        Dictionary containing the test statistics.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+
+<span class="sd">    same as `canon` in Stata</span>
+
+<span class="sd">    missing: F-statistics and p-values</span>
+
+<span class="sd">    TODO: should return a results class instead</span>
+<span class="sd">    produces nans sometimes, singular, perfect correlation of x1, x2 ?</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">nobs1</span><span class="p">,</span> <span class="n">k1</span> <span class="o">=</span> <span class="n">x1</span><span class="o">.</span><span class="n">shape</span>  <span class="c1"># endogenous ?</span>
+    <span class="n">nobs2</span><span class="p">,</span> <span class="n">k2</span> <span class="o">=</span> <span class="n">x2</span><span class="o">.</span><span class="n">shape</span>
+    <span class="n">cc</span> <span class="o">=</span> <span class="n">cancorr</span><span class="p">(</span><span class="n">x1</span><span class="p">,</span> <span class="n">x2</span><span class="p">,</span> <span class="n">demean</span><span class="o">=</span><span class="n">demean</span><span class="p">)</span>
+    <span class="n">cc2</span> <span class="o">=</span> <span class="n">cc</span><span class="o">**</span><span class="mi">2</span>
+    <span class="n">lam</span> <span class="o">=</span> <span class="p">(</span><span class="n">cc2</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">-</span> <span class="n">cc2</span><span class="p">))</span>  <span class="c1"># what if max cc2 is 1 ?</span>
+    <span class="c1"># Problem: ccr might not care if x1 or x2 are reduced rank,</span>
+    <span class="c1">#          but df will depend on rank</span>
+    <span class="n">df_model</span> <span class="o">=</span> <span class="n">k1</span> <span class="o">*</span> <span class="n">k2</span>  <span class="c1"># df_hypothesis (we do not include mean in x1, x2)</span>
+    <span class="n">df_resid</span> <span class="o">=</span> <span class="n">k1</span> <span class="o">*</span> <span class="p">(</span><span class="n">nobs1</span> <span class="o">-</span> <span class="n">k2</span> <span class="o">-</span> <span class="n">demean</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">df_model</span><span class="p">,</span> <span class="n">k1</span><span class="p">)</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">df_model</span> <span class="o">-</span> <span class="n">k1</span><span class="p">)</span>
+    <span class="n">n</span> <span class="o">=</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">df_resid</span> <span class="o">-</span> <span class="n">k1</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span>
+
+    <span class="n">df1</span> <span class="o">=</span> <span class="n">k1</span> <span class="o">*</span> <span class="n">df_model</span>
+    <span class="n">df2</span> <span class="o">=</span> <span class="n">k2</span>
+
+
+    <span class="n">pt_value</span> <span class="o">=</span> <span class="n">cc2</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>    <span class="c1"># Pillai&#39;s trace</span>
+    <span class="n">wl_value</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">product</span><span class="p">(</span><span class="mi">1</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span> <span class="o">+</span> <span class="n">lam</span><span class="p">))</span>   <span class="c1"># Wilk&#39;s Lambda</span>
+    <span class="n">ht_value</span> <span class="o">=</span> <span class="n">lam</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span>    <span class="c1"># Hotelling&#39;s Trace</span>
+    <span class="n">rm_value</span> <span class="o">=</span> <span class="n">lam</span><span class="o">.</span><span class="n">max</span><span class="p">()</span>    <span class="c1"># Roy&#39;s largest root</span>
+    <span class="c1">#from scipy import stats</span>
+    <span class="c1"># what&#39;s the distribution, the test statistic ?</span>
+    <span class="n">res</span> <span class="o">=</span> <span class="p">{}</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;canonical correlation coefficient&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">cc</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;eigenvalues&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">lam</span>
+    <span class="n">res</span><span class="p">[</span><span class="s2">&quot;Pillai&#39;s Trace&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">pt_value</span>
+    <span class="n">res</span><span class="p">[</span><span class="s2">&quot;Wilk&#39;s Lambda&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">wl_value</span>
+    <span class="n">res</span><span class="p">[</span><span class="s2">&quot;Hotelling&#39;s Trace&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">ht_value</span>
+    <span class="n">res</span><span class="p">[</span><span class="s2">&quot;Roy&#39;s Largest Root&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="n">rm_value</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;df_resid&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">df_resid</span>
+    <span class="n">res</span><span class="p">[</span><span class="s1">&#39;df_m&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">m</span>
+    <span class="k">return</span> <span class="n">res</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

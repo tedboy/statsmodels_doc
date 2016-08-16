@@ -1,0 +1,36 @@
+statsmodels.tsa.vector_ar.dynamic.DynamicVAR
+============================================
+
+.. currentmodule:: statsmodels.tsa.vector_ar.dynamic
+
+.. autoclass:: DynamicVAR
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~DynamicVAR.T
+      ~DynamicVAR.__init__
+      ~DynamicVAR.coefs
+      ~DynamicVAR.equations
+      ~DynamicVAR.forecast
+      ~DynamicVAR.plot_forecast
+      ~DynamicVAR.r2
+      ~DynamicVAR.resid
+   
+   
+
+   
+   
+   .. rubric:: Attributes
+
+   .. autosummary::
+   
+      ~DynamicVAR.nobs
+      ~DynamicVAR.result_index
+   
+   

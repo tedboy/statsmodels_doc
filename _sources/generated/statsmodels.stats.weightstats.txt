@@ -1,0 +1,50 @@
+statsmodels.stats.weightstats
+=============================
+
+.. automodule:: statsmodels.stats.weightstats
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      ttest_ind
+      ttost_ind
+      ttost_paired
+      zconfint
+      ztest
+      ztost
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CompareMeans
+      DescrStatsW
+      OneTimeProperty
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.weightstats.CompareMeans
+       generated/statsmodels.stats.weightstats.DescrStatsW
+       generated/statsmodels.stats.weightstats.OneTimeProperty
+
+   
+   
+
+   
+   
+   

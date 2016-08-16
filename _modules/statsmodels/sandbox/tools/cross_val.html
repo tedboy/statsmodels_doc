@@ -1,0 +1,587 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.tools.cross_val &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.tools.cross_val</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.tools.cross_val</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Utilities for cross validation.</span>
+
+<span class="sd">taken from scikits.learn</span>
+
+<span class="sd"># Author: Alexandre Gramfort &lt;alexandre.gramfort@inria.fr&gt;,</span>
+<span class="sd">#         Gael Varoquaux    &lt;gael.varoquaux@normalesup.org&gt;</span>
+<span class="sd"># License: BSD Style.</span>
+<span class="sd"># $Id$</span>
+
+<span class="sd">changes to code by josef-pktd:</span>
+<span class="sd"> - docstring formatting: underlines of headers</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span><span class="p">,</span> <span class="n">lrange</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">itertools</span> <span class="k">import</span> <span class="n">combinations</span>
+
+
+<span class="c1">################################################################################</span>
+<div class="viewcode-block" id="LeaveOneOut"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.cross_val.LeaveOneOut.html#statsmodels.sandbox.datarich.factormodels.LeaveOneOut">[docs]</a><span class="k">class</span> <span class="nc">LeaveOneOut</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Leave-One-Out cross validation iterator:</span>
+<span class="sd">    Provides train/test indexes to split data in train test sets</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LeaveOneOut.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.cross_val.LeaveOneOut.__init__.html#statsmodels.sandbox.datarich.factormodels.LeaveOneOut.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Leave-One-Out cross validation iterator:</span>
+<span class="sd">        Provides train/test indexes to split data in train test sets</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n: int</span>
+<span class="sd">            Total number of elements</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from scikits.learn import cross_val</span>
+<span class="sd">        &gt;&gt;&gt; X = [[1, 2], [3, 4]]</span>
+<span class="sd">        &gt;&gt;&gt; y = [1, 2]</span>
+<span class="sd">        &gt;&gt;&gt; loo = cross_val.LeaveOneOut(2)</span>
+<span class="sd">        &gt;&gt;&gt; for train_index, test_index in loo:</span>
+<span class="sd">        ...    print &quot;TRAIN:&quot;, train_index, &quot;TEST:&quot;, test_index</span>
+<span class="sd">        ...    X_train, X_test, y_train, y_test = cross_val.split(train_index, test_index, X, y)</span>
+<span class="sd">        ...    print X_train, X_test, y_train, y_test</span>
+<span class="sd">        TRAIN: [False  True] TEST: [ True False]</span>
+<span class="sd">        [[3 4]] [[1 2]] [2] [1]</span>
+<span class="sd">        TRAIN: [ True False] TEST: [False  True]</span>
+<span class="sd">        [[1 2]] [[3 4]] [1] [2]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">n</span><span class="p">):</span>
+            <span class="n">test_index</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+            <span class="n">test_index</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">train_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">test_index</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span>
+
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">(n=</span><span class="si">%i</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
+                                <span class="p">)</span></div>
+
+
+
+<span class="c1">################################################################################</span>
+<div class="viewcode-block" id="LeavePOut"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.cross_val.LeavePOut.html#statsmodels.sandbox.datarich.factormodels.LeavePOut">[docs]</a><span class="k">class</span> <span class="nc">LeavePOut</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Leave-P-Out cross validation iterator:</span>
+<span class="sd">    Provides train/test indexes to split data in train test sets</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LeavePOut.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.cross_val.LeavePOut.__init__.html#statsmodels.sandbox.datarich.factormodels.LeavePOut.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">p</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Leave-P-Out cross validation iterator:</span>
+<span class="sd">        Provides train/test indexes to split data in train test sets</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n: int</span>
+<span class="sd">            Total number of elements</span>
+<span class="sd">        p: int</span>
+<span class="sd">            Size test sets</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from scikits.learn import cross_val</span>
+<span class="sd">        &gt;&gt;&gt; X = [[1, 2], [3, 4], [5, 6], [7, 8]]</span>
+<span class="sd">        &gt;&gt;&gt; y = [1, 2, 3, 4]</span>
+<span class="sd">        &gt;&gt;&gt; lpo = cross_val.LeavePOut(4, 2)</span>
+<span class="sd">        &gt;&gt;&gt; for train_index, test_index in lpo:</span>
+<span class="sd">        ...    print &quot;TRAIN:&quot;, train_index, &quot;TEST:&quot;, test_index</span>
+<span class="sd">        ...    X_train, X_test, y_train, y_test = cross_val.split(train_index, test_index, X, y)</span>
+<span class="sd">        TRAIN: [False False  True  True] TEST: [ True  True False False]</span>
+<span class="sd">        TRAIN: [False  True False  True] TEST: [ True False  True False]</span>
+<span class="sd">        TRAIN: [False  True  True False] TEST: [ True False False  True]</span>
+<span class="sd">        TRAIN: [ True False False  True] TEST: [False  True  True False]</span>
+<span class="sd">        TRAIN: [ True False  True False] TEST: [False  True False  True]</span>
+<span class="sd">        TRAIN: [ True  True False False] TEST: [False False  True  True]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">p</span> <span class="o">=</span> <span class="n">p</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="n">p</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">p</span>
+        <span class="n">comb</span> <span class="o">=</span> <span class="n">combinations</span><span class="p">(</span><span class="n">lrange</span><span class="p">(</span><span class="n">n</span><span class="p">),</span> <span class="n">p</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">idx</span> <span class="ow">in</span> <span class="n">comb</span><span class="p">:</span>
+            <span class="n">test_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+            <span class="n">test_index</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">idx</span><span class="p">)]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">train_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">test_index</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span>
+
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">(n=</span><span class="si">%i</span><span class="s1">, p=</span><span class="si">%i</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">p</span><span class="p">,</span>
+                                <span class="p">)</span></div>
+
+
+<span class="c1">################################################################################</span>
+<div class="viewcode-block" id="KFold"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.cross_val.KFold.html#statsmodels.sandbox.datarich.factormodels.KFold">[docs]</a><span class="k">class</span> <span class="nc">KFold</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    K-Folds cross validation iterator:</span>
+<span class="sd">    Provides train/test indexes to split data in train test sets</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="KFold.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.cross_val.KFold.__init__.html#statsmodels.sandbox.datarich.factormodels.KFold.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        K-Folds cross validation iterator:</span>
+<span class="sd">        Provides train/test indexes to split data in train test sets</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n: int</span>
+<span class="sd">            Total number of elements</span>
+<span class="sd">        k: int</span>
+<span class="sd">            number of folds</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from scikits.learn import cross_val</span>
+<span class="sd">        &gt;&gt;&gt; X = [[1, 2], [3, 4], [1, 2], [3, 4]]</span>
+<span class="sd">        &gt;&gt;&gt; y = [1, 2, 3, 4]</span>
+<span class="sd">        &gt;&gt;&gt; kf = cross_val.KFold(4, k=2)</span>
+<span class="sd">        &gt;&gt;&gt; for train_index, test_index in kf:</span>
+<span class="sd">        ...    print &quot;TRAIN:&quot;, train_index, &quot;TEST:&quot;, test_index</span>
+<span class="sd">        ...    X_train, X_test, y_train, y_test = cross_val.split(train_index, test_index, X, y)</span>
+<span class="sd">        TRAIN: [False False  True  True] TEST: [ True  True False False]</span>
+<span class="sd">        TRAIN: [ True  True False False] TEST: [False False  True  True]</span>
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        All the folds have size trunc(n/k), the last one has the complementary</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">assert</span> <span class="n">k</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cannot have k below 1&#39;</span><span class="p">)</span>
+        <span class="k">assert</span> <span class="n">k</span><span class="o">&lt;</span><span class="n">n</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cannot have k=</span><span class="si">%d</span><span class="s1"> greater than </span><span class="si">%d</span><span class="s1">&#39;</span><span class="o">%</span> <span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">n</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
+        <span class="n">j</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">n</span><span class="o">/</span><span class="n">k</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">k</span><span class="p">):</span>
+            <span class="n">test_index</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">i</span><span class="o">&lt;</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span>
+                <span class="n">test_index</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">j</span><span class="p">:(</span><span class="n">i</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">test_index</span><span class="p">[</span><span class="n">i</span><span class="o">*</span><span class="n">j</span><span class="p">:]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">train_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">test_index</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span>
+
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">(n=</span><span class="si">%i</span><span class="s1">, k=</span><span class="si">%i</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">k</span><span class="p">,</span>
+                                <span class="p">)</span></div>
+
+
+<span class="c1">################################################################################</span>
+<div class="viewcode-block" id="LeaveOneLabelOut"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.cross_val.LeaveOneLabelOut.html#statsmodels.sandbox.datarich.factormodels.LeaveOneLabelOut">[docs]</a><span class="k">class</span> <span class="nc">LeaveOneLabelOut</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Leave-One-Label_Out cross-validation iterator:</span>
+<span class="sd">    Provides train/test indexes to split data in train test sets</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="LeaveOneLabelOut.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.cross_val.LeaveOneLabelOut.__init__.html#statsmodels.sandbox.datarich.factormodels.LeaveOneLabelOut.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">labels</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Leave-One-Label_Out cross validation:</span>
+<span class="sd">        Provides train/test indexes to split data in train test sets</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        labels : list</span>
+<span class="sd">                List of labels</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from scikits.learn import cross_val</span>
+<span class="sd">        &gt;&gt;&gt; X = [[1, 2], [3, 4], [5, 6], [7, 8]]</span>
+<span class="sd">        &gt;&gt;&gt; y = [1, 2, 1, 2]</span>
+<span class="sd">        &gt;&gt;&gt; labels = [1, 1, 2, 2]</span>
+<span class="sd">        &gt;&gt;&gt; lol = cross_val.LeaveOneLabelOut(labels)</span>
+<span class="sd">        &gt;&gt;&gt; for train_index, test_index in lol:</span>
+<span class="sd">        ...    print &quot;TRAIN:&quot;, train_index, &quot;TEST:&quot;, test_index</span>
+<span class="sd">        ...    X_train, X_test, y_train, y_test = cross_val.split(train_index, \</span>
+<span class="sd">            test_index, X, y)</span>
+<span class="sd">        ...    print X_train, X_test, y_train, y_test</span>
+<span class="sd">        TRAIN: [False False  True  True] TEST: [ True  True False False]</span>
+<span class="sd">        [[5 6]</span>
+<span class="sd">        [7 8]] [[1 2]</span>
+<span class="sd">        [3 4]] [1 2] [1 2]</span>
+<span class="sd">        TRAIN: [ True  True False False] TEST: [False False  True  True]</span>
+<span class="sd">        [[1 2]</span>
+<span class="sd">        [3 4]] [[5 6]</span>
+<span class="sd">        [7 8]] [1 2] [1 2]</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">labels</span> <span class="o">=</span> <span class="n">labels</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1"># We make a copy here to avoid side-effects during iteration</span>
+        <span class="n">labels</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span> <span class="n">copy</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">labels</span><span class="p">):</span>
+            <span class="n">test_index</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">labels</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+            <span class="n">test_index</span><span class="p">[</span><span class="n">labels</span><span class="o">==</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+            <span class="n">train_index</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">logical_not</span><span class="p">(</span><span class="n">test_index</span><span class="p">)</span>
+            <span class="k">yield</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span>
+
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">(labels=</span><span class="si">%s</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">labels</span><span class="p">,</span>
+                                <span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="split"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.tools.cross_val.split.html#statsmodels.sandbox.datarich.factormodels.split">[docs]</a><span class="k">def</span> <span class="nf">split</span><span class="p">(</span><span class="n">train_indexes</span><span class="p">,</span> <span class="n">test_indexes</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    For each arg return a train and test subsets defined by indexes provided</span>
+<span class="sd">    in train_indexes and test_indexes</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">ret</span> <span class="o">=</span> <span class="p">[]</span>
+    <span class="k">for</span> <span class="n">arg</span> <span class="ow">in</span> <span class="n">args</span><span class="p">:</span>
+        <span class="n">arg</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asanyarray</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="n">arg_train</span> <span class="o">=</span> <span class="n">arg</span><span class="p">[</span><span class="n">train_indexes</span><span class="p">]</span>
+        <span class="n">arg_test</span>  <span class="o">=</span> <span class="n">arg</span><span class="p">[</span><span class="n">test_indexes</span><span class="p">]</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_train</span><span class="p">)</span>
+        <span class="n">ret</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">arg_test</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">ret</span></div>
+
+<span class="sd">&#39;&#39;&#39;</span>
+<span class="sd"> &gt;&gt;&gt; cv = cross_val.LeaveOneLabelOut(X, y) # y making y optional and</span>
+<span class="sd">possible to add other arrays of the same shape[0] too</span>
+<span class="sd"> &gt;&gt;&gt; for X_train, y_train, X_test, y_test in cv:</span>
+<span class="sd"> ...      print np.sqrt((model.fit(X_train, y_train).predict(X_test)</span>
+<span class="sd">- y_test) ** 2).mean())</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+
+<span class="c1">################################################################################</span>
+<span class="c1">#below: Author: josef-pktd</span>
+
+<div class="viewcode-block" id="KStepAhead"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.cross_val.KStepAhead.html#statsmodels.sandbox.datarich.factormodels.KStepAhead">[docs]</a><span class="k">class</span> <span class="nc">KStepAhead</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    KStepAhead cross validation iterator:</span>
+<span class="sd">    Provides fit/test indexes to split data in sequential sets</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="KStepAhead.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.tools.cross_val.KStepAhead.__init__.html#statsmodels.sandbox.datarich.factormodels.KStepAhead.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">start</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">kall</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">return_slice</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        KStepAhead cross validation iterator:</span>
+<span class="sd">        Provides train/test indexes to split data in train test sets</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------</span>
+<span class="sd">        n: int</span>
+<span class="sd">            Total number of elements</span>
+<span class="sd">        k : int</span>
+<span class="sd">            number of steps ahead</span>
+<span class="sd">        start : int</span>
+<span class="sd">            initial size of data for fitting</span>
+<span class="sd">        kall : boolean</span>
+<span class="sd">            if true. all values for up to k-step ahead are included in the test index.</span>
+<span class="sd">            If false, then only the k-th step ahead value is returnd</span>
+
+
+<span class="sd">        Notes</span>
+<span class="sd">        -----</span>
+<span class="sd">        I don&#39;t think this is really useful, because it can be done with</span>
+<span class="sd">        a very simple loop instead.</span>
+<span class="sd">        Useful as a plugin, but it could return slices instead for faster array access.</span>
+
+<span class="sd">        Examples</span>
+<span class="sd">        --------</span>
+<span class="sd">        &gt;&gt;&gt; from scikits.learn import cross_val</span>
+<span class="sd">        &gt;&gt;&gt; X = [[1, 2], [3, 4]]</span>
+<span class="sd">        &gt;&gt;&gt; y = [1, 2]</span>
+<span class="sd">        &gt;&gt;&gt; loo = cross_val.LeaveOneOut(2)</span>
+<span class="sd">        &gt;&gt;&gt; for train_index, test_index in loo:</span>
+<span class="sd">        ...    print &quot;TRAIN:&quot;, train_index, &quot;TEST:&quot;, test_index</span>
+<span class="sd">        ...    X_train, X_test, y_train, y_test = cross_val.split(train_index, test_index, X, y)</span>
+<span class="sd">        ...    print X_train, X_test, y_train, y_test</span>
+<span class="sd">        TRAIN: [False  True] TEST: [ True False]</span>
+<span class="sd">        [[3 4]] [[1 2]] [2] [1]</span>
+<span class="sd">        TRAIN: [ True False] TEST: [False  True]</span>
+<span class="sd">        [[1 2]] [[3 4]] [1] [2]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n</span> <span class="o">=</span> <span class="n">n</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">k</span> <span class="o">=</span> <span class="n">k</span>
+        <span class="k">if</span> <span class="n">start</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">start</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">trunc</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="mf">0.25</span><span class="p">))</span> <span class="c1"># pick something arbitrary</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="n">start</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">kall</span> <span class="o">=</span> <span class="n">kall</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">return_slice</span> <span class="o">=</span> <span class="n">return_slice</span></div>
+
+
+    <span class="k">def</span> <span class="nf">__iter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">n</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">n</span>
+        <span class="n">k</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">k</span>
+        <span class="n">start</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">start</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">return_slice</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="n">k</span><span class="p">):</span>
+                <span class="n">train_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="kc">None</span><span class="p">,</span> <span class="n">i</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kall</span><span class="p">:</span>
+                    <span class="n">test_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">i</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">test_slice</span> <span class="o">=</span> <span class="nb">slice</span><span class="p">(</span><span class="n">i</span><span class="o">+</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="n">i</span><span class="o">+</span><span class="n">k</span><span class="p">)</span>
+                <span class="k">yield</span> <span class="n">train_slice</span><span class="p">,</span> <span class="n">test_slice</span>
+
+        <span class="k">else</span><span class="p">:</span> <span class="c1">#for compatibility with other iterators</span>
+            <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">start</span><span class="p">,</span> <span class="n">n</span><span class="o">-</span><span class="n">k</span><span class="p">):</span>
+                <span class="n">train_index</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+                <span class="n">train_index</span><span class="p">[:</span><span class="n">i</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="n">test_index</span>  <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">bool</span><span class="p">)</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">kall</span><span class="p">:</span>
+                    <span class="n">test_index</span><span class="p">[</span><span class="n">i</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span> <span class="c1"># np.logical_not(test_index)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">test_index</span><span class="p">[</span><span class="n">i</span><span class="o">+</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="n">i</span><span class="o">+</span><span class="n">k</span><span class="p">]</span> <span class="o">=</span> <span class="kc">True</span>
+                <span class="c1">#or faster to return np.arange(i,i+k) ?</span>
+                <span class="c1">#returning slice should be faster in this case</span>
+                <span class="k">yield</span> <span class="n">train_index</span><span class="p">,</span> <span class="n">test_index</span>
+
+
+    <span class="k">def</span> <span class="nf">__repr__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="si">%s</span><span class="s1">.</span><span class="si">%s</span><span class="s1">(n=</span><span class="si">%i</span><span class="s1">)&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__module__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="o">.</span><span class="n">__name__</span><span class="p">,</span>
+                                <span class="bp">self</span><span class="o">.</span><span class="n">n</span><span class="p">,</span>
+                                <span class="p">)</span></div>
+
+
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

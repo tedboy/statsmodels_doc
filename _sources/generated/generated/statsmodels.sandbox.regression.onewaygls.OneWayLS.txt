@@ -1,0 +1,27 @@
+statsmodels.sandbox.regression.onewaygls.OneWayLS
+=================================================
+
+.. currentmodule:: statsmodels.sandbox.regression.onewaygls
+.. autoclass:: OneWayLS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OneWayLS.__init__
+   ~OneWayLS.fitbygroups
+   ~OneWayLS.fitjoint
+   ~OneWayLS.fitpooled
+   ~OneWayLS.ftest_summary
+   ~OneWayLS.lr_test
+   ~OneWayLS.print_summary
+
+
+
+
+

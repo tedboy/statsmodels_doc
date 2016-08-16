@@ -1,0 +1,44 @@
+statsmodels.sandbox.nonparametric.kernels.CustomKernel
+======================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernels
+.. autoclass:: CustomKernel
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CustomKernel.__init__
+   ~CustomKernel.density
+   ~CustomKernel.density_confint
+   ~CustomKernel.density_var
+   ~CustomKernel.geth
+   ~CustomKernel.in_domain
+   ~CustomKernel.moments
+   ~CustomKernel.seth
+   ~CustomKernel.smooth
+   ~CustomKernel.smoothconf
+   ~CustomKernel.smoothvar
+   ~CustomKernel.weight
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~CustomKernel.L2Norm
+   ~CustomKernel.h
+   ~CustomKernel.kernel_var
+   ~CustomKernel.norm_const
+   ~CustomKernel.normal_reference_constant
+

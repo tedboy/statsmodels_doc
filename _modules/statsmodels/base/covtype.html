@@ -1,0 +1,486 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.base.covtype &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.base.covtype</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.base.covtype</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Created on Mon Aug 04 08:00:16 2014</span>
+
+<span class="sd">Author: Josef Perktold</span>
+<span class="sd">License: BSD-3</span>
+
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">lrange</span><span class="p">,</span> <span class="n">lzip</span><span class="p">,</span> <span class="nb">range</span>
+
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+
+<div class="viewcode-block" id="get_robustcov_results"><a class="viewcode-back" href="../../../generated/statsmodels.base.covtype.get_robustcov_results.html#statsmodels.base.covtype.get_robustcov_results">[docs]</a><span class="k">def</span> <span class="nf">get_robustcov_results</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cov_type</span><span class="o">=</span><span class="s1">&#39;HC1&#39;</span><span class="p">,</span> <span class="n">use_t</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="o">**</span><span class="n">kwds</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;create new results instance with robust covariance as default</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    cov_type : string</span>
+<span class="sd">        the type of robust sandwich estimator to use. see Notes below</span>
+<span class="sd">    use_t : bool</span>
+<span class="sd">        If true, then the t distribution is used for inference.</span>
+<span class="sd">        If false, then the normal distribution is used.</span>
+<span class="sd">    kwds : depends on cov_type</span>
+<span class="sd">        Required or optional arguments for robust covariance calculation.</span>
+<span class="sd">        see Notes below</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    results : results instance</span>
+<span class="sd">        This method creates a new results instance with the requested</span>
+<span class="sd">        robust covariance as the default covariance of the parameters.</span>
+<span class="sd">        Inferential statistics like p-values and hypothesis tests will be</span>
+<span class="sd">        based on this covariance matrix.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    Warning: Some of the options and defaults in cov_kwds may be changed in a</span>
+<span class="sd">    future version.</span>
+
+<span class="sd">    The covariance keywords provide an option &#39;scaling_factor&#39; to adjust the</span>
+<span class="sd">    scaling of the covariance matrix, that is the covariance is multiplied by</span>
+<span class="sd">    this factor if it is given and is not `None`. This allows the user to</span>
+<span class="sd">    adjust the scaling of the covariance matrix to match other statistical</span>
+<span class="sd">    packages.</span>
+<span class="sd">    For example, `scaling_factor=(nobs - 1.) / (nobs - k_params)` provides a</span>
+<span class="sd">    correction so that the robust covariance matrices match those of Stata in</span>
+<span class="sd">    some models like GLM and discrete Models.</span>
+
+<span class="sd">    The following covariance types and required or optional arguments are</span>
+<span class="sd">    currently available:</span>
+
+<span class="sd">    - &#39;HC0&#39;, &#39;HC1&#39;, &#39;HC2&#39;, &#39;HC3&#39; and no keyword arguments:</span>
+<span class="sd">        heteroscedasticity robust covariance</span>
+<span class="sd">    - &#39;HAC&#39; and keywords</span>
+
+<span class="sd">        - `maxlag` integer (required) : number of lags to use</span>
+<span class="sd">        - `kernel` string (optional) : kernel, default is Bartlett</span>
+<span class="sd">        - `use_correction` bool (optional) : If true, use small sample</span>
+<span class="sd">              correction</span>
+
+<span class="sd">    - &#39;cluster&#39; and required keyword `groups`, integer group indicator</span>
+
+<span class="sd">        - `groups` array_like, integer (required) :</span>
+<span class="sd">              index of clusters or groups</span>
+<span class="sd">        - `use_correction` bool (optional) :</span>
+<span class="sd">              If True the sandwich covariance is calulated with a small</span>
+<span class="sd">              sample correction.</span>
+<span class="sd">              If False the the sandwich covariance is calulated without</span>
+<span class="sd">              small sample correction.</span>
+<span class="sd">        - `df_correction` bool (optional)</span>
+<span class="sd">              If True (default), then the degrees of freedom for the</span>
+<span class="sd">              inferential statistics and hypothesis tests, such as</span>
+<span class="sd">              pvalues, f_pvalue, conf_int, and t_test and f_test, are</span>
+<span class="sd">              based on the number of groups minus one instead of the</span>
+<span class="sd">              total number of observations minus the number of explanatory</span>
+<span class="sd">              variables. `df_resid` of the results instance is adjusted.</span>
+<span class="sd">              If False, then `df_resid` of the results instance is not</span>
+<span class="sd">              adjusted.</span>
+
+<span class="sd">    - &#39;hac-groupsum&#39; Driscoll and Kraay, heteroscedasticity and</span>
+<span class="sd">        autocorrelation robust standard errors in panel data</span>
+<span class="sd">        keywords</span>
+
+<span class="sd">        - `time` array_like (required) : index of time periods</span>
+<span class="sd">        - `maxlag` integer (required) : number of lags to use</span>
+<span class="sd">        - `kernel` string (optional) : kernel, default is Bartlett</span>
+<span class="sd">        - `use_correction` False or string in [&#39;hac&#39;, &#39;cluster&#39;] (optional) :</span>
+<span class="sd">              If False the the sandwich covariance is calulated without</span>
+<span class="sd">              small sample correction.</span>
+<span class="sd">              If `use_correction = &#39;cluster&#39;` (default), then the same</span>
+<span class="sd">              small sample correction as in the case of &#39;covtype=&#39;cluster&#39;&#39;</span>
+<span class="sd">              is used.</span>
+<span class="sd">        - `df_correction` bool (optional)</span>
+<span class="sd">              adjustment to df_resid, see cov_type &#39;cluster&#39; above</span>
+<span class="sd">              #TODO: we need more options here</span>
+
+<span class="sd">    - &#39;hac-panel&#39; heteroscedasticity and autocorrelation robust standard</span>
+<span class="sd">        errors in panel data.</span>
+<span class="sd">        The data needs to be sorted in this case, the time series for</span>
+<span class="sd">        each panel unit or cluster need to be stacked.</span>
+<span class="sd">        keywords</span>
+
+<span class="sd">        - `time` array_like (required) : index of time periods</span>
+
+<span class="sd">        - `maxlag` integer (required) : number of lags to use</span>
+<span class="sd">        - `kernel` string (optional) : kernel, default is Bartlett</span>
+<span class="sd">        - `use_correction` False or string in [&#39;hac&#39;, &#39;cluster&#39;] (optional) :</span>
+<span class="sd">              If False the the sandwich covariance is calulated without</span>
+<span class="sd">              small sample correction.</span>
+<span class="sd">        - `df_correction` bool (optional)</span>
+<span class="sd">              adjustment to df_resid, see cov_type &#39;cluster&#39; above</span>
+<span class="sd">              #TODO: we need more options here</span>
+
+<span class="sd">    Reminder:</span>
+<span class="sd">    `use_correction` in &quot;nw-groupsum&quot; and &quot;nw-panel&quot; is not bool,</span>
+<span class="sd">    needs to be in [False, &#39;hac&#39;, &#39;cluster&#39;]</span>
+
+<span class="sd">    TODO: Currently there is no check for extra or misspelled keywords,</span>
+<span class="sd">    except in the case of cov_type `HCx`</span>
+
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="kn">import</span> <span class="nn">statsmodels.stats.sandwich_covariance</span> <span class="k">as</span> <span class="nn">sw</span>
+
+    <span class="c1"># TODO: make separate function that returns a robust cov plus info</span>
+    <span class="n">use_self</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="s1">&#39;use_self&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">use_self</span><span class="p">:</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="c1"># this doesn&#39;t work for most models, use raw instance instead from fit</span>
+        <span class="n">res</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">__class__</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">model</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="p">,</span>
+                   <span class="n">normalized_cov_params</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">normalized_cov_params</span><span class="p">,</span>
+                   <span class="n">scale</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">scale</span><span class="p">)</span>
+
+    <span class="n">res</span><span class="o">.</span><span class="n">cov_type</span> <span class="o">=</span> <span class="n">cov_type</span>
+    <span class="c1"># use_t might already be defined by the class, and already set</span>
+    <span class="k">if</span> <span class="n">use_t</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">use_t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">use_t</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span> <span class="o">=</span> <span class="p">{</span><span class="s1">&#39;use_t&#39;</span><span class="p">:</span><span class="n">use_t</span><span class="p">}</span>  <span class="c1"># store for information</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">use_t</span> <span class="o">=</span> <span class="n">use_t</span>
+
+    <span class="n">adjust_df</span> <span class="o">=</span> <span class="kc">False</span>
+    <span class="k">if</span> <span class="n">cov_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;cluster&#39;</span><span class="p">,</span> <span class="s1">&#39;nw-panel&#39;</span><span class="p">,</span> <span class="s1">&#39;nw-groupsum&#39;</span><span class="p">]:</span>
+        <span class="n">df_correction</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;df_correction&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="c1"># TODO: check also use_correction, do I need all combinations?</span>
+        <span class="k">if</span> <span class="n">df_correction</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">False</span><span class="p">:</span> <span class="c1"># i.e. in [None, True]:</span>
+            <span class="c1"># user didn&#39;t explicitely set it to False</span>
+            <span class="n">adjust_df</span> <span class="o">=</span> <span class="kc">True</span>
+
+    <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;adjust_df&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">adjust_df</span>
+
+    <span class="c1"># verify and set kwds, and calculate cov</span>
+    <span class="c1"># TODO: this should be outsourced in a function so we can reuse it in</span>
+    <span class="c1">#       other models</span>
+    <span class="c1"># TODO: make it DRYer   repeated code for checking kwds</span>
+    <span class="k">if</span> <span class="n">cov_type</span> <span class="ow">in</span> <span class="p">(</span><span class="s1">&#39;HC0&#39;</span><span class="p">,</span> <span class="s1">&#39;HC1&#39;</span><span class="p">,</span> <span class="s1">&#39;HC2&#39;</span><span class="p">,</span> <span class="s1">&#39;HC3&#39;</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">kwds</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;heteroscedasticity robust covarians &#39;</span> <span class="o">+</span>
+                             <span class="s1">&#39;does not use keywords&#39;</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Standard Errors are heteroscedasticity &#39;</span> <span class="o">+</span>
+                                       <span class="s1">&#39;robust &#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">cov_type</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_params_default</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;cov_&#39;</span> <span class="o">+</span> <span class="n">cov_type</span><span class="o">.</span><span class="n">upper</span><span class="p">(),</span> <span class="kc">None</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">res</span><span class="o">.</span><span class="n">cov_params_default</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="c1"># results classes that don&#39;t have cov_HCx attribute</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">cov_params_default</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">cov_white_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span>
+                                                         <span class="n">use_correction</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cov_type</span> <span class="o">==</span> <span class="s1">&#39;HAC&#39;</span><span class="p">:</span>
+        <span class="n">maxlags</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;maxlags&#39;</span><span class="p">]</span>   <span class="c1"># required?, default in cov_hac_simple</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;maxlags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxlags</span>
+        <span class="n">use_correction</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;use_correction&#39;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;use_correction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_correction</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Standard Errors are heteroscedasticity &#39;</span> <span class="o">+</span>
+             <span class="s1">&#39;and autocorrelation robust (HAC) using </span><span class="si">%d</span><span class="s1"> lags and </span><span class="si">%s</span><span class="s1"> small &#39;</span> <span class="o">+</span>
+             <span class="s1">&#39;sample correction&#39;</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="n">maxlags</span><span class="p">,</span> <span class="p">[</span><span class="s1">&#39;without&#39;</span><span class="p">,</span> <span class="s1">&#39;with&#39;</span><span class="p">][</span><span class="n">use_correction</span><span class="p">])</span>
+
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_params_default</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">cov_hac_simple</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">nlags</span><span class="o">=</span><span class="n">maxlags</span><span class="p">,</span>
+                                             <span class="n">use_correction</span><span class="o">=</span><span class="n">use_correction</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cov_type</span> <span class="o">==</span> <span class="s1">&#39;cluster&#39;</span><span class="p">:</span>
+        <span class="c1">#cluster robust standard errors, one- or two-way</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;groups&#39;</span><span class="p">]</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">groups</span><span class="p">,</span> <span class="s1">&#39;shape&#39;</span><span class="p">):</span>
+            <span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span><span class="o">.</span><span class="n">T</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;groups&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">groups</span>
+        <span class="n">use_correction</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;use_correction&#39;</span><span class="p">,</span> <span class="kc">True</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;use_correction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_correction</span>
+        <span class="k">if</span> <span class="n">groups</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">adjust_df</span><span class="p">:</span>
+                <span class="c1"># need to find number of groups</span>
+                <span class="c1"># duplicate work</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_groups</span> <span class="o">=</span> <span class="n">n_groups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">groups</span><span class="p">))</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">cov_params_default</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">cov_cluster</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span>
+                                             <span class="n">use_correction</span><span class="o">=</span><span class="n">use_correction</span><span class="p">)</span>
+
+        <span class="k">elif</span> <span class="n">groups</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">if</span> <span class="n">adjust_df</span><span class="p">:</span>
+                <span class="c1"># need to find number of groups</span>
+                <span class="c1"># duplicate work</span>
+                <span class="n">n_groups0</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">groups</span><span class="p">[:,</span><span class="mi">0</span><span class="p">]))</span>
+                <span class="n">n_groups1</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">groups</span><span class="p">[:,</span> <span class="mi">1</span><span class="p">]))</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">n_groups</span> <span class="o">=</span> <span class="p">(</span><span class="n">n_groups0</span><span class="p">,</span> <span class="n">n_groups1</span><span class="p">)</span>
+                <span class="n">n_groups</span> <span class="o">=</span> <span class="nb">min</span><span class="p">(</span><span class="n">n_groups0</span><span class="p">,</span> <span class="n">n_groups1</span><span class="p">)</span> <span class="c1"># use for adjust_df</span>
+
+            <span class="c1"># Note: sw.cov_cluster_2groups has 3 returns</span>
+            <span class="n">res</span><span class="o">.</span><span class="n">cov_params_default</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">cov_cluster_2groups</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">groups</span><span class="p">,</span>
+                                         <span class="n">use_correction</span><span class="o">=</span><span class="n">use_correction</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;only two groups are supported&#39;</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Standard Errors are robust to&#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;cluster correlation &#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">cov_type</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+
+    <span class="k">elif</span> <span class="n">cov_type</span> <span class="o">==</span> <span class="s1">&#39;nw-panel&#39;</span><span class="p">:</span>
+        <span class="c1">#cluster robust standard errors</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
+        <span class="c1">#TODO: nlags is currently required</span>
+        <span class="c1">#nlags = kwds.get(&#39;nlags&#39;, True)</span>
+        <span class="c1">#res.cov_kwds[&#39;nlags&#39;] = nlags</span>
+        <span class="c1">#TODO: `nlags` or `maxlags`</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;maxlags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxlags</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;maxlags&#39;</span><span class="p">]</span>
+        <span class="n">use_correction</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;use_correction&#39;</span><span class="p">,</span> <span class="s1">&#39;hac&#39;</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;use_correction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_correction</span>
+        <span class="n">weights_func</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;weights_func&#39;</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">weights_bartlett</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;weights_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weights_func</span>
+        <span class="c1"># TODO: clumsy time index in cov_nw_panel</span>
+        <span class="n">tt</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+        <span class="n">groupidx</span> <span class="o">=</span> <span class="n">lzip</span><span class="p">([</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="n">tt</span><span class="p">,</span> <span class="n">tt</span> <span class="o">+</span> <span class="p">[</span><span class="nb">len</span><span class="p">(</span><span class="n">time</span><span class="p">)])</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">n_groups</span> <span class="o">=</span> <span class="n">n_groups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">groupidx</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_params_default</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">cov_nw_panel</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxlags</span><span class="p">,</span> <span class="n">groupidx</span><span class="p">,</span>
+                                            <span class="n">weights_func</span><span class="o">=</span><span class="n">weights_func</span><span class="p">,</span>
+                                            <span class="n">use_correction</span><span class="o">=</span><span class="n">use_correction</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span><span class="s1">&#39;Standard Errors are robust to&#39;</span> <span class="o">+</span>
+                            <span class="s1">&#39;cluster correlation &#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">cov_type</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+    <span class="k">elif</span> <span class="n">cov_type</span> <span class="o">==</span> <span class="s1">&#39;nw-groupsum&#39;</span><span class="p">:</span>
+        <span class="c1"># Driscoll-Kraay standard errors</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">time</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;time&#39;</span><span class="p">]</span>
+        <span class="c1">#TODO: nlags is currently required</span>
+        <span class="c1">#nlags = kwds.get(&#39;nlags&#39;, True)</span>
+        <span class="c1">#res.cov_kwds[&#39;nlags&#39;] = nlags</span>
+        <span class="c1">#TODO: `nlags` or `maxlags`</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;maxlags&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">maxlags</span> <span class="o">=</span> <span class="n">kwds</span><span class="p">[</span><span class="s1">&#39;maxlags&#39;</span><span class="p">]</span>
+        <span class="n">use_correction</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;use_correction&#39;</span><span class="p">,</span> <span class="s1">&#39;cluster&#39;</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;use_correction&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">use_correction</span>
+        <span class="n">weights_func</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;weights_func&#39;</span><span class="p">,</span> <span class="n">sw</span><span class="o">.</span><span class="n">weights_bartlett</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;weights_func&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">weights_func</span>
+        <span class="k">if</span> <span class="n">adjust_df</span><span class="p">:</span>
+            <span class="c1"># need to find number of groups</span>
+            <span class="n">tt</span> <span class="o">=</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nonzero</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diff</span><span class="p">(</span><span class="n">time</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">n_groups</span> <span class="o">=</span> <span class="n">n_groups</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">tt</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_params_default</span> <span class="o">=</span> <span class="n">sw</span><span class="o">.</span><span class="n">cov_nw_groupsum</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">maxlags</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span>
+                                        <span class="n">weights_func</span><span class="o">=</span><span class="n">weights_func</span><span class="p">,</span>
+                                        <span class="n">use_correction</span><span class="o">=</span><span class="n">use_correction</span><span class="p">)</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;description&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="p">(</span>
+                    <span class="s1">&#39;Driscoll and Kraay Standard Errors are robust to &#39;</span> <span class="o">+</span>
+                    <span class="s1">&#39;cluster correlation &#39;</span> <span class="o">+</span> <span class="s1">&#39;(&#39;</span> <span class="o">+</span> <span class="n">cov_type</span> <span class="o">+</span> <span class="s1">&#39;)&#39;</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;cov_type not recognized. See docstring for &#39;</span> <span class="o">+</span>
+                         <span class="s1">&#39;available options and spelling&#39;</span><span class="p">)</span>
+
+    <span class="c1"># generic optional factor to scale covariance</span>
+    <span class="n">sc_factor</span> <span class="o">=</span> <span class="n">kwds</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s1">&#39;scaling_factor&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="n">res</span><span class="o">.</span><span class="n">cov_kwds</span><span class="p">[</span><span class="s1">&#39;scaling_factor&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">sc_factor</span>
+    <span class="k">if</span> <span class="n">sc_factor</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">cov_params_default</span> <span class="o">*=</span> <span class="n">sc_factor</span>
+
+    <span class="k">if</span> <span class="n">adjust_df</span><span class="p">:</span>
+        <span class="c1"># Note: df_resid is used for scale and others, add new attribute</span>
+        <span class="n">res</span><span class="o">.</span><span class="n">df_resid_inference</span> <span class="o">=</span> <span class="n">n_groups</span> <span class="o">-</span> <span class="mi">1</span>
+
+    <span class="k">return</span> <span class="n">res</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

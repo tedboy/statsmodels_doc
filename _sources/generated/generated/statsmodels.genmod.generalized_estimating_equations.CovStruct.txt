@@ -1,0 +1,26 @@
+statsmodels.genmod.generalized_estimating_equations.CovStruct
+=============================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: CovStruct
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CovStruct.__init__
+   ~CovStruct.covariance_matrix
+   ~CovStruct.covariance_matrix_solve
+   ~CovStruct.initialize
+   ~CovStruct.summary
+   ~CovStruct.update
+
+
+
+
+

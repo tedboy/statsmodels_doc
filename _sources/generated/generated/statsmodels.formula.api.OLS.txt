@@ -1,0 +1,42 @@
+statsmodels.formula.api.OLS
+===========================
+
+.. currentmodule:: statsmodels.formula.api
+.. autoclass:: OLS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~OLS.__init__
+   ~OLS.fit
+   ~OLS.fit_regularized
+   ~OLS.from_formula
+   ~OLS.hessian
+   ~OLS.information
+   ~OLS.initialize
+   ~OLS.loglike
+   ~OLS.predict
+   ~OLS.score
+   ~OLS.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~OLS.df_model
+   ~OLS.df_resid
+   ~OLS.endog_names
+   ~OLS.exog_names
+

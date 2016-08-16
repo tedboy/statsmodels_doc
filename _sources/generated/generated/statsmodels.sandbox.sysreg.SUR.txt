@@ -1,0 +1,25 @@
+statsmodels.sandbox.sysreg.SUR
+==============================
+
+.. currentmodule:: statsmodels.sandbox.sysreg
+.. autoclass:: SUR
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~SUR.__init__
+   ~SUR.fit
+   ~SUR.initialize
+   ~SUR.predict
+   ~SUR.whiten
+
+
+
+
+

@@ -1,0 +1,34 @@
+statsmodels.tsa.tests.test_stattools.TestACF_FFT
+================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_stattools
+.. autoclass:: TestACF_FFT
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestACF_FFT.__init__
+   ~TestACF_FFT.test_acf
+   ~TestACF_FFT.test_qstat
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TestACF_FFT.data
+   ~TestACF_FFT.filename
+   ~TestACF_FFT.results
+   ~TestACF_FFT.x
+

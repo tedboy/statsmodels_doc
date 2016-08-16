@@ -1,0 +1,44 @@
+statsmodels.sandbox.nonparametric.kernels.Uniform
+=================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernels
+.. autoclass:: Uniform
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Uniform.__init__
+   ~Uniform.density
+   ~Uniform.density_confint
+   ~Uniform.density_var
+   ~Uniform.geth
+   ~Uniform.in_domain
+   ~Uniform.moments
+   ~Uniform.seth
+   ~Uniform.smooth
+   ~Uniform.smoothconf
+   ~Uniform.smoothvar
+   ~Uniform.weight
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Uniform.L2Norm
+   ~Uniform.h
+   ~Uniform.kernel_var
+   ~Uniform.norm_const
+   ~Uniform.normal_reference_constant
+

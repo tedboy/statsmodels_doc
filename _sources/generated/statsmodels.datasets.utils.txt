@@ -1,0 +1,46 @@
+statsmodels.datasets.utils
+==========================
+
+.. automodule:: statsmodels.datasets.utils
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      clear_data_home
+      get_data_home
+      get_rdataset
+      process_recarray
+      process_recarray_pandas
+      webuse
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Dataset
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.datasets.utils.Dataset
+
+   
+   
+
+   
+   
+   

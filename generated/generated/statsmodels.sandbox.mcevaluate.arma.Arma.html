@@ -1,0 +1,378 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.4.2.2.1. statsmodels.sandbox.mcevaluate.arma.Arma &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="6.4.2. statsmodels.sandbox.mcevaluate.arma" href="../statsmodels.sandbox.mcevaluate.arma.html"/>
+        <link rel="next" title="6.4.2.2.1.1.1. statsmodels.sandbox.mcevaluate.arma.Arma.__init__" href="statsmodels.sandbox.mcevaluate.arma.Arma.__init__.html"/>
+        <link rel="prev" title="6.4.2.1.3. statsmodels.sandbox.mcevaluate.arma.mcarma22" href="../statsmodels.sandbox.mcevaluate.arma.mcarma22.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.mcevaluate.html">6.4.1. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.mcevaluate.arma.html">6.4.2. statsmodels.sandbox.mcevaluate.arma</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.sandbox.mcevaluate.arma.html#functions">6.4.2.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.sandbox.mcevaluate.arma.html#classes">6.4.2.2. Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.mcevaluate.arma.html">6.4.2. statsmodels.sandbox.mcevaluate.arma</a> &raquo;</li>
+        
+      <li>6.4.2.2.1. statsmodels.sandbox.mcevaluate.arma.Arma</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.mcevaluate.arma.Arma.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-mcevaluate-arma-arma">
+<h1>6.4.2.2.1. statsmodels.sandbox.mcevaluate.arma.Arma<a class="headerlink" href="#statsmodels-sandbox-mcevaluate-arma-arma" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.sandbox.mcevaluate.arma.Arma">
+<em class="property">class </em><code class="descclassname">statsmodels.sandbox.mcevaluate.arma.</code><code class="descname">Arma</code><span class="sig-paren">(</span><em>endog</em>, <em>exog=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/tsa/arma_mle.html#Arma"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.mcevaluate.arma.Arma" title="Permalink to this definition">¶</a></dt>
+<dd><p>univariate Autoregressive Moving Average model, conditional on initial values</p>
+<p>The ARMA model is estimated either with conditional Least Squares or with
+conditional Maximum Likelihood. The implementation is
+using scipy.filter.lfilter which makes it faster than the Kalman Filter
+Implementation. The Kalman Filter Implementation however uses the exact
+Maximum Likelihood and will be more accurate, statistically more efficent
+in small samples.</p>
+<p>In large samples conditional LS, conditional MLE and exact MLE should be very
+close to each other, they are equivalent asymptotically.</p>
+<p class="rubric">Notes</p>
+<p>this can subclass TSMLEModel</p>
+<p>TODO:</p>
+<ul class="simple">
+<li>CondLS return raw estimation results</li>
+<li>needs checking that there is no wrong state retained, when running fit
+several times with different options</li>
+<li>still needs consistent order options.</li>
+<li>Currently assumes that the mean is zero, no mean or effect of exogenous
+variables are included in the estimation.</li>
+</ul>
+<dl class="method">
+<dt id="statsmodels.sandbox.mcevaluate.arma.Arma.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>endog</em>, <em>exog=None</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/tsa/arma_mle.html#Arma.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.mcevaluate.arma.Arma.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>6.4.2.2.1.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.__init__.html#statsmodels.sandbox.mcevaluate.arma.Arma.__init__" title="statsmodels.sandbox.mcevaluate.arma.Arma.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(endog[,&nbsp;exog])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.expandparams.html#statsmodels.sandbox.mcevaluate.arma.Arma.expandparams" title="statsmodels.sandbox.mcevaluate.arma.Arma.expandparams"><code class="xref py py-obj docutils literal"><span class="pre">expandparams</span></code></a>(params)</td>
+<td>expand to full parameter array when some parameters are fixed</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.fit.html#statsmodels.sandbox.mcevaluate.arma.Arma.fit" title="statsmodels.sandbox.mcevaluate.arma.Arma.fit"><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code></a>([order,&nbsp;start_params,&nbsp;method])</td>
+<td>Estimate lag coefficients of an ARIMA process.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.fit_mle.html#statsmodels.sandbox.mcevaluate.arma.Arma.fit_mle" title="statsmodels.sandbox.mcevaluate.arma.Arma.fit_mle"><code class="xref py py-obj docutils literal"><span class="pre">fit_mle</span></code></a>([order,&nbsp;start_params,&nbsp;method,&nbsp;...])</td>
+<td>Estimate an ARMA model with given order using Conditional Maximum Likelihood</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.forecast.html#statsmodels.sandbox.mcevaluate.arma.Arma.forecast" title="statsmodels.sandbox.mcevaluate.arma.Arma.forecast"><code class="xref py py-obj docutils literal"><span class="pre">forecast</span></code></a>([ar,&nbsp;ma,&nbsp;nperiod])</td>
+<td>nperiod ahead forecast at the end of the data period</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.forecast2.html#statsmodels.sandbox.mcevaluate.arma.Arma.forecast2" title="statsmodels.sandbox.mcevaluate.arma.Arma.forecast2"><code class="xref py py-obj docutils literal"><span class="pre">forecast2</span></code></a>([step_ahead,&nbsp;start,&nbsp;end,&nbsp;endog])</td>
+<td>rolling h-period ahead forecast without reestimation, 1 period ahead only</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.forecast3.html#statsmodels.sandbox.mcevaluate.arma.Arma.forecast3" title="statsmodels.sandbox.mcevaluate.arma.Arma.forecast3"><code class="xref py py-obj docutils literal"><span class="pre">forecast3</span></code></a>([step_ahead,&nbsp;start])</td>
+<td>another try for h-step ahead forecasting</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.from_formula.html#statsmodels.sandbox.mcevaluate.arma.Arma.from_formula" title="statsmodels.sandbox.mcevaluate.arma.Arma.from_formula"><code class="xref py py-obj docutils literal"><span class="pre">from_formula</span></code></a>(formula,&nbsp;data[,&nbsp;subset])</td>
+<td>Create a Model from a formula and dataframe.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.generate_sample.html#statsmodels.sandbox.mcevaluate.arma.Arma.generate_sample" title="statsmodels.sandbox.mcevaluate.arma.Arma.generate_sample"><code class="xref py py-obj docutils literal"><span class="pre">generate_sample</span></code></a>(ar,&nbsp;ma,&nbsp;nsample[,&nbsp;std])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.geterrors.html#statsmodels.sandbox.mcevaluate.arma.Arma.geterrors" title="statsmodels.sandbox.mcevaluate.arma.Arma.geterrors"><code class="xref py py-obj docutils literal"><span class="pre">geterrors</span></code></a>(params)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.hessian.html#statsmodels.sandbox.mcevaluate.arma.Arma.hessian" title="statsmodels.sandbox.mcevaluate.arma.Arma.hessian"><code class="xref py py-obj docutils literal"><span class="pre">hessian</span></code></a>(params)</td>
+<td>Hessian of log-likelihood evaluated at params</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.information.html#statsmodels.sandbox.mcevaluate.arma.Arma.information" title="statsmodels.sandbox.mcevaluate.arma.Arma.information"><code class="xref py py-obj docutils literal"><span class="pre">information</span></code></a>(params)</td>
+<td>Fisher information matrix of model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.initialize.html#statsmodels.sandbox.mcevaluate.arma.Arma.initialize" title="statsmodels.sandbox.mcevaluate.arma.Arma.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.jac.html#statsmodels.sandbox.mcevaluate.arma.Arma.jac" title="statsmodels.sandbox.mcevaluate.arma.Arma.jac"><code class="xref py py-obj docutils literal"><span class="pre">jac</span></code></a>(*args,&nbsp;**kwds)</td>
+<td><cite>jac</cite> is deprecated, use <cite>score_obs</cite> instead!</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.loglike.html#statsmodels.sandbox.mcevaluate.arma.Arma.loglike" title="statsmodels.sandbox.mcevaluate.arma.Arma.loglike"><code class="xref py py-obj docutils literal"><span class="pre">loglike</span></code></a>(params)</td>
+<td>Loglikelihood for arma model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.loglikeobs.html#statsmodels.sandbox.mcevaluate.arma.Arma.loglikeobs" title="statsmodels.sandbox.mcevaluate.arma.Arma.loglikeobs"><code class="xref py py-obj docutils literal"><span class="pre">loglikeobs</span></code></a>(params)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.nloglike.html#statsmodels.sandbox.mcevaluate.arma.Arma.nloglike" title="statsmodels.sandbox.mcevaluate.arma.Arma.nloglike"><code class="xref py py-obj docutils literal"><span class="pre">nloglike</span></code></a>(params)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.nloglikeobs.html#statsmodels.sandbox.mcevaluate.arma.Arma.nloglikeobs" title="statsmodels.sandbox.mcevaluate.arma.Arma.nloglikeobs"><code class="xref py py-obj docutils literal"><span class="pre">nloglikeobs</span></code></a>(params)</td>
+<td>Loglikelihood for arma model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.predict.html#statsmodels.sandbox.mcevaluate.arma.Arma.predict" title="statsmodels.sandbox.mcevaluate.arma.Arma.predict"><code class="xref py py-obj docutils literal"><span class="pre">predict</span></code></a>(params[,&nbsp;exog])</td>
+<td>After a model has been fit predict returns the fitted values.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.predicted.html#statsmodels.sandbox.mcevaluate.arma.Arma.predicted" title="statsmodels.sandbox.mcevaluate.arma.Arma.predicted"><code class="xref py py-obj docutils literal"><span class="pre">predicted</span></code></a>([ar,&nbsp;ma])</td>
+<td>past predicted values of time series</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.reduceparams.html#statsmodels.sandbox.mcevaluate.arma.Arma.reduceparams" title="statsmodels.sandbox.mcevaluate.arma.Arma.reduceparams"><code class="xref py py-obj docutils literal"><span class="pre">reduceparams</span></code></a>(params)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.score.html#statsmodels.sandbox.mcevaluate.arma.Arma.score" title="statsmodels.sandbox.mcevaluate.arma.Arma.score"><code class="xref py py-obj docutils literal"><span class="pre">score</span></code></a>(params)</td>
+<td>Gradient of log-likelihood evaluated at params</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.score_obs.html#statsmodels.sandbox.mcevaluate.arma.Arma.score_obs" title="statsmodels.sandbox.mcevaluate.arma.Arma.score_obs"><code class="xref py py-obj docutils literal"><span class="pre">score_obs</span></code></a>(params,&nbsp;**kwds)</td>
+<td>Jacobian/Gradient of log-likelihood evaluated at params for each observation.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>6.4.2.2.1.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.endog_names.html#statsmodels.sandbox.mcevaluate.arma.Arma.endog_names" title="statsmodels.sandbox.mcevaluate.arma.Arma.endog_names"><code class="xref py py-obj docutils literal"><span class="pre">endog_names</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.mcevaluate.arma.Arma.exog_names.html#statsmodels.sandbox.mcevaluate.arma.Arma.exog_names" title="statsmodels.sandbox.mcevaluate.arma.Arma.exog_names"><code class="xref py py-obj docutils literal"><span class="pre">exog_names</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.mcevaluate.arma.Arma.__init__.html" class="btn btn-neutral float-right" title="6.4.2.2.1.1.1. statsmodels.sandbox.mcevaluate.arma.Arma.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../statsmodels.sandbox.mcevaluate.arma.mcarma22.html" class="btn btn-neutral" title="6.4.2.1.3. statsmodels.sandbox.mcevaluate.arma.mcarma22" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

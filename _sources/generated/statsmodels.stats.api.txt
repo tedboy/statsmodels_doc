@@ -1,0 +1,126 @@
+statsmodels.stats.api
+=====================
+
+.. automodule:: statsmodels.stats.api
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      acorr_breush_godfrey
+      acorr_ljungbox
+      anova_lm
+      binom_test
+      binom_test_reject_interval
+      binom_tost
+      binom_tost_reject_interval
+      breaks_cusumolsresid
+      breaks_hansen
+      chisquare_effectsize
+      cochrans_q
+      corr_clipped
+      corr_nearest
+      cov_cluster
+      cov_cluster_2groups
+      cov_hac
+      cov_hc0
+      cov_hc1
+      cov_hc2
+      cov_hc3
+      cov_nearest
+      cov_nw_panel
+      cov_white_simple
+      durbin_watson
+      fdrcorrection
+      fdrcorrection_twostage
+      gof_chisquare_discrete
+      het_arch
+      het_breushpagan
+      het_white
+      jarque_bera
+      lillifors
+      linear_harvey_collier
+      linear_lm
+      linear_rainbow
+      mcnemar
+      multipletests
+      normal_ad
+      omni_normtest
+      power_binom_tost
+      power_ztost_prop
+      powerdiscrepancy
+      proportion_confint
+      proportion_effectsize
+      proportions_chisquare
+      proportions_chisquare_allpairs
+      proportions_chisquare_pairscontrol
+      proportions_ztest
+      proportions_ztost
+      recursive_olsresiduals
+      runstest_1samp
+      runstest_2samp
+      se_cov
+      symmetry_bowker
+      ttest_ind
+      ttost_ind
+      ttost_paired
+      tukeyhsd
+      unitroot_adf
+      zconfint
+      ztest
+      ztost
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CompareCox
+      CompareJ
+      CompareMeans
+      DescrStatsW
+      Describe
+      FTestAnovaPower
+      FTestPower
+      GofChisquarePower
+      HetGoldfeldQuandt
+      NormalIndPower
+      Runs
+      TTestIndPower
+      TTestPower
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.api.CompareCox
+       generated/statsmodels.stats.api.CompareJ
+       generated/statsmodels.stats.api.CompareMeans
+       generated/statsmodels.stats.api.DescrStatsW
+       generated/statsmodels.stats.api.Describe
+       generated/statsmodels.stats.api.FTestAnovaPower
+       generated/statsmodels.stats.api.FTestPower
+       generated/statsmodels.stats.api.GofChisquarePower
+       generated/statsmodels.stats.api.HetGoldfeldQuandt
+       generated/statsmodels.stats.api.NormalIndPower
+       generated/statsmodels.stats.api.Runs
+       generated/statsmodels.stats.api.TTestIndPower
+       generated/statsmodels.stats.api.TTestPower
+
+   
+   
+
+   
+   
+   

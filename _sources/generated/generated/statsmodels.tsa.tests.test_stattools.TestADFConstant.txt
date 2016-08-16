@@ -1,0 +1,35 @@
+statsmodels.tsa.tests.test_stattools.TestADFConstant
+====================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_stattools
+.. autoclass:: TestADFConstant
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestADFConstant.__init__
+   ~TestADFConstant.test_critvalues
+   ~TestADFConstant.test_pvalue
+   ~TestADFConstant.test_teststat
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TestADFConstant.data
+   ~TestADFConstant.levels
+   ~TestADFConstant.x
+   ~TestADFConstant.y
+

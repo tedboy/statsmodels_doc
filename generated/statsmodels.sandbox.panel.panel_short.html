@@ -1,0 +1,322 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.6.3. statsmodels.sandbox.panel.panel_short &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.6.3.2.1. statsmodels.sandbox.panel.panel_short.sum_outer_product_balanced" href="statsmodels.sandbox.panel.panel_short.sum_outer_product_balanced.html"/>
+        <link rel="prev" title="6.6.2.2.4.1.8. statsmodels.sandbox.panel.mixed.Unit.logL" href="generated/statsmodels.sandbox.panel.mixed.Unit.logL.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.panel.correlation_structures.html">6.6.1. statsmodels.sandbox.panel.correlation_structures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.panel.mixed.html">6.6.2. statsmodels.sandbox.panel.mixed</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.6.3. statsmodels.sandbox.panel.panel_short</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#notes">6.6.3.1. Notes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">6.6.3.2. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">6.6.3.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.panel.random_panel.html">6.6.4. statsmodels.sandbox.panel.random_panel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.panel.sandwich_covariance_generic.html">6.6.5. statsmodels.sandbox.panel.sandwich_covariance_generic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.panel.sandwich_covariance.html">6.6.6. statsmodels.sandbox.panel.sandwich_covariance</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.6.3. statsmodels.sandbox.panel.panel_short</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.panel.panel_short.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.panel.panel_short">
+<span id="statsmodels-sandbox-panel-panel-short"></span><h1>6.6.3. statsmodels.sandbox.panel.panel_short<a class="headerlink" href="#module-statsmodels.sandbox.panel.panel_short" title="Permalink to this headline">¶</a></h1>
+<p>Panel data analysis for short T and large N</p>
+<p>Created on Sat Dec 17 19:32:00 2011</p>
+<p>Author: Josef Perktold
+License: BSD-3</p>
+<p>starting from scratch before looking at references again
+just a stub to get the basic structure for group handling
+target outsource as much as possible for reuse</p>
+<div class="section" id="notes">
+<h2>6.6.3.1. Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p>this is the basic version using a loop over individuals which will be more
+widely applicable. Depending on the special cases, there will be faster
+implementations possible (sparse, kroneker, ...)</p>
+<p>the only two group specific methods or get_within_cov and whiten</p>
+</div>
+<div class="section" id="functions">
+<h2>6.6.3.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.panel.panel_short.sum_outer_product_balanced.html#statsmodels.sandbox.panel.panel_short.sum_outer_product_balanced" title="statsmodels.sandbox.panel.panel_short.sum_outer_product_balanced"><code class="xref py py-obj docutils literal"><span class="pre">sum_outer_product_balanced</span></code></a>(x,&nbsp;n_groups)</td>
+<td>sum outerproduct dot(x_i, x_i.T) over individuals</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.panel.panel_short.sum_outer_product_loop.html#statsmodels.sandbox.panel.panel_short.sum_outer_product_loop" title="statsmodels.sandbox.panel.panel_short.sum_outer_product_loop"><code class="xref py py-obj docutils literal"><span class="pre">sum_outer_product_loop</span></code></a>(x,&nbsp;group_iter)</td>
+<td>sum outerproduct dot(x_i, x_i.T) over individuals</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.panel.panel_short.whiten_individuals_loop.html#statsmodels.sandbox.panel.panel_short.whiten_individuals_loop" title="statsmodels.sandbox.panel.panel_short.whiten_individuals_loop"><code class="xref py py-obj docutils literal"><span class="pre">whiten_individuals_loop</span></code></a>(x,&nbsp;transform,&nbsp;group_iter)</td>
+<td>apply linear transform for each individual</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>6.6.3.3. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.panel_short.GLS.html#statsmodels.sandbox.panel.panel_short.GLS" title="statsmodels.sandbox.panel.panel_short.GLS"><code class="xref py py-obj docutils literal"><span class="pre">GLS</span></code></a>(endog,&nbsp;exog[,&nbsp;sigma,&nbsp;missing,&nbsp;hasconst])</td>
+<td>Generalized least squares model with a general covariance structure.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.panel_short.Group.html#statsmodels.sandbox.panel.panel_short.Group" title="statsmodels.sandbox.panel.panel_short.Group"><code class="xref py py-obj docutils literal"><span class="pre">Group</span></code></a>(group[,&nbsp;name])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.panel_short.GroupSorted.html#statsmodels.sandbox.panel.panel_short.GroupSorted" title="statsmodels.sandbox.panel.panel_short.GroupSorted"><code class="xref py py-obj docutils literal"><span class="pre">GroupSorted</span></code></a>(group[,&nbsp;name])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.panel_short.OLS.html#statsmodels.sandbox.panel.panel_short.OLS" title="statsmodels.sandbox.panel.panel_short.OLS"><code class="xref py py-obj docutils literal"><span class="pre">OLS</span></code></a>(endog[,&nbsp;exog,&nbsp;missing,&nbsp;hasconst])</td>
+<td>A simple ordinary least squares model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS" title="statsmodels.sandbox.panel.panel_short.ShortPanelGLS"><code class="xref py py-obj docutils literal"><span class="pre">ShortPanelGLS</span></code></a>(endog,&nbsp;exog,&nbsp;group[,&nbsp;sigma_i])</td>
+<td>Short Panel with general intertemporal within correlation</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.panel_short.ShortPanelGLS2.html#statsmodels.sandbox.panel.panel_short.ShortPanelGLS2" title="statsmodels.sandbox.panel.panel_short.ShortPanelGLS2"><code class="xref py py-obj docutils literal"><span class="pre">ShortPanelGLS2</span></code></a>(endog,&nbsp;exog,&nbsp;group)</td>
+<td>Short Panel with general intertemporal within correlation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.panel.panel_short.Unit.html#statsmodels.sandbox.panel.panel_short.Unit" title="statsmodels.sandbox.panel.panel_short.Unit"><code class="xref py py-obj docutils literal"><span class="pre">Unit</span></code></a>(endog,&nbsp;exog)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.panel.panel_short.sum_outer_product_balanced.html" class="btn btn-neutral float-right" title="6.6.3.2.1. statsmodels.sandbox.panel.panel_short.sum_outer_product_balanced" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.sandbox.panel.mixed.Unit.logL.html" class="btn btn-neutral" title="6.6.2.2.4.1.8. statsmodels.sandbox.panel.mixed.Unit.logL" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

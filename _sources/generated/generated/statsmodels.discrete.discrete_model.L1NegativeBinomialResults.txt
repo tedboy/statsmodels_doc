@@ -1,0 +1,57 @@
+statsmodels.discrete.discrete_model.L1NegativeBinomialResults
+=============================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: L1NegativeBinomialResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~L1NegativeBinomialResults.__init__
+   ~L1NegativeBinomialResults.aic
+   ~L1NegativeBinomialResults.bic
+   ~L1NegativeBinomialResults.bse
+   ~L1NegativeBinomialResults.conf_int
+   ~L1NegativeBinomialResults.cov_params
+   ~L1NegativeBinomialResults.f_test
+   ~L1NegativeBinomialResults.fittedvalues
+   ~L1NegativeBinomialResults.get_margeff
+   ~L1NegativeBinomialResults.initialize
+   ~L1NegativeBinomialResults.llf
+   ~L1NegativeBinomialResults.llnull
+   ~L1NegativeBinomialResults.llr
+   ~L1NegativeBinomialResults.llr_pvalue
+   ~L1NegativeBinomialResults.lnalpha
+   ~L1NegativeBinomialResults.lnalpha_std_err
+   ~L1NegativeBinomialResults.load
+   ~L1NegativeBinomialResults.normalized_cov_params
+   ~L1NegativeBinomialResults.predict
+   ~L1NegativeBinomialResults.prsquared
+   ~L1NegativeBinomialResults.pvalues
+   ~L1NegativeBinomialResults.remove_data
+   ~L1NegativeBinomialResults.resid
+   ~L1NegativeBinomialResults.save
+   ~L1NegativeBinomialResults.summary
+   ~L1NegativeBinomialResults.summary2
+   ~L1NegativeBinomialResults.t_test
+   ~L1NegativeBinomialResults.tvalues
+   ~L1NegativeBinomialResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~L1NegativeBinomialResults.use_t
+

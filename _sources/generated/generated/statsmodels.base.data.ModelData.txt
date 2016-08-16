@@ -1,0 +1,42 @@
+statsmodels.base.data.ModelData
+===============================
+
+.. currentmodule:: statsmodels.base.data
+.. autoclass:: ModelData
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ModelData.__init__
+   ~ModelData.attach_columns
+   ~ModelData.attach_columns_eq
+   ~ModelData.attach_cov
+   ~ModelData.attach_cov_eq
+   ~ModelData.attach_dates
+   ~ModelData.attach_generic_columns
+   ~ModelData.attach_generic_columns_2d
+   ~ModelData.attach_rows
+   ~ModelData.handle_missing
+   ~ModelData.row_labels
+   ~ModelData.wrap_output
+   ~ModelData.xnames
+   ~ModelData.ynames
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~ModelData.param_names
+

@@ -1,0 +1,345 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.11.22. statsmodels.stats.weightstats &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="3. Main modules of interest" href="../main.html"/>
+        <link rel="next" title="3.11.22.3.1. statsmodels.stats.weightstats.ttest_ind" href="statsmodels.stats.weightstats.ttest_ind.html"/>
+        <link rel="prev" title="3.11.21.1.1.1.8. statsmodels.stats.tabledist.TableDist.prob" href="generated/statsmodels.stats.tabledist.TableDist.prob.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main.html#statsmodel-stats">3.11. statsmodel.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.api.html">3.11.1. statsmodels.stats.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.adnorm.html">3.11.2. statsmodels.stats.adnorm</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.anova.html">3.11.3. statsmodels.stats.anova</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.base.html">3.11.4. statsmodels.stats.base</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.contrast.html">3.11.5. statsmodels.stats.contrast</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.correlation_tools.html">3.11.6. statsmodels.stats.correlation_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.descriptivestats.html">3.11.7. statsmodels.stats.descriptivestats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.diagnostic.html">3.11.8. statsmodels.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.gof.html">3.11.9. statsmodels.stats.gof</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.inter_rater.html">3.11.10. statsmodels.stats.inter_rater</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.lilliefors.html">3.11.11. statsmodels.stats.lilliefors</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.moment_helpers.html">3.11.12. statsmodels.stats.moment_helpers</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multicomp.html">3.11.13. statsmodels.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multitest.html">3.11.14. statsmodels.stats.multitest</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.multivariate_tools.html">3.11.15. statsmodels.stats.multivariate_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.outliers_influence.html">3.11.16. statsmodels.stats.outliers_influence</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.power.html">3.11.17. statsmodels.stats.power</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.proportion.html">3.11.18. statsmodels.stats.proportion</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.sandwich_covariance.html">3.11.19. statsmodels.stats.sandwich_covariance</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.stattools.html">3.11.20. statsmodels.stats.stattools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.stats.tabledist.html">3.11.21. statsmodels.stats.tabledist</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">3.11.22. statsmodels.stats.weightstats</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#references">3.11.22.1. References</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#notes">3.11.22.2. Notes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">3.11.22.3. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">3.11.22.4. Classes</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+      <li>3.11.22. statsmodels.stats.weightstats</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.stats.weightstats.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.stats.weightstats">
+<span id="statsmodels-stats-weightstats"></span><h1>3.11.22. statsmodels.stats.weightstats<a class="headerlink" href="#module-statsmodels.stats.weightstats" title="Permalink to this headline">¶</a></h1>
+<p>Ttests and descriptive statistics with weights</p>
+<p>Created on 2010-09-18</p>
+<p>Author: josef-pktd
+License: BSD (3-clause)</p>
+<div class="section" id="references">
+<h2>3.11.22.1. References<a class="headerlink" href="#references" title="Permalink to this headline">¶</a></h2>
+<p>SPSS manual
+SAS manual</p>
+<p>This follows in large parts the SPSS manual, which is largely the same as
+the SAS manual with different, simpler notation.</p>
+<p>Freq, Weight in SAS seems redundant since they always show up as product, SPSS
+has only weights.</p>
+</div>
+<div class="section" id="notes">
+<h2>3.11.22.2. Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p>This has potential problems with ddof, I started to follow numpy with ddof=0
+by default and users can change it, but this might still mess up the t-tests,
+since the estimates for the standard deviation will be based on the ddof that
+the user chooses.
+- fixed ddof for the meandiff ttest, now matches scipy.stats.ttest_ind</p>
+<p>Note: scipy has now a separate, pooled variance option in ttest, but I haven&#8217;t
+compared yet.</p>
+</div>
+<div class="section" id="functions">
+<h2>3.11.22.3. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.weightstats.ttest_ind.html#statsmodels.stats.weightstats.ttest_ind" title="statsmodels.stats.weightstats.ttest_ind"><code class="xref py py-obj docutils literal"><span class="pre">ttest_ind</span></code></a>(x1,&nbsp;x2[,&nbsp;alternative,&nbsp;usevar,&nbsp;...])</td>
+<td>ttest independent sample</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.weightstats.ttost_ind.html#statsmodels.stats.weightstats.ttost_ind" title="statsmodels.stats.weightstats.ttost_ind"><code class="xref py py-obj docutils literal"><span class="pre">ttost_ind</span></code></a>(x1,&nbsp;x2,&nbsp;low,&nbsp;upp[,&nbsp;usevar,&nbsp;...])</td>
+<td>test of (non-)equivalence for two independent samples</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.weightstats.ttost_paired.html#statsmodels.stats.weightstats.ttost_paired" title="statsmodels.stats.weightstats.ttost_paired"><code class="xref py py-obj docutils literal"><span class="pre">ttost_paired</span></code></a>(x1,&nbsp;x2,&nbsp;low,&nbsp;upp[,&nbsp;transform,&nbsp;...])</td>
+<td>test of (non-)equivalence for two dependent, paired sample</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.weightstats.zconfint.html#statsmodels.stats.weightstats.zconfint" title="statsmodels.stats.weightstats.zconfint"><code class="xref py py-obj docutils literal"><span class="pre">zconfint</span></code></a>(x1[,&nbsp;x2,&nbsp;value,&nbsp;alpha,&nbsp;...])</td>
+<td>confidence interval based on normal distribution z-test</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.stats.weightstats.ztest.html#statsmodels.stats.weightstats.ztest" title="statsmodels.stats.weightstats.ztest"><code class="xref py py-obj docutils literal"><span class="pre">ztest</span></code></a>(x1[,&nbsp;x2,&nbsp;value,&nbsp;alternative,&nbsp;usevar,&nbsp;ddof])</td>
+<td>test for mean based on normal distribution, one or two samples</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.stats.weightstats.ztost.html#statsmodels.stats.weightstats.ztost" title="statsmodels.stats.weightstats.ztost"><code class="xref py py-obj docutils literal"><span class="pre">ztost</span></code></a>(x1,&nbsp;low,&nbsp;upp[,&nbsp;x2,&nbsp;usevar,&nbsp;ddof])</td>
+<td>Equivalence test based on normal distribution</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>3.11.22.4. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.weightstats.CompareMeans.html#statsmodels.stats.weightstats.CompareMeans" title="statsmodels.stats.weightstats.CompareMeans"><code class="xref py py-obj docutils literal"><span class="pre">CompareMeans</span></code></a>(d1,&nbsp;d2)</td>
+<td>class for two sample comparison</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.stats.weightstats.DescrStatsW.html#statsmodels.stats.weightstats.DescrStatsW" title="statsmodels.stats.weightstats.DescrStatsW"><code class="xref py py-obj docutils literal"><span class="pre">DescrStatsW</span></code></a>(data[,&nbsp;weights,&nbsp;ddof])</td>
+<td>descriptive statistics and tests with weights for case weights</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.stats.weightstats.OneTimeProperty.html#statsmodels.stats.weightstats.OneTimeProperty" title="statsmodels.stats.weightstats.OneTimeProperty"><code class="xref py py-obj docutils literal"><span class="pre">OneTimeProperty</span></code></a>(func)</td>
+<td>A descriptor to make special properties that become normal attributes.</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.stats.weightstats.ttest_ind.html" class="btn btn-neutral float-right" title="3.11.22.3.1. statsmodels.stats.weightstats.ttest_ind" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.stats.tabledist.TableDist.prob.html" class="btn btn-neutral" title="3.11.21.1.1.1.8. statsmodels.stats.tabledist.TableDist.prob" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

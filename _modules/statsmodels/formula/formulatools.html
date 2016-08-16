@@ -1,0 +1,319 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.formula.formulatools &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.formula.formulatools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.formula.formulatools</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="n">iterkeys</span>
+<span class="kn">import</span> <span class="nn">statsmodels.tools.data</span> <span class="k">as</span> <span class="nn">data_util</span>
+<span class="kn">from</span> <span class="nn">patsy</span> <span class="k">import</span> <span class="n">dmatrices</span><span class="p">,</span> <span class="n">NAAction</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+
+<span class="c1"># if users want to pass in a different formula framework, they can</span>
+<span class="c1"># add their handler here. how to do it interactively?</span>
+
+<span class="c1"># this is a mutable object, so editing it should show up in the below</span>
+<span class="n">formula_handler</span> <span class="o">=</span> <span class="p">{}</span>
+
+
+<div class="viewcode-block" id="NAAction"><a class="viewcode-back" href="../../../generated/generated/statsmodels.formula.formulatools.NAAction.html#statsmodels.formula.formulatools.NAAction">[docs]</a><span class="k">class</span> <span class="nc">NAAction</span><span class="p">(</span><span class="n">NAAction</span><span class="p">):</span>
+    <span class="c1"># monkey-patch so we can handle missing values in &#39;extra&#39; arrays later</span>
+    <span class="k">def</span> <span class="nf">_handle_NA_drop</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">values</span><span class="p">,</span> <span class="n">is_NAs</span><span class="p">,</span> <span class="n">origins</span><span class="p">):</span>
+        <span class="n">total_mask</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">is_NAs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">dtype</span><span class="o">=</span><span class="nb">bool</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">is_NA</span> <span class="ow">in</span> <span class="n">is_NAs</span><span class="p">:</span>
+            <span class="n">total_mask</span> <span class="o">|=</span> <span class="n">is_NA</span>
+        <span class="n">good_mask</span> <span class="o">=</span> <span class="o">~</span><span class="n">total_mask</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">missing_mask</span> <span class="o">=</span> <span class="n">total_mask</span>
+        <span class="c1"># &quot;...&quot; to handle 1- versus 2-dim indexing</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">v</span><span class="p">[</span><span class="n">good_mask</span><span class="p">,</span> <span class="o">...</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">values</span><span class="p">]</span></div>
+
+
+<div class="viewcode-block" id="handle_formula_data"><a class="viewcode-back" href="../../../generated/statsmodels.formula.formulatools.handle_formula_data.html#statsmodels.formula.formulatools.handle_formula_data">[docs]</a><span class="k">def</span> <span class="nf">handle_formula_data</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">,</span> <span class="n">formula</span><span class="p">,</span> <span class="n">depth</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">missing</span><span class="o">=</span><span class="s1">&#39;drop&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns endog, exog, and the model specification from arrays and formula</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    Y : array-like</span>
+<span class="sd">        Either endog (the LHS) of a model specification or all of the data.</span>
+<span class="sd">        Y must define __getitem__ for now.</span>
+<span class="sd">    X : array-like</span>
+<span class="sd">        Either exog or None. If all the data for the formula is provided in</span>
+<span class="sd">        Y then you must explicitly set X to None.</span>
+<span class="sd">    formula : str or patsy.model_desc</span>
+<span class="sd">        You can pass a handler by import formula_handler and adding a</span>
+<span class="sd">        key-value pair where the key is the formula object class and</span>
+<span class="sd">        the value is a function that returns endog, exog, formula object</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    endog : array-like</span>
+<span class="sd">        Should preserve the input type of Y,X</span>
+<span class="sd">    exog : array-like</span>
+<span class="sd">        Should preserve the input type of Y,X. Could be None.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="c1"># half ass attempt to handle other formula objects</span>
+    <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="nb">tuple</span><span class="p">(</span><span class="n">iterkeys</span><span class="p">(</span><span class="n">formula_handler</span><span class="p">))):</span>
+        <span class="k">return</span> <span class="n">formula_handler</span><span class="p">[</span><span class="nb">type</span><span class="p">(</span><span class="n">formula</span><span class="p">)]</span>
+
+    <span class="n">na_action</span> <span class="o">=</span> <span class="n">NAAction</span><span class="p">(</span><span class="n">on_NA</span><span class="o">=</span><span class="n">missing</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">X</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data_util</span><span class="o">.</span><span class="n">_is_using_pandas</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">dmatrices</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">),</span> <span class="n">depth</span><span class="p">,</span>
+                               <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;dataframe&#39;</span><span class="p">,</span> <span class="n">NA_action</span><span class="o">=</span><span class="n">na_action</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">dmatrices</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="n">X</span><span class="p">),</span> <span class="n">depth</span><span class="p">,</span>
+                               <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;dataframe&#39;</span><span class="p">,</span> <span class="n">NA_action</span><span class="o">=</span><span class="n">na_action</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">if</span> <span class="n">data_util</span><span class="o">.</span><span class="n">_is_using_pandas</span><span class="p">(</span><span class="n">Y</span><span class="p">,</span> <span class="kc">None</span><span class="p">):</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">dmatrices</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;dataframe&#39;</span><span class="p">,</span>
+                               <span class="n">NA_action</span><span class="o">=</span><span class="n">na_action</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="n">dmatrices</span><span class="p">(</span><span class="n">formula</span><span class="p">,</span> <span class="n">Y</span><span class="p">,</span> <span class="n">depth</span><span class="p">,</span> <span class="n">return_type</span><span class="o">=</span><span class="s1">&#39;dataframe&#39;</span><span class="p">,</span>
+                               <span class="n">NA_action</span><span class="o">=</span><span class="n">na_action</span><span class="p">)</span>
+
+    <span class="c1"># if missing == &#39;raise&#39; there&#39;s not missing_mask</span>
+    <span class="n">missing_mask</span> <span class="o">=</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">na_action</span><span class="p">,</span> <span class="s1">&#39;missing_mask&#39;</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">any</span><span class="p">(</span><span class="n">missing_mask</span><span class="p">):</span>
+        <span class="n">missing_mask</span> <span class="o">=</span> <span class="kc">None</span>
+    <span class="k">return</span> <span class="n">result</span><span class="p">,</span> <span class="n">missing_mask</span></div>
+
+
+<span class="k">def</span> <span class="nf">_remove_intercept_patsy</span><span class="p">(</span><span class="n">terms</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Remove intercept from Patsy terms.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">patsy.desc</span> <span class="k">import</span> <span class="n">INTERCEPT</span>
+    <span class="k">if</span> <span class="n">INTERCEPT</span> <span class="ow">in</span> <span class="n">terms</span><span class="p">:</span>
+        <span class="n">terms</span><span class="o">.</span><span class="n">remove</span><span class="p">(</span><span class="n">INTERCEPT</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">terms</span>
+
+<span class="k">def</span> <span class="nf">_has_intercept</span><span class="p">(</span><span class="n">design_info</span><span class="p">):</span>
+    <span class="kn">from</span> <span class="nn">patsy.desc</span> <span class="k">import</span> <span class="n">INTERCEPT</span>
+    <span class="k">return</span> <span class="n">INTERCEPT</span> <span class="ow">in</span> <span class="n">design_info</span><span class="o">.</span><span class="n">terms</span>
+
+<span class="k">def</span> <span class="nf">_intercept_idx</span><span class="p">(</span><span class="n">design_info</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns boolean array index indicating which column holds the intercept</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">patsy.desc</span> <span class="k">import</span> <span class="n">INTERCEPT</span>
+    <span class="kn">from</span> <span class="nn">numpy</span> <span class="k">import</span> <span class="n">array</span>
+    <span class="k">return</span> <span class="n">array</span><span class="p">([</span><span class="n">INTERCEPT</span> <span class="o">==</span> <span class="n">i</span> <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">design_info</span><span class="o">.</span><span class="n">terms</span><span class="p">])</span>
+
+<div class="viewcode-block" id="make_hypotheses_matrices"><a class="viewcode-back" href="../../../generated/statsmodels.formula.formulatools.make_hypotheses_matrices.html#statsmodels.formula.formulatools.make_hypotheses_matrices">[docs]</a><span class="k">def</span> <span class="nf">make_hypotheses_matrices</span><span class="p">(</span><span class="n">model_results</span><span class="p">,</span> <span class="n">test_formula</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="kn">from</span> <span class="nn">patsy.constraint</span> <span class="k">import</span> <span class="n">linear_constraint</span>
+    <span class="n">exog_names</span> <span class="o">=</span> <span class="n">model_results</span><span class="o">.</span><span class="n">model</span><span class="o">.</span><span class="n">exog_names</span>
+    <span class="n">LC</span> <span class="o">=</span> <span class="n">linear_constraint</span><span class="p">(</span><span class="n">test_formula</span><span class="p">,</span> <span class="n">exog_names</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">LC</span></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,42 @@
+statsmodels.api.QuantReg
+========================
+
+.. currentmodule:: statsmodels.api
+.. autoclass:: QuantReg
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~QuantReg.__init__
+   ~QuantReg.fit
+   ~QuantReg.fit_regularized
+   ~QuantReg.from_formula
+   ~QuantReg.hessian
+   ~QuantReg.information
+   ~QuantReg.initialize
+   ~QuantReg.loglike
+   ~QuantReg.predict
+   ~QuantReg.score
+   ~QuantReg.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~QuantReg.df_model
+   ~QuantReg.df_resid
+   ~QuantReg.endog_names
+   ~QuantReg.exog_names
+

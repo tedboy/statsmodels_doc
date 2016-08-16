@@ -1,0 +1,383 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.7.4.2.4. statsmodels.tools.decorators.ResettableCache &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="4.7.4. statsmodels.tools.decorators" href="../statsmodels.tools.decorators.html"/>
+        <link rel="next" title="4.7.4.2.4.1.1. statsmodels.tools.decorators.ResettableCache.__init__" href="statsmodels.tools.decorators.ResettableCache.__init__.html"/>
+        <link rel="prev" title="4.7.4.2.3.1.1. statsmodels.tools.decorators.OneTimeProperty.__init__" href="statsmodels.tools.decorators.OneTimeProperty.__init__.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../submain.html#statsmodel-tools">4.7. statsmodel.tools</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.catadd.html">4.7.1. statsmodels.tools.catadd</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.compatibility.html">4.7.2. statsmodels.tools.compatibility</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.data.html">4.7.3. statsmodels.tools.data</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.tools.decorators.html">4.7.4. statsmodels.tools.decorators</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.tools.decorators.html#functions">4.7.4.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.tools.decorators.html#classes">4.7.4.2. Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.tools.decorators.html#exceptions">4.7.4.3. Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.dump2module.html">4.7.5. statsmodels.tools.dump2module</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.eval_measures.html">4.7.6. statsmodels.tools.eval_measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.grouputils.html">4.7.7. statsmodels.tools.grouputils</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.linalg.html">4.7.8. statsmodels.tools.linalg</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.numdiff.html">4.7.9. statsmodels.tools.numdiff</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.parallel.html">4.7.10. statsmodels.tools.parallel</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.rootfinding.html">4.7.11. statsmodels.tools.rootfinding</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.sm_exceptions.html">4.7.12. statsmodels.tools.sm_exceptions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.testing.html">4.7.13. statsmodels.tools.testing</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.tools.html">4.7.14. statsmodels.tools.tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.transform_model.html">4.7.15. statsmodels.tools.transform_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.tools.web.html">4.7.16. statsmodels.tools.web</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.tools.decorators.html">4.7.4. statsmodels.tools.decorators</a> &raquo;</li>
+        
+      <li>4.7.4.2.4. statsmodels.tools.decorators.ResettableCache</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.tools.decorators.ResettableCache.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-tools-decorators-resettablecache">
+<h1>4.7.4.2.4. statsmodels.tools.decorators.ResettableCache<a class="headerlink" href="#statsmodels-tools-decorators-resettablecache" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.tools.decorators.ResettableCache">
+<em class="property">class </em><code class="descclassname">statsmodels.tools.decorators.</code><code class="descname">ResettableCache</code><span class="sig-paren">(</span><em>reset=None</em>, <em>**items</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/tools/decorators.html#ResettableCache"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.tools.decorators.ResettableCache" title="Permalink to this definition">¶</a></dt>
+<dd><p>Dictionary whose elements mey depend one from another.</p>
+<p>If entry <cite>B</cite> depends on entry <cite>A</cite>, changing the values of entry <cite>A</cite> will
+reset the value of entry <cite>B</cite> to a default (None); deleteing entry <cite>A</cite> will
+delete entry <cite>B</cite>.  The connections between entries are stored in a
+<cite>_resetdict</cite> private attribute.</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>reset</strong> : dictionary, optional</p>
+<blockquote>
+<div><p>An optional dictionary, associated a sequence of entries to any key
+of the object.</p>
+</div></blockquote>
+<p><strong>items</strong> : var, optional</p>
+<blockquote class="last">
+<div><p>An optional dictionary used to initialize the dictionary</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">Examples</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="n">reset</span> <span class="o">=</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;b&#39;</span><span class="p">,),</span> <span class="n">b</span><span class="o">=</span><span class="p">(</span><span class="s1">&#39;c&#39;</span><span class="p">,))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cache</span> <span class="o">=</span> <span class="n">resettable_cache</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">reset</span><span class="o">=</span><span class="n">reset</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_equal</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Try resetting a&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_equal</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;c&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">2</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_equal</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="mi">2</span><span class="p">))</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;b&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_equal</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="nb">dict</span><span class="p">(</span><span class="n">a</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">b</span><span class="o">=</span><span class="mi">0</span><span class="p">,</span> <span class="n">c</span><span class="o">=</span><span class="kc">None</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="gp">&gt;&gt;&gt; </span><span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Try deleting b&quot;</span><span class="p">)</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="k">del</span><span class="p">(</span><span class="n">cache</span><span class="p">[</span><span class="s1">&#39;a&#39;</span><span class="p">])</span>
+<span class="gp">&gt;&gt;&gt; </span><span class="n">assert_equal</span><span class="p">(</span><span class="n">cache</span><span class="p">,</span> <span class="p">{})</span>
+</pre></div>
+</div>
+<dl class="method">
+<dt id="statsmodels.tools.decorators.ResettableCache.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>reset=None</em>, <em>**items</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/tools/decorators.html#ResettableCache.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.tools.decorators.ResettableCache.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>4.7.4.2.4.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.__init__.html#statsmodels.tools.decorators.ResettableCache.__init__" title="statsmodels.tools.decorators.ResettableCache.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>([reset])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.clear.html#statsmodels.tools.decorators.ResettableCache.clear" title="statsmodels.tools.decorators.ResettableCache.clear"><code class="xref py py-obj docutils literal"><span class="pre">clear</span></code></a>(()&nbsp;-&gt;&nbsp;None.&nbsp;&nbsp;Remove&nbsp;all&nbsp;items&nbsp;from&nbsp;D.)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.copy.html#statsmodels.tools.decorators.ResettableCache.copy" title="statsmodels.tools.decorators.ResettableCache.copy"><code class="xref py py-obj docutils literal"><span class="pre">copy</span></code></a>(()&nbsp;-&gt;&nbsp;a&nbsp;shallow&nbsp;copy&nbsp;of&nbsp;D)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.fromkeys.html#statsmodels.tools.decorators.ResettableCache.fromkeys" title="statsmodels.tools.decorators.ResettableCache.fromkeys"><code class="xref py py-obj docutils literal"><span class="pre">fromkeys</span></code></a>(...)</td>
+<td>v defaults to None.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.get.html#statsmodels.tools.decorators.ResettableCache.get" title="statsmodels.tools.decorators.ResettableCache.get"><code class="xref py py-obj docutils literal"><span class="pre">get</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D[k]&nbsp;if&nbsp;k&nbsp;in&nbsp;D,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.has_key.html#statsmodels.tools.decorators.ResettableCache.has_key" title="statsmodels.tools.decorators.ResettableCache.has_key"><code class="xref py py-obj docutils literal"><span class="pre">has_key</span></code></a>((k)&nbsp;-&gt;&nbsp;True&nbsp;if&nbsp;D&nbsp;has&nbsp;a&nbsp;key&nbsp;k,&nbsp;else&nbsp;False)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.items.html#statsmodels.tools.decorators.ResettableCache.items" title="statsmodels.tools.decorators.ResettableCache.items"><code class="xref py py-obj docutils literal"><span class="pre">items</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;(key,&nbsp;value)&nbsp;pairs,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.iteritems.html#statsmodels.tools.decorators.ResettableCache.iteritems" title="statsmodels.tools.decorators.ResettableCache.iteritems"><code class="xref py py-obj docutils literal"><span class="pre">iteritems</span></code></a>(()&nbsp;-&gt;&nbsp;an&nbsp;iterator&nbsp;over&nbsp;the&nbsp;(key,&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.iterkeys.html#statsmodels.tools.decorators.ResettableCache.iterkeys" title="statsmodels.tools.decorators.ResettableCache.iterkeys"><code class="xref py py-obj docutils literal"><span class="pre">iterkeys</span></code></a>(()&nbsp;-&gt;&nbsp;an&nbsp;iterator&nbsp;over&nbsp;the&nbsp;keys&nbsp;of&nbsp;D)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.itervalues.html#statsmodels.tools.decorators.ResettableCache.itervalues" title="statsmodels.tools.decorators.ResettableCache.itervalues"><code class="xref py py-obj docutils literal"><span class="pre">itervalues</span></code></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.keys.html#statsmodels.tools.decorators.ResettableCache.keys" title="statsmodels.tools.decorators.ResettableCache.keys"><code class="xref py py-obj docutils literal"><span class="pre">keys</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;keys)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.pop.html#statsmodels.tools.decorators.ResettableCache.pop" title="statsmodels.tools.decorators.ResettableCache.pop"><code class="xref py py-obj docutils literal"><span class="pre">pop</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;v,&nbsp;...)</td>
+<td>If key is not found, d is returned if given, otherwise KeyError is raised</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.popitem.html#statsmodels.tools.decorators.ResettableCache.popitem" title="statsmodels.tools.decorators.ResettableCache.popitem"><code class="xref py py-obj docutils literal"><span class="pre">popitem</span></code></a>(()&nbsp;-&gt;&nbsp;(k,&nbsp;v),&nbsp;...)</td>
+<td>2-tuple; but raise KeyError if D is empty.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.setdefault.html#statsmodels.tools.decorators.ResettableCache.setdefault" title="statsmodels.tools.decorators.ResettableCache.setdefault"><code class="xref py py-obj docutils literal"><span class="pre">setdefault</span></code></a>((k[,d])&nbsp;-&gt;&nbsp;D.get(k,d),&nbsp;...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.update.html#statsmodels.tools.decorators.ResettableCache.update" title="statsmodels.tools.decorators.ResettableCache.update"><code class="xref py py-obj docutils literal"><span class="pre">update</span></code></a>(([E,&nbsp;...)</td>
+<td>If E present and has a .keys() method, does:     for k in E: D[k] = E[k]</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.values.html#statsmodels.tools.decorators.ResettableCache.values" title="statsmodels.tools.decorators.ResettableCache.values"><code class="xref py py-obj docutils literal"><span class="pre">values</span></code></a>(()&nbsp;-&gt;&nbsp;list&nbsp;of&nbsp;D&#8217;s&nbsp;values)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.viewitems.html#statsmodels.tools.decorators.ResettableCache.viewitems" title="statsmodels.tools.decorators.ResettableCache.viewitems"><code class="xref py py-obj docutils literal"><span class="pre">viewitems</span></code></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.viewkeys.html#statsmodels.tools.decorators.ResettableCache.viewkeys" title="statsmodels.tools.decorators.ResettableCache.viewkeys"><code class="xref py py-obj docutils literal"><span class="pre">viewkeys</span></code></a>(...)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.tools.decorators.ResettableCache.viewvalues.html#statsmodels.tools.decorators.ResettableCache.viewvalues" title="statsmodels.tools.decorators.ResettableCache.viewvalues"><code class="xref py py-obj docutils literal"><span class="pre">viewvalues</span></code></a>(...)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.tools.decorators.ResettableCache.__init__.html" class="btn btn-neutral float-right" title="4.7.4.2.4.1.1. statsmodels.tools.decorators.ResettableCache.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.tools.decorators.OneTimeProperty.__init__.html" class="btn btn-neutral" title="4.7.4.2.3.1.1. statsmodels.tools.decorators.OneTimeProperty.__init__" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

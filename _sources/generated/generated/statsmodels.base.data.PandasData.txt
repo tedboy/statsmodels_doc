@@ -1,0 +1,42 @@
+statsmodels.base.data.PandasData
+================================
+
+.. currentmodule:: statsmodels.base.data
+.. autoclass:: PandasData
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~PandasData.__init__
+   ~PandasData.attach_columns
+   ~PandasData.attach_columns_eq
+   ~PandasData.attach_cov
+   ~PandasData.attach_cov_eq
+   ~PandasData.attach_dates
+   ~PandasData.attach_generic_columns
+   ~PandasData.attach_generic_columns_2d
+   ~PandasData.attach_rows
+   ~PandasData.handle_missing
+   ~PandasData.row_labels
+   ~PandasData.wrap_output
+   ~PandasData.xnames
+   ~PandasData.ynames
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~PandasData.param_names
+

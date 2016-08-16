@@ -1,0 +1,25 @@
+statsmodels.genmod.families.links.probit
+========================================
+
+.. currentmodule:: statsmodels.genmod.families.links
+.. autoclass:: probit
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~probit.__init__
+   ~probit.deriv
+   ~probit.deriv2
+   ~probit.inverse
+   ~probit.inverse_deriv
+
+
+
+
+

@@ -1,0 +1,74 @@
+statsmodels.sandbox.regression.gmm
+==================================
+
+.. automodule:: statsmodels.sandbox.regression.gmm
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      approx_fprime
+      approx_hess
+      maxabs
+      spec_hausman
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      DistQuantilesGMM
+      GMM
+      GMMResults
+      IV2SLS
+      IVGMM
+      IVGMMResults
+      IVRegressionResults
+      LikelihoodModel
+      LikelihoodModelResults
+      LinearIVGMM
+      Model
+      NonlinearIVGMM
+      OLS
+      RegressionResults
+      RegressionResultsWrapper
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.regression.gmm.DistQuantilesGMM
+       generated/statsmodels.sandbox.regression.gmm.GMM
+       generated/statsmodels.sandbox.regression.gmm.GMMResults
+       generated/statsmodels.sandbox.regression.gmm.IV2SLS
+       generated/statsmodels.sandbox.regression.gmm.IVGMM
+       generated/statsmodels.sandbox.regression.gmm.IVGMMResults
+       generated/statsmodels.sandbox.regression.gmm.IVRegressionResults
+       generated/statsmodels.sandbox.regression.gmm.LikelihoodModel
+       generated/statsmodels.sandbox.regression.gmm.LikelihoodModelResults
+       generated/statsmodels.sandbox.regression.gmm.LinearIVGMM
+       generated/statsmodels.sandbox.regression.gmm.Model
+       generated/statsmodels.sandbox.regression.gmm.NonlinearIVGMM
+       generated/statsmodels.sandbox.regression.gmm.OLS
+       generated/statsmodels.sandbox.regression.gmm.RegressionResults
+       generated/statsmodels.sandbox.regression.gmm.RegressionResultsWrapper
+       generated/statsmodels.sandbox.regression.gmm.resettable_cache
+
+   
+   
+
+   
+   
+   

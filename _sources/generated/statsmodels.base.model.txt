@@ -1,0 +1,66 @@
+statsmodels.base.model
+======================
+
+.. automodule:: statsmodels.base.model
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      approx_fprime
+      handle_data
+      handle_formula_data
+      iterkeys
+      nan_dot
+      recipr
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ContrastResults
+      GenericLikelihoodModel
+      GenericLikelihoodModelResults
+      LikelihoodModel
+      LikelihoodModelResults
+      LikelihoodResultsWrapper
+      Model
+      Optimizer
+      ResultMixin
+      Results
+      resettable_cache
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.base.model.ContrastResults
+       generated/statsmodels.base.model.GenericLikelihoodModel
+       generated/statsmodels.base.model.GenericLikelihoodModelResults
+       generated/statsmodels.base.model.LikelihoodModel
+       generated/statsmodels.base.model.LikelihoodModelResults
+       generated/statsmodels.base.model.LikelihoodResultsWrapper
+       generated/statsmodels.base.model.Model
+       generated/statsmodels.base.model.Optimizer
+       generated/statsmodels.base.model.ResultMixin
+       generated/statsmodels.base.model.Results
+       generated/statsmodels.base.model.resettable_cache
+
+   
+   
+
+   
+   
+   

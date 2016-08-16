@@ -1,0 +1,91 @@
+statsmodels.sandbox.tests.test_formula.TestTerm
+===============================================
+
+.. currentmodule:: statsmodels.sandbox.tests.test_formula
+.. autoclass:: TestTerm
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestTerm.__init__
+   ~TestTerm.addCleanup
+   ~TestTerm.addTypeEqualityFunc
+   ~TestTerm.assertAlmostEqual
+   ~TestTerm.assertAlmostEquals
+   ~TestTerm.assertDictContainsSubset
+   ~TestTerm.assertDictEqual
+   ~TestTerm.assertEqual
+   ~TestTerm.assertEquals
+   ~TestTerm.assertFalse
+   ~TestTerm.assertGreater
+   ~TestTerm.assertGreaterEqual
+   ~TestTerm.assertIn
+   ~TestTerm.assertIs
+   ~TestTerm.assertIsInstance
+   ~TestTerm.assertIsNone
+   ~TestTerm.assertIsNot
+   ~TestTerm.assertIsNotNone
+   ~TestTerm.assertItemsEqual
+   ~TestTerm.assertLess
+   ~TestTerm.assertLessEqual
+   ~TestTerm.assertListEqual
+   ~TestTerm.assertMultiLineEqual
+   ~TestTerm.assertNotAlmostEqual
+   ~TestTerm.assertNotAlmostEquals
+   ~TestTerm.assertNotEqual
+   ~TestTerm.assertNotEquals
+   ~TestTerm.assertNotIn
+   ~TestTerm.assertNotIsInstance
+   ~TestTerm.assertNotRegexpMatches
+   ~TestTerm.assertRaises
+   ~TestTerm.assertRaisesRegexp
+   ~TestTerm.assertRegexpMatches
+   ~TestTerm.assertSequenceEqual
+   ~TestTerm.assertSetEqual
+   ~TestTerm.assertTrue
+   ~TestTerm.assertTupleEqual
+   ~TestTerm.assert_
+   ~TestTerm.countTestCases
+   ~TestTerm.debug
+   ~TestTerm.defaultTestResult
+   ~TestTerm.doCleanups
+   ~TestTerm.fail
+   ~TestTerm.failIf
+   ~TestTerm.failIfAlmostEqual
+   ~TestTerm.failIfEqual
+   ~TestTerm.failUnless
+   ~TestTerm.failUnlessAlmostEqual
+   ~TestTerm.failUnlessEqual
+   ~TestTerm.failUnlessRaises
+   ~TestTerm.id
+   ~TestTerm.run
+   ~TestTerm.setUp
+   ~TestTerm.setUpClass
+   ~TestTerm.shortDescription
+   ~TestTerm.skipTest
+   ~TestTerm.tearDown
+   ~TestTerm.tearDownClass
+   ~TestTerm.test_add
+   ~TestTerm.test_init
+   ~TestTerm.test_mul
+   ~TestTerm.test_str
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~TestTerm.longMessage
+   ~TestTerm.maxDiff
+

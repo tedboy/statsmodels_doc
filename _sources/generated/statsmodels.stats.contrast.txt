@@ -1,0 +1,45 @@
+statsmodels.stats.contrast
+==========================
+
+.. automodule:: statsmodels.stats.contrast
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      clean0
+      contrastfromcols
+      fullrank
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Contrast
+      ContrastResults
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.contrast.Contrast
+       generated/statsmodels.stats.contrast.ContrastResults
+
+   
+   
+
+   
+   
+   

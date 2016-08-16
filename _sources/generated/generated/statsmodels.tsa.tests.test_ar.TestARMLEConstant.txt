@@ -1,0 +1,23 @@
+statsmodels.tsa.tests.test_ar.TestARMLEConstant
+===============================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_ar
+.. autoclass:: TestARMLEConstant
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestARMLEConstant.setupClass
+   ~TestARMLEConstant.test_dynamic_predict
+   ~TestARMLEConstant.test_predict
+
+
+
+
+

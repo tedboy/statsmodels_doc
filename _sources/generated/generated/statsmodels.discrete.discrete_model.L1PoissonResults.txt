@@ -1,0 +1,56 @@
+statsmodels.discrete.discrete_model.L1PoissonResults
+====================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: L1PoissonResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~L1PoissonResults.__init__
+   ~L1PoissonResults.aic
+   ~L1PoissonResults.bic
+   ~L1PoissonResults.bse
+   ~L1PoissonResults.conf_int
+   ~L1PoissonResults.cov_params
+   ~L1PoissonResults.f_test
+   ~L1PoissonResults.fittedvalues
+   ~L1PoissonResults.get_margeff
+   ~L1PoissonResults.initialize
+   ~L1PoissonResults.llf
+   ~L1PoissonResults.llnull
+   ~L1PoissonResults.llr
+   ~L1PoissonResults.llr_pvalue
+   ~L1PoissonResults.load
+   ~L1PoissonResults.normalized_cov_params
+   ~L1PoissonResults.predict
+   ~L1PoissonResults.predict_prob
+   ~L1PoissonResults.prsquared
+   ~L1PoissonResults.pvalues
+   ~L1PoissonResults.remove_data
+   ~L1PoissonResults.resid
+   ~L1PoissonResults.save
+   ~L1PoissonResults.summary
+   ~L1PoissonResults.summary2
+   ~L1PoissonResults.t_test
+   ~L1PoissonResults.tvalues
+   ~L1PoissonResults.wald_test
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~L1PoissonResults.use_t
+

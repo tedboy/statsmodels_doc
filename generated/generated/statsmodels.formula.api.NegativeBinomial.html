@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.4.1.1.8. statsmodels.formula.api.NegativeBinomial &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="4.4.1. statsmodels.formula.api" href="../statsmodels.formula.api.html"/>
+        <link rel="next" title="4.4.1.1.8.1.1. statsmodels.formula.api.NegativeBinomial.__init__" href="statsmodels.formula.api.NegativeBinomial.__init__.html"/>
+        <link rel="prev" title="4.4.1.1.7.2.2. statsmodels.formula.api.MixedLM.exog_names" href="statsmodels.formula.api.MixedLM.exog_names.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../submain.html#statsmodel-formula">4.4. statsmodel.formula</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.formula.api.html">4.4.1. statsmodels.formula.api</a><ul class="current">
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.formula.api.html#classes">4.4.1.1. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.formula.formulatools.html">4.4.2. statsmodels.formula.formulatools</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.formula.api.html">4.4.1. statsmodels.formula.api</a> &raquo;</li>
+        
+      <li>4.4.1.1.8. statsmodels.formula.api.NegativeBinomial</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.formula.api.NegativeBinomial.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-formula-api-negativebinomial">
+<h1>4.4.1.1.8. statsmodels.formula.api.NegativeBinomial<a class="headerlink" href="#statsmodels-formula-api-negativebinomial" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.formula.api.NegativeBinomial">
+<em class="property">class </em><code class="descclassname">statsmodels.formula.api.</code><code class="descname">NegativeBinomial</code><span class="sig-paren">(</span><em>endog</em>, <em>exog</em>, <em>loglike_method='nb2'</em>, <em>offset=None</em>, <em>exposure=None</em>, <em>missing='none'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/discrete/discrete_model.html#NegativeBinomial"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.formula.api.NegativeBinomial" title="Permalink to this definition">¶</a></dt>
+<dd><p>Negative Binomial Model for count data</p>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">Parameters:</th><td class="field-body"><p class="first"><strong>endog</strong> : array-like</p>
+<blockquote>
+<div><p>1-d endogenous response variable. The dependent variable.</p>
+</div></blockquote>
+<p><strong>exog</strong> : array-like</p>
+<blockquote>
+<div><p>A nobs x k array where <cite>nobs</cite> is the number of observations and <cite>k</cite>
+is the number of regressors. An intercept is not included by default
+and should be added by the user. See
+<code class="xref py py-func docutils literal"><span class="pre">statsmodels.tools.add_constant()</span></code>.</p>
+</div></blockquote>
+<p><strong>loglike_method</strong> : string</p>
+<blockquote>
+<div><p>Log-likelihood type. &#8216;nb2&#8217;,&#8217;nb1&#8217;, or &#8216;geometric&#8217;.
+Fitted value <span class="math">\(\mu\)</span>
+Heterogeneity parameter <span class="math">\(\alpha\)</span></p>
+<ul class="simple">
+<li>nb2: Variance equal to <span class="math">\(\mu + \alpha\mu^2\)</span> (most common)</li>
+<li>nb1: Variance equal to <span class="math">\(\mu + \alpha\mu\)</span></li>
+<li>geometric: Variance equal to <span class="math">\(\mu + \mu^2\)</span></li>
+</ul>
+</div></blockquote>
+<p><strong>offset</strong> : array_like</p>
+<blockquote>
+<div><p>Offset is added to the linear prediction with coefficient equal to 1.</p>
+</div></blockquote>
+<p><strong>exposure</strong> : array_like</p>
+<blockquote>
+<div><p>Log(exposure) is added to the linear prediction with coefficient
+equal to 1.</p>
+</div></blockquote>
+<p><strong>missing</strong> : str</p>
+<blockquote class="last">
+<div><p>Available options are &#8216;none&#8217;, &#8216;drop&#8217;, and &#8216;raise&#8217;. If &#8216;none&#8217;, no nan
+checking is done. If &#8216;drop&#8217;, any observations with nans are dropped.
+If &#8216;raise&#8217;, an error is raised. Default is &#8216;none.&#8217;</p>
+</div></blockquote>
+</td>
+</tr>
+</tbody>
+</table>
+<p class="rubric">References</p>
+<p>References:</p>
+<dl class="docutils">
+<dt>Greene, W. 2008. &#8220;Functional forms for the negtive binomial model</dt>
+<dd>for count data&#8221;. Economics Letters. Volume 99, Number 3, pp.585-590.</dd>
+<dt>Hilbe, J.M. 2011. &#8220;Negative binomial regression&#8221;. Cambridge University</dt>
+<dd>Press.</dd>
+</dl>
+<p class="rubric">Attributes</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="8%" />
+<col width="92%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>endog</td>
+<td>(array) A reference to the endogenous response variable</td>
+</tr>
+<tr class="row-even"><td>exog</td>
+<td>(array) A reference to the exogenous design.</td>
+</tr>
+</tbody>
+</table>
+<dl class="method">
+<dt id="statsmodels.formula.api.NegativeBinomial.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>endog</em>, <em>exog</em>, <em>loglike_method='nb2'</em>, <em>offset=None</em>, <em>exposure=None</em>, <em>missing='none'</em>, <em>**kwargs</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/discrete/discrete_model.html#NegativeBinomial.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.formula.api.NegativeBinomial.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>4.4.1.1.8.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.__init__.html#statsmodels.formula.api.NegativeBinomial.__init__" title="statsmodels.formula.api.NegativeBinomial.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(endog,&nbsp;exog[,&nbsp;loglike_method,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.cdf.html#statsmodels.formula.api.NegativeBinomial.cdf" title="statsmodels.formula.api.NegativeBinomial.cdf"><code class="xref py py-obj docutils literal"><span class="pre">cdf</span></code></a>(X)</td>
+<td>The cumulative distribution function of the model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.cov_params_func_l1.html#statsmodels.formula.api.NegativeBinomial.cov_params_func_l1" title="statsmodels.formula.api.NegativeBinomial.cov_params_func_l1"><code class="xref py py-obj docutils literal"><span class="pre">cov_params_func_l1</span></code></a>(likelihood_model,&nbsp;xopt,&nbsp;...)</td>
+<td>Computes cov_params on a reduced parameter space corresponding to the nonzero parameters resulting from the l1 regularized fit.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.fit.html#statsmodels.formula.api.NegativeBinomial.fit" title="statsmodels.formula.api.NegativeBinomial.fit"><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code></a>([start_params,&nbsp;method,&nbsp;maxiter,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.fit_regularized.html#statsmodels.formula.api.NegativeBinomial.fit_regularized" title="statsmodels.formula.api.NegativeBinomial.fit_regularized"><code class="xref py py-obj docutils literal"><span class="pre">fit_regularized</span></code></a>([start_params,&nbsp;method,&nbsp;...])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.from_formula.html#statsmodels.formula.api.NegativeBinomial.from_formula" title="statsmodels.formula.api.NegativeBinomial.from_formula"><code class="xref py py-obj docutils literal"><span class="pre">from_formula</span></code></a>(formula,&nbsp;data[,&nbsp;subset])</td>
+<td>Create a Model from a formula and dataframe.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.hessian.html#statsmodels.formula.api.NegativeBinomial.hessian" title="statsmodels.formula.api.NegativeBinomial.hessian"><code class="xref py py-obj docutils literal"><span class="pre">hessian</span></code></a>(params)</td>
+<td>The Hessian matrix of the model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.information.html#statsmodels.formula.api.NegativeBinomial.information" title="statsmodels.formula.api.NegativeBinomial.information"><code class="xref py py-obj docutils literal"><span class="pre">information</span></code></a>(params)</td>
+<td>Fisher information matrix of model</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.initialize.html#statsmodels.formula.api.NegativeBinomial.initialize" title="statsmodels.formula.api.NegativeBinomial.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>()</td>
+<td>Initialize is called by statsmodels.model.LikelihoodModel.__init__ and should contain any preprocessing that needs to be done for a model.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.jac.html#statsmodels.formula.api.NegativeBinomial.jac" title="statsmodels.formula.api.NegativeBinomial.jac"><code class="xref py py-obj docutils literal"><span class="pre">jac</span></code></a>(*args,&nbsp;**kwds)</td>
+<td><cite>jac</cite> is deprecated, use <cite>score_obs</cite> instead!</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.loglike.html#statsmodels.formula.api.NegativeBinomial.loglike" title="statsmodels.formula.api.NegativeBinomial.loglike"><code class="xref py py-obj docutils literal"><span class="pre">loglike</span></code></a>(params)</td>
+<td>Loglikelihood for negative binomial model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.pdf.html#statsmodels.formula.api.NegativeBinomial.pdf" title="statsmodels.formula.api.NegativeBinomial.pdf"><code class="xref py py-obj docutils literal"><span class="pre">pdf</span></code></a>(X)</td>
+<td>The probability density (mass) function of the model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.predict.html#statsmodels.formula.api.NegativeBinomial.predict" title="statsmodels.formula.api.NegativeBinomial.predict"><code class="xref py py-obj docutils literal"><span class="pre">predict</span></code></a>(params[,&nbsp;exog,&nbsp;exposure,&nbsp;offset,&nbsp;linear])</td>
+<td>Predict response variable of a count model given exogenous variables.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.score.html#statsmodels.formula.api.NegativeBinomial.score" title="statsmodels.formula.api.NegativeBinomial.score"><code class="xref py py-obj docutils literal"><span class="pre">score</span></code></a>(params)</td>
+<td>Score vector of model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.score_obs.html#statsmodels.formula.api.NegativeBinomial.score_obs" title="statsmodels.formula.api.NegativeBinomial.score_obs"><code class="xref py py-obj docutils literal"><span class="pre">score_obs</span></code></a>(params)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>4.4.1.1.8.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.endog_names.html#statsmodels.formula.api.NegativeBinomial.endog_names" title="statsmodels.formula.api.NegativeBinomial.endog_names"><code class="xref py py-obj docutils literal"><span class="pre">endog_names</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.formula.api.NegativeBinomial.exog_names.html#statsmodels.formula.api.NegativeBinomial.exog_names" title="statsmodels.formula.api.NegativeBinomial.exog_names"><code class="xref py py-obj docutils literal"><span class="pre">exog_names</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.formula.api.NegativeBinomial.__init__.html" class="btn btn-neutral float-right" title="4.4.1.1.8.1.1. statsmodels.formula.api.NegativeBinomial.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.formula.api.MixedLM.exog_names.html" class="btn btn-neutral" title="4.4.1.1.7.2.2. statsmodels.formula.api.MixedLM.exog_names" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,75 @@
+statsmodels.sandbox.distributions.extras
+========================================
+
+.. automodule:: statsmodels.sandbox.distributions.extras
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      absfunc
+      derivminus
+      derivplus
+      get_u_argskwargs
+      identit
+      inverse
+      inverseminus
+      inverseplus
+      inversew
+      inversew_inv
+      iteritems
+      mc2mvsk
+      mvnormcdf
+      mvsk2mc
+      mvstdnormcdf
+      negsquarefunc
+      pdf_moments
+      pdf_moments_st
+      pdf_mvsk
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ACSkewT_gen
+      ExpTransf_gen
+      LogTransf_gen
+      NormExpan_gen
+      SkewNorm2_gen
+      SkewNorm_gen
+      SquareFunc
+      TransfTwo_gen
+      Transf_gen
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.distributions.extras.ACSkewT_gen
+       generated/statsmodels.sandbox.distributions.extras.ExpTransf_gen
+       generated/statsmodels.sandbox.distributions.extras.LogTransf_gen
+       generated/statsmodels.sandbox.distributions.extras.NormExpan_gen
+       generated/statsmodels.sandbox.distributions.extras.SkewNorm2_gen
+       generated/statsmodels.sandbox.distributions.extras.SkewNorm_gen
+       generated/statsmodels.sandbox.distributions.extras.SquareFunc
+       generated/statsmodels.sandbox.distributions.extras.TransfTwo_gen
+       generated/statsmodels.sandbox.distributions.extras.Transf_gen
+
+   
+   
+
+   
+   
+   

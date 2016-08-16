@@ -1,0 +1,325 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>5.2.2.1. statsmodels.sandbox.cox.CoxPH &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="5.2. statsmodels.sandbox.cox" href="../statsmodels.sandbox.cox.html"/>
+        <link rel="next" title="5.2.2.1.1.1. statsmodels.sandbox.cox.CoxPH.__init__" href="statsmodels.sandbox.cox.CoxPH.__init__.html"/>
+        <link rel="prev" title="5.2.1.1. statsmodels.sandbox.cox.iterkeys" href="../statsmodels.sandbox.cox.iterkeys.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.contrast_old.html">5.1. statsmodels.sandbox.contrast_old</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../statsmodels.sandbox.cox.html">5.2. statsmodels.sandbox.cox</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.sandbox.cox.html#functions">5.2.1. Functions</a></li>
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.sandbox.cox.html#classes">5.2.2. Classes</a><ul class="current">
+<li class="toctree-l4 current"><a class="current reference internal" href="#">5.2.2.1. statsmodels.sandbox.cox.CoxPH</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.cox.Discrete.html">5.2.2.2. statsmodels.sandbox.cox.Discrete</a></li>
+<li class="toctree-l4"><a class="reference internal" href="statsmodels.sandbox.cox.Observation.html">5.2.2.3. statsmodels.sandbox.cox.Observation</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.descstats.html">5.3. statsmodels.sandbox.descstats</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.formula.html">5.4. statsmodels.sandbox.formula</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.gam.html">5.5. statsmodels.sandbox.gam</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.infotheo.html">5.6. statsmodels.sandbox.infotheo</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.km_class.html">5.7. statsmodels.sandbox.km_class</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.mle.html">5.8. statsmodels.sandbox.mle</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.multilinear.html">5.9. statsmodels.sandbox.multilinear</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.pca.html">5.10. statsmodels.sandbox.pca</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.rls.html">5.11. statsmodels.sandbox.rls</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.survival.html">5.12. statsmodels.sandbox.survival</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.survival2.html">5.13. statsmodels.sandbox.survival2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.sysreg.html">5.14. statsmodels.sandbox.sysreg</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../statsmodels.sandbox.utils_old.html">5.15. statsmodels.sandbox.utils_old</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../sandbox.html">5. statsmodel.sandbox</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.sandbox.cox.html">5.2. statsmodels.sandbox.cox</a> &raquo;</li>
+        
+      <li>5.2.2.1. statsmodels.sandbox.cox.CoxPH</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.sandbox.cox.CoxPH.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-sandbox-cox-coxph">
+<h1>5.2.2.1. statsmodels.sandbox.cox.CoxPH<a class="headerlink" href="#statsmodels-sandbox-cox-coxph" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="statsmodels.sandbox.cox.CoxPH">
+<em class="property">class </em><code class="descclassname">statsmodels.sandbox.cox.</code><code class="descname">CoxPH</code><span class="sig-paren">(</span><em>subjects</em>, <em>formula</em>, <em>time_dependent=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/cox.html#CoxPH"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.cox.CoxPH" title="Permalink to this definition">¶</a></dt>
+<dd><p>Cox proportional hazards regression model.</p>
+<dl class="method">
+<dt id="statsmodels.sandbox.cox.CoxPH.__init__">
+<code class="descname">__init__</code><span class="sig-paren">(</span><em>subjects</em>, <em>formula</em>, <em>time_dependent=False</em><span class="sig-paren">)</span><a class="reference internal" href="../../_modules/statsmodels/sandbox/cox.html#CoxPH.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#statsmodels.sandbox.cox.CoxPH.__init__" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<div class="section" id="methods">
+<h2>5.2.2.1.1. Methods<a class="headerlink" href="#methods" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.__init__.html#statsmodels.sandbox.cox.CoxPH.__init__" title="statsmodels.sandbox.cox.CoxPH.__init__"><code class="xref py py-obj docutils literal"><span class="pre">__init__</span></code></a>(subjects,&nbsp;formula[,&nbsp;time_dependent])</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.cache.html#statsmodels.sandbox.cox.CoxPH.cache" title="statsmodels.sandbox.cox.CoxPH.cache"><code class="xref py py-obj docutils literal"><span class="pre">cache</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.fit.html#statsmodels.sandbox.cox.CoxPH.fit" title="statsmodels.sandbox.cox.CoxPH.fit"><code class="xref py py-obj docutils literal"><span class="pre">fit</span></code></a>([start_params,&nbsp;method,&nbsp;maxiter,&nbsp;...])</td>
+<td>Fit method for likelihood based models</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.from_formula.html#statsmodels.sandbox.cox.CoxPH.from_formula" title="statsmodels.sandbox.cox.CoxPH.from_formula"><code class="xref py py-obj docutils literal"><span class="pre">from_formula</span></code></a>(formula,&nbsp;data[,&nbsp;subset])</td>
+<td>Create a Model from a formula and dataframe.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.hessian.html#statsmodels.sandbox.cox.CoxPH.hessian" title="statsmodels.sandbox.cox.CoxPH.hessian"><code class="xref py py-obj docutils literal"><span class="pre">hessian</span></code></a>(params)</td>
+<td>The Hessian matrix of the model</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.information.html#statsmodels.sandbox.cox.CoxPH.information" title="statsmodels.sandbox.cox.CoxPH.information"><code class="xref py py-obj docutils literal"><span class="pre">information</span></code></a>(b[,&nbsp;ties])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.initialize.html#statsmodels.sandbox.cox.CoxPH.initialize" title="statsmodels.sandbox.cox.CoxPH.initialize"><code class="xref py py-obj docutils literal"><span class="pre">initialize</span></code></a>(subjects)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.loglike.html#statsmodels.sandbox.cox.CoxPH.loglike" title="statsmodels.sandbox.cox.CoxPH.loglike"><code class="xref py py-obj docutils literal"><span class="pre">loglike</span></code></a>(b[,&nbsp;ties])</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.predict.html#statsmodels.sandbox.cox.CoxPH.predict" title="statsmodels.sandbox.cox.CoxPH.predict"><code class="xref py py-obj docutils literal"><span class="pre">predict</span></code></a>(params[,&nbsp;exog])</td>
+<td>After a model has been fit predict returns the fitted values.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.score.html#statsmodels.sandbox.cox.CoxPH.score" title="statsmodels.sandbox.cox.CoxPH.score"><code class="xref py py-obj docutils literal"><span class="pre">score</span></code></a>(b[,&nbsp;ties])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="attributes">
+<h2>5.2.2.1.2. Attributes<a class="headerlink" href="#attributes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.endog_names.html#statsmodels.sandbox.cox.CoxPH.endog_names" title="statsmodels.sandbox.cox.CoxPH.endog_names"><code class="xref py py-obj docutils literal"><span class="pre">endog_names</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.cox.CoxPH.exog_names.html#statsmodels.sandbox.cox.CoxPH.exog_names" title="statsmodels.sandbox.cox.CoxPH.exog_names"><code class="xref py py-obj docutils literal"><span class="pre">exog_names</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.cox.CoxPH.__init__.html" class="btn btn-neutral float-right" title="5.2.2.1.1.1. statsmodels.sandbox.cox.CoxPH.__init__" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="../statsmodels.sandbox.cox.iterkeys.html" class="btn btn-neutral" title="5.2.1.1. statsmodels.sandbox.cox.iterkeys" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

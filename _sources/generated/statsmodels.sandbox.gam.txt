@@ -1,0 +1,59 @@
+statsmodels.sandbox.gam
+=======================
+
+.. automodule:: statsmodels.sandbox.gam
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      default_smoother
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      AdditiveModel
+      GLM
+      Model
+      Offset
+      PolySmoother
+      Results
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.gam.AdditiveModel
+       generated/statsmodels.sandbox.gam.GLM
+       generated/statsmodels.sandbox.gam.Model
+       generated/statsmodels.sandbox.gam.Offset
+       generated/statsmodels.sandbox.gam.PolySmoother
+       generated/statsmodels.sandbox.gam.Results
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      IterationLimitWarning
+   
+   

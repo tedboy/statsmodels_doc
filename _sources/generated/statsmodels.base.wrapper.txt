@@ -1,0 +1,45 @@
+statsmodels.base.wrapper
+========================
+
+.. automodule:: statsmodels.base.wrapper
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      get_function_name
+      iteritems
+      make_wrapper
+      populate_wrapper
+      union_dicts
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      ResultsWrapper
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.base.wrapper.ResultsWrapper
+
+   
+   
+
+   
+   
+   

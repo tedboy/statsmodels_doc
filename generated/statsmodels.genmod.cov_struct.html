@@ -1,0 +1,321 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>3.5.2. statsmodels.genmod.cov_struct &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="3. Main modules of interest" href="../main.html"/>
+        <link rel="next" title="3.5.2.1.1. statsmodels.genmod.cov_struct.cov_nearest" href="statsmodels.genmod.cov_struct.cov_nearest.html"/>
+        <link rel="prev" title="3.5.1.1.4.2.3. statsmodels.genmod.api.OrdinalGEE.exog_names" href="generated/statsmodels.genmod.api.OrdinalGEE.exog_names.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../main.html">3. Main modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel">3.1. statsmodel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-discrete">3.2. statsmodel.discrete</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-distributions">3.3. statsmodel.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-emplike">3.4. statsmodel.emplike</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../main.html#statsmodel-genmod">3.5. statsmodel.genmod</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.genmod.api.html">3.5.1. statsmodels.genmod.api</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">3.5.2. statsmodels.genmod.cov_struct</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#functions">3.5.2.1. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">3.5.2.2. Classes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#exceptions">3.5.2.3. Exceptions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.genmod.generalized_estimating_equations.html">3.5.3. statsmodels.genmod.generalized_estimating_equations</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.genmod.generalized_linear_model.html">3.5.4. statsmodels.genmod.generalized_linear_model</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../main.html#statsmodel-genmod-families">3.5.5. statsmodel.genmod.families</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-graphics">3.6. statsmodel.graphics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-miscmodels">3.7. statsmodel.miscmodels</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-nonparametric">3.8. statsmodels.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodels-regression">3.9. statsmodels.regression</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-robust">3.10. statsmodel.robust</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../main.html#statsmodel-stats">3.11. statsmodel.stats</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../main.html">3. Main modules of interest</a> &raquo;</li>
+        
+      <li>3.5.2. statsmodels.genmod.cov_struct</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.genmod.cov_struct.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.genmod.cov_struct">
+<span id="statsmodels-genmod-cov-struct"></span><h1>3.5.2. statsmodels.genmod.cov_struct<a class="headerlink" href="#module-statsmodels.genmod.cov_struct" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="functions">
+<h2>3.5.2.1. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.cov_struct.cov_nearest.html#statsmodels.genmod.cov_struct.cov_nearest" title="statsmodels.genmod.cov_struct.cov_nearest"><code class="xref py py-obj docutils literal"><span class="pre">cov_nearest</span></code></a>(cov[,&nbsp;method,&nbsp;threshold,&nbsp;...])</td>
+<td>Find the nearest covariance matrix that is postive (semi-) definite</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.cov_struct.iterkeys.html#statsmodels.genmod.cov_struct.iterkeys" title="statsmodels.genmod.cov_struct.iterkeys"><code class="xref py py-obj docutils literal"><span class="pre">iterkeys</span></code></a>(obj,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.cov_struct.itervalues.html#statsmodels.genmod.cov_struct.itervalues" title="statsmodels.genmod.cov_struct.itervalues"><code class="xref py py-obj docutils literal"><span class="pre">itervalues</span></code></a>(obj,&nbsp;**kwargs)</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>3.5.2.2. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.genmod.cov_struct.Autoregressive.html#statsmodels.genmod.cov_struct.Autoregressive" title="statsmodels.genmod.cov_struct.Autoregressive"><code class="xref py py-obj docutils literal"><span class="pre">Autoregressive</span></code></a>([dist_func])</td>
+<td>An autoregressive working dependence structure.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.genmod.cov_struct.CovStruct.html#statsmodels.genmod.cov_struct.CovStruct" title="statsmodels.genmod.cov_struct.CovStruct"><code class="xref py py-obj docutils literal"><span class="pre">CovStruct</span></code></a>([cov_nearest_method])</td>
+<td>A base class for correlation and covariance structures of grouped data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.genmod.cov_struct.Exchangeable.html#statsmodels.genmod.cov_struct.Exchangeable" title="statsmodels.genmod.cov_struct.Exchangeable"><code class="xref py py-obj docutils literal"><span class="pre">Exchangeable</span></code></a>()</td>
+<td>An exchangeable working dependence structure.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.genmod.cov_struct.GlobalOddsRatio.html#statsmodels.genmod.cov_struct.GlobalOddsRatio" title="statsmodels.genmod.cov_struct.GlobalOddsRatio"><code class="xref py py-obj docutils literal"><span class="pre">GlobalOddsRatio</span></code></a>(endog_type)</td>
+<td>Estimate the global odds ratio for a GEE with ordinal or nominal data.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.genmod.cov_struct.Independence.html#statsmodels.genmod.cov_struct.Independence" title="statsmodels.genmod.cov_struct.Independence"><code class="xref py py-obj docutils literal"><span class="pre">Independence</span></code></a>([cov_nearest_method])</td>
+<td>An independence working dependence structure.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.genmod.cov_struct.Nested.html#statsmodels.genmod.cov_struct.Nested" title="statsmodels.genmod.cov_struct.Nested"><code class="xref py py-obj docutils literal"><span class="pre">Nested</span></code></a>([cov_nearest_method])</td>
+<td>A nested working dependence structure.</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+<div class="section" id="exceptions">
+<h2>3.5.2.3. Exceptions<a class="headerlink" href="#exceptions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.genmod.cov_struct.ConvergenceWarning.html#statsmodels.genmod.cov_struct.ConvergenceWarning" title="statsmodels.genmod.cov_struct.ConvergenceWarning"><code class="xref py py-obj docutils literal"><span class="pre">ConvergenceWarning</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.genmod.cov_struct.IterationLimitWarning.html#statsmodels.genmod.cov_struct.IterationLimitWarning" title="statsmodels.genmod.cov_struct.IterationLimitWarning"><code class="xref py py-obj docutils literal"><span class="pre">IterationLimitWarning</span></code></a></td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.genmod.cov_struct.cov_nearest.html" class="btn btn-neutral float-right" title="3.5.2.1.1. statsmodels.genmod.cov_struct.cov_nearest" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.genmod.api.OrdinalGEE.exog_names.html" class="btn btn-neutral" title="3.5.1.1.4.2.3. statsmodels.genmod.api.OrdinalGEE.exog_names" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

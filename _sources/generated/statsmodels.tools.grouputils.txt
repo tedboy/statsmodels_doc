@@ -1,0 +1,49 @@
+statsmodels.tools.grouputils
+============================
+
+.. automodule:: statsmodels.tools.grouputils
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      combine_indices
+      dummy_sparse
+      group_sums
+      group_sums_dummy
+      npc_unique
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      Group
+      GroupSorted
+      Grouping
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.tools.grouputils.Group
+       generated/statsmodels.tools.grouputils.GroupSorted
+       generated/statsmodels.tools.grouputils.Grouping
+
+   
+   
+
+   
+   
+   

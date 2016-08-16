@@ -1,0 +1,23 @@
+statsmodels.tools.transform_model.StandardizeTransform
+======================================================
+
+.. currentmodule:: statsmodels.tools.transform_model
+.. autoclass:: StandardizeTransform
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~StandardizeTransform.__init__
+   ~StandardizeTransform.transform
+   ~StandardizeTransform.transform_params
+
+
+
+
+

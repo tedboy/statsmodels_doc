@@ -1,0 +1,42 @@
+statsmodels.api.GLS
+===================
+
+.. currentmodule:: statsmodels.api
+.. autoclass:: GLS
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GLS.__init__
+   ~GLS.fit
+   ~GLS.fit_regularized
+   ~GLS.from_formula
+   ~GLS.hessian
+   ~GLS.information
+   ~GLS.initialize
+   ~GLS.loglike
+   ~GLS.predict
+   ~GLS.score
+   ~GLS.whiten
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~GLS.df_model
+   ~GLS.df_resid
+   ~GLS.endog_names
+   ~GLS.exog_names
+

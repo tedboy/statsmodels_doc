@@ -1,0 +1,490 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.8.5. statsmodels.sandbox.stats.multicomp &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.8.5.2.1. statsmodels.sandbox.stats.multicomp.Tukeythreegene" href="statsmodels.sandbox.stats.multicomp.Tukeythreegene.html"/>
+        <link rel="prev" title="6.8.4.1.1. statsmodels.sandbox.stats.ex_newtests.unitroot_adf" href="statsmodels.sandbox.stats.ex_newtests.unitroot_adf.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.html">6.8.1. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.html">6.8.2. statsmodels.sandbox.stats.contrast_tools</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.html">6.8.3. statsmodels.sandbox.stats.diagnostic</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.ex_newtests.html">6.8.4. statsmodels.sandbox.stats.ex_newtests</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.8.5. statsmodels.sandbox.stats.multicomp</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#todo">6.8.5.1. TODO</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">6.8.5.2. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">6.8.5.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.runs.html">6.8.6. statsmodels.sandbox.stats.runs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.stats_dhuard.html">6.8.7. statsmodels.sandbox.stats.stats_dhuard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.8.5. statsmodels.sandbox.stats.multicomp</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.stats.multicomp.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.stats.multicomp">
+<span id="statsmodels-sandbox-stats-multicomp"></span><h1>6.8.5. statsmodels.sandbox.stats.multicomp<a class="headerlink" href="#module-statsmodels.sandbox.stats.multicomp" title="Permalink to this headline">¶</a></h1>
+<p>from pystatsmodels mailinglist 20100524</p>
+<dl class="docutils">
+<dt>Notes:</dt>
+<dd><ul class="first last simple">
+<li>unfinished, unverified, but most parts seem to work in MonteCarlo</li>
+<li>one example taken from lecture notes looks ok</li>
+<li>needs cases with non-monotonic inequality for test to see difference between
+one-step, step-up and step-down procedures</li>
+<li>FDR doesn&#8217;t look really better then Bonferoni in the MC examples that I tried</li>
+</ul>
+</dd>
+<dt>update:</dt>
+<dd><ul class="first last simple">
+<li>now tested against R, stats and multtest,
+I have all of their methods for p-value correction</li>
+<li>getting Hommel was impossible until I found reference for pvalue correction</li>
+<li>now, since I have p-values correction, some of the original tests (rej/norej)
+implementation is not really needed anymore. I think I keep it for reference.
+Test procedure for Hommel in development session log</li>
+<li>I haven&#8217;t updated other functions and classes in here.
+- multtest has some good helper function according to docs</li>
+<li>still need to update references, the real papers</li>
+<li>fdr with estimated true hypothesis still missing</li>
+<li>multiple comparison procedures incomplete or missing</li>
+<li>I will get multiple comparison for now only for independent case, which might
+be conservative in correlated case (?).</li>
+</ul>
+</dd>
+</dl>
+<p>some References:</p>
+<p>Gibbons, Jean Dickinson and Chakraborti Subhabrata, 2003, Nonparametric Statistical
+Inference, Fourth Edition, Marcel Dekker</p>
+<blockquote>
+<div>p.363: 10.4 THE KRUSKAL-WALLIS ONE-WAY ANOVA TEST AND MULTIPLE COMPARISONS
+p.367: multiple comparison for kruskal formula used in multicomp.kruskal</div></blockquote>
+<p>Sheskin, David J., 2004, Handbook of Parametric and Nonparametric Statistical
+Procedures, 3rd ed., Chapman&amp;Hall/CRC</p>
+<blockquote>
+<div>Test 21: The Single-Factor Between-Subjects Analysis of Variance
+Test 22: The Kruskal-Wallis One-Way Analysis of Variance by Ranks Test</div></blockquote>
+<p>Zwillinger, Daniel and Stephen Kokoska, 2000, CRC standard probability and
+statistics tables and formulae, Chapman&amp;Hall/CRC</p>
+<blockquote>
+<div>14.9 WILCOXON RANKSUM (MANN WHITNEY) TEST</div></blockquote>
+<ol class="upperalpha" start="19">
+<li><dl class="first docutils">
+<dt>Paul Wright, Adjusted P-Values for Simultaneous Inference, Biometrics</dt>
+<dd><p class="first last">Vol. 48, No. 4 (Dec., 1992), pp. 1005-1013, International Biometric Society
+Stable URL: <a class="reference external" href="http://www.jstor.org/stable/2532694">http://www.jstor.org/stable/2532694</a></p>
+</dd>
+</dl>
+</li>
+</ol>
+<blockquote>
+<div>(p-value correction for Hommel in appendix)</div></blockquote>
+<p>for multicomparison</p>
+<p>new book &#8220;multiple comparison in R&#8221;
+Hsu is a good reference but I don&#8217;t have it.</p>
+<p>Author: Josef Pktd and example from H Raja and rewrite from Vincent Davis</p>
+<div class="section" id="todo">
+<h2>6.8.5.1. TODO<a class="headerlink" href="#todo" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>handle exception if empty, shows up only sometimes when running this</li>
+</ul>
+<ul class="simple">
+<li>DONE I think</li>
+</ul>
+<dl class="docutils">
+<dt>Traceback (most recent call last):</dt>
+<dd><dl class="first docutils">
+<dt>File &#8220;C:Josefeclipsegworkspacestatsmodels-josef-experimental-gsocscikitsstatsmodelssandboxstatsmulticomp.py&#8221;, line 711, in &lt;module&gt;</dt>
+<dd>print(&#8216;sh&#8217;, multipletests(tpval, alpha=0.05, method=&#8217;sh&#8217;)</dd>
+<dt>File &#8220;C:Josefeclipsegworkspacestatsmodels-josef-experimental-gsocscikitsstatsmodelssandboxstatsmulticomp.py&#8221;, line 241, in multipletests</dt>
+<dd>rejectmax = np.max(np.nonzero(reject))</dd>
+</dl>
+<p class="last">File &#8220;C:ProgramsPython25libsite-packages</p>
+</dd>
+</dl>
+<p>umpycore
+romnumeric.py&#8221;, line 1765, in amax</p>
+<blockquote>
+<div><blockquote>
+<div>return _wrapit(a, &#8216;max&#8217;, axis, out)</div></blockquote>
+<p>File &#8220;C:ProgramsPython25libsite-packages</p>
+</div></blockquote>
+<p>umpycore
+romnumeric.py&#8221;, line 37, in _wrapit</p>
+<blockquote>
+<div>result = getattr(asarray(obj),method)(<a href="#id1"><span class="problematic" id="id2">*</span></a>args, <a href="#id3"><span class="problematic" id="id4">**</span></a>kwds)</div></blockquote>
+<p>ValueError: zero-size array to ufunc.reduce without identity</p>
+<ul class="simple">
+<li>name of function multipletests, rename to something like pvalue_correction?</li>
+</ul>
+</div>
+<div class="section" id="functions">
+<h2>6.8.5.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.Tukeythreegene.html#statsmodels.sandbox.stats.multicomp.Tukeythreegene" title="statsmodels.sandbox.stats.multicomp.Tukeythreegene"><code class="xref py py-obj docutils literal"><span class="pre">Tukeythreegene</span></code></a>(first,&nbsp;second,&nbsp;third)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.Tukeythreegene2.html#statsmodels.sandbox.stats.multicomp.Tukeythreegene2" title="statsmodels.sandbox.stats.multicomp.Tukeythreegene2"><code class="xref py py-obj docutils literal"><span class="pre">Tukeythreegene2</span></code></a>(genes)</td>
+<td>gend is a list, ie [first, second, third]</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.catstack.html#statsmodels.sandbox.stats.multicomp.catstack" title="statsmodels.sandbox.stats.multicomp.catstack"><code class="xref py py-obj docutils literal"><span class="pre">catstack</span></code></a>(args)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.compare_ordered.html#statsmodels.sandbox.stats.multicomp.compare_ordered" title="statsmodels.sandbox.stats.multicomp.compare_ordered"><code class="xref py py-obj docutils literal"><span class="pre">compare_ordered</span></code></a>(vals,&nbsp;alpha)</td>
+<td>simple ordered sequential comparison of means</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.contrast_all_one.html#statsmodels.sandbox.stats.multicomp.contrast_all_one" title="statsmodels.sandbox.stats.multicomp.contrast_all_one"><code class="xref py py-obj docutils literal"><span class="pre">contrast_all_one</span></code></a>(nm)</td>
+<td>contrast or restriction matrix for all against first comparison</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.contrast_allpairs.html#statsmodels.sandbox.stats.multicomp.contrast_allpairs" title="statsmodels.sandbox.stats.multicomp.contrast_allpairs"><code class="xref py py-obj docutils literal"><span class="pre">contrast_allpairs</span></code></a>(nm)</td>
+<td>contrast or restriction matrix for all pairs of nm variables</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.contrast_diff_mean.html#statsmodels.sandbox.stats.multicomp.contrast_diff_mean" title="statsmodels.sandbox.stats.multicomp.contrast_diff_mean"><code class="xref py py-obj docutils literal"><span class="pre">contrast_diff_mean</span></code></a>(nm)</td>
+<td>contrast or restriction matrix for all against mean comparison</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.distance_st_range.html#statsmodels.sandbox.stats.multicomp.distance_st_range" title="statsmodels.sandbox.stats.multicomp.distance_st_range"><code class="xref py py-obj docutils literal"><span class="pre">distance_st_range</span></code></a>(mean_all,&nbsp;nobs_all,&nbsp;var_all)</td>
+<td>pairwise distance matrix, outsourced from tukeyhsd</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.ecdf.html#statsmodels.sandbox.stats.multicomp.ecdf" title="statsmodels.sandbox.stats.multicomp.ecdf"><code class="xref py py-obj docutils literal"><span class="pre">ecdf</span></code></a>(x)</td>
+<td>no frills empirical cdf used in fdrcorrection</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.fdrcorrection0.html#statsmodels.sandbox.stats.multicomp.fdrcorrection0" title="statsmodels.sandbox.stats.multicomp.fdrcorrection0"><code class="xref py py-obj docutils literal"><span class="pre">fdrcorrection0</span></code></a>(pvals[,&nbsp;alpha,&nbsp;method,&nbsp;is_sorted])</td>
+<td>pvalue correction for false discovery rate</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.fdrcorrection_bak.html#statsmodels.sandbox.stats.multicomp.fdrcorrection_bak" title="statsmodels.sandbox.stats.multicomp.fdrcorrection_bak"><code class="xref py py-obj docutils literal"><span class="pre">fdrcorrection_bak</span></code></a>(pvals[,&nbsp;alpha,&nbsp;method])</td>
+<td>Reject False discovery rate correction for pvalues</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.fdrcorrection_twostage.html#statsmodels.sandbox.stats.multicomp.fdrcorrection_twostage" title="statsmodels.sandbox.stats.multicomp.fdrcorrection_twostage"><code class="xref py py-obj docutils literal"><span class="pre">fdrcorrection_twostage</span></code></a>(pvals[,&nbsp;alpha,&nbsp;...])</td>
+<td>(iterated) two stage linear step-up procedure with estimation of number of true</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.get_tukeyQcrit.html#statsmodels.sandbox.stats.multicomp.get_tukeyQcrit" title="statsmodels.sandbox.stats.multicomp.get_tukeyQcrit"><code class="xref py py-obj docutils literal"><span class="pre">get_tukeyQcrit</span></code></a>(k,&nbsp;df[,&nbsp;alpha])</td>
+<td>return critical values for Tukey&#8217;s HSD (Q)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.get_tukeyQcrit2.html#statsmodels.sandbox.stats.multicomp.get_tukeyQcrit2" title="statsmodels.sandbox.stats.multicomp.get_tukeyQcrit2"><code class="xref py py-obj docutils literal"><span class="pre">get_tukeyQcrit2</span></code></a>(k,&nbsp;df[,&nbsp;alpha])</td>
+<td>return critical values for Tukey&#8217;s HSD (Q)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.homogeneous_subsets.html#statsmodels.sandbox.stats.multicomp.homogeneous_subsets" title="statsmodels.sandbox.stats.multicomp.homogeneous_subsets"><code class="xref py py-obj docutils literal"><span class="pre">homogeneous_subsets</span></code></a>(vals,&nbsp;dcrit)</td>
+<td>recursively check all pairs of vals for minimum distance</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.maxzero.html#statsmodels.sandbox.stats.multicomp.maxzero" title="statsmodels.sandbox.stats.multicomp.maxzero"><code class="xref py py-obj docutils literal"><span class="pre">maxzero</span></code></a>(x)</td>
+<td>find all up zero crossings and return the index of the highest</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.maxzerodown.html#statsmodels.sandbox.stats.multicomp.maxzerodown" title="statsmodels.sandbox.stats.multicomp.maxzerodown"><code class="xref py py-obj docutils literal"><span class="pre">maxzerodown</span></code></a>(x)</td>
+<td>find all up zero crossings and return the index of the highest</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.mcfdr.html#statsmodels.sandbox.stats.multicomp.mcfdr" title="statsmodels.sandbox.stats.multicomp.mcfdr"><code class="xref py py-obj docutils literal"><span class="pre">mcfdr</span></code></a>([nrepl,&nbsp;nobs,&nbsp;ntests,&nbsp;ntrue,&nbsp;mu,&nbsp;...])</td>
+<td>MonteCarlo to test fdrcorrection</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.multicontrast_pvalues.html#statsmodels.sandbox.stats.multicomp.multicontrast_pvalues" title="statsmodels.sandbox.stats.multicomp.multicontrast_pvalues"><code class="xref py py-obj docutils literal"><span class="pre">multicontrast_pvalues</span></code></a>(tstat,&nbsp;tcorr[,&nbsp;df,&nbsp;...])</td>
+<td>pvalues for simultaneous tests</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.multipletests.html#statsmodels.sandbox.stats.multicomp.multipletests" title="statsmodels.sandbox.stats.multicomp.multipletests"><code class="xref py py-obj docutils literal"><span class="pre">multipletests</span></code></a>(pvals[,&nbsp;alpha,&nbsp;method,&nbsp;...])</td>
+<td>test results and p-value correction for multiple tests</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.randmvn.html#statsmodels.sandbox.stats.multicomp.randmvn" title="statsmodels.sandbox.stats.multicomp.randmvn"><code class="xref py py-obj docutils literal"><span class="pre">randmvn</span></code></a>(rho[,&nbsp;size,&nbsp;standardize])</td>
+<td>create random draws from equi-correlated multivariate normal distribution</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.rankdata.html#statsmodels.sandbox.stats.multicomp.rankdata" title="statsmodels.sandbox.stats.multicomp.rankdata"><code class="xref py py-obj docutils literal"><span class="pre">rankdata</span></code></a>(x)</td>
+<td>rankdata, equivalent to scipy.stats.rankdata</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.rejectionline.html#statsmodels.sandbox.stats.multicomp.rejectionline" title="statsmodels.sandbox.stats.multicomp.rejectionline"><code class="xref py py-obj docutils literal"><span class="pre">rejectionline</span></code></a>(n[,&nbsp;alpha])</td>
+<td>reference line for rejection in multiple tests</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.set_partition.html#statsmodels.sandbox.stats.multicomp.set_partition" title="statsmodels.sandbox.stats.multicomp.set_partition"><code class="xref py py-obj docutils literal"><span class="pre">set_partition</span></code></a>(ssli)</td>
+<td>extract a partition from a list of tuples</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.set_remove_subs.html#statsmodels.sandbox.stats.multicomp.set_remove_subs" title="statsmodels.sandbox.stats.multicomp.set_remove_subs"><code class="xref py py-obj docutils literal"><span class="pre">set_remove_subs</span></code></a>(ssli)</td>
+<td>remove sets that are subsets of another set from a list of tuples</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.simultaneous_ci.html#statsmodels.sandbox.stats.multicomp.simultaneous_ci" title="statsmodels.sandbox.stats.multicomp.simultaneous_ci"><code class="xref py py-obj docutils literal"><span class="pre">simultaneous_ci</span></code></a>(q_crit,&nbsp;var,&nbsp;groupnobs[,&nbsp;...])</td>
+<td>Compute simultaneous confidence intervals for comparison of means.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.test_tukey_pvalues.html#statsmodels.sandbox.stats.multicomp.test_tukey_pvalues" title="statsmodels.sandbox.stats.multicomp.test_tukey_pvalues"><code class="xref py py-obj docutils literal"><span class="pre">test_tukey_pvalues</span></code></a>()</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.tiecorrect.html#statsmodels.sandbox.stats.multicomp.tiecorrect" title="statsmodels.sandbox.stats.multicomp.tiecorrect"><code class="xref py py-obj docutils literal"><span class="pre">tiecorrect</span></code></a>(xranks)</td>
+<td>should be equivalent of scipy.stats.tiecorrect</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.tukey_pvalues.html#statsmodels.sandbox.stats.multicomp.tukey_pvalues" title="statsmodels.sandbox.stats.multicomp.tukey_pvalues"><code class="xref py py-obj docutils literal"><span class="pre">tukey_pvalues</span></code></a>(std_range,&nbsp;nm,&nbsp;df)</td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.tukeyhsd.html#statsmodels.sandbox.stats.multicomp.tukeyhsd" title="statsmodels.sandbox.stats.multicomp.tukeyhsd"><code class="xref py py-obj docutils literal"><span class="pre">tukeyhsd</span></code></a>(mean_all,&nbsp;nobs_all,&nbsp;var_all[,&nbsp;df,&nbsp;...])</td>
+<td>simultaneous Tukey HSD</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.varcorrection_pairs_unbalanced.html#statsmodels.sandbox.stats.multicomp.varcorrection_pairs_unbalanced" title="statsmodels.sandbox.stats.multicomp.varcorrection_pairs_unbalanced"><code class="xref py py-obj docutils literal"><span class="pre">varcorrection_pairs_unbalanced</span></code></a>(nobs_all[,&nbsp;...])</td>
+<td>correction factor for variance with unequal sample sizes for all pairs</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.varcorrection_pairs_unequal.html#statsmodels.sandbox.stats.multicomp.varcorrection_pairs_unequal" title="statsmodels.sandbox.stats.multicomp.varcorrection_pairs_unequal"><code class="xref py py-obj docutils literal"><span class="pre">varcorrection_pairs_unequal</span></code></a>(var_all,&nbsp;...)</td>
+<td>return joint variance from samples with unequal variances and unequal</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.varcorrection_unbalanced.html#statsmodels.sandbox.stats.multicomp.varcorrection_unbalanced" title="statsmodels.sandbox.stats.multicomp.varcorrection_unbalanced"><code class="xref py py-obj docutils literal"><span class="pre">varcorrection_unbalanced</span></code></a>(nobs_all[,&nbsp;srange])</td>
+<td>correction factor for variance with unequal sample sizes</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.varcorrection_unequal.html#statsmodels.sandbox.stats.multicomp.varcorrection_unequal" title="statsmodels.sandbox.stats.multicomp.varcorrection_unequal"><code class="xref py py-obj docutils literal"><span class="pre">varcorrection_unequal</span></code></a>(var_all,&nbsp;nobs_all,&nbsp;df_all)</td>
+<td>return joint variance from samples with unequal variances and unequal</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>6.8.5.3. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.multicomp.GroupsStats.html#statsmodels.sandbox.stats.multicomp.GroupsStats" title="statsmodels.sandbox.stats.multicomp.GroupsStats"><code class="xref py py-obj docutils literal"><span class="pre">GroupsStats</span></code></a>(x[,&nbsp;useranks,&nbsp;uni,&nbsp;intlab])</td>
+<td>statistics by groups (another version)</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.multicomp.MultiComparison.html#statsmodels.sandbox.stats.multicomp.MultiComparison" title="statsmodels.sandbox.stats.multicomp.MultiComparison"><code class="xref py py-obj docutils literal"><span class="pre">MultiComparison</span></code></a>(data,&nbsp;groups[,&nbsp;group_order])</td>
+<td>Tests for multiple comparisons</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.multicomp.SimpleTable.html#statsmodels.sandbox.stats.multicomp.SimpleTable" title="statsmodels.sandbox.stats.multicomp.SimpleTable"><code class="xref py py-obj docutils literal"><span class="pre">SimpleTable</span></code></a>(data[,&nbsp;headers,&nbsp;stubs,&nbsp;title,&nbsp;...])</td>
+<td>Produce a simple ASCII, CSV, HTML, or LaTeX table from a <em>rectangular</em> (2d!) array of data, not necessarily numerical.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.multicomp.StepDown.html#statsmodels.sandbox.stats.multicomp.StepDown" title="statsmodels.sandbox.stats.multicomp.StepDown"><code class="xref py py-obj docutils literal"><span class="pre">StepDown</span></code></a>(vals,&nbsp;nobs_all,&nbsp;var_all[,&nbsp;df])</td>
+<td>a class for step down methods</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.multicomp.TukeyHSDResults.html#statsmodels.sandbox.stats.multicomp.TukeyHSDResults" title="statsmodels.sandbox.stats.multicomp.TukeyHSDResults"><code class="xref py py-obj docutils literal"><span class="pre">TukeyHSDResults</span></code></a>(mc_object,&nbsp;results_table,&nbsp;q_crit)</td>
+<td>Results from Tukey HSD test, with additional plot methods</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.stats.multicomp.Tukeythreegene.html" class="btn btn-neutral float-right" title="6.8.5.2.1. statsmodels.sandbox.stats.multicomp.Tukeythreegene" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.sandbox.stats.ex_newtests.unitroot_adf.html" class="btn btn-neutral" title="6.8.4.1.1. statsmodels.sandbox.stats.ex_newtests.unitroot_adf" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

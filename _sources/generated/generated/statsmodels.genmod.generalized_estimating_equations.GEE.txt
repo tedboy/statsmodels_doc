@@ -1,0 +1,37 @@
+statsmodels.genmod.generalized_estimating_equations.GEE
+=======================================================
+
+.. currentmodule:: statsmodels.genmod.generalized_estimating_equations
+.. autoclass:: GEE
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GEE.__init__
+   ~GEE.cluster_list
+   ~GEE.estimate_scale
+   ~GEE.fit
+   ~GEE.from_formula
+   ~GEE.predict
+   ~GEE.update_cached_means
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~GEE.cached_means
+   ~GEE.endog_names
+   ~GEE.exog_names
+

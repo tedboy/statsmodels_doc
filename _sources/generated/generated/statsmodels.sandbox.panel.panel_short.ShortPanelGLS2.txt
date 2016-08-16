@@ -1,0 +1,25 @@
+statsmodels.sandbox.panel.panel_short.ShortPanelGLS2
+====================================================
+
+.. currentmodule:: statsmodels.sandbox.panel.panel_short
+.. autoclass:: ShortPanelGLS2
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ShortPanelGLS2.__init__
+   ~ShortPanelGLS2.fit
+   ~ShortPanelGLS2.fit_ols
+   ~ShortPanelGLS2.get_within_cov
+   ~ShortPanelGLS2.whiten_groups
+
+
+
+
+

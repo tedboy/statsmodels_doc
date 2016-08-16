@@ -1,0 +1,380 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>6.8.3. statsmodels.sandbox.stats.diagnostic &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="6. statsmodel.sandbox2" href="../sandbox2.html"/>
+        <link rel="next" title="6.8.3.2.1. statsmodels.sandbox.stats.diagnostic.acf" href="statsmodels.sandbox.stats.diagnostic.acf.html"/>
+        <link rel="prev" title="6.8.2.2.3.1.6. statsmodels.sandbox.stats.contrast_tools.TwoWay.ttest_interaction" href="generated/statsmodels.sandbox.stats.contrast_tools.TwoWay.ttest_interaction.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-archive">6.1. statsmodels.sandbox.archive</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-datarich">6.2. statsmodels.sandbox.datarich</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-distributions">6.3. statsmodels.sandbox.distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-mcevaluate">6.4. statsmodels.sandbox.mcevaluate</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-nonparametric">6.5. statsmodels.sandbox.nonparametric</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-panel">6.6. statsmodels.sandbox.panel</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-regression">6.7. statsmodels.sandbox.regression</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-stats">6.8. statsmodels.sandbox.stats</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.html">6.8.1. statsmodels.sandbox.stats</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.contrast_tools.html">6.8.2. statsmodels.sandbox.stats.contrast_tools</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">6.8.3. statsmodels.sandbox.stats.diagnostic</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#notes">6.8.3.1. Notes</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">6.8.3.2. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">6.8.3.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.ex_newtests.html">6.8.4. statsmodels.sandbox.stats.ex_newtests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.multicomp.html">6.8.5. statsmodels.sandbox.stats.multicomp</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.runs.html">6.8.6. statsmodels.sandbox.stats.runs</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.sandbox.stats.stats_dhuard.html">6.8.7. statsmodels.sandbox.stats.stats_dhuard</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tests">6.9. statsmodels.sandbox.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tools">6.10. statsmodels.sandbox.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../sandbox2.html#statsmodels-sandbox-tsa">6.11. statsmodels.sandbox.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../sandbox2.html">6. statsmodel.sandbox2</a> &raquo;</li>
+        
+      <li>6.8.3. statsmodels.sandbox.stats.diagnostic</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.sandbox.stats.diagnostic.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.sandbox.stats.diagnostic">
+<span id="statsmodels-sandbox-stats-diagnostic"></span><h1>6.8.3. statsmodels.sandbox.stats.diagnostic<a class="headerlink" href="#module-statsmodels.sandbox.stats.diagnostic" title="Permalink to this headline">¶</a></h1>
+<p>Various Statistical Tests</p>
+<p>Author: josef-pktd
+License: BSD-3</p>
+<div class="section" id="notes">
+<h2>6.8.3.1. Notes<a class="headerlink" href="#notes" title="Permalink to this headline">¶</a></h2>
+<p>Almost fully verified against R or Gretl, not all options are the same.
+In many cases of Lagrange multiplier tests both the LM test and the F test is
+returned. In some but not all cases, R has the option to choose the test
+statistic. Some alternative test statistic results have not been verified.</p>
+<p>TODO
+* refactor to store intermediate results
+* how easy is it to attach a test that is a class to a result instance,</p>
+<blockquote>
+<div>for example CompareCox as a method compare_cox(self, other) ?</div></blockquote>
+<ul class="simple">
+<li>StatTestMC has been moved and should be deleted</li>
+</ul>
+<p>missing:</p>
+<ul class="simple">
+<li>pvalues for breaks_hansen</li>
+<li>additional options, compare with R, check where ddof is appropriate</li>
+<li>new tests:
+- breaks_ap, more recent breaks tests
+- specification tests against nonparametric alternatives</li>
+</ul>
+</div>
+<div class="section" id="functions">
+<h2>6.8.3.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.acf.html#statsmodels.sandbox.stats.diagnostic.acf" title="statsmodels.sandbox.stats.diagnostic.acf"><code class="xref py py-obj docutils literal"><span class="pre">acf</span></code></a>(x[,&nbsp;unbiased,&nbsp;nlags,&nbsp;qstat,&nbsp;fft,&nbsp;alpha])</td>
+<td>Autocorrelation function for 1d arrays.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.acorr_breush_godfrey.html#statsmodels.sandbox.stats.diagnostic.acorr_breush_godfrey" title="statsmodels.sandbox.stats.diagnostic.acorr_breush_godfrey"><code class="xref py py-obj docutils literal"><span class="pre">acorr_breush_godfrey</span></code></a>(results[,&nbsp;nlags,&nbsp;store])</td>
+<td>Breush Godfrey Lagrange Multiplier tests for residual autocorrelation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.acorr_ljungbox.html#statsmodels.sandbox.stats.diagnostic.acorr_ljungbox" title="statsmodels.sandbox.stats.diagnostic.acorr_ljungbox"><code class="xref py py-obj docutils literal"><span class="pre">acorr_ljungbox</span></code></a>(x[,&nbsp;lags,&nbsp;boxpierce])</td>
+<td>Ljung-Box test for no autocorrelation</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.acorr_lm.html#statsmodels.sandbox.stats.diagnostic.acorr_lm" title="statsmodels.sandbox.stats.diagnostic.acorr_lm"><code class="xref py py-obj docutils literal"><span class="pre">acorr_lm</span></code></a>(x[,&nbsp;maxlag,&nbsp;autolag,&nbsp;store,&nbsp;regresults])</td>
+<td>Lagrange Multiplier tests for autocorrelation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.add_constant.html#statsmodels.sandbox.stats.diagnostic.add_constant" title="statsmodels.sandbox.stats.diagnostic.add_constant"><code class="xref py py-obj docutils literal"><span class="pre">add_constant</span></code></a>(data[,&nbsp;prepend,&nbsp;has_constant])</td>
+<td>This appends a column of ones to an array if prepend==False.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.adfuller.html#statsmodels.sandbox.stats.diagnostic.adfuller" title="statsmodels.sandbox.stats.diagnostic.adfuller"><code class="xref py py-obj docutils literal"><span class="pre">adfuller</span></code></a>(x[,&nbsp;maxlag,&nbsp;regression,&nbsp;autolag,&nbsp;...])</td>
+<td>Augmented Dickey-Fuller unit root test</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.breaks_AP.html#statsmodels.sandbox.stats.diagnostic.breaks_AP" title="statsmodels.sandbox.stats.diagnostic.breaks_AP"><code class="xref py py-obj docutils literal"><span class="pre">breaks_AP</span></code></a>(endog,&nbsp;exog,&nbsp;skip)</td>
+<td>supLM, expLM and aveLM by Andrews, and Andrews,Ploberger</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.breaks_cusumolsresid.html#statsmodels.sandbox.stats.diagnostic.breaks_cusumolsresid" title="statsmodels.sandbox.stats.diagnostic.breaks_cusumolsresid"><code class="xref py py-obj docutils literal"><span class="pre">breaks_cusumolsresid</span></code></a>(olsresidual[,&nbsp;ddof])</td>
+<td>cusum test for parameter stability based on ols residuals</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.breaks_hansen.html#statsmodels.sandbox.stats.diagnostic.breaks_hansen" title="statsmodels.sandbox.stats.diagnostic.breaks_hansen"><code class="xref py py-obj docutils literal"><span class="pre">breaks_hansen</span></code></a>(olsresults)</td>
+<td>test for model stability, breaks in parameters for ols, Hansen 1992</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.het_arch.html#statsmodels.sandbox.stats.diagnostic.het_arch" title="statsmodels.sandbox.stats.diagnostic.het_arch"><code class="xref py py-obj docutils literal"><span class="pre">het_arch</span></code></a>(resid[,&nbsp;maxlag,&nbsp;autolag,&nbsp;store,&nbsp;...])</td>
+<td>Engle&#8217;s Test for Autoregressive Conditional Heteroscedasticity (ARCH)</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.het_breushpagan.html#statsmodels.sandbox.stats.diagnostic.het_breushpagan" title="statsmodels.sandbox.stats.diagnostic.het_breushpagan"><code class="xref py py-obj docutils literal"><span class="pre">het_breushpagan</span></code></a>(resid,&nbsp;exog_het)</td>
+<td>Breush-Pagan Lagrange Multiplier test for heteroscedasticity</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.het_white.html#statsmodels.sandbox.stats.diagnostic.het_white" title="statsmodels.sandbox.stats.diagnostic.het_white"><code class="xref py py-obj docutils literal"><span class="pre">het_white</span></code></a>(resid,&nbsp;exog[,&nbsp;retres])</td>
+<td>White&#8217;s Lagrange Multiplier Test for Heteroscedasticity</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.iteritems.html#statsmodels.sandbox.stats.diagnostic.iteritems" title="statsmodels.sandbox.stats.diagnostic.iteritems"><code class="xref py py-obj docutils literal"><span class="pre">iteritems</span></code></a>(obj,&nbsp;**kwargs)</td>
+<td>replacement for six&#8217;s iteritems for Python2/3 compat</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.lagmat.html#statsmodels.sandbox.stats.diagnostic.lagmat" title="statsmodels.sandbox.stats.diagnostic.lagmat"><code class="xref py py-obj docutils literal"><span class="pre">lagmat</span></code></a>(x,&nbsp;maxlag[,&nbsp;trim,&nbsp;original])</td>
+<td>create 2d array of lags</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.linear_harvey_collier.html#statsmodels.sandbox.stats.diagnostic.linear_harvey_collier" title="statsmodels.sandbox.stats.diagnostic.linear_harvey_collier"><code class="xref py py-obj docutils literal"><span class="pre">linear_harvey_collier</span></code></a>(res)</td>
+<td>Harvey Collier test for linearity</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.linear_lm.html#statsmodels.sandbox.stats.diagnostic.linear_lm" title="statsmodels.sandbox.stats.diagnostic.linear_lm"><code class="xref py py-obj docutils literal"><span class="pre">linear_lm</span></code></a>(resid,&nbsp;exog[,&nbsp;func])</td>
+<td>Lagrange multiplier test for linearity against functional alternative</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.linear_rainbow.html#statsmodels.sandbox.stats.diagnostic.linear_rainbow" title="statsmodels.sandbox.stats.diagnostic.linear_rainbow"><code class="xref py py-obj docutils literal"><span class="pre">linear_rainbow</span></code></a>(res[,&nbsp;frac])</td>
+<td>Rainbow test for linearity</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.recursive_olsresiduals.html#statsmodels.sandbox.stats.diagnostic.recursive_olsresiduals" title="statsmodels.sandbox.stats.diagnostic.recursive_olsresiduals"><code class="xref py py-obj docutils literal"><span class="pre">recursive_olsresiduals</span></code></a>(olsresults[,&nbsp;skip,&nbsp;...])</td>
+<td>calculate recursive ols with residuals and cusum test statistic</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.sandbox.stats.diagnostic.unitroot_adf.html#statsmodels.sandbox.stats.diagnostic.unitroot_adf" title="statsmodels.sandbox.stats.diagnostic.unitroot_adf"><code class="xref py py-obj docutils literal"><span class="pre">unitroot_adf</span></code></a>(x[,&nbsp;maxlag,&nbsp;trendorder,&nbsp;...])</td>
+<td></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>6.8.3.3. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.diagnostic.CompareCox.html#statsmodels.sandbox.stats.diagnostic.CompareCox" title="statsmodels.sandbox.stats.diagnostic.CompareCox"><code class="xref py py-obj docutils literal"><span class="pre">CompareCox</span></code></a></td>
+<td>Cox Test for non-nested models</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.diagnostic.CompareJ.html#statsmodels.sandbox.stats.diagnostic.CompareJ" title="statsmodels.sandbox.stats.diagnostic.CompareJ"><code class="xref py py-obj docutils literal"><span class="pre">CompareJ</span></code></a></td>
+<td>J-Test for comparing non-nested models</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.diagnostic.HetGoldfeldQuandt.html#statsmodels.sandbox.stats.diagnostic.HetGoldfeldQuandt" title="statsmodels.sandbox.stats.diagnostic.HetGoldfeldQuandt"><code class="xref py py-obj docutils literal"><span class="pre">HetGoldfeldQuandt</span></code></a></td>
+<td>test whether variance is the same in 2 subsamples</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.diagnostic.OLS.html#statsmodels.sandbox.stats.diagnostic.OLS" title="statsmodels.sandbox.stats.diagnostic.OLS"><code class="xref py py-obj docutils literal"><span class="pre">OLS</span></code></a>(endog[,&nbsp;exog,&nbsp;missing,&nbsp;hasconst])</td>
+<td>A simple ordinary least squares model.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.diagnostic.ResultsStore.html#statsmodels.sandbox.stats.diagnostic.ResultsStore" title="statsmodels.sandbox.stats.diagnostic.ResultsStore"><code class="xref py py-obj docutils literal"><span class="pre">ResultsStore</span></code></a></td>
+<td></td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.sandbox.stats.diagnostic.StatTestMC.html#statsmodels.sandbox.stats.diagnostic.StatTestMC" title="statsmodels.sandbox.stats.diagnostic.StatTestMC"><code class="xref py py-obj docutils literal"><span class="pre">StatTestMC</span></code></a>(dgp,&nbsp;statistic)</td>
+<td>class to run Monte Carlo study on a statistical test&#8217;&#8216;&#8217;</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.sandbox.stats.diagnostic.acf.html" class="btn btn-neutral float-right" title="6.8.3.2.1. statsmodels.sandbox.stats.diagnostic.acf" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.sandbox.stats.contrast_tools.TwoWay.ttest_interaction.html" class="btn btn-neutral" title="6.8.2.2.3.1.6. statsmodels.sandbox.stats.contrast_tools.TwoWay.ttest_interaction" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

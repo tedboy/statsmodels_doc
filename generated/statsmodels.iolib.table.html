@@ -1,0 +1,392 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.5.7. statsmodels.iolib.table &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="4. Other modules of interest" href="../submain.html"/>
+        <link rel="next" title="4.5.7.2.1. statsmodels.iolib.table.csv2st" href="statsmodels.iolib.table.csv2st.html"/>
+        <link rel="prev" title="4.5.6.2.3.1.10. statsmodels.iolib.summary2.Summary.as_text" href="generated/statsmodels.iolib.summary2.Summary.as_text.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.api.html">4.5.1. statsmodels.iolib.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.foreign.html">4.5.2. statsmodels.iolib.foreign</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.smpickle.html">4.5.3. statsmodels.iolib.smpickle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.stata_summary_examples.html">4.5.4. statsmodels.iolib.stata_summary_examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.summary.html">4.5.5. statsmodels.iolib.summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.summary2.html">4.5.6. statsmodels.iolib.summary2</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.5.7. statsmodels.iolib.table</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="#potential-problems-for-python-3">4.5.7.1. Potential problems for Python 3</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#functions">4.5.7.2. Functions</a></li>
+<li class="toctree-l4"><a class="reference internal" href="#classes">4.5.7.3. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.tableformatting.html">4.5.8. statsmodels.iolib.tableformatting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+      <li>4.5.7. statsmodels.iolib.table</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.iolib.table.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.iolib.table">
+<span id="statsmodels-iolib-table"></span><h1>4.5.7. statsmodels.iolib.table<a class="headerlink" href="#module-statsmodels.iolib.table" title="Permalink to this headline">¶</a></h1>
+<p>Provides a simple table class.  A SimpleTable is essentially
+a list of lists plus some formatting functionality.</p>
+<p>Dependencies: the Python 2.5+ standard library.</p>
+<dl class="docutils">
+<dt>Installation: just copy this module into your working directory (or</dt>
+<dd>anywhere in your pythonpath).</dd>
+</dl>
+<p>Basic use:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">mydata</span> <span class="o">=</span> <span class="p">[[</span><span class="mi">11</span><span class="p">,</span><span class="mi">12</span><span class="p">],[</span><span class="mi">21</span><span class="p">,</span><span class="mi">22</span><span class="p">]]</span>  <span class="c1"># data MUST be 2-dimensional</span>
+<span class="n">myheaders</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;Column 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Column 2&quot;</span> <span class="p">]</span>
+<span class="n">mystubs</span> <span class="o">=</span> <span class="p">[</span> <span class="s2">&quot;Row 1&quot;</span><span class="p">,</span> <span class="s2">&quot;Row 2&quot;</span> <span class="p">]</span>
+<span class="n">tbl</span> <span class="o">=</span> <span class="n">SimpleTable</span><span class="p">(</span><span class="n">mydata</span><span class="p">,</span> <span class="n">myheaders</span><span class="p">,</span> <span class="n">mystubs</span><span class="p">,</span> <span class="n">title</span><span class="o">=</span><span class="s2">&quot;Title&quot;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="n">tbl</span> <span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span> <span class="n">tbl</span><span class="o">.</span><span class="n">as_csv</span><span class="p">()</span> <span class="p">)</span>
+</pre></div>
+</div>
+<p>A SimpleTable is inherently (but not rigidly) rectangular.
+You should create it from a <em>rectangular</em> (2d!) iterable of data.
+Each item in your rectangular iterable will become the data
+of a single Cell.  In principle, items can be any object,
+not just numbers and strings.  However, default conversion
+during table production is by simple string interpolation.
+(So you cannot have a tuple as a data item <em>and</em> rely on
+the default conversion.)</p>
+<p>A SimpleTable allows only one column (the first) of stubs at
+initilization, concatenation of tables allows you to produce tables
+with interior stubs.  (You can also assign the datatype &#8216;stub&#8217; to the
+cells in any column, or use <code class="docutils literal"><span class="pre">insert_stubs</span></code>.) A SimpleTable can be
+concatenated with another SimpleTable or extended by another
+SimpleTable.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="n">table1</span><span class="o">.</span><span class="n">extend_right</span><span class="p">(</span><span class="n">table2</span><span class="p">)</span>
+<span class="n">table1</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">table2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>A SimpleTable can be initialized with <cite>datatypes</cite>: a list of ints that
+provide indexes into <cite>data_fmts</cite> and <cite>data_aligns</cite>.  Each data cell is
+assigned a datatype, which will control formatting.  If you do not
+specify the <cite>datatypes</cite> list, it will be set to <code class="docutils literal"><span class="pre">range(ncols)</span></code> where
+<cite>ncols</cite> is the number of columns in the data.  (I.e., cells in a
+column have their own datatype.) This means that you can just specify
+<cite>data_fmts</cite> without bothering to provide a <cite>datatypes</cite> list.  If
+<code class="docutils literal"><span class="pre">len(datatypes)&lt;ncols</span></code> then datatype assignment will cycle across a
+row.  E.g., if you provide 10 columns of data with <code class="docutils literal"><span class="pre">datatypes=[0,1]</span></code>
+then you will have 5 columns of datatype 0 and 5 columns of datatype
+1, alternating.  Correspoding to this specification, you should provide
+a list of two <code class="docutils literal"><span class="pre">data_fmts</span></code> and a list of two <code class="docutils literal"><span class="pre">data_aligns</span></code>.</p>
+<p>Cells can be assigned labels as their <cite>datatype</cite> attribute.
+You can then provide a format for that lable.
+Us the SimpleTable&#8217;s <cite>label_cells</cite> method to do this.</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="k">def</span> <span class="nf">mylabeller</span><span class="p">(</span><span class="n">cell</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">cell</span><span class="o">.</span><span class="n">data</span> <span class="ow">is</span> <span class="n">np</span><span class="o">.</span><span class="n">nan</span><span class="p">:</span>
+        <span class="k">return</span> <span class="s1">&#39;missing&#39;</span>
+
+<span class="n">mytable</span><span class="o">.</span><span class="n">label_cells</span><span class="p">(</span><span class="n">mylabeller</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mytable</span><span class="o">.</span><span class="n">as_text</span><span class="p">(</span><span class="n">missing</span><span class="o">=</span><span class="s1">&#39;-&#39;</span><span class="p">))</span>
+</pre></div>
+</div>
+<div class="section" id="potential-problems-for-python-3">
+<h2>4.5.7.1. Potential problems for Python 3<a class="headerlink" href="#potential-problems-for-python-3" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li>Calls <code class="docutils literal"><span class="pre">next</span></code> instead of <code class="docutils literal"><span class="pre">__next__</span></code>.
+The 2to3 tool should handle that no problem.
+(We will switch to the <cite>next</cite> function if 2.5 support is ever dropped.)</li>
+<li>from __future__ import division</li>
+<li>Let me know if you find other problems.</li>
+</ul>
+<table class="docutils field-list" frame="void" rules="none">
+<col class="field-name" />
+<col class="field-body" />
+<tbody valign="top">
+<tr class="field-odd field"><th class="field-name">contact:</th><td class="field-body">alan dot isaac at gmail dot com</td>
+</tr>
+<tr class="field-even field"><th class="field-name">requires:</th><td class="field-body">Python 2.5.1+</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">note:</th><td class="field-body">current version</td>
+</tr>
+<tr class="field-even field"><th class="field-name">note:</th><td class="field-body">HTML data format currently specifies tags</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">todo:</th><td class="field-body">support a bit more of <a class="reference external" href="http://www.oasis-open.org/specs/tr9503.html">http://www.oasis-open.org/specs/tr9503.html</a></td>
+</tr>
+<tr class="field-even field"><th class="field-name">todo:</th><td class="field-body">add labels2formatters method, that associates a cell formatter with a
+datatype</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">todo:</th><td class="field-body">add colspan support to Cell</td>
+</tr>
+<tr class="field-even field"><th class="field-name">since:</th><td class="field-body">2008-12-21</td>
+</tr>
+<tr class="field-odd field"><th class="field-name">change:</th><td class="field-body">2010-05-02 eliminate newlines that came before and after table</td>
+</tr>
+<tr class="field-even field"><th class="field-name">change:</th><td class="field-body">2010-05-06 add <cite>label_cells</cite> to <cite>SimpleTable</cite></td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="functions">
+<h2>4.5.7.2. Functions<a class="headerlink" href="#functions" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.table.csv2st.html#statsmodels.iolib.table.csv2st" title="statsmodels.iolib.table.csv2st"><code class="xref py py-obj docutils literal"><span class="pre">csv2st</span></code></a>(csvfile[,&nbsp;headers,&nbsp;stubs,&nbsp;title])</td>
+<td>Return SimpleTable instance, created from the data in <cite>csvfile</cite>, which is in comma separated values format.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.table.get_output_format.html#statsmodels.iolib.table.get_output_format" title="statsmodels.iolib.table.get_output_format"><code class="xref py py-obj docutils literal"><span class="pre">get_output_format</span></code></a>(output_format)</td>
+<td></td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="statsmodels.iolib.table.iteritems.html#statsmodels.iolib.table.iteritems" title="statsmodels.iolib.table.iteritems"><code class="xref py py-obj docutils literal"><span class="pre">iteritems</span></code></a>(obj,&nbsp;**kwargs)</td>
+<td>replacement for six&#8217;s iteritems for Python2/3 compat</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="statsmodels.iolib.table.pad.html#statsmodels.iolib.table.pad" title="statsmodels.iolib.table.pad"><code class="xref py py-obj docutils literal"><span class="pre">pad</span></code></a>(s,&nbsp;width,&nbsp;align)</td>
+<td>Return string padded with spaces, based on alignment parameter.</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="classes">
+<h2>4.5.7.3. Classes<a class="headerlink" href="#classes" title="Permalink to this headline">¶</a></h2>
+<table border="1" class="longtable docutils">
+<colgroup>
+<col width="10%" />
+<col width="90%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.iolib.table.Cell.html#statsmodels.iolib.table.Cell" title="statsmodels.iolib.table.Cell"><code class="xref py py-obj docutils literal"><span class="pre">Cell</span></code></a>([data,&nbsp;datatype,&nbsp;row])</td>
+<td>Provides a table cell.</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="generated/statsmodels.iolib.table.Row.html#statsmodels.iolib.table.Row" title="statsmodels.iolib.table.Row"><code class="xref py py-obj docutils literal"><span class="pre">Row</span></code></a>(seq[,&nbsp;datatype,&nbsp;table,&nbsp;celltype,&nbsp;dec_below])</td>
+<td>Provides a table row as a list of cells.</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="generated/statsmodels.iolib.table.SimpleTable.html#statsmodels.iolib.table.SimpleTable" title="statsmodels.iolib.table.SimpleTable"><code class="xref py py-obj docutils literal"><span class="pre">SimpleTable</span></code></a>(data[,&nbsp;headers,&nbsp;stubs,&nbsp;title,&nbsp;...])</td>
+<td>Produce a simple ASCII, CSV, HTML, or LaTeX table from a <em>rectangular</em> (2d!) array of data, not necessarily numerical.</td>
+</tr>
+</tbody>
+</table>
+<div class="toctree-wrapper compound">
+</div>
+</div>
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.iolib.table.csv2st.html" class="btn btn-neutral float-right" title="4.5.7.2.1. statsmodels.iolib.table.csv2st" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="generated/statsmodels.iolib.summary2.Summary.as_text.html" class="btn btn-neutral" title="4.5.6.2.3.1.10. statsmodels.iolib.summary2.Summary.as_text" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

@@ -1,0 +1,44 @@
+statsmodels.sandbox.nonparametric.kernels.Cosine
+================================================
+
+.. currentmodule:: statsmodels.sandbox.nonparametric.kernels
+.. autoclass:: Cosine
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Cosine.__init__
+   ~Cosine.density
+   ~Cosine.density_confint
+   ~Cosine.density_var
+   ~Cosine.geth
+   ~Cosine.in_domain
+   ~Cosine.moments
+   ~Cosine.seth
+   ~Cosine.smooth
+   ~Cosine.smoothconf
+   ~Cosine.smoothvar
+   ~Cosine.weight
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Cosine.L2Norm
+   ~Cosine.h
+   ~Cosine.kernel_var
+   ~Cosine.norm_const
+   ~Cosine.normal_reference_constant
+

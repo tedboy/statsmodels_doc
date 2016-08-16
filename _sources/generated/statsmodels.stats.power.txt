@@ -1,0 +1,58 @@
+statsmodels.stats.power
+=======================
+
+.. automodule:: statsmodels.stats.power
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      brentq_expanding
+      ftest_anova_power
+      ftest_power
+      iteritems
+      normal_power
+      ttest_power
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      FTestAnovaPower
+      FTestPower
+      GofChisquarePower
+      NormalIndPower
+      Power
+      TTestIndPower
+      TTestPower
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.stats.power.FTestAnovaPower
+       generated/statsmodels.stats.power.FTestPower
+       generated/statsmodels.stats.power.GofChisquarePower
+       generated/statsmodels.stats.power.NormalIndPower
+       generated/statsmodels.stats.power.Power
+       generated/statsmodels.stats.power.TTestIndPower
+       generated/statsmodels.stats.power.TTestPower
+
+   
+   
+
+   
+   
+   

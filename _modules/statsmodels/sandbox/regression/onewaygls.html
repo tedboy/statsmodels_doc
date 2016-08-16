@@ -1,0 +1,597 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.regression.onewaygls &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.regression.onewaygls</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.regression.onewaygls</h1><div class="highlight"><pre>
+<span></span><span class="c1"># -*- coding: utf-8 -*-</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">F test for null hypothesis that coefficients in several regressions are the same</span>
+
+<span class="sd">* implemented by creating groupdummies*exog and testing appropriate contrast</span>
+<span class="sd">  matrices</span>
+<span class="sd">* similar to test for structural change in all variables at predefined break points</span>
+<span class="sd">* allows only one group variable</span>
+<span class="sd">* currently tests for change in all exog variables</span>
+<span class="sd">* allows for heterogscedasticity, error variance varies across groups</span>
+<span class="sd">* does not work if there is a group with only a single observation</span>
+
+<span class="sd">TODO</span>
+<span class="sd">----</span>
+
+<span class="sd">* generalize anova structure,</span>
+<span class="sd">  - structural break in only some variables</span>
+<span class="sd">  - compare structural breaks in several exog versus constant only</span>
+<span class="sd">  - fast way to construct comparisons</span>
+<span class="sd">* print anova style results</span>
+<span class="sd">* add all pairwise comparison tests (DONE) with and without Bonferroni correction</span>
+<span class="sd">* add additional test, likelihood-ratio, lagrange-multiplier, wald ?</span>
+<span class="sd">* test for heteroscedasticity, equality of variances</span>
+<span class="sd">  - how?</span>
+<span class="sd">  - like lagrange-multiplier in stattools heteroscedasticity tests</span>
+<span class="sd">* permutation or bootstrap test statistic or pvalues</span>
+
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+
+<span class="sd">Greene: section 7.4 Modeling and Testing for a Structural Break</span>
+<span class="sd">   is not the same because I use a different normalization, which looks easier</span>
+<span class="sd">   for more than 2 groups/subperiods</span>
+
+<span class="sd">after looking at Greene:</span>
+<span class="sd">* my version assumes that all groups are large enough to estimate the coefficients</span>
+<span class="sd">* in sections 7.4.2 and 7.5.3, predictive tests can also be used when there are</span>
+<span class="sd">  insufficient (nobs&lt;nvars) observations in one group/subperiods</span>
+<span class="sd">  question: can this be used to test structural change for last period?</span>
+<span class="sd">        cusum test but only for current period,</span>
+<span class="sd">        in general cusum is better done with recursive ols</span>
+<span class="sd">        check other references again for this, there was one for non-recursive</span>
+<span class="sd">        calculation of cusum (if I remember correctly)</span>
+<span class="sd">* Greene 7.4.4: with unequal variances Greene mentions Wald test, but where</span>
+<span class="sd">  size of test might not be very good</span>
+<span class="sd">  no mention of F-test based on GLS, is there a reference for what I did?</span>
+<span class="sd">  alternative: use Wald test with bootstrap pvalues?</span>
+
+
+<span class="sd">Created on Sat Mar 27 01:48:01 2010</span>
+<span class="sd">Author: josef-pktd</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">zip</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="kn">from</span> <span class="nn">statsmodels.regression.linear_model</span> <span class="k">import</span> <span class="n">OLS</span><span class="p">,</span> <span class="n">WLS</span>
+
+
+<div class="viewcode-block" id="OneWayLS"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.onewaygls.OneWayLS.html#statsmodels.sandbox.regression.onewaygls.OneWayLS">[docs]</a><span class="k">class</span> <span class="nc">OneWayLS</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Class to test equality of regression coefficients across groups</span>
+
+<span class="sd">    This class performs tests whether the linear regression coefficients are</span>
+<span class="sd">    the same across pre-specified groups. This can be used to test for</span>
+<span class="sd">    structural breaks at given change points, or for ANOVA style analysis of</span>
+<span class="sd">    differences in the effect of explanatory variables across groups.</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    The test is implemented by regression on the original pooled exogenous</span>
+<span class="sd">    variables and on group dummies times the exogenous regressors.</span>
+
+<span class="sd">    y_i = X_i beta_i + u_i  for all groups i</span>
+
+<span class="sd">    The test is for the null hypothesis: beta_i = beta for all i</span>
+<span class="sd">    against the alternative that at least one beta_i is different.</span>
+
+<span class="sd">    By default it is assumed that all u_i have the same variance. If the</span>
+<span class="sd">    keyword option het is True, then it is assumed that the variance is</span>
+<span class="sd">    group specific. This uses WLS with weights given by the standard errors</span>
+<span class="sd">    from separate regressions for each group.</span>
+<span class="sd">    Note: het=True is not sufficiently tested</span>
+
+<span class="sd">    The F-test assumes that the errors are normally distributed.</span>
+
+
+
+<span class="sd">    original question from mailing list for equality of coefficients</span>
+<span class="sd">    across regressions, and example in Stata FAQ</span>
+
+<span class="sd">    *testing*:</span>
+
+<span class="sd">    * if constant is the only regressor then the result for the F-test is</span>
+<span class="sd">      the same as scipy.stats.f_oneway</span>
+<span class="sd">      (which in turn is verified against NIST for not badly scaled problems)</span>
+<span class="sd">    * f-test for simple structural break is the same as in original script</span>
+<span class="sd">    * power and size of test look ok in examples</span>
+<span class="sd">    * not checked/verified for heteroscedastic case</span>
+<span class="sd">      - for constant only: ftest result is the same with WLS as with OLS - check?</span>
+
+<span class="sd">    check: I might be mixing up group names (unique)</span>
+<span class="sd">           and group id (integers in arange(ngroups)</span>
+<span class="sd">           not tested for groups that are not arange(ngroups)</span>
+<span class="sd">           make sure groupnames are always consistently sorted/ordered</span>
+<span class="sd">           Fixed for getting the results, but groups are not printed yet, still</span>
+<span class="sd">           inconsistent use for summaries of results.</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="OneWayLS.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.onewaygls.OneWayLS.__init__.html#statsmodels.sandbox.regression.onewaygls.OneWayLS.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">groups</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">het</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">data</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">meta</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+        <span class="k">if</span> <span class="n">groups</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;use OLS if there are no groups&#39;</span><span class="p">)</span>
+            <span class="c1">#maybe replace by dispatch to OLS</span>
+        <span class="k">if</span> <span class="n">data</span><span class="p">:</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">y</span><span class="p">]</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">[</span><span class="n">data</span><span class="p">[</span><span class="n">v</span><span class="p">]</span> <span class="k">for</span> <span class="n">v</span> <span class="ow">in</span> <span class="n">x</span><span class="p">]</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">groups</span> <span class="o">=</span> <span class="n">data</span><span class="p">[</span><span class="n">groups</span><span class="p">]</span>
+            <span class="k">except</span> <span class="p">[</span><span class="ne">KeyError</span><span class="p">,</span> <span class="ne">ValueError</span><span class="p">]:</span>
+                <span class="k">pass</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">endog</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">y</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="o">.</span><span class="n">ndim</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">exog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groups</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">groups</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">het</span> <span class="o">=</span> <span class="n">het</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">groupsint</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="k">if</span> <span class="n">np</span><span class="o">.</span><span class="n">issubdtype</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="o">.</span><span class="n">dtype</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unique</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">)</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">)))</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">groupsint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">groups</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupsint</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span> <span class="c1"># groups are not consecutive integers</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupsint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groups</span><span class="p">,</span> <span class="n">return_inverse</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">uniqueint</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">))</span> <span class="c1">#as shortcut</span></div>
+
+<div class="viewcode-block" id="OneWayLS.fitbygroups"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.onewaygls.OneWayLS.fitbygroups.html#statsmodels.sandbox.regression.onewaygls.OneWayLS.fitbygroups">[docs]</a>    <span class="k">def</span> <span class="nf">fitbygroups</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;Fit OLS regression for each group separately.</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        results are attached</span>
+
+<span class="sd">        olsbygroup : dictionary of result instance</span>
+<span class="sd">            the returned regression results for each group</span>
+<span class="sd">        sigmabygroup : array (ngroups,) (this should be called sigma2group ??? check)</span>
+<span class="sd">            mse_resid for each group</span>
+<span class="sd">        weights : array (nobs,)</span>
+<span class="sd">            standard deviation of group extended to the original observations. This can</span>
+<span class="sd">            be used as weights in WLS for group-wise heteroscedasticity.</span>
+
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">olsbygroup</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">sigmabygroup</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">gi</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">):</span> <span class="c1">#np.arange(len(self.unique))):</span>
+            <span class="n">groupmask</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">groupsint</span> <span class="o">==</span> <span class="n">gi</span>   <span class="c1">#group index</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">[</span><span class="n">groupmask</span><span class="p">],</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">[</span><span class="n">groupmask</span><span class="p">])</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+            <span class="n">olsbygroup</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">res</span>
+            <span class="n">sigmabygroup</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">mse_resid</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">olsbygroup</span> <span class="o">=</span> <span class="n">olsbygroup</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigmabygroup</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">sigmabygroup</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">weights</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">sigmabygroup</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">groupsint</span><span class="p">])</span> <span class="c1">#TODO:chk sqrt</span></div>
+
+<div class="viewcode-block" id="OneWayLS.fitjoint"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.onewaygls.OneWayLS.fitjoint.html#statsmodels.sandbox.regression.onewaygls.OneWayLS.fitjoint">[docs]</a>    <span class="k">def</span> <span class="nf">fitjoint</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;fit a joint fixed effects model to all observations</span>
+
+<span class="sd">        The regression results are attached as `lsjoint`.</span>
+
+<span class="sd">        The contrasts for overall and pairwise tests for equality of coefficients are</span>
+<span class="sd">        attached as a dictionary `contrasts`. This also includes the contrasts for the test</span>
+<span class="sd">        that the coefficients of a level are zero. ::</span>
+
+<span class="sd">        &gt;&gt;&gt; res.contrasts.keys()</span>
+<span class="sd">        [(0, 1), 1, &#39;all&#39;, 3, (1, 2), 2, (1, 3), (2, 3), (0, 3), (0, 2)]</span>
+
+<span class="sd">        The keys are based on the original names or labels of the groups.</span>
+
+<span class="sd">        TODO: keys can be numpy scalars and then the keys cannot be sorted</span>
+
+
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;weights&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitbygroups</span><span class="p">()</span>
+        <span class="n">groupdummy</span> <span class="o">=</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">groupsint</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span> <span class="o">==</span> <span class="bp">self</span><span class="o">.</span><span class="n">uniqueint</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="nb">int</span><span class="p">)</span>
+        <span class="c1">#order of dummy variables by variable - not used</span>
+        <span class="c1">#dummyexog = self.exog[:,:,None]*groupdummy[:,None,1:]</span>
+        <span class="c1">#order of dummy variables by grous - used</span>
+        <span class="n">dummyexog</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">[:,</span><span class="kc">None</span><span class="p">,:]</span><span class="o">*</span><span class="n">groupdummy</span><span class="p">[:,</span><span class="mi">1</span><span class="p">:,</span><span class="kc">None</span><span class="p">]</span>
+        <span class="n">exog</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">,</span> <span class="n">dummyexog</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span><span class="o">-</span><span class="mi">1</span><span class="p">)]</span> <span class="c1">#self.nobs ??</span>
+        <span class="c1">#Notes: I changed to drop first group from dummy</span>
+        <span class="c1">#instead I want one full set dummies</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">het</span><span class="p">:</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">WLS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="n">exog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lsjoint</span> <span class="o">=</span> <span class="n">res</span>
+        <span class="n">contrasts</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">nvars</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">nparams</span> <span class="o">=</span> <span class="n">exog</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+        <span class="n">ndummies</span> <span class="o">=</span> <span class="n">nparams</span> <span class="o">-</span> <span class="n">nvars</span>
+        <span class="n">contrasts</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">c_</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">ndummies</span><span class="p">,</span> <span class="n">nvars</span><span class="p">)),</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">ndummies</span><span class="p">)]</span>
+        <span class="k">for</span> <span class="n">groupind</span><span class="p">,</span> <span class="n">group</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">[</span><span class="mi">1</span><span class="p">:]):</span>  <span class="c1">#need enumerate if groups != groupsint</span>
+            <span class="n">groupind</span> <span class="o">=</span> <span class="n">groupind</span> <span class="o">+</span> <span class="mi">1</span>
+            <span class="n">contr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nvars</span><span class="p">,</span> <span class="n">nparams</span><span class="p">))</span>
+            <span class="n">contr</span><span class="p">[:,</span><span class="n">nvars</span><span class="o">*</span><span class="n">groupind</span><span class="p">:</span><span class="n">nvars</span><span class="o">*</span><span class="p">(</span><span class="n">groupind</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span>
+            <span class="n">contrasts</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">contr</span>
+            <span class="c1">#save also for pairs, see next</span>
+            <span class="n">contrasts</span><span class="p">[(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">group</span><span class="p">)]</span> <span class="o">=</span> <span class="n">contr</span>
+
+        <span class="c1">#Note: I&#39;m keeping some duplication for testing</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu_indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ind1</span><span class="p">,</span><span class="n">ind2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pairs</span><span class="p">):</span>  <span class="c1">#replace with group1, group2 in sorted(keys)</span>
+            <span class="k">if</span> <span class="n">ind1</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="k">continue</span> <span class="c1"># need comparison with benchmark/normalization group separate</span>
+            <span class="n">g1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">[</span><span class="n">ind1</span><span class="p">]</span>
+            <span class="n">g2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">[</span><span class="n">ind2</span><span class="p">]</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">)</span>
+            <span class="n">contr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">((</span><span class="n">nvars</span><span class="p">,</span> <span class="n">nparams</span><span class="p">))</span>
+            <span class="n">contr</span><span class="p">[:,</span><span class="n">nvars</span><span class="o">*</span><span class="n">ind1</span><span class="p">:</span><span class="n">nvars</span><span class="o">*</span><span class="p">(</span><span class="n">ind1</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span>
+            <span class="n">contr</span><span class="p">[:,</span><span class="n">nvars</span><span class="o">*</span><span class="n">ind2</span><span class="p">:</span><span class="n">nvars</span><span class="o">*</span><span class="p">(</span><span class="n">ind2</span><span class="o">+</span><span class="mi">1</span><span class="p">)]</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">eye</span><span class="p">(</span><span class="n">nvars</span><span class="p">)</span>
+            <span class="n">contrasts</span><span class="p">[</span><span class="n">group</span><span class="p">]</span> <span class="o">=</span> <span class="n">contr</span>
+
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">contrasts</span> <span class="o">=</span> <span class="n">contrasts</span></div>
+
+<div class="viewcode-block" id="OneWayLS.fitpooled"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.onewaygls.OneWayLS.fitpooled.html#statsmodels.sandbox.regression.onewaygls.OneWayLS.fitpooled">[docs]</a>    <span class="k">def</span> <span class="nf">fitpooled</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;fit the pooled model, which assumes there are no differences across groups</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">het</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;weights&#39;</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">fitbygroups</span><span class="p">()</span>
+            <span class="n">weights</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">weights</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">WLS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">,</span> <span class="n">weights</span><span class="o">=</span><span class="n">weights</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">res</span> <span class="o">=</span> <span class="n">OLS</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">endog</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">exog</span><span class="p">)</span><span class="o">.</span><span class="n">fit</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">lspooled</span> <span class="o">=</span> <span class="n">res</span></div>
+
+<div class="viewcode-block" id="OneWayLS.ftest_summary"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.onewaygls.OneWayLS.ftest_summary.html#statsmodels.sandbox.regression.onewaygls.OneWayLS.ftest_summary">[docs]</a>    <span class="k">def</span> <span class="nf">ftest_summary</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;run all ftests on the joint model</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        -------</span>
+<span class="sd">        fres : str</span>
+<span class="sd">           a string that lists the results of all individual f-tests</span>
+<span class="sd">        summarytable : list of tuples</span>
+<span class="sd">           contains (pair, (fvalue, pvalue,df_denom, df_num)) for each f-test</span>
+
+<span class="sd">        Note</span>
+<span class="sd">        ----</span>
+<span class="sd">        This are the raw results and not formatted for nice printing.</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;lsjoint&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitjoint</span><span class="p">()</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="n">summarytable</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;F-test for equality of coefficients across groups&#39;</span><span class="p">)</span>
+        <span class="n">fres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lsjoint</span><span class="o">.</span><span class="n">f_test</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contrasts</span><span class="p">[</span><span class="s1">&#39;all&#39;</span><span class="p">])</span>
+        <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fres</span><span class="o">.</span><span class="n">__str__</span><span class="p">())</span>
+        <span class="n">summarytable</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="s1">&#39;all&#39;</span><span class="p">,(</span><span class="n">fres</span><span class="o">.</span><span class="n">fvalue</span><span class="p">,</span> <span class="n">fres</span><span class="o">.</span><span class="n">pvalue</span><span class="p">,</span> <span class="n">fres</span><span class="o">.</span><span class="n">df_denom</span><span class="p">,</span> <span class="n">fres</span><span class="o">.</span><span class="n">df_num</span><span class="p">)))</span>
+
+<span class="c1">#        for group in self.unique[1:]:  #replace with group1, group2 in sorted(keys)</span>
+<span class="c1">#            txt.append(&#39;F-test for equality of coefficients between group&#39;</span>
+<span class="c1">#                       &#39; %s and group %s&#39; % (group, &#39;0&#39;))</span>
+<span class="c1">#            fres = self.lsjoint.f_test(self.contrasts[group])</span>
+<span class="c1">#            txt.append(fres.__str__())</span>
+<span class="c1">#            summarytable.append((group,(fres.fvalue, fres.pvalue, fres.df_denom, fres.df_num)))</span>
+        <span class="n">pairs</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">triu_indices</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">ind1</span><span class="p">,</span><span class="n">ind2</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="o">*</span><span class="n">pairs</span><span class="p">):</span>  <span class="c1">#replace with group1, group2 in sorted(keys)</span>
+            <span class="n">g1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">[</span><span class="n">ind1</span><span class="p">]</span>
+            <span class="n">g2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">unique</span><span class="p">[</span><span class="n">ind2</span><span class="p">]</span>
+            <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="s1">&#39;F-test for equality of coefficients between group&#39;</span>
+                       <span class="s1">&#39; </span><span class="si">%s</span><span class="s1"> and group </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">))</span>
+            <span class="n">group</span> <span class="o">=</span> <span class="p">(</span><span class="n">g1</span><span class="p">,</span> <span class="n">g2</span><span class="p">)</span>
+            <span class="n">fres</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lsjoint</span><span class="o">.</span><span class="n">f_test</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">contrasts</span><span class="p">[</span><span class="n">group</span><span class="p">])</span>
+            <span class="n">txt</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">fres</span><span class="o">.</span><span class="n">__str__</span><span class="p">())</span>
+            <span class="n">summarytable</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">group</span><span class="p">,(</span><span class="n">fres</span><span class="o">.</span><span class="n">fvalue</span><span class="p">,</span> <span class="n">fres</span><span class="o">.</span><span class="n">pvalue</span><span class="p">,</span> <span class="n">fres</span><span class="o">.</span><span class="n">df_denom</span><span class="p">,</span> <span class="n">fres</span><span class="o">.</span><span class="n">df_num</span><span class="p">)))</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">summarytable</span> <span class="o">=</span> <span class="n">summarytable</span>
+        <span class="k">return</span> <span class="s1">&#39;</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">txt</span><span class="p">),</span> <span class="n">summarytable</span></div>
+
+
+<div class="viewcode-block" id="OneWayLS.print_summary"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.onewaygls.OneWayLS.print_summary.html#statsmodels.sandbox.regression.onewaygls.OneWayLS.print_summary">[docs]</a>    <span class="k">def</span> <span class="nf">print_summary</span><span class="p">(</span><span class="n">res</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;printable string of summary</span>
+
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="n">groupind</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">groups</span>
+        <span class="c1">#res.fitjoint()  #not really necessary, because called by ftest_summary</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">res</span><span class="p">,</span> <span class="s1">&#39;self.summarytable&#39;</span><span class="p">):</span>
+            <span class="n">summtable</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">summarytable</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="n">_</span><span class="p">,</span> <span class="n">summtable</span> <span class="o">=</span> <span class="n">res</span><span class="o">.</span><span class="n">ftest_summary</span><span class="p">()</span>
+        <span class="n">txt</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="c1">#print ft[0]  #skip because table is nicer</span>
+        <span class="n">templ</span> <span class="o">=</span> \
+<span class="sd">&#39;&#39;&#39;Table of F-tests for overall or pairwise equality of coefficients&#39;</span>
+<span class="sd">%(tab)s</span>
+
+
+<span class="sd">Notes: p-values are not corrected for many tests</span>
+<span class="sd">       (no Bonferroni correction)</span>
+<span class="sd">       * : reject at 5%% uncorrected confidence level</span>
+<span class="sd">Null hypothesis: all or pairwise coefficient are the same&#39;</span>
+<span class="sd">Alternative hypothesis: all coefficients are different&#39;</span>
+
+
+<span class="sd">Comparison with stats.f_oneway</span>
+<span class="sd">%(statsfow)s</span>
+
+
+<span class="sd">Likelihood Ratio Test</span>
+<span class="sd">%(lrtest)s</span>
+<span class="sd">Null model: pooled all coefficients are the same across groups,&#39;</span>
+<span class="sd">Alternative model: all coefficients are allowed to be different&#39;</span>
+<span class="sd">not verified but looks close to f-test result&#39;</span>
+
+
+<span class="sd">Ols parameters by group from individual, separate ols regressions&#39;</span>
+<span class="sd">%(olsbg)s</span>
+<span class="sd">for group in sorted(res.olsbygroup):</span>
+<span class="sd">    r = res.olsbygroup[group]</span>
+<span class="sd">    print group, r.params</span>
+
+
+<span class="sd">Check for heteroscedasticity, &#39;</span>
+<span class="sd">variance and standard deviation for individual regressions&#39;</span>
+<span class="sd">%(grh)s</span>
+<span class="sd">variance    &#39;, res.sigmabygroup</span>
+<span class="sd">standard dev&#39;, np.sqrt(res.sigmabygroup)</span>
+<span class="sd">&#39;&#39;&#39;</span>
+
+        <span class="kn">from</span> <span class="nn">statsmodels.iolib</span> <span class="k">import</span> <span class="n">SimpleTable</span>
+        <span class="n">resvals</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="n">resvals</span><span class="p">[</span><span class="s1">&#39;tab&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">SimpleTable</span><span class="p">([([</span><span class="s1">&#39;</span><span class="si">%r</span><span class="s1">&#39;</span><span class="o">%</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">0</span><span class="p">],)]</span>
+                            <span class="o">+</span> <span class="nb">list</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                            <span class="o">+</span> <span class="p">[</span><span class="s1">&#39;*&#39;</span><span class="p">]</span><span class="o">*</span><span class="p">(</span><span class="n">row</span><span class="p">[</span><span class="mi">1</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span><span class="o">&gt;</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">item</span><span class="p">()</span> <span class="p">)</span> <span class="k">for</span> <span class="n">row</span> <span class="ow">in</span> <span class="n">summtable</span><span class="p">],</span>
+                          <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;pair&#39;</span><span class="p">,</span> <span class="s1">&#39;F-statistic&#39;</span><span class="p">,</span><span class="s1">&#39;p-value&#39;</span><span class="p">,</span><span class="s1">&#39;df_denom&#39;</span><span class="p">,</span>
+                                   <span class="s1">&#39;df_num&#39;</span><span class="p">]))</span>
+        <span class="n">resvals</span><span class="p">[</span><span class="s1">&#39;statsfow&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">f_oneway</span><span class="p">(</span><span class="o">*</span><span class="p">[</span><span class="n">res</span><span class="o">.</span><span class="n">endog</span><span class="p">[</span><span class="n">groupind</span><span class="o">==</span><span class="n">gr</span><span class="p">]</span> <span class="k">for</span> <span class="n">gr</span> <span class="ow">in</span>
+                                                   <span class="n">res</span><span class="o">.</span><span class="n">unique</span><span class="p">]))</span>
+        <span class="c1">#resvals[&#39;lrtest&#39;] = str(res.lr_test())</span>
+        <span class="n">resvals</span><span class="p">[</span><span class="s1">&#39;lrtest&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">SimpleTable</span><span class="p">([</span><span class="n">res</span><span class="o">.</span><span class="n">lr_test</span><span class="p">()],</span>
+                                    <span class="n">headers</span><span class="o">=</span><span class="p">[</span><span class="s1">&#39;likelihood ratio&#39;</span><span class="p">,</span> <span class="s1">&#39;p-value&#39;</span><span class="p">,</span> <span class="s1">&#39;df&#39;</span><span class="p">]</span> <span class="p">))</span>
+
+        <span class="n">resvals</span><span class="p">[</span><span class="s1">&#39;olsbg&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">SimpleTable</span><span class="p">([[</span><span class="n">group</span><span class="p">]</span>
+                                            <span class="o">+</span> <span class="n">res</span><span class="o">.</span><span class="n">olsbygroup</span><span class="p">[</span><span class="n">group</span><span class="p">]</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">tolist</span><span class="p">()</span>
+                                            <span class="k">for</span> <span class="n">group</span> <span class="ow">in</span> <span class="nb">sorted</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">olsbygroup</span><span class="p">)]))</span>
+        <span class="n">resvals</span><span class="p">[</span><span class="s1">&#39;grh&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="nb">str</span><span class="p">(</span><span class="n">SimpleTable</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">vstack</span><span class="p">([</span><span class="n">res</span><span class="o">.</span><span class="n">sigmabygroup</span><span class="p">,</span>
+                                               <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">res</span><span class="o">.</span><span class="n">sigmabygroup</span><span class="p">)]),</span>
+                                     <span class="n">headers</span><span class="o">=</span><span class="n">res</span><span class="o">.</span><span class="n">unique</span><span class="o">.</span><span class="n">tolist</span><span class="p">()))</span>
+
+        <span class="k">return</span> <span class="n">templ</span> <span class="o">%</span> <span class="n">resvals</span></div>
+
+
+
+    <span class="c1"># a variation of this has been added to RegressionResults as compare_lr</span>
+<div class="viewcode-block" id="OneWayLS.lr_test"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.regression.onewaygls.OneWayLS.lr_test.html#statsmodels.sandbox.regression.onewaygls.OneWayLS.lr_test">[docs]</a>    <span class="k">def</span> <span class="nf">lr_test</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;generic likelihood ration test between nested models</span>
+
+<span class="sd">            \begin{align} D &amp; = -2(\ln(\text{likelihood for null model}) - \ln(\text{likelihood for alternative model})) \\ &amp; = -2\ln\left( \frac{\text{likelihood for null model}}{\text{likelihood for alternative model}} \right). \end{align}</span>
+
+<span class="sd">            is distributed as chisquare with df equal to difference in number of parameters or equivalently</span>
+<span class="sd">            difference in residual degrees of freedom  (sign?)</span>
+
+<span class="sd">        TODO: put into separate function</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;lsjoint&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitjoint</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s1">&#39;lspooled&#39;</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">fitpooled</span><span class="p">()</span>
+        <span class="n">loglikejoint</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lsjoint</span><span class="o">.</span><span class="n">llf</span>
+        <span class="n">loglikepooled</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lspooled</span><span class="o">.</span><span class="n">llf</span>
+        <span class="n">lrstat</span> <span class="o">=</span> <span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">loglikepooled</span> <span class="o">-</span> <span class="n">loglikejoint</span><span class="p">)</span>   <span class="c1">#??? check sign</span>
+        <span class="n">lrdf</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">lspooled</span><span class="o">.</span><span class="n">df_resid</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">lsjoint</span><span class="o">.</span><span class="n">df_resid</span>
+        <span class="n">lrpval</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">chi2</span><span class="o">.</span><span class="n">sf</span><span class="p">(</span><span class="n">lrstat</span><span class="p">,</span> <span class="n">lrdf</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">lrstat</span><span class="p">,</span> <span class="n">lrpval</span><span class="p">,</span> <span class="n">lrdf</span></div></div>
+
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

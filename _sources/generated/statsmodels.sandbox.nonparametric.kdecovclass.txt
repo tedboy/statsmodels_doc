@@ -1,0 +1,44 @@
+statsmodels.sandbox.nonparametric.kdecovclass
+=============================================
+
+.. automodule:: statsmodels.sandbox.nonparametric.kdecovclass
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      plotkde
+      test_kde_1d
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      gaussian_kde_covfact
+      gaussian_kde_set_covariance
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_covfact
+       generated/statsmodels.sandbox.nonparametric.kdecovclass.gaussian_kde_set_covariance
+
+   
+   
+
+   
+   
+   

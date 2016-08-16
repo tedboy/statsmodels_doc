@@ -1,0 +1,61 @@
+statsmodels.regression.quantile_regression
+==========================================
+
+.. automodule:: statsmodels.regression.quantile_regression
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      bofinger
+      chain_dot
+      chamberlain
+      hall_sheather
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      QuantReg
+      QuantRegResults
+      RegressionModel
+      RegressionResults
+      RegressionResultsWrapper
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.regression.quantile_regression.QuantReg
+       generated/statsmodels.regression.quantile_regression.QuantRegResults
+       generated/statsmodels.regression.quantile_regression.RegressionModel
+       generated/statsmodels.regression.quantile_regression.RegressionResults
+       generated/statsmodels.regression.quantile_regression.RegressionResultsWrapper
+
+   
+   
+
+   
+   
+   Exceptions
+   ----------
+   .. autosummary::
+      :toctree:
+
+   
+      ConvergenceWarning
+      IterationLimitWarning
+   
+   

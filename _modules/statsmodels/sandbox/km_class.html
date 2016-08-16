@@ -1,0 +1,455 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.km_class &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.km_class</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.km_class</h1><div class="highlight"><pre>
+<span></span><span class="c1">#a class for the Kaplan-Meier estimator</span>
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="k">import</span> <span class="n">sqrt</span>
+<span class="kn">import</span> <span class="nn">matplotlib.pyplot</span> <span class="k">as</span> <span class="nn">plt</span>
+
+<div class="viewcode-block" id="KAPLAN_MEIER"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.km_class.KAPLAN_MEIER.html#statsmodels.sandbox.km_class.KAPLAN_MEIER">[docs]</a><span class="k">class</span> <span class="nc">KAPLAN_MEIER</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+<div class="viewcode-block" id="KAPLAN_MEIER.__init__"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.km_class.KAPLAN_MEIER.__init__.html#statsmodels.sandbox.km_class.KAPLAN_MEIER.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">data</span><span class="p">,</span> <span class="n">timesIn</span><span class="p">,</span> <span class="n">groupIn</span><span class="p">,</span> <span class="n">censoringIn</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">RuntimeError</span><span class="p">(</span><span class="s1">&#39;Newer version of Kaplan-Meier class available in survival2.py&#39;</span><span class="p">)</span>
+        <span class="c1">#store the inputs</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">data</span> <span class="o">=</span> <span class="n">data</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">timesIn</span> <span class="o">=</span> <span class="n">timesIn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">groupIn</span> <span class="o">=</span> <span class="n">groupIn</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">censoringIn</span> <span class="o">=</span> <span class="n">censoringIn</span></div>
+
+<div class="viewcode-block" id="KAPLAN_MEIER.fit"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.km_class.KAPLAN_MEIER.fit.html#statsmodels.sandbox.km_class.KAPLAN_MEIER.fit">[docs]</a>    <span class="k">def</span> <span class="nf">fit</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#split the data into groups based on the predicting variable</span>
+        <span class="c1">#get a set of all the groups</span>
+        <span class="n">groups</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[:,</span><span class="bp">self</span><span class="o">.</span><span class="n">groupIn</span><span class="p">]))</span>
+        <span class="c1">#create an empty list to store the data for different groups</span>
+        <span class="n">groupList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1">#create an empty list for each group and add it to groups</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)):</span>
+            <span class="n">groupList</span><span class="o">.</span><span class="n">append</span><span class="p">([])</span>
+        <span class="c1">#iterate through all the groups in groups</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groups</span><span class="p">)):</span>
+           <span class="c1">#iterate though the rows of dataArray</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">)):</span>
+                <span class="c1">#test if this row has the correct group</span>
+                <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">,</span><span class="bp">self</span><span class="o">.</span><span class="n">groupIn</span><span class="p">]</span> <span class="o">==</span> <span class="n">groups</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                    <span class="c1">#add the row to groupList</span>
+                    <span class="n">groupList</span><span class="p">[</span><span class="n">i</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">data</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
+        <span class="c1">#create an empty list to store the times for each group</span>
+        <span class="n">timeList</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1">#iterate through all the groups</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groupList</span><span class="p">)):</span>
+            <span class="c1">#create an empty list</span>
+            <span class="n">times</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1">#iterate through all the rows of the group</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groupList</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                <span class="c1">#get a list of all the times in the group</span>
+                <span class="n">times</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">groupList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">timesIn</span><span class="p">])</span>
+            <span class="c1">#get a sorted set of the times and store it in timeList</span>
+            <span class="n">times</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="nb">sorted</span><span class="p">(</span><span class="nb">set</span><span class="p">(</span><span class="n">times</span><span class="p">)))</span>
+            <span class="n">timeList</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">times</span><span class="p">)</span>
+        <span class="c1">#get a list of the number at risk and events at each time</span>
+        <span class="c1">#create an empty list to store the results in</span>
+        <span class="n">timeCounts</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1">#create an empty list to hold points for plotting</span>
+        <span class="n">points</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1">#create a list for points where censoring occurs</span>
+        <span class="n">censoredPoints</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1">#iterate trough each group</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groupList</span><span class="p">)):</span>
+            <span class="c1">#initialize a variable to estimate the survival function</span>
+            <span class="n">survival</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="c1">#initialize a variable to estimate the variance of</span>
+            <span class="c1">#the survival function</span>
+            <span class="n">varSum</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1">#initialize a counter for the number at risk</span>
+            <span class="n">riskCounter</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">groupList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span>
+            <span class="c1">#create a list for the counts for this group</span>
+            <span class="n">counts</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1">##create a list for points to plot</span>
+            <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="n">y</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="c1">#iterate through the list of times</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                <span class="k">if</span> <span class="n">j</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">j</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                        <span class="c1">#add an indicator to tell if the time</span>
+                        <span class="c1">#starts a new group</span>
+                        <span class="n">groupInd</span> <span class="o">=</span> <span class="mi">1</span>
+                        <span class="c1">#add (0,1) to the list of points</span>
+                        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+                        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="c1">#add the point time to the right of that</span>
+                        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+                        <span class="c1">#add the point below that at survival</span>
+                        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">survival</span><span class="p">)</span>
+                        <span class="c1">#add the survival to y</span>
+                        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">survival</span><span class="p">)</span>
+                    <span class="k">else</span><span class="p">:</span>
+                        <span class="n">groupInd</span> <span class="o">=</span> <span class="mi">0</span>
+                        <span class="c1">#add survival twice to y</span>
+                        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">survival</span><span class="p">)</span>
+                        <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">survival</span><span class="p">)</span>
+                        <span class="c1">#add the time twice to x</span>
+                        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                        <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="c1">#add each censored time, number of censorings and</span>
+                    <span class="c1">#its survival to censoredPoints</span>
+                    <span class="n">censoredPoints</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                           <span class="n">censoringNum</span><span class="p">,</span><span class="n">survival</span><span class="p">,</span><span class="n">groupInd</span><span class="p">])</span>
+                    <span class="c1">#add the count to the list</span>
+                    <span class="n">counts</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="n">riskCounter</span><span class="p">,</span>
+                                   <span class="n">eventCounter</span><span class="p">,</span><span class="n">survival</span><span class="p">,</span>
+                                   <span class="n">sqrt</span><span class="p">(((</span><span class="n">survival</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">varSum</span><span class="p">)])</span>
+                    <span class="c1">#increment the number at risk</span>
+                    <span class="n">riskCounter</span> <span class="o">+=</span> <span class="o">-</span><span class="mi">1</span><span class="o">*</span><span class="p">(</span><span class="n">riskChange</span><span class="p">)</span>
+                <span class="c1">#initialize a counter for the change in the number at risk</span>
+                <span class="n">riskChange</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="c1">#initialize a counter to zero</span>
+                <span class="n">eventCounter</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="c1">#intialize a counter to tell when censoring occurs</span>
+                <span class="n">censoringCounter</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="n">censoringNum</span> <span class="o">=</span> <span class="mi">0</span>
+                <span class="c1">#iterate through the observations in each group</span>
+                <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">groupList</span><span class="p">[</span><span class="n">i</span><span class="p">])):</span>
+                    <span class="c1">#check of the observation has the given time</span>
+                    <span class="k">if</span> <span class="p">(</span><span class="n">groupList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">timesIn</span><span class="p">])</span> <span class="o">==</span> <span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">j</span><span class="p">]):</span>
+                        <span class="c1">#increment the number at risk counter</span>
+                        <span class="n">riskChange</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="c1">#check if this is an event or censoring</span>
+                        <span class="k">if</span> <span class="n">groupList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="n">k</span><span class="p">][</span><span class="bp">self</span><span class="o">.</span><span class="n">censoringIn</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="c1">#add 1 to the counter</span>
+                            <span class="n">eventCounter</span> <span class="o">+=</span> <span class="mi">1</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">censoringNum</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="c1">#check if there are any events at this time</span>
+                <span class="k">if</span> <span class="n">eventCounter</span> <span class="o">!=</span> <span class="n">censoringCounter</span><span class="p">:</span>
+                    <span class="n">censoringCounter</span> <span class="o">=</span> <span class="n">eventCounter</span>
+                    <span class="c1">#calculate the estimate of the survival function</span>
+                    <span class="n">survival</span> <span class="o">*=</span> <span class="p">((</span><span class="nb">float</span><span class="p">(</span><span class="n">riskCounter</span><span class="p">)</span> <span class="o">-</span>
+                                  <span class="n">eventCounter</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="n">riskCounter</span><span class="p">))</span>
+                    <span class="k">try</span><span class="p">:</span>
+                        <span class="c1">#calculate the estimate of the variance</span>
+                        <span class="n">varSum</span> <span class="o">+=</span> <span class="p">(</span><span class="n">eventCounter</span><span class="p">)</span><span class="o">/</span><span class="p">((</span><span class="n">riskCounter</span><span class="p">)</span>
+                                                  <span class="o">*</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="n">riskCounter</span><span class="p">)</span><span class="o">-</span>
+                                                    <span class="n">eventCounter</span><span class="p">))</span>
+                    <span class="k">except</span> <span class="ne">ZeroDivisionError</span><span class="p">:</span>
+                        <span class="n">varSum</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="c1">#append the last row to counts</span>
+            <span class="n">counts</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="nb">len</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                           <span class="n">riskCounter</span><span class="p">,</span><span class="n">eventCounter</span><span class="p">,</span><span class="n">survival</span><span class="p">,</span>
+                           <span class="n">sqrt</span><span class="p">(((</span><span class="n">survival</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">*</span><span class="n">varSum</span><span class="p">)])</span>
+            <span class="c1">#add the last time once to x</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="nb">len</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="n">x</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="nb">len</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1">#add the last survival twice to y</span>
+            <span class="n">y</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">survival</span><span class="p">)</span>
+            <span class="c1">#y.append(survival)</span>
+            <span class="n">censoredPoints</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="nb">len</span><span class="p">(</span><span class="n">timeList</span><span class="p">[</span><span class="n">i</span><span class="p">])</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span>
+                                   <span class="n">censoringNum</span><span class="p">,</span><span class="n">survival</span><span class="p">,</span><span class="mi">1</span><span class="p">])</span>
+            <span class="c1">#add the list for the group to al ist for all the groups</span>
+            <span class="n">timeCounts</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">counts</span><span class="p">))</span>
+            <span class="n">points</span><span class="o">.</span><span class="n">append</span><span class="p">([</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">])</span>
+        <span class="c1">#returns a list of arrays, where each array has as it columns: the time,</span>
+        <span class="c1">#the number at risk, the number of events, the estimated value of the</span>
+        <span class="c1">#survival function at that time, and the estimated standard error at</span>
+        <span class="c1">#that time, in that order</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">results</span> <span class="o">=</span> <span class="n">timeCounts</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">points</span> <span class="o">=</span> <span class="n">points</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span> <span class="o">=</span> <span class="n">censoredPoints</span></div>
+
+<div class="viewcode-block" id="KAPLAN_MEIER.plot"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.km_class.KAPLAN_MEIER.plot.html#statsmodels.sandbox.km_class.KAPLAN_MEIER.plot">[docs]</a>    <span class="k">def</span> <span class="nf">plot</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="c1">#iterate through the groups</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">)):</span>
+            <span class="c1">#plot x and y</span>
+            <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]),</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">1</span><span class="p">]))</span>
+            <span class="c1">#create lists of all the x and y values</span>
+            <span class="n">x</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span>
+        <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">)):</span>
+            <span class="c1">#check if censoring is occuring</span>
+            <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]</span> <span class="o">!=</span> <span class="mi">0</span><span class="p">):</span>
+                <span class="c1">#if this is the first censored point</span>
+                <span class="k">if</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span> <span class="p">(</span><span class="n">j</span> <span class="o">==</span> <span class="mi">0</span><span class="p">):</span>
+                    <span class="c1">#calculate a distance beyond 1 to place it</span>
+                    <span class="c1">#so all the points will fit</span>
+                    <span class="n">dx</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.</span><span class="o">/</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mf">1.</span><span class="p">))</span>
+                    <span class="o">*</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">])))</span>
+                    <span class="c1">#iterate through all the censored points at this time</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="c1">#plot a vertical line for censoring</span>
+                        <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="p">((</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span><span class="p">)),</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mf">0.03</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mf">0.03</span><span class="p">)</span>
+                <span class="c1">#if this censored point starts a new group</span>
+                <span class="k">elif</span> <span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">and</span>
+                      <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">3</span><span class="p">]</span> <span class="o">==</span> <span class="mi">1</span><span class="p">)):</span>
+                    <span class="c1">#calculate a distance beyond 1 to place it</span>
+                    <span class="c1">#so all the points will fit</span>
+                    <span class="n">dx</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.</span><span class="o">/</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mf">1.</span><span class="p">))</span>
+                    <span class="o">*</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">])))</span>
+                    <span class="c1">#iterate through all the censored points at this time</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="c1">#plot a vertical line for censoring</span>
+                        <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="p">((</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span><span class="p">)),</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mf">0.03</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mf">0.03</span><span class="p">)</span>
+                <span class="c1">#if this is the last censored point</span>
+                <span class="k">elif</span> <span class="n">j</span> <span class="o">==</span> <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">)</span> <span class="o">-</span> <span class="mi">1</span><span class="p">):</span>
+                    <span class="c1">#calculate a distance beyond the previous time</span>
+                    <span class="c1">#so that all the points will fit</span>
+                    <span class="n">dx</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.</span><span class="o">/</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mf">1.</span><span class="p">))</span>
+                    <span class="o">*</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">])))</span>
+                    <span class="c1">#iterate through all the points at this time</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="c1">#plot a vertical line for censoring</span>
+                        <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="o">-</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="p">((</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span><span class="p">)),</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mf">0.03</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mf">0.03</span><span class="p">)</span>
+                <span class="c1">#if this is a point in the middle of the group</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="c1">#calcuate a distance beyond the current time</span>
+                    <span class="c1">#to place the point, so they all fit</span>
+                    <span class="n">dx</span> <span class="o">=</span> <span class="p">((</span><span class="mf">1.</span><span class="o">/</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">])</span><span class="o">+</span><span class="mf">1.</span><span class="p">))</span>
+                    <span class="o">*</span><span class="p">(</span><span class="nb">float</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="o">+</span><span class="mi">1</span><span class="p">][</span><span class="mi">0</span><span class="p">])</span>
+                      <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]))</span>
+                    <span class="c1">#iterate through all the points at this time</span>
+                    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">1</span><span class="p">]):</span>
+                        <span class="c1">#plot a vetical line for censoring</span>
+                        <span class="n">plt</span><span class="o">.</span><span class="n">vlines</span><span class="p">((</span><span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">0</span><span class="p">]</span><span class="o">+</span><span class="p">((</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">dx</span><span class="p">)),</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">-</span><span class="mf">0.03</span><span class="p">,</span>
+                                   <span class="bp">self</span><span class="o">.</span><span class="n">censoredPoints</span><span class="p">[</span><span class="n">j</span><span class="p">][</span><span class="mi">2</span><span class="p">]</span><span class="o">+</span><span class="mf">0.03</span><span class="p">)</span>
+        <span class="c1">#set the size of the plot so it extends to the max x and above 1 for y</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">x</span><span class="p">)))</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylim</span><span class="p">((</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.05</span><span class="p">))</span>
+        <span class="c1">#label the axes</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s1">&#39;time&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s1">&#39;survival&#39;</span><span class="p">)</span>
+        <span class="n">plt</span><span class="o">.</span><span class="n">show</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="KAPLAN_MEIER.show_results"><a class="viewcode-back" href="../../../generated/generated/statsmodels.sandbox.km_class.KAPLAN_MEIER.show_results.html#statsmodels.sandbox.km_class.KAPLAN_MEIER.show_results">[docs]</a>    <span class="k">def</span> <span class="nf">show_results</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="c1">#start a string that will be a table of the results</span>
+        <span class="n">resultsString</span> <span class="o">=</span> <span class="s1">&#39;&#39;</span>
+        <span class="c1">#iterate through all the groups</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">)):</span>
+            <span class="c1">#label the group and header</span>
+            <span class="n">resultsString</span> <span class="o">+=</span> <span class="p">(</span><span class="s1">&#39;Group </span><span class="si">{0}</span><span class="se">\n\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="n">i</span><span class="p">)</span> <span class="o">+</span>
+            <span class="s1">&#39;Time     At Risk     Events     Survival     Std. Err</span><span class="se">\n</span><span class="s1">&#39;</span><span class="p">)</span>
+            <span class="k">for</span> <span class="n">j</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">results</span><span class="p">[</span><span class="n">i</span><span class="p">]:</span>
+                <span class="c1">#add the results to the string</span>
+                <span class="n">resultsString</span> <span class="o">+=</span> <span class="p">(</span>
+                <span class="s1">&#39;</span><span class="si">{0:&lt;9d}{1:&lt;12d}{2:&lt;11d}{3:&lt;13.4f}{4:&lt;6.4f}</span><span class="se">\n</span><span class="s1">&#39;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span>
+                    <span class="nb">int</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">0</span><span class="p">]),</span><span class="nb">int</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="nb">int</span><span class="p">(</span><span class="n">j</span><span class="p">[</span><span class="mi">2</span><span class="p">]),</span><span class="n">j</span><span class="p">[</span><span class="mi">3</span><span class="p">],</span><span class="n">j</span><span class="p">[</span><span class="mi">4</span><span class="p">]))</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">resultsString</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

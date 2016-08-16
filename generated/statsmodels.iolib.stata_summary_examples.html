@@ -1,0 +1,277 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.5.4. statsmodels.iolib.stata_summary_examples &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../index.html"/>
+        <link rel="up" title="4. Other modules of interest" href="../submain.html"/>
+        <link rel="next" title="4.5.5. statsmodels.iolib.summary" href="statsmodels.iolib.summary.html"/>
+        <link rel="prev" title="4.5.3.1.2. statsmodels.iolib.smpickle.save_pickle" href="statsmodels.iolib.smpickle.save_pickle.html"/> 
+
+  
+  <script src="../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a><ul class="current">
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.api.html">4.5.1. statsmodels.iolib.api</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.foreign.html">4.5.2. statsmodels.iolib.foreign</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.smpickle.html">4.5.3. statsmodels.iolib.smpickle</a></li>
+<li class="toctree-l3 current"><a class="current reference internal" href="#">4.5.4. statsmodels.iolib.stata_summary_examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.summary.html">4.5.5. statsmodels.iolib.summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.summary2.html">4.5.6. statsmodels.iolib.summary2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.table.html">4.5.7. statsmodels.iolib.table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="statsmodels.iolib.tableformatting.html">4.5.8. statsmodels.iolib.tableformatting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+      <li>4.5.4. statsmodels.iolib.stata_summary_examples</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../_sources/generated/statsmodels.iolib.stata_summary_examples.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-statsmodels.iolib.stata_summary_examples">
+<span id="statsmodels-iolib-stata-summary-examples"></span><h1>4.5.4. statsmodels.iolib.stata_summary_examples<a class="headerlink" href="#module-statsmodels.iolib.stata_summary_examples" title="Permalink to this headline">¶</a></h1>
+<p>. regress totemp gnpdefl gnp unemp armed pop year</p>
+<blockquote>
+<div>Source |       SS       df       MS              Number of obs =      16</div></blockquote>
+<dl class="docutils">
+<dt>&#8212;&#8212;&#8212;&#8212;-+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;           F(  6,     9) =  330.29</dt>
+<dd><blockquote class="first">
+<div>Model |   184172402     6  30695400.3           Prob &gt; F      =  0.0000</div></blockquote>
+<p class="last">Residual |  836424.129     9  92936.0144           R-squared     =  0.9955</p>
+</dd>
+<dt>&#8212;&#8212;&#8212;&#8212;-+&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;&#8212;           Adj R-squared =  0.9925</dt>
+<dd>Total |   185008826    15  12333921.7           Root MSE      =  304.85</dd>
+</dl>
+<blockquote>
+<div><dl class="docutils">
+<dt>gnpdefl |   15.06167   84.91486     0.18   0.863    -177.0291    207.1524</dt>
+<dd><blockquote class="first">
+<div>gnp |  -.0358191    .033491    -1.07   0.313     -.111581    .0399428</div></blockquote>
+<p>unemp |  -2.020229   .4883995    -4.14   0.003    -3.125065   -.9153928
+armed |  -1.033227   .2142741    -4.82   0.001    -1.517948   -.5485049</p>
+<blockquote>
+<div><blockquote>
+<div>pop |  -.0511045   .2260731    -0.23   0.826    -.5625173    .4603083</div></blockquote>
+<p>year |   1829.151   455.4785     4.02   0.003     798.7873    2859.515</p>
+</div></blockquote>
+<p class="last">_cons |   -3482258   890420.3    -3.91   0.004     -5496529    -1467987</p>
+</dd>
+</dl>
+</div></blockquote>
+<hr class="docutils" />
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.iolib.summary.html" class="btn btn-neutral float-right" title="4.5.5. statsmodels.iolib.summary" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.iolib.smpickle.save_pickle.html" class="btn btn-neutral" title="4.5.3.1.2. statsmodels.iolib.smpickle.save_pickle" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../_static/jquery.js"></script>
+      <script type="text/javascript" src="../_static/underscore.js"></script>
+      <script type="text/javascript" src="../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

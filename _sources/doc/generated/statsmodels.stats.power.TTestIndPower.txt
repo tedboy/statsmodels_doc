@@ -1,0 +1,25 @@
+statsmodels.stats.power.TTestIndPower
+=====================================
+
+.. currentmodule:: statsmodels.stats.power
+
+.. autoclass:: TTestIndPower
+
+   
+   .. automethod:: __init__
+
+   
+   .. rubric:: Methods
+
+   .. autosummary::
+   
+      ~TTestIndPower.__init__
+      ~TTestIndPower.plot_power
+      ~TTestIndPower.power
+      ~TTestIndPower.solve_power
+   
+   
+
+   
+   
+   

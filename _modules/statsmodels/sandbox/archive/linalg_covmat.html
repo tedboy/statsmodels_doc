@@ -1,0 +1,497 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.archive.linalg_covmat &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.archive.linalg_covmat</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.archive.linalg_covmat</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">__future__</span> <span class="k">import</span> <span class="n">print_function</span>
+<span class="kn">import</span> <span class="nn">math</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">linalg</span><span class="p">,</span> <span class="n">stats</span>
+
+<span class="kn">from</span> <span class="nn">.linalg_decomp_1</span> <span class="k">import</span> <span class="n">tiny2zero</span>
+
+<span class="c1">#univariate standard normal distribution</span>
+<span class="c1">#following from scipy.stats.distributions with adjustments</span>
+<span class="n">sqrt2pi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+<span class="n">logsqrt2pi</span> <span class="o">=</span> <span class="n">math</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sqrt2pi</span><span class="p">)</span>
+
+<div class="viewcode-block" id="StandardNormal"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.StandardNormal.html#statsmodels.sandbox.archive.linalg_covmat.StandardNormal">[docs]</a><span class="k">class</span> <span class="nc">StandardNormal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;Distribution of vector x, with independent distribution N(0,1)</span>
+
+<span class="sd">    this is the same as univariate normal for pdf and logpdf</span>
+
+<span class="sd">    other methods not checked/adjusted yet</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="StandardNormal.rvs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.StandardNormal.rvs.html#statsmodels.sandbox.archive.linalg_covmat.StandardNormal.rvs">[docs]</a>    <span class="k">def</span> <span class="nf">rvs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">standard_normal</span><span class="p">(</span><span class="n">size</span><span class="p">)</span></div>
+<div class="viewcode-block" id="StandardNormal.pdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.StandardNormal.pdf.html#statsmodels.sandbox.archive.linalg_covmat.StandardNormal.pdf">[docs]</a>    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">exp</span><span class="p">(</span><span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.5</span><span class="p">)</span> <span class="o">/</span> <span class="n">sqrt2pi</span></div>
+<div class="viewcode-block" id="StandardNormal.logpdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.StandardNormal.logpdf.html#statsmodels.sandbox.archive.linalg_covmat.StandardNormal.logpdf">[docs]</a>    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">x</span><span class="o">**</span><span class="mi">2</span> <span class="o">*</span> <span class="mf">0.5</span> <span class="o">-</span> <span class="n">logsqrt2pi</span></div>
+    <span class="k">def</span> <span class="nf">_cdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">special</span><span class="o">.</span><span class="n">ndtr</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="k">def</span> <span class="nf">_logcdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">log</span><span class="p">(</span><span class="n">special</span><span class="o">.</span><span class="n">ndtr</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+    <span class="k">def</span> <span class="nf">_ppf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">q</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">special</span><span class="o">.</span><span class="n">ndtri</span><span class="p">(</span><span class="n">q</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="AffineTransform"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.AffineTransform.html#statsmodels.sandbox.archive.linalg_covmat.AffineTransform">[docs]</a><span class="k">class</span> <span class="nc">AffineTransform</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;affine full rank transformation of a multivariate distribution</span>
+
+<span class="sd">    no dimension checking, assumes everything broadcasts correctly</span>
+<span class="sd">    first version without bound support</span>
+
+<span class="sd">    provides distribution of y given distribution of x</span>
+<span class="sd">    y = const + tmat * x</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+<div class="viewcode-block" id="AffineTransform.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.AffineTransform.__init__.html#statsmodels.sandbox.archive.linalg_covmat.AffineTransform.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">const</span><span class="p">,</span> <span class="n">tmat</span><span class="p">,</span> <span class="n">dist</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">const</span> <span class="o">=</span> <span class="n">const</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmat</span> <span class="o">=</span> <span class="n">tmat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dist</span> <span class="o">=</span> <span class="n">dist</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nrv</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">const</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">equal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nrv</span><span class="p">,</span> <span class="n">tmat</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span><span class="o">.</span><span class="n">all</span><span class="p">():</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s1">&#39;dimension of const and tmat do not agree&#39;</span><span class="p">)</span>
+
+        <span class="c1">#replace the following with a linalgarray class</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">tmatinv</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">tmat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">absdet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmat</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">logabsdet</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">abs</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmat</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">dist</span></div>
+
+<div class="viewcode-block" id="AffineTransform.rvs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.AffineTransform.rvs.html#statsmodels.sandbox.archive.linalg_covmat.AffineTransform.rvs">[docs]</a>    <span class="k">def</span> <span class="nf">rvs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">size</span><span class="p">):</span>
+        <span class="c1">#size can only be integer not yet tuple</span>
+        <span class="nb">print</span><span class="p">((</span><span class="n">size</span><span class="p">,)</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nrv</span><span class="p">,))</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">transform</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">rvs</span><span class="p">(</span><span class="n">size</span><span class="o">=</span><span class="p">(</span><span class="n">size</span><span class="p">,)</span><span class="o">+</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nrv</span><span class="p">,)))</span></div>
+
+<div class="viewcode-block" id="AffineTransform.transform"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.AffineTransform.transform.html#statsmodels.sandbox.archive.linalg_covmat.AffineTransform.transform">[docs]</a>    <span class="k">def</span> <span class="nf">transform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="c1">#return np.dot(self.tmat, x) + self.const</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">tmat</span><span class="p">)</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">const</span></div>
+
+<div class="viewcode-block" id="AffineTransform.invtransform"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.AffineTransform.invtransform.html#statsmodels.sandbox.archive.linalg_covmat.AffineTransform.invtransform">[docs]</a>    <span class="k">def</span> <span class="nf">invtransform</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">y</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">tmatinv</span><span class="p">,</span> <span class="n">y</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">const</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="AffineTransform.pdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.AffineTransform.pdf.html#statsmodels.sandbox.archive.linalg_covmat.AffineTransform.pdf">[docs]</a>    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="mf">1.</span> <span class="o">/</span> <span class="bp">self</span><span class="o">.</span><span class="n">absdet</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invtransform</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="AffineTransform.logpdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.AffineTransform.logpdf.html#statsmodels.sandbox.archive.linalg_covmat.AffineTransform.logpdf">[docs]</a>    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">logabsdet</span> <span class="o">+</span> <span class="bp">self</span><span class="o">.</span><span class="n">dist</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">invtransform</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div></div>
+
+
+<span class="kn">from</span> <span class="nn">.linalg_decomp_1</span> <span class="k">import</span> <span class="n">SvdArray</span><span class="p">,</span> <span class="n">OneTimeProperty</span>
+
+<span class="k">class</span> <span class="nc">MultivariateNormal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;multivariate normal distribution with plain linalg</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigmainv</span> <span class="o">=</span> <span class="n">sigmainv</span>
+
+<div class="viewcode-block" id="MultivariateNormalChol"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.html#statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol">[docs]</a><span class="k">class</span> <span class="nc">MultivariateNormalChol</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;multivariate normal distribution with cholesky decomposition of sigma</span>
+
+<span class="sd">    ignoring mean at the beginning, maybe</span>
+
+<span class="sd">    needs testing for broadcasting to contemporaneously but not intertemporaly</span>
+<span class="sd">    correlated random variable, which axis?,</span>
+<span class="sd">    maybe swapaxis or rollaxis if x.ndim != mean.ndim == (sigma.ndim - 1)</span>
+
+<span class="sd">    initially 1d is ok, 2d should work with iid in axis 0 and mvn in axis 1</span>
+
+<span class="sd">    &#39;&#39;&#39;</span>
+
+<div class="viewcode-block" id="MultivariateNormalChol.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.__init__.html#statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">sigma</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigmainv</span> <span class="o">=</span> <span class="n">sigmainv</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cholsigma</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+        <span class="c1">#the following makes it lower triangular with increasing time</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">sigmainv</span><span class="p">)[::</span><span class="o">-</span><span class="mi">1</span><span class="p">,::</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span></div>
+        <span class="c1">#todo: this might be a trick todo backward instead of forward filtering</span>
+
+<div class="viewcode-block" id="MultivariateNormalChol.whiten"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.whiten.html#statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.whiten">[docs]</a>    <span class="k">def</span> <span class="nf">whiten</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultivariateNormalChol.logpdf_obs"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.logpdf_obs.html#statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.logpdf_obs">[docs]</a>    <span class="k">def</span> <span class="nf">logpdf_obs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="n">x</span> <span class="o">=</span> <span class="n">x</span> <span class="o">-</span> <span class="bp">self</span><span class="o">.</span><span class="n">mean</span>
+        <span class="n">x_whitened</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">whiten</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+        <span class="c1">#sigmainv = linalg.cholesky(sigma)</span>
+        <span class="n">logdetsigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+
+        <span class="n">sigma2</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># error variance is included in sigma</span>
+
+        <span class="n">llike</span>  <span class="o">=</span>  <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span>
+                         <span class="o">-</span> <span class="mf">2.</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">cholsigmainv</span><span class="p">))</span>
+                         <span class="o">+</span> <span class="p">(</span><span class="n">x_whitened</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">sigma2</span>
+                         <span class="o">+</span>  <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+
+        <span class="k">return</span> <span class="n">llike</span></div>
+
+<div class="viewcode-block" id="MultivariateNormalChol.logpdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.logpdf.html#statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.logpdf">[docs]</a>    <span class="k">def</span> <span class="nf">logpdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">logpdf_obs</span><span class="p">(</span><span class="n">x</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="MultivariateNormalChol.pdf"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.pdf.html#statsmodels.sandbox.archive.linalg_covmat.MultivariateNormalChol.pdf">[docs]</a>    <span class="k">def</span> <span class="nf">pdf</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span></div></div>
+
+
+
+<div class="viewcode-block" id="MultivariateNormal"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.MultivariateNormal.html#statsmodels.sandbox.archive.linalg_covmat.MultivariateNormal">[docs]</a><span class="k">class</span> <span class="nc">MultivariateNormal</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+
+<div class="viewcode-block" id="MultivariateNormal.__init__"><a class="viewcode-back" href="../../../../generated/generated/statsmodels.sandbox.archive.linalg_covmat.MultivariateNormal.__init__.html#statsmodels.sandbox.archive.linalg_covmat.MultivariateNormal.__init__">[docs]</a>    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mean</span> <span class="o">=</span> <span class="n">mean</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">sigma</span> <span class="o">=</span> <span class="n">SvdArray</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span></div></div>
+
+
+
+
+<div class="viewcode-block" id="loglike_ar1"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.archive.linalg_covmat.loglike_ar1.html#statsmodels.sandbox.archive.linalg_covmat.loglike_ar1">[docs]</a><span class="k">def</span> <span class="nf">loglike_ar1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">rho</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;loglikelihood of AR(1) process, as a test case</span>
+
+<span class="sd">    sigma_u partially hard coded</span>
+
+<span class="sd">    Greene chapter 12 eq. (12-31)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">u</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">r_</span><span class="p">[</span><span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:]</span> <span class="o">-</span> <span class="n">rho</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]]</span>
+    <span class="n">sigma_u2</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+    <span class="n">loglik</span> <span class="o">=</span> <span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="o">-</span><span class="p">(</span><span class="n">u</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span> <span class="o">/</span> <span class="n">sigma_u2</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">rho</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span>
+                  <span class="o">-</span> <span class="n">x</span><span class="o">.</span><span class="n">shape</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span> <span class="o">+</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma_u2</span><span class="p">)))</span>
+    <span class="k">return</span> <span class="n">loglik</span></div>
+
+
+<div class="viewcode-block" id="ar2transform"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.archive.linalg_covmat.ar2transform.html#statsmodels.sandbox.archive.linalg_covmat.ar2transform">[docs]</a><span class="k">def</span> <span class="nf">ar2transform</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">arcoefs</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+
+<span class="sd">    (Greene eq 12-30)</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="n">a1</span><span class="p">,</span> <span class="n">a2</span> <span class="o">=</span> <span class="n">arcoefs</span>
+    <span class="n">y</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros_like</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+    <span class="n">y</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">((</span><span class="mi">1</span><span class="o">+</span><span class="n">a2</span><span class="p">)</span> <span class="o">*</span> <span class="p">((</span><span class="mi">1</span><span class="o">-</span><span class="n">a2</span><span class="p">)</span><span class="o">**</span><span class="mi">2</span> <span class="o">-</span> <span class="n">a1</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">/</span> <span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a2</span><span class="p">))</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+    <span class="n">y</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a2</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a1</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">a2</span><span class="p">)</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="c1">#TODO:wrong index in x</span>
+    <span class="n">y</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">=</span> <span class="n">x</span><span class="p">[</span><span class="mi">2</span><span class="p">:]</span> <span class="o">-</span> <span class="n">a1</span> <span class="o">*</span> <span class="n">x</span><span class="p">[</span><span class="mi">1</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">a2</span> <span class="o">*</span> <span class="n">x</span><span class="p">[:</span><span class="o">-</span><span class="mi">2</span><span class="p">]</span>
+    <span class="k">return</span> <span class="n">y</span></div>
+
+
+<div class="viewcode-block" id="mvn_loglike"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.archive.linalg_covmat.mvn_loglike.html#statsmodels.sandbox.archive.linalg_covmat.mvn_loglike">[docs]</a><span class="k">def</span> <span class="nf">mvn_loglike</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;loglike multivariate normal</span>
+
+<span class="sd">    assumes x is 1d, (nobs,) and sigma is 2d (nobs, nobs)</span>
+
+<span class="sd">    brute force from formula</span>
+<span class="sd">    no checking of correct inputs</span>
+<span class="sd">    use of inv and log-det should be replace with something more efficient</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#see numpy thread</span>
+    <span class="c1">#Sturla: sqmahal = (cx*cho_solve(cho_factor(S),cx.T).T).sum(axis=1)</span>
+    <span class="n">sigmainv</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="n">logdetsigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+
+    <span class="n">llf</span> <span class="o">=</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">sigmainv</span><span class="p">,</span> <span class="n">x</span><span class="p">))</span>
+    <span class="n">llf</span> <span class="o">-=</span> <span class="n">nobs</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+    <span class="n">llf</span> <span class="o">-=</span> <span class="n">logdetsigma</span>
+    <span class="n">llf</span> <span class="o">*=</span> <span class="mf">0.5</span>
+    <span class="k">return</span> <span class="n">llf</span></div>
+
+<div class="viewcode-block" id="mvn_nloglike_obs"><a class="viewcode-back" href="../../../../generated/statsmodels.sandbox.archive.linalg_covmat.mvn_nloglike_obs.html#statsmodels.sandbox.archive.linalg_covmat.mvn_nloglike_obs">[docs]</a><span class="k">def</span> <span class="nf">mvn_nloglike_obs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigma</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39;loglike multivariate normal</span>
+
+<span class="sd">    assumes x is 1d, (nobs,) and sigma is 2d (nobs, nobs)</span>
+
+<span class="sd">    brute force from formula</span>
+<span class="sd">    no checking of correct inputs</span>
+<span class="sd">    use of inv and log-det should be replace with something more efficient</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+    <span class="c1">#see numpy thread</span>
+    <span class="c1">#Sturla: sqmahal = (cx*cho_solve(cho_factor(S),cx.T).T).sum(axis=1)</span>
+
+    <span class="c1">#Still wasteful to calculate pinv first</span>
+    <span class="n">sigmainv</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+    <span class="n">cholsigmainv</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">sigmainv</span><span class="p">)</span>
+    <span class="c1">#2 * np.sum(np.log(np.diagonal(np.linalg.cholesky(A)))) #Dag mailinglist</span>
+    <span class="c1"># logdet not needed ???</span>
+    <span class="c1">#logdetsigma = 2 * np.sum(np.log(np.diagonal(cholsigmainv)))</span>
+    <span class="n">x_whitened</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+    <span class="c1">#sigmainv = linalg.cholesky(sigma)</span>
+    <span class="n">logdetsigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+
+    <span class="n">sigma2</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># error variance is included in sigma</span>
+
+    <span class="n">llike</span>  <span class="o">=</span>  <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">))</span>
+                          <span class="o">+</span> <span class="p">(</span><span class="n">x_whitened</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">sigma2</span>
+                          <span class="o">+</span>  <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+
+    <span class="k">return</span> <span class="n">llike</span><span class="p">,</span> <span class="p">(</span><span class="n">x_whitened</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
+
+<span class="n">nobs</span> <span class="o">=</span> <span class="mi">10</span>
+<span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+<span class="n">autocov</span> <span class="o">=</span> <span class="mi">2</span><span class="o">*</span><span class="mf">0.8</span><span class="o">**</span><span class="n">np</span><span class="o">.</span><span class="n">arange</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span><span class="c1"># +0.01 * np.random.randn(nobs)</span>
+<span class="n">sigma</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">toeplitz</span><span class="p">(</span><span class="n">autocov</span><span class="p">)</span>
+<span class="c1">#sigma = np.diag(1+np.random.randn(10)**2)</span>
+
+<span class="n">cholsigma</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span><span class="o">.</span><span class="n">T</span><span class="c1">#, lower=True)</span>
+
+<span class="n">sigmainv</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">sigma</span><span class="p">)</span>
+<span class="n">cholsigmainv</span> <span class="o">=</span> <span class="n">linalg</span><span class="o">.</span><span class="n">cholesky</span><span class="p">(</span><span class="n">sigmainv</span><span class="p">)</span>
+<span class="c1">#2 * np.sum(np.log(np.diagonal(np.linalg.cholesky(A)))) #Dag mailinglist</span>
+<span class="c1"># logdet not needed ???</span>
+<span class="c1">#logdetsigma = 2 * np.sum(np.log(np.diagonal(cholsigmainv)))</span>
+<span class="n">x_whitened</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">,</span> <span class="n">x</span><span class="p">)</span>
+
+<span class="c1">#sigmainv = linalg.cholesky(sigma)</span>
+<span class="n">logdetsigma</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">det</span><span class="p">(</span><span class="n">sigma</span><span class="p">))</span>
+
+<span class="n">sigma2</span> <span class="o">=</span> <span class="mf">1.</span> <span class="c1"># error variance is included in sigma</span>
+
+<span class="n">llike</span>  <span class="o">=</span>  <span class="mf">0.5</span> <span class="o">*</span> <span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">sigma2</span><span class="p">)</span> <span class="o">-</span> <span class="mf">2.</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">))</span>
+                      <span class="o">+</span> <span class="p">(</span><span class="n">x_whitened</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span><span class="o">/</span><span class="n">sigma2</span>
+                      <span class="o">+</span>  <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">))</span>
+
+<span class="n">ll</span><span class="p">,</span> <span class="n">ls</span> <span class="o">=</span> <span class="n">mvn_nloglike_obs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigma</span><span class="p">)</span>
+<span class="c1">#the following are all the same for diagonal sigma</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">ll</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="s1">&#39;ll.sum()&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">llike</span><span class="o">.</span><span class="n">sum</span><span class="p">(),</span> <span class="s1">&#39;llike.sum()&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">_pdf</span><span class="p">(</span><span class="n">x_whitened</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()</span> <span class="o">-</span> <span class="mf">0.5</span> <span class="o">*</span> <span class="n">logdetsigma</span><span class="p">,)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stats whitened&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">stats</span><span class="o">.</span><span class="n">norm</span><span class="o">.</span><span class="n">pdf</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">scale</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diag</span><span class="p">(</span><span class="n">sigma</span><span class="p">))))</span><span class="o">.</span><span class="n">sum</span><span class="p">(),)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;stats scaled&#39;</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_solve</span><span class="p">((</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_factor</span><span class="p">(</span><span class="n">sigma</span><span class="p">,</span> <span class="n">lower</span><span class="o">=</span><span class="kc">False</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span>
+                                    <span class="kc">False</span><span class="p">),</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span>
+           <span class="o">+</span> <span class="n">nobs</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span>
+           <span class="o">-</span> <span class="mf">2.</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_solve</span><span class="p">((</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_factor</span><span class="p">(</span><span class="n">sigma</span><span class="p">)[</span><span class="mi">0</span><span class="p">]</span><span class="o">.</span><span class="n">T</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">nobs</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">-</span> <span class="mf">2.</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="mf">0.5</span><span class="o">*</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_solve</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_factor</span><span class="p">(</span><span class="n">sigma</span><span class="p">),</span><span class="n">x</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">x</span><span class="p">)</span> <span class="o">+</span> <span class="n">nobs</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">pi</span><span class="p">)</span><span class="o">-</span> <span class="mf">2.</span><span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="n">cholsigmainv</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">()))</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mvn_loglike</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">sigma</span><span class="p">))</span>
+
+
+<span class="n">normtransf</span> <span class="o">=</span> <span class="n">AffineTransform</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nobs</span><span class="p">),</span> <span class="n">cholsigma</span><span class="p">,</span> <span class="n">StandardNormal</span><span class="p">())</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">normtransf</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x_whitened</span><span class="p">)</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+<span class="c1">#print(normtransf.rvs(5)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">loglike_ar1</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mf">0.8</span><span class="p">))</span>
+
+<span class="n">mch</span> <span class="o">=</span> <span class="n">MultivariateNormalChol</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nobs</span><span class="p">),</span> <span class="n">sigma</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="n">mch</span><span class="o">.</span><span class="n">logpdf</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+
+<span class="c1">#print(tiny2zero(mch.cholsigmainv / mch.cholsigmainv[-1,-1])</span>
+
+<span class="n">xw</span> <span class="o">=</span> <span class="n">mch</span><span class="o">.</span><span class="n">whiten</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;xSigmax&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">xw</span><span class="p">,</span><span class="n">xw</span><span class="p">))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;xSigmax&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_solve</span><span class="p">(</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_factor</span><span class="p">(</span><span class="n">mch</span><span class="o">.</span><span class="n">sigma</span><span class="p">),</span><span class="n">x</span><span class="p">)))</span>
+<span class="nb">print</span><span class="p">(</span><span class="s1">&#39;xSigmax&#39;</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">linalg</span><span class="o">.</span><span class="n">cho_solve</span><span class="p">((</span><span class="n">mch</span><span class="o">.</span><span class="n">cholsigma</span><span class="p">,</span> <span class="kc">False</span><span class="p">),</span><span class="n">x</span><span class="p">)))</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

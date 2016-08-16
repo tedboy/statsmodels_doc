@@ -1,0 +1,29 @@
+statsmodels.tsa.tests.test_arima.CheckDynamicForecastMixin
+==========================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_arima
+.. autoclass:: CheckDynamicForecastMixin
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~CheckDynamicForecastMixin.test_dynamic_forecast
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~CheckDynamicForecastMixin.decimal_forecast_dyn
+

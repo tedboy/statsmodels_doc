@@ -1,0 +1,47 @@
+statsmodels.stats.inter_rater.ResultsBunch
+==========================================
+
+.. currentmodule:: statsmodels.stats.inter_rater
+.. autoclass:: ResultsBunch
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~ResultsBunch.__init__
+   ~ResultsBunch.clear
+   ~ResultsBunch.copy
+   ~ResultsBunch.fromkeys
+   ~ResultsBunch.get
+   ~ResultsBunch.has_key
+   ~ResultsBunch.items
+   ~ResultsBunch.iteritems
+   ~ResultsBunch.iterkeys
+   ~ResultsBunch.itervalues
+   ~ResultsBunch.keys
+   ~ResultsBunch.pop
+   ~ResultsBunch.popitem
+   ~ResultsBunch.setdefault
+   ~ResultsBunch.update
+   ~ResultsBunch.values
+   ~ResultsBunch.viewitems
+   ~ResultsBunch.viewkeys
+   ~ResultsBunch.viewvalues
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~ResultsBunch.template
+

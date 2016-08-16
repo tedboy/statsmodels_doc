@@ -1,0 +1,24 @@
+statsmodels.sandbox.stats.contrast_tools.TestContrastTools
+==========================================================
+
+.. currentmodule:: statsmodels.sandbox.stats.contrast_tools
+.. autoclass:: TestContrastTools
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestContrastTools.__init__
+   ~TestContrastTools.test_contrast_product
+   ~TestContrastTools.test_dummy_1d
+   ~TestContrastTools.test_dummy_limits
+
+
+
+
+

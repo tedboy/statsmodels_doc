@@ -1,0 +1,26 @@
+statsmodels.sandbox.distributions.mv_normal.MVNormal0
+=====================================================
+
+.. currentmodule:: statsmodels.sandbox.distributions.mv_normal
+.. autoclass:: MVNormal0
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~MVNormal0.__init__
+   ~MVNormal0.expect_mc
+   ~MVNormal0.logpdf
+   ~MVNormal0.pdf
+   ~MVNormal0.rvs
+   ~MVNormal0.whiten
+
+
+
+
+

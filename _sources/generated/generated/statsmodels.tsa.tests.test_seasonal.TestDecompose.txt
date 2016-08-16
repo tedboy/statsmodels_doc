@@ -1,0 +1,25 @@
+statsmodels.tsa.tests.test_seasonal.TestDecompose
+=================================================
+
+.. currentmodule:: statsmodels.tsa.tests.test_seasonal
+.. autoclass:: TestDecompose
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TestDecompose.setupClass
+   ~TestDecompose.test_filt
+   ~TestDecompose.test_ndarray
+   ~TestDecompose.test_pandas
+   ~TestDecompose.test_raises
+
+
+
+
+

@@ -1,0 +1,25 @@
+statsmodels.discrete.discrete_model.BinaryResultsWrapper
+========================================================
+
+.. currentmodule:: statsmodels.discrete.discrete_model
+.. autoclass:: BinaryResultsWrapper
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~BinaryResultsWrapper.__init__
+   ~BinaryResultsWrapper.conf_int
+   ~BinaryResultsWrapper.cov_params
+   ~BinaryResultsWrapper.load
+   ~BinaryResultsWrapper.save
+
+
+
+
+

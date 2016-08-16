@@ -1,0 +1,30 @@
+statsmodels.sandbox.contrast_old.Contrast
+=========================================
+
+.. currentmodule:: statsmodels.sandbox.contrast_old
+.. autoclass:: Contrast
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~Contrast.__init__
+   ~Contrast.compute_matrix
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~Contrast.matrix
+

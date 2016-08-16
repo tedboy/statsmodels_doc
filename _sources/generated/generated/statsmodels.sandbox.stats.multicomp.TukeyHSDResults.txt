@@ -1,0 +1,23 @@
+statsmodels.sandbox.stats.multicomp.TukeyHSDResults
+===================================================
+
+.. currentmodule:: statsmodels.sandbox.stats.multicomp
+.. autoclass:: TukeyHSDResults
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~TukeyHSDResults.__init__
+   ~TukeyHSDResults.plot_simultaneous
+   ~TukeyHSDResults.summary
+
+
+
+
+

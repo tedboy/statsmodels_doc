@@ -1,0 +1,440 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.tsa.tests.test_tsa_tools &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../../statsmodels.html"/> 
+
+  
+  <script src="../../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.tsa.tests.test_tsa_tools</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.tsa.tests.test_tsa_tools</h1><div class="highlight"><pre>
+<span></span><span class="sd">&#39;&#39;&#39;tests for some time series analysis functions</span>
+
+<span class="sd">&#39;&#39;&#39;</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">zip</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">numpy.testing</span> <span class="k">import</span> <span class="n">assert_array_almost_equal</span><span class="p">,</span> <span class="n">assert_equal</span>
+<span class="kn">import</span> <span class="nn">statsmodels.api</span> <span class="k">as</span> <span class="nn">sm</span>
+<span class="kn">import</span> <span class="nn">statsmodels.tsa.stattools</span> <span class="k">as</span> <span class="nn">tsa</span>
+<span class="kn">import</span> <span class="nn">statsmodels.tsa.tsatools</span> <span class="k">as</span> <span class="nn">tools</span>
+<span class="kn">from</span> <span class="nn">statsmodels.tsa.tsatools</span> <span class="k">import</span> <span class="n">vec</span><span class="p">,</span> <span class="n">vech</span>
+
+<span class="kn">from</span> <span class="nn">.results</span> <span class="k">import</span> <span class="n">savedrvs</span>
+<span class="kn">from</span> <span class="nn">.results.datamlw_tls</span> <span class="k">import</span> <span class="n">mlacf</span><span class="p">,</span> <span class="n">mlccf</span><span class="p">,</span> <span class="n">mlpacf</span><span class="p">,</span> <span class="n">mlywar</span>
+
+<span class="n">xo</span> <span class="o">=</span> <span class="n">savedrvs</span><span class="o">.</span><span class="n">rvsdata</span><span class="o">.</span><span class="n">xar2</span>
+<span class="n">x100</span> <span class="o">=</span> <span class="n">xo</span><span class="p">[</span><span class="o">-</span><span class="mi">100</span><span class="p">:]</span><span class="o">/</span><span class="mf">1000.</span>
+<span class="n">x1000</span> <span class="o">=</span> <span class="n">xo</span><span class="o">/</span><span class="mf">1000.</span>
+
+
+<div class="viewcode-block" id="test_acf"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_acf.html#statsmodels.tsa.tests.test_tsa_tools.test_acf">[docs]</a><span class="k">def</span> <span class="nf">test_acf</span><span class="p">():</span>
+    <span class="n">acf_x</span> <span class="o">=</span> <span class="n">tsa</span><span class="o">.</span><span class="n">acf</span><span class="p">(</span><span class="n">x100</span><span class="p">,</span> <span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)[:</span><span class="mi">21</span><span class="p">]</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mlacf</span><span class="o">.</span><span class="n">acf100</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">acf_x</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="c1">#why only dec=8</span>
+    <span class="n">acf_x</span> <span class="o">=</span> <span class="n">tsa</span><span class="o">.</span><span class="n">acf</span><span class="p">(</span><span class="n">x1000</span><span class="p">,</span> <span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)[:</span><span class="mi">21</span><span class="p">]</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mlacf</span><span class="o">.</span><span class="n">acf1000</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">acf_x</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span> <span class="c1">#why only dec=9</span></div>
+
+<div class="viewcode-block" id="test_ccf"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_ccf.html#statsmodels.tsa.tests.test_tsa_tools.test_ccf">[docs]</a><span class="k">def</span> <span class="nf">test_ccf</span><span class="p">():</span>
+    <span class="n">ccf_x</span> <span class="o">=</span> <span class="n">tsa</span><span class="o">.</span><span class="n">ccf</span><span class="p">(</span><span class="n">x100</span><span class="p">[</span><span class="mi">4</span><span class="p">:],</span> <span class="n">x100</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)[:</span><span class="mi">21</span><span class="p">]</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mlccf</span><span class="o">.</span><span class="n">ccf100</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[:</span><span class="mi">21</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">ccf_x</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="n">ccf_x</span> <span class="o">=</span> <span class="n">tsa</span><span class="o">.</span><span class="n">ccf</span><span class="p">(</span><span class="n">x1000</span><span class="p">[</span><span class="mi">4</span><span class="p">:],</span> <span class="n">x1000</span><span class="p">[:</span><span class="o">-</span><span class="mi">4</span><span class="p">],</span> <span class="n">unbiased</span><span class="o">=</span><span class="kc">False</span><span class="p">)[:</span><span class="mi">21</span><span class="p">]</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mlccf</span><span class="o">.</span><span class="n">ccf1000</span><span class="o">.</span><span class="n">ravel</span><span class="p">()[:</span><span class="mi">21</span><span class="p">][::</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span> <span class="n">ccf_x</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_pacf_yw"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_pacf_yw.html#statsmodels.tsa.tests.test_tsa_tools.test_pacf_yw">[docs]</a><span class="k">def</span> <span class="nf">test_pacf_yw</span><span class="p">():</span>
+    <span class="n">pacfyw</span> <span class="o">=</span> <span class="n">tsa</span><span class="o">.</span><span class="n">pacf_yw</span><span class="p">(</span><span class="n">x100</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;mle&#39;</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mlpacf</span><span class="o">.</span><span class="n">pacf100</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">pacfyw</span><span class="p">,</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="n">pacfyw</span> <span class="o">=</span> <span class="n">tsa</span><span class="o">.</span><span class="n">pacf_yw</span><span class="p">(</span><span class="n">x1000</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;mle&#39;</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mlpacf</span><span class="o">.</span><span class="n">pacf1000</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">pacfyw</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span></div>
+    <span class="c1">#assert False</span>
+
+<div class="viewcode-block" id="test_pacf_ols"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_pacf_ols.html#statsmodels.tsa.tests.test_tsa_tools.test_pacf_ols">[docs]</a><span class="k">def</span> <span class="nf">test_pacf_ols</span><span class="p">():</span>
+    <span class="n">pacfols</span> <span class="o">=</span> <span class="n">tsa</span><span class="o">.</span><span class="n">pacf_ols</span><span class="p">(</span><span class="n">x100</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mlpacf</span><span class="o">.</span><span class="n">pacf100</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">pacfols</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="n">pacfols</span> <span class="o">=</span> <span class="n">tsa</span><span class="o">.</span><span class="n">pacf_ols</span><span class="p">(</span><span class="n">x1000</span><span class="p">,</span> <span class="mi">20</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mlpacf</span><span class="o">.</span><span class="n">pacf1000</span><span class="o">.</span><span class="n">ravel</span><span class="p">(),</span> <span class="n">pacfols</span><span class="p">,</span> <span class="mi">8</span><span class="p">)</span></div>
+    <span class="c1">#assert False</span>
+
+<div class="viewcode-block" id="test_ywcoef"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_ywcoef.html#statsmodels.tsa.tests.test_tsa_tools.test_ywcoef">[docs]</a><span class="k">def</span> <span class="nf">test_ywcoef</span><span class="p">():</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mlywar</span><span class="o">.</span><span class="n">arcoef100</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                    <span class="o">-</span><span class="n">sm</span><span class="o">.</span><span class="n">regression</span><span class="o">.</span><span class="n">yule_walker</span><span class="p">(</span><span class="n">x100</span><span class="p">,</span> <span class="mi">10</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;mle&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">8</span><span class="p">)</span>
+    <span class="n">assert_array_almost_equal</span><span class="p">(</span><span class="n">mlywar</span><span class="o">.</span><span class="n">arcoef1000</span><span class="p">[</span><span class="mi">1</span><span class="p">:],</span>
+                    <span class="o">-</span><span class="n">sm</span><span class="o">.</span><span class="n">regression</span><span class="o">.</span><span class="n">yule_walker</span><span class="p">(</span><span class="n">x1000</span><span class="p">,</span> <span class="mi">20</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;mle&#39;</span><span class="p">)[</span><span class="mi">0</span><span class="p">],</span> <span class="mi">8</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_yule_walker_inter"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_yule_walker_inter.html#statsmodels.tsa.tests.test_tsa_tools.test_yule_walker_inter">[docs]</a><span class="k">def</span> <span class="nf">test_yule_walker_inter</span><span class="p">():</span>
+    <span class="c1"># see 1869</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">1</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">2</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="o">-</span><span class="mi">3</span><span class="p">,</span> <span class="mi">0</span><span class="p">,</span> <span class="mi">0</span><span class="p">])</span>
+    <span class="c1"># it works</span>
+    <span class="n">result</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">regression</span><span class="o">.</span><span class="n">yule_walker</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="test_duplication_matrix"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_duplication_matrix.html#statsmodels.tsa.tests.test_tsa_tools.test_duplication_matrix">[docs]</a><span class="k">def</span> <span class="nf">test_duplication_matrix</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">unvech</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">k</span> <span class="o">*</span> <span class="p">(</span><span class="n">k</span> <span class="o">+</span> <span class="mi">1</span><span class="p">)</span> <span class="o">/</span> <span class="mi">2</span><span class="p">))</span>
+        <span class="n">Dk</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">duplication_matrix</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">vec</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Dk</span><span class="p">,</span> <span class="n">vech</span><span class="p">(</span><span class="n">m</span><span class="p">))))</span></div>
+
+<div class="viewcode-block" id="test_elimination_matrix"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_elimination_matrix.html#statsmodels.tsa.tests.test_tsa_tools.test_elimination_matrix">[docs]</a><span class="k">def</span> <span class="nf">test_elimination_matrix</span><span class="p">():</span>
+    <span class="k">for</span> <span class="n">k</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="mi">10</span><span class="p">):</span>
+        <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">k</span><span class="p">)</span>
+        <span class="n">Lk</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">elimination_matrix</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">vech</span><span class="p">(</span><span class="n">m</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">Lk</span><span class="p">,</span> <span class="n">vec</span><span class="p">(</span><span class="n">m</span><span class="p">))))</span></div>
+
+<div class="viewcode-block" id="test_commutation_matrix"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_commutation_matrix.html#statsmodels.tsa.tests.test_tsa_tools.test_commutation_matrix">[docs]</a><span class="k">def</span> <span class="nf">test_commutation_matrix</span><span class="p">():</span>
+    <span class="n">m</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">K</span> <span class="o">=</span> <span class="n">tools</span><span class="o">.</span><span class="n">commutation_matrix</span><span class="p">(</span><span class="mi">4</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">vec</span><span class="p">(</span><span class="n">m</span><span class="o">.</span><span class="n">T</span><span class="p">),</span> <span class="n">np</span><span class="o">.</span><span class="n">dot</span><span class="p">(</span><span class="n">K</span><span class="p">,</span> <span class="n">vec</span><span class="p">(</span><span class="n">m</span><span class="p">))))</span></div>
+
+<div class="viewcode-block" id="test_vec"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_vec.html#statsmodels.tsa.tests.test_tsa_tools.test_vec">[docs]</a><span class="k">def</span> <span class="nf">test_vec</span><span class="p">():</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mi">3</span><span class="p">,</span> <span class="mi">4</span><span class="p">]])</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">vec</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">4</span><span class="p">]))</span></div>
+
+<div class="viewcode-block" id="test_vech"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_vech.html#statsmodels.tsa.tests.test_tsa_tools.test_vech">[docs]</a><span class="k">def</span> <span class="nf">test_vech</span><span class="p">():</span>
+    <span class="n">arr</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mi">4</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">6</span><span class="p">],</span>
+                    <span class="p">[</span><span class="mi">7</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]])</span>
+    <span class="k">assert</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">array_equal</span><span class="p">(</span><span class="n">vech</span><span class="p">(</span><span class="n">arr</span><span class="p">),</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">7</span><span class="p">,</span> <span class="mi">5</span><span class="p">,</span> <span class="mi">8</span><span class="p">,</span> <span class="mi">9</span><span class="p">]))</span></div>
+
+
+<div class="viewcode-block" id="test_add_lag_insert"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag_insert.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag_insert">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag_insert</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span><span class="s1">&#39;quarter&#39;</span><span class="p">,</span><span class="s1">&#39;realgdp&#39;</span><span class="p">,</span><span class="s1">&#39;cpi&#39;</span><span class="p">]]</span>
+    <span class="n">nddata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">nddata</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,:</span><span class="mi">3</span><span class="p">],</span><span class="n">lagmat</span><span class="p">,</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;realgdp&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lag_data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">lag_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">))),</span> <span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_add_lag_noinsert"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag_noinsert.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag_noinsert">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag_noinsert</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span><span class="s1">&#39;quarter&#39;</span><span class="p">,</span><span class="s1">&#39;realgdp&#39;</span><span class="p">,</span><span class="s1">&#39;cpi&#39;</span><span class="p">]]</span>
+    <span class="n">nddata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">nddata</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,:],</span><span class="n">lagmat</span><span class="p">))</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;realgdp&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lag_data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">lag_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">))),</span> <span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_add_lag_noinsert_atend"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag_noinsert_atend.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag_noinsert_atend">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag_noinsert_atend</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span><span class="s1">&#39;quarter&#39;</span><span class="p">,</span><span class="s1">&#39;realgdp&#39;</span><span class="p">,</span><span class="s1">&#39;cpi&#39;</span><span class="p">]]</span>
+    <span class="n">nddata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">nddata</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,:],</span><span class="n">lagmat</span><span class="p">))</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;cpi&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lag_data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">lag_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">))),</span> <span class="n">results</span><span class="p">)</span>
+    <span class="c1"># should be the same as insert</span>
+    <span class="n">lag_data2</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;cpi&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lag_data2</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">lag_data2</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">))),</span> <span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_add_lag_ndarray"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag_ndarray.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag_ndarray">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag_ndarray</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span><span class="s1">&#39;quarter&#39;</span><span class="p">,</span><span class="s1">&#39;realgdp&#39;</span><span class="p">,</span><span class="s1">&#39;cpi&#39;</span><span class="p">]]</span>
+    <span class="n">nddata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">nddata</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,:</span><span class="mi">3</span><span class="p">],</span><span class="n">lagmat</span><span class="p">,</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">nddata</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lag_data</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_add_lag_noinsert_ndarray"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag_noinsert_ndarray.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag_noinsert_ndarray">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag_noinsert_ndarray</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span><span class="s1">&#39;quarter&#39;</span><span class="p">,</span><span class="s1">&#39;realgdp&#39;</span><span class="p">,</span><span class="s1">&#39;cpi&#39;</span><span class="p">]]</span>
+    <span class="n">nddata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">nddata</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,:],</span><span class="n">lagmat</span><span class="p">))</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">nddata</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lag_data</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_add_lag_noinsertatend_ndarray"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag_noinsertatend_ndarray.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag_noinsertatend_ndarray">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag_noinsertatend_ndarray</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span><span class="s1">&#39;quarter&#39;</span><span class="p">,</span><span class="s1">&#39;realgdp&#39;</span><span class="p">,</span><span class="s1">&#39;cpi&#39;</span><span class="p">]]</span>
+    <span class="n">nddata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">nddata</span><span class="p">[:,</span><span class="o">-</span><span class="mi">1</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,:],</span><span class="n">lagmat</span><span class="p">))</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">nddata</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lag_data</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span>
+    <span class="c1"># should be the same as insert also check negative col number</span>
+    <span class="n">lag_data2</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">nddata</span><span class="p">,</span> <span class="o">-</span><span class="mi">1</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lag_data2</span><span class="p">,</span> <span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_add_lag1d"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag1d.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag1d">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag1d</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">:],</span><span class="n">lagmat</span><span class="p">))</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">lag_data</span><span class="p">)</span>
+
+    <span class="c1"># add index</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">data</span><span class="p">[:,</span><span class="kc">None</span><span class="p">]</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span> <span class="c1"># test for lagmat too</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">data</span><span class="p">[</span><span class="mi">3</span><span class="p">:],</span><span class="n">lagmat</span><span class="p">))</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="n">lags</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">results</span><span class="p">,</span> <span class="n">lag_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_add_lag1d_drop"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag1d_drop.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag1d_drop">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag1d_drop</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lagmat</span><span class="p">,</span> <span class="n">lag_data</span><span class="p">)</span>
+
+    <span class="c1"># no insert, should be the same</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lagmat</span><span class="p">,</span> <span class="n">lag_data</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_add_lag1d_struct"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag1d_struct.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag1d_struct">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag1d_struct</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;variable&#39;</span><span class="p">,</span><span class="nb">float</span><span class="p">)])</span>
+    <span class="n">nddata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nddata</span>
+
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">nddata</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">,</span> <span class="n">original</span><span class="o">=</span><span class="s1">&#39;in&#39;</span><span class="p">)</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lagmat</span><span class="p">,</span> <span class="n">lag_data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">)))</span>
+
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;variable&#39;</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">False</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lagmat</span><span class="p">,</span> <span class="n">lag_data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">)))</span>
+
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lagmat</span><span class="p">,</span> <span class="n">lag_data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="test_add_lag_1d_drop_struct"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag_1d_drop_struct.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag_1d_drop_struct">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag_1d_drop_struct</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="mi">100</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="p">[(</span><span class="s1">&#39;variable&#39;</span><span class="p">,</span><span class="nb">float</span><span class="p">)])</span>
+    <span class="n">nddata</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">randn</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>
+    <span class="n">data</span><span class="p">[</span><span class="s1">&#39;variable&#39;</span><span class="p">]</span> <span class="o">=</span> <span class="n">nddata</span>
+
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">nddata</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="n">lags</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lagmat</span><span class="p">,</span> <span class="n">lag_data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">3</span><span class="p">)))</span></div>
+
+<div class="viewcode-block" id="test_add_lag_drop_insert"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag_drop_insert.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag_drop_insert">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag_drop_insert</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span><span class="s1">&#39;quarter&#39;</span><span class="p">,</span><span class="s1">&#39;realgdp&#39;</span><span class="p">,</span><span class="s1">&#39;cpi&#39;</span><span class="p">]]</span>
+    <span class="n">nddata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">nddata</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,:</span><span class="mi">2</span><span class="p">],</span><span class="n">lagmat</span><span class="p">,</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,</span><span class="o">-</span><span class="mi">1</span><span class="p">]))</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;realgdp&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lag_data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">lag_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">))),</span> <span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_add_lag_drop_noinsert"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_add_lag_drop_noinsert.html#statsmodels.tsa.tests.test_tsa_tools.test_add_lag_drop_noinsert">[docs]</a><span class="k">def</span> <span class="nf">test_add_lag_drop_noinsert</span><span class="p">():</span>
+    <span class="n">data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">datasets</span><span class="o">.</span><span class="n">macrodata</span><span class="o">.</span><span class="n">load</span><span class="p">()</span><span class="o">.</span><span class="n">data</span><span class="p">[[</span><span class="s1">&#39;year&#39;</span><span class="p">,</span><span class="s1">&#39;quarter&#39;</span><span class="p">,</span><span class="s1">&#39;realgdp&#39;</span><span class="p">,</span><span class="s1">&#39;cpi&#39;</span><span class="p">]]</span>
+    <span class="n">nddata</span> <span class="o">=</span> <span class="n">data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="mi">4</span><span class="p">))</span>
+    <span class="n">lagmat</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">lagmat</span><span class="p">(</span><span class="n">nddata</span><span class="p">[:,</span><span class="mi">2</span><span class="p">],</span><span class="mi">3</span><span class="p">,</span><span class="n">trim</span><span class="o">=</span><span class="s1">&#39;Both&#39;</span><span class="p">)</span>
+    <span class="n">results</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">column_stack</span><span class="p">((</span><span class="n">nddata</span><span class="p">[</span><span class="mi">3</span><span class="p">:,</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">])],</span><span class="n">lagmat</span><span class="p">))</span>
+    <span class="n">lag_data</span> <span class="o">=</span> <span class="n">sm</span><span class="o">.</span><span class="n">tsa</span><span class="o">.</span><span class="n">add_lag</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="s1">&#39;realgdp&#39;</span><span class="p">,</span> <span class="mi">3</span><span class="p">,</span> <span class="n">insert</span><span class="o">=</span><span class="kc">False</span><span class="p">,</span> <span class="n">drop</span><span class="o">=</span><span class="kc">True</span><span class="p">)</span>
+    <span class="n">assert_equal</span><span class="p">(</span><span class="n">lag_data</span><span class="o">.</span><span class="n">view</span><span class="p">((</span><span class="nb">float</span><span class="p">,</span><span class="nb">len</span><span class="p">(</span><span class="n">lag_data</span><span class="o">.</span><span class="n">dtype</span><span class="o">.</span><span class="n">names</span><span class="p">))),</span> <span class="n">results</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="test_freq_to_period"><a class="viewcode-back" href="../../../../generated/statsmodels.tsa.tests.test_tsa_tools.test_freq_to_period.html#statsmodels.tsa.tests.test_tsa_tools.test_freq_to_period">[docs]</a><span class="k">def</span> <span class="nf">test_freq_to_period</span><span class="p">():</span>
+    <span class="kn">from</span> <span class="nn">pandas.tseries.frequencies</span> <span class="k">import</span> <span class="n">to_offset</span>
+    <span class="n">freqs</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;A&#39;</span><span class="p">,</span> <span class="s1">&#39;AS-MAR&#39;</span><span class="p">,</span> <span class="s1">&#39;Q&#39;</span><span class="p">,</span> <span class="s1">&#39;QS&#39;</span><span class="p">,</span> <span class="s1">&#39;QS-APR&#39;</span><span class="p">,</span> <span class="s1">&#39;W&#39;</span><span class="p">,</span> <span class="s1">&#39;W-MON&#39;</span><span class="p">,</span> <span class="s1">&#39;B&#39;</span><span class="p">]</span>
+    <span class="n">expected</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="p">,</span> <span class="mi">1</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">4</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">52</span><span class="p">,</span> <span class="mi">52</span><span class="p">]</span>
+    <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="nb">zip</span><span class="p">(</span><span class="n">freqs</span><span class="p">,</span> <span class="n">expected</span><span class="p">):</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="n">tools</span><span class="o">.</span><span class="n">freq_to_period</span><span class="p">(</span><span class="n">i</span><span class="p">),</span> <span class="n">j</span><span class="p">)</span>
+        <span class="n">assert_equal</span><span class="p">(</span><span class="n">tools</span><span class="o">.</span><span class="n">freq_to_period</span><span class="p">(</span><span class="n">to_offset</span><span class="p">(</span><span class="n">i</span><span class="p">)),</span> <span class="n">j</span><span class="p">)</span></div>
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s1">&#39;__main__&#39;</span><span class="p">:</span>
+    <span class="c1">#running them directly</span>
+    <span class="c1"># test_acf()</span>
+    <span class="c1"># test_ccf()</span>
+    <span class="c1"># test_pacf_yw()</span>
+    <span class="c1"># test_pacf_ols()</span>
+    <span class="c1"># test_ywcoef()</span>
+
+    <span class="kn">import</span> <span class="nn">nose</span>
+    <span class="n">nose</span><span class="o">.</span><span class="n">runmodule</span><span class="p">()</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

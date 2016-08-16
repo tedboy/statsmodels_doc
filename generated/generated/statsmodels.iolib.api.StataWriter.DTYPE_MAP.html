@@ -1,0 +1,261 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>4.5.1.2.3.2.1. statsmodels.iolib.api.StataWriter.DTYPE_MAP &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../index.html"/>
+        <link rel="up" title="4.5.1.2.3. statsmodels.iolib.api.StataWriter" href="statsmodels.iolib.api.StataWriter.html"/>
+        <link rel="next" title="4.5.1.2.3.2.2. statsmodels.iolib.api.StataWriter.MISSING_VALUES" href="statsmodels.iolib.api.StataWriter.MISSING_VALUES.html"/>
+        <link rel="prev" title="4.5.1.2.3.1.2. statsmodels.iolib.api.StataWriter.write_file" href="statsmodels.iolib.api.StataWriter.write_file.html"/> 
+
+  
+  <script src="../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="../../submain.html">4. Other modules of interest</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-base">4.1. statsmodel.base</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-datasets">4.2. statsmodel.datasets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-duration">4.3. statsmodel.duration</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-formula">4.4. statsmodel.formula</a></li>
+<li class="toctree-l2 current"><a class="reference internal" href="../../submain.html#statsmodel-iolib">4.5. statsmodel.iolib</a><ul class="current">
+<li class="toctree-l3 current"><a class="reference internal" href="../statsmodels.iolib.api.html">4.5.1. statsmodels.iolib.api</a><ul class="current">
+<li class="toctree-l4"><a class="reference internal" href="../statsmodels.iolib.api.html#functions">4.5.1.1. Functions</a></li>
+<li class="toctree-l4 current"><a class="reference internal" href="../statsmodels.iolib.api.html#classes">4.5.1.2. Classes</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.foreign.html">4.5.2. statsmodels.iolib.foreign</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.smpickle.html">4.5.3. statsmodels.iolib.smpickle</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.stata_summary_examples.html">4.5.4. statsmodels.iolib.stata_summary_examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.summary.html">4.5.5. statsmodels.iolib.summary</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.summary2.html">4.5.6. statsmodels.iolib.summary2</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.table.html">4.5.7. statsmodels.iolib.table</a></li>
+<li class="toctree-l3"><a class="reference internal" href="../statsmodels.iolib.tableformatting.html">4.5.8. statsmodels.iolib.tableformatting</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tests">4.6. statsmodel.tests</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tools">4.7. statsmodel.tools</a></li>
+<li class="toctree-l2"><a class="reference internal" href="../../submain.html#statsmodel-tsa">4.8. statsmodel.tsa</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../submain.html">4. Other modules of interest</a> &raquo;</li>
+        
+          <li><a href="../statsmodels.iolib.api.html">4.5.1. statsmodels.iolib.api</a> &raquo;</li>
+        
+          <li><a href="statsmodels.iolib.api.StataWriter.html">4.5.1.2.3. statsmodels.iolib.api.StataWriter</a> &raquo;</li>
+        
+      <li>4.5.1.2.3.2.1. statsmodels.iolib.api.StataWriter.DTYPE_MAP</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="../../_sources/generated/generated/statsmodels.iolib.api.StataWriter.DTYPE_MAP.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="statsmodels-iolib-api-statawriter-dtype-map">
+<h1>4.5.1.2.3.2.1. statsmodels.iolib.api.StataWriter.DTYPE_MAP<a class="headerlink" href="#statsmodels-iolib-api-statawriter-dtype-map" title="Permalink to this headline">¶</a></h1>
+<dl class="attribute">
+<dt id="statsmodels.iolib.api.StataWriter.DTYPE_MAP">
+<code class="descclassname">StataWriter.</code><code class="descname">DTYPE_MAP</code><em class="property"> = {1: 'a1', 2: 'a2', 3: 'a3', 4: 'a4', 5: 'a5', 6: 'a6', 7: 'a7', 8: 'a8', 9: 'a9', 10: 'a10', 11: 'a11', 12: 'a12', 13: 'a13', 14: 'a14', 15: 'a15', 16: 'a16', 17: 'a17', 18: 'a18', 19: 'a19', 20: 'a20', 21: 'a21', 22: 'a22', 23: 'a23', 24: 'a24', 25: 'a25', 26: 'a26', 27: 'a27', 28: 'a28', 29: 'a29', 30: 'a30', 31: 'a31', 32: 'a32', 33: 'a33', 34: 'a34', 35: 'a35', 36: 'a36', 37: 'a37', 38: 'a38', 39: 'a39', 40: 'a40', 41: 'a41', 42: 'a42', 43: 'a43', 44: 'a44', 45: 'a45', 46: 'a46', 47: 'a47', 48: 'a48', 49: 'a49', 50: 'a50', 51: 'a51', 52: 'a52', 53: 'a53', 54: 'a54', 55: 'a55', 56: 'a56', 57: 'a57', 58: 'a58', 59: 'a59', 60: 'a60', 61: 'a61', 62: 'a62', 63: 'a63', 64: 'a64', 65: 'a65', 66: 'a66', 67: 'a67', 68: 'a68', 69: 'a69', 70: 'a70', 71: 'a71', 72: 'a72', 73: 'a73', 74: 'a74', 75: 'a75', 76: 'a76', 77: 'a77', 78: 'a78', 79: 'a79', 80: 'a80', 81: 'a81', 82: 'a82', 83: 'a83', 84: 'a84', 85: 'a85', 86: 'a86', 87: 'a87', 88: 'a88', 89: 'a89', 90: 'a90', 91: 'a91', 92: 'a92', 93: 'a93', 94: 'a94', 95: 'a95', 96: 'a96', 97: 'a97', 98: 'a98', 99: 'a99', 100: 'a100', 101: 'a101', 102: 'a102', 103: 'a103', 104: 'a104', 105: 'a105', 106: 'a106', 107: 'a107', 108: 'a108', 109: 'a109', 110: 'a110', 111: 'a111', 112: 'a112', 113: 'a113', 114: 'a114', 115: 'a115', 116: 'a116', 117: 'a117', 118: 'a118', 119: 'a119', 120: 'a120', 121: 'a121', 122: 'a122', 123: 'a123', 124: 'a124', 125: 'a125', 126: 'a126', 127: 'a127', 128: 'a128', 129: 'a129', 130: 'a130', 131: 'a131', 132: 'a132', 133: 'a133', 134: 'a134', 135: 'a135', 136: 'a136', 137: 'a137', 138: 'a138', 139: 'a139', 140: 'a140', 141: 'a141', 142: 'a142', 143: 'a143', 144: 'a144', 145: 'a145', 146: 'a146', 147: 'a147', 148: 'a148', 149: 'a149', 150: 'a150', 151: 'a151', 152: 'a152', 153: 'a153', 154: 'a154', 155: 'a155', 156: 'a156', 157: 'a157', 158: 'a158', 159: 'a159', 160: 'a160', 161: 'a161', 162: 'a162', 163: 'a163', 164: 'a164', 165: 'a165', 166: 'a166', 167: 'a167', 168: 'a168', 169: 'a169', 170: 'a170', 171: 'a171', 172: 'a172', 173: 'a173', 174: 'a174', 175: 'a175', 176: 'a176', 177: 'a177', 178: 'a178', 179: 'a179', 180: 'a180', 181: 'a181', 182: 'a182', 183: 'a183', 184: 'a184', 185: 'a185', 186: 'a186', 187: 'a187', 188: 'a188', 189: 'a189', 190: 'a190', 191: 'a191', 192: 'a192', 193: 'a193', 194: 'a194', 195: 'a195', 196: 'a196', 197: 'a197', 198: 'a198', 199: 'a199', 200: 'a200', 201: 'a201', 202: 'a202', 203: 'a203', 204: 'a204', 205: 'a205', 206: 'a206', 207: 'a207', 208: 'a208', 209: 'a209', 210: 'a210', 211: 'a211', 212: 'a212', 213: 'a213', 214: 'a214', 215: 'a215', 216: 'a216', 217: 'a217', 218: 'a218', 219: 'a219', 220: 'a220', 221: 'a221', 222: 'a222', 223: 'a223', 224: 'a224', 225: 'a225', 226: 'a226', 227: 'a227', 228: 'a228', 229: 'a229', 230: 'a230', 231: 'a231', 232: 'a232', 233: 'a233', 234: 'a234', 235: 'a235', 236: 'a236', 237: 'a237', 238: 'a238', 239: 'a239', 240: 'a240', 241: 'a241', 242: 'a242', 243: 'a243', 244: 'a244', 251: &lt;type 'numpy.int16'&gt;, 252: &lt;type 'numpy.int32'&gt;, 253: &lt;type 'int'&gt;, 254: &lt;type 'numpy.float32'&gt;, 255: &lt;type 'numpy.float64'&gt;}</em><a class="headerlink" href="#statsmodels.iolib.api.StataWriter.DTYPE_MAP" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="statsmodels.iolib.api.StataWriter.MISSING_VALUES.html" class="btn btn-neutral float-right" title="4.5.1.2.3.2.2. statsmodels.iolib.api.StataWriter.MISSING_VALUES" accesskey="n">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="statsmodels.iolib.api.StataWriter.write_file.html" class="btn btn-neutral" title="4.5.1.2.3.1.2. statsmodels.iolib.api.StataWriter.write_file" accesskey="p"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

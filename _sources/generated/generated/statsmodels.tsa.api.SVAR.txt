@@ -1,0 +1,40 @@
+statsmodels.tsa.api.SVAR
+========================
+
+.. currentmodule:: statsmodels.tsa.api
+.. autoclass:: SVAR
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~SVAR.__init__
+   ~SVAR.check_order
+   ~SVAR.check_rank
+   ~SVAR.fit
+   ~SVAR.from_formula
+   ~SVAR.hessian
+   ~SVAR.information
+   ~SVAR.initialize
+   ~SVAR.loglike
+   ~SVAR.predict
+   ~SVAR.score
+
+
+
+
+
+Attributes
+----------
+.. autosummary::
+  :toctree:
+
+
+   ~SVAR.endog_names
+   ~SVAR.exog_names
+

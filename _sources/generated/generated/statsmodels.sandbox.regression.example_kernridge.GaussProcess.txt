@@ -1,0 +1,24 @@
+statsmodels.sandbox.regression.example_kernridge.GaussProcess
+=============================================================
+
+.. currentmodule:: statsmodels.sandbox.regression.example_kernridge
+.. autoclass:: GaussProcess
+   :members: __init__
+   :undoc-members:
+
+
+Methods
+-------
+.. autosummary::
+   :toctree:
+
+
+   ~GaussProcess.__init__
+   ~GaussProcess.fit
+   ~GaussProcess.plot
+   ~GaussProcess.predict
+
+
+
+
+

@@ -1,0 +1,50 @@
+statsmodels.miscmodels.count
+============================
+
+.. automodule:: statsmodels.miscmodels.count
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      maxabs
+      maxabsrel
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      GenericLikelihoodModel
+      NonlinearDeltaCov
+      PoissonGMLE
+      PoissonOffsetGMLE
+      PoissonZiGMLE
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.miscmodels.count.GenericLikelihoodModel
+       generated/statsmodels.miscmodels.count.NonlinearDeltaCov
+       generated/statsmodels.miscmodels.count.PoissonGMLE
+       generated/statsmodels.miscmodels.count.PoissonOffsetGMLE
+       generated/statsmodels.miscmodels.count.PoissonZiGMLE
+
+   
+   
+
+   
+   
+   

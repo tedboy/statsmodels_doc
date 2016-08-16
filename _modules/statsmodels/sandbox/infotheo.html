@@ -1,0 +1,734 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>statsmodels.sandbox.infotheo &mdash; Statsmodels API v1</title>
+  
+
+  
+  
+
+  
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="Statsmodels API v1" href="../../../index.html"/>
+        <link rel="up" title="statsmodels" href="../../statsmodels.html"/> 
+
+  
+  <script src="../../../_static/js/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+   
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search">
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home"> Statsmodels API
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+                <p class="caption"><span class="caption-text">Table of Contents</span></p>
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../main_api.html">1. Main API</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc_basic/index.html">2. Basic Documentation</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../main.html">3. Main modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../submain.html">4. Other modules of interest</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox.html">5. statsmodel.sandbox</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../sandbox2.html">6. statsmodel.sandbox2</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../doc/index.html">7. From official doc</a></li>
+</ul>
+
+            
+          
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Statsmodels API</a>
+        
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html">Docs</a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../../statsmodels.html">statsmodels</a> &raquo;</li>
+        
+      <li>statsmodels.sandbox.infotheo</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+        
+      </li>
+    
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for statsmodels.sandbox.infotheo</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">Information Theoretic and Entropy Measures</span>
+
+<span class="sd">References</span>
+<span class="sd">----------</span>
+<span class="sd">Golan, As. 2008. &quot;Information and Entropy Econometrics -- A Review and</span>
+<span class="sd">    Synthesis.&quot; Foundations And Trends in Econometrics 2(1-2), 1-145.</span>
+
+<span class="sd">Golan, A., Judge, G., and Miller, D.  1996.  Maximum Entropy Econometrics.</span>
+<span class="sd">    Wiley &amp; Sons, Chichester.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+<span class="c1">#For MillerMadow correction</span>
+<span class="c1">#Miller, G. 1955. Note on the bias of information estimates. Info. Theory</span>
+<span class="c1">#    Psychol. Prob. Methods II-B:95-100.</span>
+
+<span class="c1">#For ChaoShen method</span>
+<span class="c1">#Chao, A., and T.-J. Shen. 2003. Nonparametric estimation of Shannon&#39;s index of diversity when</span>
+<span class="c1">#there are unseen species in sample. Environ. Ecol. Stat. 10:429-443.</span>
+<span class="c1">#Good, I. J. 1953. The population frequencies of species and the estimation of population parameters.</span>
+<span class="c1">#Biometrika 40:237-264.</span>
+<span class="c1">#Horvitz, D.G., and D. J. Thompson. 1952. A generalization of sampling without replacement from a finute universe. J. Am. Stat. Assoc. 47:663-685.</span>
+
+<span class="c1">#For NSB method</span>
+<span class="c1">#Nemenman, I., F. Shafee, and W. Bialek. 2002. Entropy and inference, revisited. In: Dietterich, T.,</span>
+<span class="c1">#S. Becker, Z. Gharamani, eds. Advances in Neural Information Processing Systems 14: 471-478.</span>
+<span class="c1">#Cambridge (Massachusetts): MIT Press.</span>
+
+<span class="c1">#For shrinkage method</span>
+<span class="c1">#Dougherty, J., Kohavi, R., and Sahami, M. (1995). Supervised and unsupervised discretization of</span>
+<span class="c1">#continuous features. In International Conference on Machine Learning.</span>
+<span class="c1">#Yang, Y. and Webb, G. I. (2003). Discretization for naive-bayes learning: managing discretization</span>
+<span class="c1">#bias and variance. Technical Report 2003/131 School of Computer Science and Software Engineer-</span>
+<span class="c1">#ing, Monash University.</span>
+
+<span class="kn">from</span> <span class="nn">statsmodels.compat.python</span> <span class="k">import</span> <span class="nb">range</span><span class="p">,</span> <span class="n">lzip</span><span class="p">,</span> <span class="n">lmap</span>
+<span class="kn">from</span> <span class="nn">scipy</span> <span class="k">import</span> <span class="n">stats</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="k">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">scipy.misc</span> <span class="k">import</span> <span class="n">logsumexp</span> <span class="k">as</span> <span class="n">sp_logsumexp</span>
+
+<span class="c1">#TODO: change these to use maxentutils so that over/underflow is handled</span>
+<span class="c1">#with the logsumexp.</span>
+
+
+<div class="viewcode-block" id="logsumexp"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.logsumexp.html#statsmodels.sandbox.infotheo.logsumexp">[docs]</a><span class="k">def</span> <span class="nf">logsumexp</span><span class="p">(</span><span class="n">a</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Compute the log of the sum of exponentials log(e^{a_1}+...e^{a_n}) of a</span>
+
+<span class="sd">    Avoids numerical overflow.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    a : array-like</span>
+<span class="sd">        The vector to exponentiate and sum</span>
+<span class="sd">    axis : int, optional</span>
+<span class="sd">        The axis along which to apply the operation.  Defaults is None.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sum(log(exp(a)))</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This function was taken from the mailing list</span>
+<span class="sd">    http://mail.scipy.org/pipermail/scipy-user/2009-October/022931.html</span>
+
+<span class="sd">    This should be superceded by the ufunc when it is finished.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="n">axis</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="c1"># Use the scipy.maxentropy version.</span>
+        <span class="k">return</span> <span class="n">sp_logsumexp</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">a</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">a</span><span class="p">)</span>
+    <span class="n">shp</span> <span class="o">=</span> <span class="nb">list</span><span class="p">(</span><span class="n">a</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span>
+    <span class="n">shp</span><span class="p">[</span><span class="n">axis</span><span class="p">]</span> <span class="o">=</span> <span class="mi">1</span>
+    <span class="n">a_max</span> <span class="o">=</span> <span class="n">a</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">)</span>
+    <span class="n">s</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">exp</span><span class="p">(</span><span class="n">a</span> <span class="o">-</span> <span class="n">a_max</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">shp</span><span class="p">))</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="n">axis</span><span class="p">))</span>
+    <span class="n">lse</span>  <span class="o">=</span> <span class="n">a_max</span> <span class="o">+</span> <span class="n">s</span>
+    <span class="k">return</span> <span class="n">lse</span></div>
+
+
+<span class="k">def</span> <span class="nf">_isproperdist</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Checks to see if `X` is a proper probability distribution</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">X</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">allclose</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">X</span><span class="p">),</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">X</span><span class="o">&gt;=</span><span class="mi">0</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">X</span><span class="o">&lt;=</span><span class="mi">1</span><span class="p">):</span>
+        <span class="k">return</span> <span class="kc">False</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="kc">True</span>
+
+<div class="viewcode-block" id="discretize"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.discretize.html#statsmodels.sandbox.infotheo.discretize">[docs]</a><span class="k">def</span> <span class="nf">discretize</span><span class="p">(</span><span class="n">X</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s2">&quot;ef&quot;</span><span class="p">,</span> <span class="n">nbins</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Discretize `X`</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    bins : int, optional</span>
+<span class="sd">        Number of bins.  Default is floor(sqrt(N))</span>
+<span class="sd">    method : string</span>
+<span class="sd">        &quot;ef&quot; is equal-frequency binning</span>
+<span class="sd">        &quot;ew&quot; is equal-width binning</span>
+
+<span class="sd">    Examples</span>
+<span class="sd">    --------</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">nobs</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">nbins</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">nbins</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">sqrt</span><span class="p">(</span><span class="n">nobs</span><span class="p">))</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;ef&quot;</span><span class="p">:</span>
+        <span class="n">discrete</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">ceil</span><span class="p">(</span><span class="n">nbins</span> <span class="o">*</span> <span class="n">stats</span><span class="o">.</span><span class="n">rankdata</span><span class="p">(</span><span class="n">X</span><span class="p">)</span><span class="o">/</span><span class="n">nobs</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s2">&quot;ew&quot;</span><span class="p">:</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">X</span><span class="p">)</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">width</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">floor</span><span class="p">(</span><span class="n">width</span><span class="o">/</span><span class="n">nbins</span><span class="p">)</span>
+        <span class="n">svec</span><span class="p">,</span> <span class="n">ivec</span> <span class="o">=</span> <span class="n">stats</span><span class="o">.</span><span class="n">fastsort</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+        <span class="n">discrete</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span><span class="n">nobs</span><span class="p">)</span>
+        <span class="n">binnum</span> <span class="o">=</span> <span class="mi">1</span>
+        <span class="n">base</span> <span class="o">=</span> <span class="n">svec</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">discrete</span><span class="p">[</span><span class="n">ivec</span><span class="p">[</span><span class="mi">0</span><span class="p">]]</span> <span class="o">=</span> <span class="n">binnum</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nobs</span><span class="p">):</span>
+            <span class="k">if</span> <span class="n">svec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span> <span class="o">&lt;</span> <span class="n">base</span> <span class="o">+</span> <span class="n">width</span><span class="p">:</span>
+                <span class="n">discrete</span><span class="p">[</span><span class="n">ivec</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">binnum</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="n">base</span> <span class="o">=</span> <span class="n">svec</span><span class="p">[</span><span class="n">i</span><span class="p">]</span>
+                <span class="n">binnum</span> <span class="o">+=</span> <span class="mi">1</span>
+                <span class="n">discrete</span><span class="p">[</span><span class="n">ivec</span><span class="p">[</span><span class="n">i</span><span class="p">]]</span> <span class="o">=</span> <span class="n">binnum</span>
+    <span class="k">return</span> <span class="n">discrete</span></div>
+<span class="c1">#TODO: looks okay but needs more robust tests for corner cases</span>
+
+
+
+<div class="viewcode-block" id="logbasechange"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.logbasechange.html#statsmodels.sandbox.infotheo.logbasechange">[docs]</a><span class="k">def</span> <span class="nf">logbasechange</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="n">b</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    There is a one-to-one transformation of the entropy value from</span>
+<span class="sd">    a log base b to a log base a :</span>
+
+<span class="sd">    H_{b}(X)=log_{b}(a)[H_{a}(X)]</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    log_{b}(a)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">b</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">a</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="natstobits"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.natstobits.html#statsmodels.sandbox.infotheo.natstobits">[docs]</a><span class="k">def</span> <span class="nf">natstobits</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts from nats to bits</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">logbasechange</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">e</span><span class="p">,</span> <span class="mi">2</span><span class="p">)</span> <span class="o">*</span> <span class="n">X</span></div>
+
+<div class="viewcode-block" id="bitstonats"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.bitstonats.html#statsmodels.sandbox.infotheo.bitstonats">[docs]</a><span class="k">def</span> <span class="nf">bitstonats</span><span class="p">(</span><span class="n">X</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Converts from bits to nats</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="n">logbasechange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">np</span><span class="o">.</span><span class="n">e</span><span class="p">)</span> <span class="o">*</span> <span class="n">X</span></div>
+
+<span class="c1">#TODO: make this entropy, and then have different measures as</span>
+<span class="c1">#a method</span>
+<div class="viewcode-block" id="shannonentropy"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.shannonentropy.html#statsmodels.sandbox.infotheo.shannonentropy">[docs]</a><span class="k">def</span> <span class="nf">shannonentropy</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">logbase</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    This is Shannon&#39;s entropy</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    -----------</span>
+<span class="sd">    logbase, int or np.e</span>
+<span class="sd">        The base of the log</span>
+<span class="sd">    px : 1d or 2d array_like</span>
+<span class="sd">        Can be a discrete probability distribution, a 2d joint distribution,</span>
+<span class="sd">        or a sequence of probabilities.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -----</span>
+<span class="sd">    For log base 2 (bits) given a discrete distribution</span>
+<span class="sd">        H(p) = sum(px * log2(1/px) = -sum(pk*log2(px)) = E[log2(1/p(X))]</span>
+
+<span class="sd">    For log base 2 (bits) given a joint distribution</span>
+<span class="sd">        H(px,py) = -sum_{k,j}*w_{kj}log2(w_{kj})</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    shannonentropy(0) is defined as 0</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="c1">#TODO: haven&#39;t defined the px,py case?</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">px</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">px</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;px does not define proper distribution&quot;</span><span class="p">)</span>
+    <span class="n">entropy</span> <span class="o">=</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">px</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">px</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">logbase</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">logbasechange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">logbase</span><span class="p">)</span> <span class="o">*</span> <span class="n">entropy</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">entropy</span></div>
+
+<span class="c1"># Shannon&#39;s information content</span>
+<div class="viewcode-block" id="shannoninfo"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.shannoninfo.html#statsmodels.sandbox.infotheo.shannoninfo">[docs]</a><span class="k">def</span> <span class="nf">shannoninfo</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">logbase</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Shannon&#39;s information</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    px : float or array-like</span>
+<span class="sd">        `px` is a discrete probability distribution</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    For logbase = 2</span>
+<span class="sd">    np.log2(px)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">asarray</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">px</span> <span class="o">&lt;=</span> <span class="mi">1</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">np</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">px</span> <span class="o">&gt;=</span> <span class="mi">0</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;px does not define proper distribution&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">logbase</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span> <span class="n">logbasechange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">logbase</span><span class="p">)</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span> <span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">px</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="condentropy"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.condentropy.html#statsmodels.sandbox.infotheo.condentropy">[docs]</a><span class="k">def</span> <span class="nf">condentropy</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">,</span> <span class="n">pxpy</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">logbase</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Return the conditional entropy of X given Y.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    px : array-like</span>
+<span class="sd">    py : array-like</span>
+<span class="sd">    pxpy : array-like, optional</span>
+<span class="sd">        If pxpy is None, the distributions are assumed to be independent</span>
+<span class="sd">        and conendtropy(px,py) = shannonentropy(px)</span>
+<span class="sd">    logbase : int or np.e</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    sum_{kj}log(q_{j}/w_{kj}</span>
+
+<span class="sd">    where q_{j} = Y[j]</span>
+<span class="sd">    and w_kj = X[k,j]</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">px</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">py</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;px or py is not a proper probability distribution&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pxpy</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">pxpy</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;pxpy is not a proper joint distribtion&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pxpy</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pxpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">py</span><span class="p">,</span><span class="n">px</span><span class="p">)</span>
+    <span class="n">condent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="n">pxpy</span> <span class="o">*</span> <span class="n">np</span><span class="o">.</span><span class="n">nan_to_num</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="n">py</span><span class="o">/</span><span class="n">pxpy</span><span class="p">)))</span>
+    <span class="k">if</span> <span class="n">logbase</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">condent</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="n">logbasechange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">logbase</span><span class="p">)</span> <span class="o">*</span> <span class="n">condent</span></div>
+
+<div class="viewcode-block" id="mutualinfo"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.mutualinfo.html#statsmodels.sandbox.infotheo.mutualinfo">[docs]</a><span class="k">def</span> <span class="nf">mutualinfo</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">pxpy</span><span class="p">,</span> <span class="n">logbase</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Returns the mutual information between X and Y.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    px : array-like</span>
+<span class="sd">        Discrete probability distribution of random variable X</span>
+<span class="sd">    py : array-like</span>
+<span class="sd">        Discrete probability distribution of random variable Y</span>
+<span class="sd">    pxpy : 2d array-like</span>
+<span class="sd">        The joint probability distribution of random variables X and Y.</span>
+<span class="sd">        Note that if X and Y are independent then the mutual information</span>
+<span class="sd">        is zero.</span>
+<span class="sd">    logbase : int or np.e, optional</span>
+<span class="sd">        Default is 2 (bits)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    shannonentropy(px) - condentropy(px,py,pxpy)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">px</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">py</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;px or py is not a proper probability distribution&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pxpy</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">pxpy</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;pxpy is not a proper joint distribtion&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pxpy</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pxpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">py</span><span class="p">,</span><span class="n">px</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">shannonentropy</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">logbase</span><span class="o">=</span><span class="n">logbase</span><span class="p">)</span> <span class="o">-</span> <span class="n">condentropy</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">pxpy</span><span class="p">,</span>
+            <span class="n">logbase</span><span class="o">=</span><span class="n">logbase</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="corrent"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.corrent.html#statsmodels.sandbox.infotheo.corrent">[docs]</a><span class="k">def</span> <span class="nf">corrent</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">pxpy</span><span class="p">,</span><span class="n">logbase</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An information theoretic correlation measure.</span>
+
+<span class="sd">    Reflects linear and nonlinear correlation between two random variables</span>
+<span class="sd">    X and Y, characterized by the discrete probability distributions px and py</span>
+<span class="sd">    respectively.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    px : array-like</span>
+<span class="sd">        Discrete probability distribution of random variable X</span>
+<span class="sd">    py : array-like</span>
+<span class="sd">        Discrete probability distribution of random variable Y</span>
+<span class="sd">    pxpy : 2d array-like, optional</span>
+<span class="sd">        Joint probability distribution of X and Y.  If pxpy is None, X and Y</span>
+<span class="sd">        are assumed to be independent.</span>
+<span class="sd">    logbase : int or np.e, optional</span>
+<span class="sd">        Default is 2 (bits)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    mutualinfo(px,py,pxpy,logbase=logbase)/shannonentropy(py,logbase=logbase)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This is also equivalent to</span>
+
+<span class="sd">    corrent(px,py,pxpy) = 1 - condent(px,py,pxpy)/shannonentropy(py)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">px</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">py</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;px or py is not a proper probability distribution&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pxpy</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">pxpy</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;pxpy is not a proper joint distribtion&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pxpy</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pxpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">py</span><span class="p">,</span><span class="n">px</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">mutualinfo</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">pxpy</span><span class="p">,</span><span class="n">logbase</span><span class="o">=</span><span class="n">logbase</span><span class="p">)</span><span class="o">/</span><span class="n">shannonentropy</span><span class="p">(</span><span class="n">py</span><span class="p">,</span>
+            <span class="n">logbase</span><span class="o">=</span><span class="n">logbase</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="covent"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.covent.html#statsmodels.sandbox.infotheo.covent">[docs]</a><span class="k">def</span> <span class="nf">covent</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">pxpy</span><span class="p">,</span><span class="n">logbase</span><span class="o">=</span><span class="mi">2</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    An information theoretic covariance measure.</span>
+
+<span class="sd">    Reflects linear and nonlinear correlation between two random variables</span>
+<span class="sd">    X and Y, characterized by the discrete probability distributions px and py</span>
+<span class="sd">    respectively.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    px : array-like</span>
+<span class="sd">        Discrete probability distribution of random variable X</span>
+<span class="sd">    py : array-like</span>
+<span class="sd">        Discrete probability distribution of random variable Y</span>
+<span class="sd">    pxpy : 2d array-like, optional</span>
+<span class="sd">        Joint probability distribution of X and Y.  If pxpy is None, X and Y</span>
+<span class="sd">        are assumed to be independent.</span>
+<span class="sd">    logbase : int or np.e, optional</span>
+<span class="sd">        Default is 2 (bits)</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    condent(px,py,pxpy,logbase=logbase) + condent(py,px,pxpy,</span>
+<span class="sd">            logbase=logbase)</span>
+
+<span class="sd">    Notes</span>
+<span class="sd">    -----</span>
+<span class="sd">    This is also equivalent to</span>
+
+<span class="sd">    covent(px,py,pxpy) = condent(px,py,pxpy) + condent(py,px,pxpy)</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">px</span><span class="p">)</span> <span class="ow">or</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">py</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;px or py is not a proper probability distribution&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pxpy</span> <span class="o">!=</span> <span class="kc">None</span> <span class="ow">and</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">pxpy</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;pxpy is not a proper joint distribtion&quot;</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">pxpy</span> <span class="o">==</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="n">pxpy</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">outer</span><span class="p">(</span><span class="n">py</span><span class="p">,</span><span class="n">px</span><span class="p">)</span>
+
+    <span class="k">return</span> <span class="n">condent</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">pxpy</span><span class="p">,</span><span class="n">logbase</span><span class="o">=</span><span class="n">logbase</span><span class="p">)</span> <span class="o">+</span> <span class="n">condent</span><span class="p">(</span><span class="n">py</span><span class="p">,</span><span class="n">px</span><span class="p">,</span><span class="n">pxpy</span><span class="p">,</span>
+            <span class="n">logbase</span><span class="o">=</span><span class="n">logbase</span><span class="p">)</span></div>
+
+
+<span class="c1">#### Generalized Entropies ####</span>
+
+<div class="viewcode-block" id="renyientropy"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.renyientropy.html#statsmodels.sandbox.infotheo.renyientropy">[docs]</a><span class="k">def</span> <span class="nf">renyientropy</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">logbase</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span><span class="n">measure</span><span class="o">=</span><span class="s1">&#39;R&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Renyi&#39;s generalized entropy</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    px : array-like</span>
+<span class="sd">        Discrete probability distribution of random variable X.  Note that</span>
+<span class="sd">        px is assumed to be a proper probability distribution.</span>
+<span class="sd">    logbase : int or np.e, optional</span>
+<span class="sd">        Default is 2 (bits)</span>
+<span class="sd">    alpha : float or inf</span>
+<span class="sd">        The order of the entropy.  The default is 1, which in the limit</span>
+<span class="sd">        is just Shannon&#39;s entropy.  2 is Renyi (Collision) entropy.  If</span>
+<span class="sd">        the string &quot;inf&quot; or numpy.inf is specified the min-entropy is returned.</span>
+<span class="sd">    measure : str, optional</span>
+<span class="sd">        The type of entropy measure desired.  &#39;R&#39; returns Renyi entropy</span>
+<span class="sd">        measure.  &#39;T&#39; returns the Tsallis entropy measure.</span>
+
+<span class="sd">    Returns</span>
+<span class="sd">    -------</span>
+<span class="sd">    1/(1-alpha)*log(sum(px**alpha))</span>
+
+<span class="sd">    In the limit as alpha -&gt; 1, Shannon&#39;s entropy is returned.</span>
+
+<span class="sd">    In the limit as alpha -&gt; inf, min-entropy is returned.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+<span class="c1">#TODO:finish returns</span>
+<span class="c1">#TODO:add checks for measure</span>
+    <span class="k">if</span> <span class="ow">not</span> <span class="n">_isproperdist</span><span class="p">(</span><span class="n">px</span><span class="p">):</span>
+        <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span><span class="s2">&quot;px is not a proper probability distribution&quot;</span><span class="p">)</span>
+    <span class="n">alpha</span> <span class="o">=</span> <span class="nb">float</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">alpha</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+        <span class="n">genent</span> <span class="o">=</span> <span class="n">shannonentropy</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">logbase</span> <span class="o">!=</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span> <span class="n">logbasechange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">logbase</span><span class="p">)</span> <span class="o">*</span> <span class="n">genent</span>
+        <span class="k">return</span> <span class="n">genent</span>
+    <span class="k">elif</span> <span class="s1">&#39;inf&#39;</span> <span class="ow">in</span> <span class="n">string</span><span class="p">(</span><span class="n">alpha</span><span class="p">)</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span> <span class="ow">or</span> <span class="n">alpha</span> <span class="o">==</span> <span class="n">np</span><span class="o">.</span><span class="n">inf</span><span class="p">:</span>
+        <span class="k">return</span> <span class="o">-</span><span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">px</span><span class="p">))</span>
+
+    <span class="c1"># gets here if alpha != (1 or inf)</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="n">px</span><span class="o">**</span><span class="n">alpha</span>
+    <span class="n">genent</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">log</span><span class="p">(</span><span class="n">px</span><span class="o">.</span><span class="n">sum</span><span class="p">())</span>
+    <span class="k">if</span> <span class="n">logbase</span> <span class="o">==</span> <span class="mi">2</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">genent</span>
+    <span class="k">else</span><span class="p">:</span>
+        <span class="k">return</span> <span class="mi">1</span><span class="o">/</span><span class="p">(</span><span class="mi">1</span><span class="o">-</span><span class="n">alpha</span><span class="p">)</span> <span class="o">*</span> <span class="n">logbasechange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span> <span class="n">logbase</span><span class="p">)</span> <span class="o">*</span> <span class="n">genent</span></div>
+
+<span class="c1">#TODO: before completing this, need to rethink the organization of</span>
+<span class="c1"># (relative) entropy measures, ie., all put into one function</span>
+<span class="c1"># and have kwdargs, etc.?</span>
+<div class="viewcode-block" id="gencrossentropy"><a class="viewcode-back" href="../../../generated/statsmodels.sandbox.infotheo.gencrossentropy.html#statsmodels.sandbox.infotheo.gencrossentropy">[docs]</a><span class="k">def</span> <span class="nf">gencrossentropy</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">pxpy</span><span class="p">,</span><span class="n">alpha</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span><span class="n">logbase</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">measure</span><span class="o">=</span><span class="s1">&#39;T&#39;</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    Generalized cross-entropy measures.</span>
+
+<span class="sd">    Parameters</span>
+<span class="sd">    ----------</span>
+<span class="sd">    px : array-like</span>
+<span class="sd">        Discrete probability distribution of random variable X</span>
+<span class="sd">    py : array-like</span>
+<span class="sd">        Discrete probability distribution of random variable Y</span>
+<span class="sd">    pxpy : 2d array-like, optional</span>
+<span class="sd">        Joint probability distribution of X and Y.  If pxpy is None, X and Y</span>
+<span class="sd">        are assumed to be independent.</span>
+<span class="sd">    logbase : int or np.e, optional</span>
+<span class="sd">        Default is 2 (bits)</span>
+<span class="sd">    measure : str, optional</span>
+<span class="sd">        The measure is the type of generalized cross-entropy desired. &#39;T&#39; is</span>
+<span class="sd">        the cross-entropy version of the Tsallis measure.  &#39;CR&#39; is Cressie-Read</span>
+<span class="sd">        measure.</span>
+
+<span class="sd">    &quot;&quot;&quot;</span></div>
+
+
+<span class="k">if</span> <span class="n">__name__</span> <span class="o">==</span> <span class="s2">&quot;__main__&quot;</span><span class="p">:</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;From Golan (2008) </span><span class="se">\&quot;</span><span class="s2">Information and Entropy Econometrics -- A Review </span><span class="se">\</span>
+<span class="s2">and Synthesis&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Table 3.1&quot;</span><span class="p">)</span>
+    <span class="c1"># Examples from Golan (2008)</span>
+
+    <span class="n">X</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span><span class="o">.</span><span class="mi">2</span><span class="p">]</span>
+    <span class="n">Y</span> <span class="o">=</span> <span class="p">[</span><span class="o">.</span><span class="mi">322</span><span class="p">,</span><span class="o">.</span><span class="mi">072</span><span class="p">,</span><span class="o">.</span><span class="mi">511</span><span class="p">,</span><span class="o">.</span><span class="mi">091</span><span class="p">,</span><span class="o">.</span><span class="mi">004</span><span class="p">]</span>
+
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">X</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">shannoninfo</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">Y</span><span class="p">:</span>
+        <span class="nb">print</span><span class="p">(</span><span class="n">shannoninfo</span><span class="p">(</span><span class="n">i</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">shannonentropy</span><span class="p">(</span><span class="n">X</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">shannonentropy</span><span class="p">(</span><span class="n">Y</span><span class="p">))</span>
+
+    <span class="n">p</span> <span class="o">=</span> <span class="p">[</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">5</span><span class="p">,</span><span class="mi">1</span><span class="n">e</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">.</span><span class="mi">001</span><span class="p">,</span><span class="o">.</span><span class="mi">01</span><span class="p">,</span><span class="o">.</span><span class="mi">1</span><span class="p">,</span><span class="o">.</span><span class="mi">15</span><span class="p">,</span><span class="o">.</span><span class="mi">2</span><span class="p">,</span><span class="o">.</span><span class="mi">25</span><span class="p">,</span><span class="o">.</span><span class="mi">3</span><span class="p">,</span><span class="o">.</span><span class="mi">35</span><span class="p">,</span><span class="o">.</span><span class="mi">4</span><span class="p">,</span><span class="o">.</span><span class="mi">45</span><span class="p">,</span><span class="o">.</span><span class="mi">5</span><span class="p">]</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Information&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Probability&quot;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">100001</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">shannoninfo</span><span class="p">(</span><span class="n">x</span><span class="p">))</span>
+<span class="c1">#    plt.show()</span>
+
+    <span class="n">plt</span><span class="o">.</span><span class="n">subplot</span><span class="p">(</span><span class="mi">111</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">ylabel</span><span class="p">(</span><span class="s2">&quot;Entropy&quot;</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">xlabel</span><span class="p">(</span><span class="s2">&quot;Probability&quot;</span><span class="p">)</span>
+    <span class="n">x</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">linspace</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">101</span><span class="p">)</span>
+    <span class="n">plt</span><span class="o">.</span><span class="n">plot</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">lmap</span><span class="p">(</span><span class="n">shannonentropy</span><span class="p">,</span> <span class="n">lzip</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">x</span><span class="p">)))</span>
+<span class="c1">#    plt.show()</span>
+
+    <span class="c1"># define a joint probability distribution</span>
+    <span class="c1"># from Golan (2008) table 3.3</span>
+    <span class="n">w</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mf">1.</span><span class="o">/</span><span class="mi">3</span><span class="p">],[</span><span class="mi">1</span><span class="o">/</span><span class="mf">9.</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mf">9.</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mf">9.</span><span class="p">],[</span><span class="mi">1</span><span class="o">/</span><span class="mf">18.</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mf">9.</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mf">6.</span><span class="p">]])</span>
+    <span class="c1"># table 3.4</span>
+    <span class="n">px</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+    <span class="n">py</span> <span class="o">=</span> <span class="n">w</span><span class="o">.</span><span class="n">sum</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+    <span class="n">H_X</span> <span class="o">=</span> <span class="n">shannonentropy</span><span class="p">(</span><span class="n">px</span><span class="p">)</span>
+    <span class="n">H_Y</span> <span class="o">=</span> <span class="n">shannonentropy</span><span class="p">(</span><span class="n">py</span><span class="p">)</span>
+    <span class="n">H_XY</span> <span class="o">=</span> <span class="n">shannonentropy</span><span class="p">(</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">H_XgivenY</span> <span class="o">=</span> <span class="n">condentropy</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">w</span><span class="p">)</span>
+    <span class="n">H_YgivenX</span> <span class="o">=</span> <span class="n">condentropy</span><span class="p">(</span><span class="n">py</span><span class="p">,</span><span class="n">px</span><span class="p">,</span><span class="n">w</span><span class="p">)</span>
+<span class="c1"># note that cross-entropy is not a distance measure as the following shows</span>
+    <span class="n">D_YX</span> <span class="o">=</span> <span class="n">logbasechange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">e</span><span class="p">)</span><span class="o">*</span><span class="n">stats</span><span class="o">.</span><span class="n">entropy</span><span class="p">(</span><span class="n">px</span><span class="p">,</span> <span class="n">py</span><span class="p">)</span>
+    <span class="n">D_XY</span> <span class="o">=</span> <span class="n">logbasechange</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">np</span><span class="o">.</span><span class="n">e</span><span class="p">)</span><span class="o">*</span><span class="n">stats</span><span class="o">.</span><span class="n">entropy</span><span class="p">(</span><span class="n">py</span><span class="p">,</span> <span class="n">px</span><span class="p">)</span>
+    <span class="n">I_XY</span> <span class="o">=</span> <span class="n">mutualinfo</span><span class="p">(</span><span class="n">px</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">w</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Table 3.3&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">H_X</span><span class="p">,</span><span class="n">H_Y</span><span class="p">,</span> <span class="n">H_XY</span><span class="p">,</span> <span class="n">H_XgivenY</span><span class="p">,</span> <span class="n">H_YgivenX</span><span class="p">,</span> <span class="n">D_YX</span><span class="p">,</span> <span class="n">D_XY</span><span class="p">,</span> <span class="n">I_XY</span><span class="p">)</span>
+
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;discretize functions&quot;</span><span class="p">)</span>
+    <span class="n">X</span><span class="o">=</span><span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="mf">21.2</span><span class="p">,</span><span class="mf">44.5</span><span class="p">,</span><span class="mf">31.0</span><span class="p">,</span><span class="mf">19.5</span><span class="p">,</span><span class="mf">40.6</span><span class="p">,</span><span class="mf">38.7</span><span class="p">,</span><span class="mf">11.1</span><span class="p">,</span><span class="mf">15.8</span><span class="p">,</span><span class="mf">31.9</span><span class="p">,</span><span class="mf">25.8</span><span class="p">,</span><span class="mf">20.2</span><span class="p">,</span><span class="mf">14.2</span><span class="p">,</span>
+        <span class="mf">24.0</span><span class="p">,</span><span class="mf">21.0</span><span class="p">,</span><span class="mf">11.3</span><span class="p">,</span><span class="mf">18.0</span><span class="p">,</span><span class="mf">16.3</span><span class="p">,</span><span class="mf">22.2</span><span class="p">,</span><span class="mf">7.8</span><span class="p">,</span><span class="mf">27.8</span><span class="p">,</span><span class="mf">16.3</span><span class="p">,</span><span class="mf">35.1</span><span class="p">,</span><span class="mf">14.9</span><span class="p">,</span><span class="mf">17.1</span><span class="p">,</span><span class="mf">28.2</span><span class="p">,</span><span class="mf">16.4</span><span class="p">,</span>
+        <span class="mf">16.5</span><span class="p">,</span><span class="mf">46.0</span><span class="p">,</span><span class="mf">9.5</span><span class="p">,</span><span class="mf">18.8</span><span class="p">,</span><span class="mf">32.1</span><span class="p">,</span><span class="mf">26.1</span><span class="p">,</span><span class="mf">16.1</span><span class="p">,</span><span class="mf">7.3</span><span class="p">,</span><span class="mf">21.4</span><span class="p">,</span><span class="mf">20.0</span><span class="p">,</span><span class="mf">29.3</span><span class="p">,</span><span class="mf">14.9</span><span class="p">,</span><span class="mf">8.3</span><span class="p">,</span><span class="mf">22.5</span><span class="p">,</span>
+        <span class="mf">12.8</span><span class="p">,</span><span class="mf">26.9</span><span class="p">,</span><span class="mf">25.5</span><span class="p">,</span><span class="mf">22.9</span><span class="p">,</span><span class="mf">11.2</span><span class="p">,</span><span class="mf">20.7</span><span class="p">,</span><span class="mf">26.2</span><span class="p">,</span><span class="mf">9.3</span><span class="p">,</span><span class="mf">10.8</span><span class="p">,</span><span class="mf">15.6</span><span class="p">])</span>
+    <span class="n">discX</span> <span class="o">=</span> <span class="n">discretize</span><span class="p">(</span><span class="n">X</span><span class="p">)</span>
+    <span class="c1">#CF: R&#39;s infotheo</span>
+<span class="c1">#TODO: compare to pyentropy quantize?</span>
+    <span class="nb">print</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Example in section 3.6 of Golan, using table 3.3&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Bounding errors using Fano&#39;s inequality&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;H(P_</span><span class="si">{e}</span><span class="s2">) + P_</span><span class="si">{e}</span><span class="s2">log(K-1) &gt;= H(X|Y)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;or, a weaker inequality&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P_</span><span class="si">{e}</span><span class="s2"> &gt;= [H(X|Y) - 1]/log(K)&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;P(x) = </span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">px</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;X = 3 has the highest probability, so this is the estimate Xhat&quot;</span><span class="p">)</span>
+    <span class="n">pe</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">-</span> <span class="n">px</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The probability of error Pe is 1 - p(X=3) = </span><span class="si">%0.4g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="n">pe</span><span class="p">)</span>
+    <span class="n">H_pe</span> <span class="o">=</span> <span class="n">shannonentropy</span><span class="p">([</span><span class="n">pe</span><span class="p">,</span><span class="mi">1</span><span class="o">-</span><span class="n">pe</span><span class="p">])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;H(Pe) = </span><span class="si">%0.4g</span><span class="s2"> and K=3&quot;</span> <span class="o">%</span> <span class="n">H_pe</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;H(Pe) + Pe*log(K-1) = </span><span class="si">%0.4g</span><span class="s2"> &gt;= H(X|Y) = </span><span class="si">%0.4g</span><span class="s2">&quot;</span> <span class="o">%</span> \
+            <span class="p">(</span><span class="n">H_pe</span><span class="o">+</span><span class="n">pe</span><span class="o">*</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mi">2</span><span class="p">),</span> <span class="n">H_XgivenY</span><span class="p">))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;or using the weaker inequality&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pe = </span><span class="si">%0.4g</span><span class="s2"> &gt;= [H(X) - 1]/log(K) = </span><span class="si">%0.4g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="n">pe</span><span class="p">,</span> <span class="p">(</span><span class="n">H_X</span> <span class="o">-</span> <span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Consider now, table 3.5, where there is additional information&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The conditional probabilities of P(X|Y=y) are &quot;</span><span class="p">)</span>
+    <span class="n">w2</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="mf">0.</span><span class="p">,</span><span class="mf">0.</span><span class="p">,</span><span class="mf">1.</span><span class="p">],[</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">],[</span><span class="mi">1</span><span class="o">/</span><span class="mf">6.</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mf">3.</span><span class="p">,</span><span class="mi">1</span><span class="o">/</span><span class="mf">2.</span><span class="p">]])</span>
+    <span class="nb">print</span><span class="p">(</span><span class="n">w2</span><span class="p">)</span>
+<span class="c1"># not a proper distribution?</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;The probability of error given this information is&quot;</span><span class="p">)</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;Pe = [H(X|Y) -1]/log(K) = </span><span class="si">%0.4g</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">((</span><span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">([</span><span class="mi">0</span><span class="p">,</span><span class="n">shannonentropy</span><span class="p">(</span><span class="n">w2</span><span class="p">[</span><span class="mi">1</span><span class="p">]),</span><span class="n">shannonentropy</span><span class="p">(</span><span class="n">w2</span><span class="p">[</span><span class="mi">2</span><span class="p">])])</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">np</span><span class="o">.</span><span class="n">log2</span><span class="p">(</span><span class="mi">3</span><span class="p">)))</span>
+    <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;such that more information lowers the error&quot;</span><span class="p">)</span>
+
+<span class="c1">### Stochastic processes</span>
+    <span class="n">markovchain</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([[</span><span class="o">.</span><span class="mi">553</span><span class="p">,</span><span class="o">.</span><span class="mi">284</span><span class="p">,</span><span class="o">.</span><span class="mi">163</span><span class="p">],[</span><span class="o">.</span><span class="mi">465</span><span class="p">,</span><span class="o">.</span><span class="mi">312</span><span class="p">,</span><span class="o">.</span><span class="mi">223</span><span class="p">],[</span><span class="o">.</span><span class="mi">420</span><span class="p">,</span><span class="o">.</span><span class="mi">322</span><span class="p">,</span><span class="o">.</span><span class="mi">258</span><span class="p">]])</span>
+</pre></div>
+
+           </div>
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2016.
+
+    </p>
+  </div>
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'../../../',
+            VERSION:'1',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="../../../_static/jquery.js"></script>
+      <script type="text/javascript" src="../../../_static/underscore.js"></script>
+      <script type="text/javascript" src="../../../_static/doctools.js"></script>
+      <script type="text/javascript" src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>

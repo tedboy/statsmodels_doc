@@ -1,0 +1,50 @@
+statsmodels.sandbox.archive.linalg_decomp_1
+===========================================
+
+.. automodule:: statsmodels.sandbox.archive.linalg_decomp_1
+
+   
+   
+   Functions
+   ---------
+   .. autosummary::
+      :toctree:
+
+   
+      get_function_name
+      maxabs
+      testcompare
+      tiny2zero
+   
+   
+
+   
+   
+   Classes
+   ---------
+   .. autosummary::
+      :toctree:generated/
+      :template:class_custom.rst
+
+   
+      CholArray
+      OneTimeProperty
+      PlainMatrixArray
+      SvdArray
+
+   .. toctree::
+       :maxdepth: 1
+       :hidden:
+
+   
+       generated/statsmodels.sandbox.archive.linalg_decomp_1.CholArray
+       generated/statsmodels.sandbox.archive.linalg_decomp_1.OneTimeProperty
+       generated/statsmodels.sandbox.archive.linalg_decomp_1.PlainMatrixArray
+       generated/statsmodels.sandbox.archive.linalg_decomp_1.SvdArray
+
+   
+   
+
+   
+   
+   
