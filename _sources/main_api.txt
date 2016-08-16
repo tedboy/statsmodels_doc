@@ -1,8 +1,3 @@
-########
-Main API
-########
-
-
 .. toctree::
     :maxdepth: 1
 
